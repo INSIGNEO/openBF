@@ -320,7 +320,21 @@
 
   <span class="k">while</span> <span class="n">true</span>
     <span class="n">dU</span> <span class="o">=</span> <span class="n">J</span>\<span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="p">)</span>
-    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">dU</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-3">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-3">&#182;</a>
+  </div>
+  <p>U_new = U + 0.01*dU</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="n">dU</span>
 
     <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">F</span><span class="p">)))</span>
       <span class="n">println</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
@@ -328,24 +342,24 @@
       <span class="k">break</span>
     <span class="k">end</span>
 
-  <span class="n">u_ok</span> <span class="o">=</span> <span class="mi">0</span>
-  <span class="n">f_ok</span> <span class="o">=</span> <span class="mi">0</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">abs</span><span class="p">(</span><span class="n">dU</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_U</span> <span class="o">||</span> <span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_F</span>
-      <span class="n">u_ok</span> <span class="o">+=</span> <span class="mi">1</span>
-      <span class="n">f_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">u_ok</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">f_ok</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">abs</span><span class="p">(</span><span class="n">dU</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_U</span> <span class="o">||</span> <span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_F</span>
+        <span class="n">u_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">f_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">u_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span> <span class="o">||</span> <span class="n">f_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
+      <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
+      <span class="k">break</span>
+    <span class="k">else</span>
+      <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
+      <span class="n">W</span> <span class="o">=</span> <span class="n">calculateWstarBif</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+      <span class="n">F</span> <span class="o">=</span> <span class="n">calculateFofUBif</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
-
-  <span class="k">if</span> <span class="n">u_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span> <span class="o">||</span> <span class="n">f_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
-    <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
-    <span class="k">break</span>
-  <span class="k">else</span>
-    <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
-    <span class="n">W</span> <span class="o">=</span> <span class="n">calculateWstarBif</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-    <span class="n">F</span> <span class="o">=</span> <span class="n">calculateFofUBif</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
 
   <span class="c">#Update vessel quantities</span>
   <span class="n">v1</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -375,10 +389,10 @@
 </td>
 </tr>
 
-<tr id="section-3">
+<tr id="section-4">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-3">&#182;</a>
+    <a class="pilcrow" href="#section-4">&#182;</a>
   </div>
   <p><a name="calculateWstarAn"></a></p>
 
@@ -398,10 +412,10 @@
 </td>
 </tr>
 
-<tr id="section-4">
+<tr id="section-5">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-4">&#182;</a>
+    <a class="pilcrow" href="#section-5">&#182;</a>
   </div>
   <p><a name="calculateFofUAn"></a></p>
 
@@ -432,10 +446,10 @@
 </td>
 </tr>
 
-<tr id="section-5">
+<tr id="section-6">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-5">&#182;</a>
+    <a class="pilcrow" href="#section-6">&#182;</a>
   </div>
   <p><a name="calculateJacobianAn"></a></p>
 

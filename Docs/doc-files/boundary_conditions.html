@@ -1499,12 +1499,6 @@ Q_{vein-in} = \frac{P_c}{R_2},
 <td class="code">
 <div class="highlight"><pre>	<span class="n">As</span> <span class="o">=</span> <span class="n">Al</span>
 
-	<span class="n">fun</span><span class="p">(</span><span class="n">As</span><span class="p">)</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">R1</span><span class="o">*</span><span class="p">(</span><span class="n">ul</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Al</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">))</span><span class="o">*</span><span class="n">As</span> <span class="o">-</span>
-		<span class="mi">4</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">R1</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">As</span> <span class="o">-</span>
-		<span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Pext</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="o">/</span><span class="n">v</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">Pc</span>
-
-	<span class="n">dfun</span><span class="p">(</span><span class="n">As</span><span class="p">)</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">R1</span><span class="o">*</span><span class="p">(</span> <span class="n">ul</span> <span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Al</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.25</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="p">)))</span> <span class="p">)</span> <span class="o">-</span>
-		<span class="n">v</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="mf">0.5</span><span class="o">/</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">]))</span>
 
 </pre></div>
 </td>
@@ -1515,11 +1509,11 @@ Q_{vein-in} = \frac{P_c}{R_2},
   <div class="pilwrap">
     <a class="pilcrow" href="#section-42">&#182;</a>
   </div>
-  <p><span class="math inline">\(\mathcal{F}(A^*)=0\)</span> is solved for <span class="math inline">\(A^*\)</span> with the Newton’s method implemented in <a href="https://github.com/JuliaLang/Roots.jl"><strong>Roots</strong></a> library. <span class="math inline">\(A^*\)</span> is initialised equal to <span class="math inline">\(A_l\)</span>.</p>
+  <p>fun(As) = v.R1<em>(ul+4</em>sqrt(3<em>v.gamma[end]</em>sqrt(Al)<em>0.5))</em>As - 4<em>v.R1</em>sqrt(3<em>v.gamma[end]</em>sqrt(As)<em>0.5)</em>As - (v.Pext + v.beta[end]*(sqrt(As/v.A0[end]) - 1)) + v.Pc</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>	<span class="n">As</span> <span class="o">=</span> <span class="n">newton</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">dfun</span><span class="p">,</span> <span class="n">As</span><span class="p">)</span>
+<div class="highlight"><pre>
 
 </pre></div>
 </td>
@@ -1529,6 +1523,46 @@ Q_{vein-in} = \frac{P_c}{R_2},
 <td class="docs">
   <div class="pilwrap">
     <a class="pilcrow" href="#section-43">&#182;</a>
+  </div>
+  <p>dfun(As) = v.R1<em>( ul +4</em>sqrt(1.5<em>v.gamma[end])</em>(sqrt(sqrt(Al)) - 1.25<em>sqrt(sqrt(As))) ) - v.beta[end]</em>0.5/(sqrt(As*v.A0[end]))</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+	<span class="n">ssAl</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Al</span><span class="p">))</span>
+	<span class="n">sgamma</span> <span class="o">=</span>  <span class="mi">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>
+	<span class="n">sA0</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>
+	<span class="n">bA0</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">/</span><span class="n">sA0</span>
+	
+	<span class="n">fun</span><span class="p">(</span><span class="n">As</span><span class="p">)</span> <span class="o">=</span> <span class="n">As</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">R1</span><span class="o">*</span><span class="p">(</span><span class="n">ul</span> <span class="o">+</span> <span class="n">sgamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">ssAl</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="p">))))</span> <span class="o">-</span>
+		<span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Pext</span> <span class="o">+</span> <span class="n">bA0</span><span class="o">*</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="p">)</span> <span class="o">-</span> <span class="n">sA0</span><span class="p">))</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">Pc</span>
+
+	<span class="n">dfun</span><span class="p">(</span><span class="n">As</span><span class="p">)</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">R1</span><span class="o">*</span><span class="p">(</span><span class="n">ul</span> <span class="o">+</span> <span class="n">sgamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">ssAl</span> <span class="o">-</span> <span class="mf">1.25</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="p">))))</span> <span class="o">-</span> <span class="n">bA0</span><span class="o">*</span><span class="mf">0.5</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-44">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-44">&#182;</a>
+  </div>
+  <p><span class="math inline">\(\mathcal{F}(A^*)=0\)</span> is solved for <span class="math inline">\(A^*\)</span> with the Newton’s method implemented in <a href="https://github.com/JuliaLang/Roots.jl"><strong>Roots</strong></a> library. <span class="math inline">\(A^*\)</span> is initialised equal to <span class="math inline">\(A_l\)</span>. As = newton(fun, dfun, As)</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>	<span class="n">As</span> <span class="o">=</span> <span class="n">newtone</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">dfun</span><span class="p">,</span> <span class="n">As</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-45">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-45">&#182;</a>
   </div>
   <p>Once <span class="math inline">\(A^*\)</span> is found, <span class="math inline">\(u^*\)</span> reads <span class="math display">\[
   u^* = \frac{P_e^* - P{out}}{A^*R_1},
@@ -1543,15 +1577,26 @@ Q_{vein-in} = \frac{P_c}{R_2},
 
 <span class="k">end</span>
 
+<span class="k">function</span><span class="nf"> newtone</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+
+	<span class="n">xn</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span><span class="o">/</span><span class="n">df</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">abs</span><span class="p">(</span><span class="n">xn</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">&lt;=</span> <span class="mf">1e-5</span>
+		<span class="k">return</span> <span class="n">xn</span>
+	<span class="k">else</span>
+		<span class="n">newtone</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">xn</span><span class="p">)</span>
+	<span class="k">end</span>
+<span class="k">end</span>
+
+
 
 </pre></div>
 </td>
 </tr>
 
-<tr id="section-44">
+<tr id="section-46">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-44">&#182;</a>
+    <a class="pilcrow" href="#section-46">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>updateGhostCells</code></strong></p>
 <table>
@@ -1610,10 +1655,10 @@ Q_{vein-in} = \frac{P_c}{R_2},
 </td>
 </tr>
 
-<tr id="section-45">
+<tr id="section-47">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-45">&#182;</a>
+    <a class="pilcrow" href="#section-47">&#182;</a>
   </div>
   <p><code>updateGhostCells</code> exploits julia’s multiple dispatch property. This function can handle one or more than one vessels organised in an <code>Array</code> structure.</p>
 
@@ -1629,10 +1674,10 @@ Q_{vein-in} = \frac{P_c}{R_2},
 </td>
 </tr>
 
-<tr id="section-46">
+<tr id="section-48">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-46">&#182;</a>
+    <a class="pilcrow" href="#section-48">&#182;</a>
   </div>
   <p>if length(vessels) == 1 updateGhostCells(vessels[1]) else pmap(updateGhostCells, vessels) end</p>
 
@@ -1645,10 +1690,10 @@ Q_{vein-in} = \frac{P_c}{R_2},
 </td>
 </tr>
 
-<tr id="section-47">
+<tr id="section-49">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-47">&#182;</a>
+    <a class="pilcrow" href="#section-49">&#182;</a>
   </div>
   <h3 id="references">References</h3>
 <div class="footnotes">

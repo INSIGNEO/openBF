@@ -416,8 +416,8 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="n">nr_tol_U</span> <span class="o">=</span> <span class="mf">1.e-5</span>
-  <span class="n">nr_tol_F</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+<div class="highlight"><pre>  <span class="n">nr_toll_U</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+  <span class="n">nr_toll_F</span> <span class="o">=</span> <span class="mf">1.e-5</span>
 
 </pre></div>
 </td>
@@ -434,7 +434,6 @@
 <td class="code">
 <div class="highlight"><pre>  <span class="k">while</span> <span class="n">true</span>
     <span class="n">dU</span> <span class="o">=</span> <span class="n">J</span>\<span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="p">)</span>
-    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">dU</span>
 
 </pre></div>
 </td>
@@ -444,6 +443,21 @@
 <td class="docs">
   <div class="pilwrap">
     <a class="pilcrow" href="#section-6">&#182;</a>
+  </div>
+  <p>U_new = U + 0.01*dU</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="n">dU</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-7">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-7">&#182;</a>
   </div>
   <p>In the case the solution diverges, <span class="math inline">\(F\)</span> will contain <code>nan</code> elements. In this case <code>openBF</code> exits the simulation and returns an error.</p>
 
@@ -458,17 +472,25 @@
 </td>
 </tr>
 
-<tr id="section-7">
+<tr id="section-8">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-7">&#182;</a>
+    <a class="pilcrow" href="#section-8">&#182;</a>
   </div>
   <p>When all the elements in <span class="math inline">\(\delta U\)</span> and <span class="math inline">\(F\)</span> meet the set tolerances, the solver stops the iterative loop.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>    <span class="k">if</span> <span class="n">all</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span> <span class="o">.&lt;=</span> <span class="n">nr_tol_U</span><span class="p">)</span> <span class="o">||</span> <span class="n">all</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span> <span class="o">.&lt;=</span> <span class="n">nr_tol_F</span><span class="p">)</span>
+<div class="highlight"><pre>    <span class="n">u_ok</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">f_ok</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">abs</span><span class="p">(</span><span class="n">dU</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_U</span> <span class="o">||</span> <span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_F</span>
+        <span class="n">u_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">f_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
 
+    <span class="k">if</span> <span class="n">u_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span> <span class="o">||</span> <span class="n">f_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
       <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
       <span class="k">break</span>
 
@@ -476,10 +498,10 @@
 </td>
 </tr>
 
-<tr id="section-8">
+<tr id="section-9">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-8">&#182;</a>
+    <a class="pilcrow" href="#section-9">&#182;</a>
   </div>
   <p>If tolerances are not met, new <span class="math inline">\(U\)</span>, <span class="math inline">\(W\)</span>, and <span class="math inline">\(F\)</span> vectors are computed and a new iteration starts.</p>
 
@@ -497,10 +519,10 @@
 </td>
 </tr>
 
-<tr id="section-9">
+<tr id="section-10">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-9">&#182;</a>
+    <a class="pilcrow" href="#section-10">&#182;</a>
   </div>
   <p>Once the solution is found, quantities at both sides of the interface are updated.</p>
 
@@ -527,10 +549,10 @@
 </td>
 </tr>
 
-<tr id="section-10">
+<tr id="section-11">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-10">&#182;</a>
+    <a class="pilcrow" href="#section-11">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>calculateWstarConj</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>W::Array{Float, 1}</code></p>
 <table>
@@ -607,10 +629,10 @@ W_1 = u_1 + 4c_1, \quad W_2 = u_2 - 4c_2.
 </td>
 </tr>
 
-<tr id="section-11">
+<tr id="section-12">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-11">&#182;</a>
+    <a class="pilcrow" href="#section-12">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>calculateFofUconj</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>F::Array</code></p>
 <table>
@@ -722,10 +744,10 @@ U_1U_3^4 - U_2U_4^4 = 0, \\
 </td>
 </tr>
 
-<tr id="section-12">
+<tr id="section-13">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-12">&#182;</a>
+    <a class="pilcrow" href="#section-13">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>calculateJacobianConj</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>W::Array{Float, 1}</code></p>
 <table>
@@ -835,10 +857,10 @@ U_3^4 &amp; -U_4^4 &amp; 4U_1 U_3^4 &amp; -4 U_2 U_4^4 \\
 </td>
 </tr>
 
-<tr id="section-13">
+<tr id="section-14">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-13">&#182;</a>
+    <a class="pilcrow" href="#section-14">&#182;</a>
   </div>
   <h3 id="references">References</h3>
 <div class="footnotes">
