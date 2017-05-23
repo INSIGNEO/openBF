@@ -82,4 +82,4 @@ The `main.jl` file can be copied and used as it is for different simulations. Th
 
 ### Docs
 
-<!-- For the library documentation check the [Docs](https://alemelis.github.io/openbf.jl/Docs/index.html), the password is **moonlike**. -->
+For the library documentation check the [Docs](https://INSIGNEO.github.io/openBF/Docs/index.html).S
