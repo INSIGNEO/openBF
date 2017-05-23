@@ -1,8 +1,26 @@
+#= Copyright (C) 2017 Alessandro Melis.
+
+  This file is part of openBF.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Bash.  If not, see <http://www.gnu.org/licenses/>.
+=#
+
 # The `main.jl` file is where `openBF` is implemented. Only
 # [`openBF`](openBF.html) library is needed to be imported.
 # Until the official `openBF` Julia `Pkg` is created, the
 # library is loaded locally.
-push!(LOAD_PATH, "../../src")
+push!(LOAD_PATH, ".")
 using openBF
 reload("openBF")
 
@@ -149,13 +167,15 @@ else
   venous_model = false
 end
 
-prog = ProgressMeter.Progress(int(total_time/dt)*2, 1, "Running ", 50)
+prog = ProgressMeter.Progress(int(total_time/dt), 1, "Running ", 50)
 
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.
 passed_cycles = 0
 
 tic()
+counter = 0
+counter_v = 0
 while true
   # At the beginning of each time step the $\Delta t$ is computed with
   # [`calculateDeltaT`](godunov.html#calculateDeltaT). This is because
@@ -185,7 +205,12 @@ while true
   # All quantities in each vessel are stored by
   # [`saveTempData`](IOutils.html#saveTempData) in `.temp` files until the
   # end of the cardiac cycle.
-  openBF.saveTempData(current_time, vessels)
+  if counter == 100
+    openBF.saveTempData(current_time, vessels)
+    counter = 0
+  else
+    counter += 1
+  end
 
   #Solve veins
   if venous_model
@@ -193,7 +218,14 @@ while true
                       grafo, edgess, vessels,
                       blood_prop, dt, current_time)
     openBF.updateGhostCells(vessels_v)
-    openBF.saveTempData(current_time, vessels_v)
+
+    if counter_v == 100
+      openBF.saveTempData(current_time, vessels_v)
+      counter_v = 0
+    else
+      counter_v += 1
+    end
+
   end
 
   #Progress bar update
