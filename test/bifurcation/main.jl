@@ -33,7 +33,7 @@ reload("openBF")
 #     julia main.jl project_name
 #
 # `project_name` is a string used to initialise all the output files.
-project_name = ARGS[1]
+project_name = "bifurcation"
 
 # In `main.jl` all functions from `openBF` library are called using the dot
 # notation: `library.function(parameters)`. Function
