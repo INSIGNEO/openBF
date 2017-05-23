@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>grafo.jl</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" media="all" href="./jocco.css" />
+  <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
+  <script type="text/javascript"
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <!-- jQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.min.js"></script>
+  <script>
+    $(function(){
+      $("table").resizableColumns({
+        store: window.store
+      });
+    });
+  </script>
+</head>
+<body>
+<nav>
+  <ul>
+    <li><a href="../doc-index.html">Index</a></li>
+    <li>
+      <a href="Boris.html">Boris <span class="caret"></span></a>
+      <div>
+        <ul>
+          <li><a href="main.html#" title="boris main file">main.jl</a></li>
+          <li><a href="BTypes.html#" title="data structures definition">BTypes.jl</a></li>
+          <li><a href="initialise.html#" title="model and solution initialisation">initialise.jl</a></li>
+          <li><a href="boundary_conditions.html#" title="BC settings">boundary_conditions.jl</a></li>
+          <li><a href="junctions.html#" title="junction switch">junctions.jl</a></li>
+          <li><a href="conjunctions.html#" title="conjunctions solution">conjunctions.jl</a></li>
+          <li><a href="bifurcations.html#" title="bifurcations solution">bifurcations.jl</a></li>
+          <li><a href="godunov.html#" title="Godunov' method implementation">godunov.jl</a></li>
+          <li><a href="converter.html#" title="conversion tools">converter.jl</a></li>
+          <li><a href="IOutils.html#" title="I/O functions">IOutils</a></li>
+        </ul>
+      </div>
+    </li>
+    <li><a href="../index.html#tutorial">Tutorial</a></li>
+  </ul>
+</nav>
+  <div id="container">
+    <div id="background"></div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs" data-resizable-column-id="docs">
+            <h1>
+              grafo.jl
+            </h1>
+          </th>
+          <th class="code" data-resizable-column-id="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+<tr id="section-1">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-1">&#182;</a>
+  </div>
+  <p>Solution workflow automatic generator for <code>Boris</code> using <a href="http://graphsjl-docs.readthedocs.org/en/latest/index.html">Graphs.jl</a>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">using</span> <span class="n">Graphs</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-2">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-2">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="grafo_draw.pdf.png" width="400">
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-3">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-3">&#182;</a>
+  </div>
+  <p>The arterial tree is specified as a <code>simple_graph</code> with 13 nodes and vessels (aka edges) are added by hand (for now) through <code>add_edge!</code>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="n">g</span> <span class="o">=</span> <span class="n">simple_graph</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-4">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-4">&#182;</a>
+  </div>
+  <p>Function <code>edges</code> returns a list of iterable edges.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="n">e</span> <span class="o">=</span> <span class="n">edges</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-5">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-5">&#182;</a>
+  </div>
+  <p>Each edge is evaluated starting from the 1st; current edge index is stored as <code>i</code>, its source node is <code>s</code> and its target node is <code>t</code>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+	<span class="n">s</span> <span class="o">=</span> <span class="n">source</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	<span class="n">t</span> <span class="o">=</span> <span class="n">target</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-6">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-6">&#182;</a>
+  </div>
+  <p>If the source node is the first in the arterial tree, the inlet boundary condtion is applied.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>	<span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span>
+		<span class="p">@</span><span class="n">printf</span> <span class="s">&quot;edge %i - source %i -&gt; setInletBC </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">i</span> <span class="n">s</span>
+	<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-7">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-7">&#182;</a>
+  </div>
+  <p>Once the source node is processed, the edge (vessel) is solved by means of Godunov’s method.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>	<span class="p">@</span><span class="n">printf</span> <span class="s">&quot;edge %i - solve </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">i</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-8">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-8">&#182;</a>
+  </div>
+  <p>If the target node is a peripheral node, the outlet boundary condition is applied.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>	<span class="k">if</span> <span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+		<span class="p">@</span><span class="n">printf</span> <span class="s">&quot;edge %i - target %i -&gt; setOutletBC </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">i</span> <span class="n">t</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-9">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-9">&#182;</a>
+  </div>
+  <p>If from the target <code>t</code> node is the source node of a new edge, a check is done to establish wether <code>t</code> is a conjunction node or an anastomosis node. A conjunction is found when the <code>out_degree</code> of <code>t</code> is equal to 1, otherwise is an anastomosis.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>	<span class="k">elseif</span> <span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-10">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-10">&#182;</a>
+  </div>
+  <p>The conjunction is solved calling the joinVessels routine with parent and daughter indices.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>		<span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+			<span class="n">o</span> <span class="o">=</span> <span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+			<span class="p">@</span><span class="n">printf</span> <span class="s">&quot;edge %i -&gt; conjunction %i - %i </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">i</span> <span class="n">i</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">g</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-11">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-11">&#182;</a>
+  </div>
+  <p>Before solving the anastomosis a check is done on the current edge index <code>i</code>. If <code>i</code> is higher than the index of the other parent edge, it means that both parent vessel have been already solved, thus the anastomosis can be solved as well.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>		<span class="k">else</span>
+			<span class="n">es</span> <span class="o">=</span> <span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">g</span><span class="p">),</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">g</span><span class="p">))</span>
+				<span class="p">@</span><span class="n">printf</span> <span class="s">&quot;node %i -&gt; anastomosis(%i, %i, %i) </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">t</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">g</span><span class="p">)</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">g</span><span class="p">)</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">g</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="k">end</span>
+		<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-12">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-12">&#182;</a>
+  </div>
+  <p>A bifurcation is found when the <code>out_degree</code> of <code>t</code> is 2. It is solved as soon as it is found because the parent vessel is already solved for sure.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>	<span class="k">elseif</span> <span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+		<span class="p">@</span><span class="n">printf</span> <span class="s">&quot;node %i -&gt; bifurcation(%i, %i, %i) </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">t</span> <span class="n">i</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">g</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="n">edge_index</span><span class="p">(</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">g</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+
+	<span class="k">end</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+<nav>
+  <ul>
+    <li><a href="#">^</a></li>
+    <li><a href="../doc-index.html">Index</a></li>
+  </ul>
+</nav>
+</body>
+</html>

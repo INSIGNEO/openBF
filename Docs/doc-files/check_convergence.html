@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <link rel="icon" type="image/png" href="../../images/fish.png">
+  <title>check_convergence.jl</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" media="all" href="./jocco.css" />
+  <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <!-- jQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.min.js"></script>
+  <script>
+    $(function(){
+      $("table").resizableColumns({
+        store: window.store
+      });
+    });
+  </script>
+</head>
+<body>
+<nav>
+	<ul>
+		<li><a href="../index.html#">Home</a></li>
+		<li>
+      		<a href="openBF.html">openBF.jl <span class="caret"></span></a>
+			<div>
+				<ul>
+        <li><a href="main.html#">main.jl</a>
+
+<li><a href="BTypes.html#">BTypes.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="BTypes.html#::Vessel
+">::Vessel
+</a></li>
+<li><a href="BTypes.html#::Heart
+">::Heart
+</a></li>
+<li><a href="BTypes.html#::Blood
+">::Blood
+</a></li>
+</ul>
+</div>
+</li><li><a href="initialise.html#">initialise.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="initialise.html#projectPreamble
+">projectPreamble
+</a></li>
+<li><a href="initialise.html#writeScripts
+">writeScripts
+</a></li>
+<li><a href="initialise.html#cleanLibrary
+">cleanLibrary
+</a></li>
+<li><a href="initialise.html#readModelData
+">readModelData
+</a></li>
+<li><a href="initialise.html#initialiseVessel
+">initialiseVessel
+</a></li>
+<li><a href="initialise.html#loadInputData
+">loadInputData
+</a></li>
+<li><a href="initialise.html#loadGlobalConstants
+">loadGlobalConstants
+</a></li>
+</ul>
+</div>
+</li><li><a href="boundary_conditions.html#">boundary_conditions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="boundary_conditions.html#setInletBC
+">setInletBC
+</a></li>
+<li><a href="boundary_conditions.html#sinHeaviside
+">sinHeaviside
+</a></li>
+<li><a href="boundary_conditions.html#heaviside
+">heaviside
+</a></li>
+<li><a href="boundary_conditions.html#gauss
+">gauss
+</a></li>
+<li><a href="boundary_conditions.html#inputFromData
+">inputFromData
+</a></li>
+<li><a href="boundary_conditions.html#inletCompatibility
+">inletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#setOutletBC
+">setOutletBC
+</a></li>
+<li><a href="boundary_conditions.html#outletCompatibility
+">outletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#wk3
+">wk3
+</a></li>
+<li><a href="boundary_conditions.html#updateGhostCells
+">updateGhostCells
+</a></li>
+</ul>
+</div>
+</li><li><a href="junctions.html#">junctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="junctions.html#joinVessels
+">joinVessels
+</a></li>
+</ul>
+</div>
+</li><li><a href="conjunctions.html#">conjunctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="conjunctions.html#solveConjunction
+">solveConjunction
+</a></li>
+<li><a href="conjunctions.html#calculateWstarConj
+">calculateWstarConj
+</a></li>
+<li><a href="conjunctions.html#calculateFofUconj
+">calculateFofUconj
+</a></li>
+<li><a href="conjunctions.html#calculateJacobianConj
+">calculateJacobianConj
+</a></li>
+</ul>
+</div>
+</li><li><a href="bifurcations.html#">bifurcations.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="bifurcations.html#solveBifurcation
+">solveBifurcation
+</a></li>
+<li><a href="bifurcations.html#calculateWstarBif
+">calculateWstarBif
+</a></li>
+<li><a href="bifurcations.html#calculateFofUBif
+">calculateFofUBif
+</a></li>
+<li><a href="bifurcations.html#calculateJacobianBif
+">calculateJacobianBif
+</a></li>
+</ul>
+</div>
+</li><li><a href="godunov.html#">godunov.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="godunov.html#Godunov
+">Godunov
+</a></li>
+<li><a href="godunov.html#riemannSolver
+">riemannSolver
+</a></li>
+<li><a href="godunov.html#fL
+">fL
+</a></li>
+<li><a href="godunov.html#fR
+">fR
+</a></li>
+<li><a href="godunov.html#flux
+">flux
+</a></li>
+<li><a href="godunov.html#source
+">source
+</a></li>
+<li><a href="godunov.html#calculateDeltaT
+">calculateDeltaT
+</a></li>
+<li><a href="godunov.html#solveModel
+">solveModel
+</a></li>
+</ul>
+</div>
+</li><li><a href="MUSCL.html#">MUSCL.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="MUSCL.html#computeFlux
+">computeFlux
+</a></li>
+<li><a href="MUSCL.html#minMod
+">minMod
+</a></li>
+<li><a href="MUSCL.html#maxmod
+">maxmod
+</a></li>
+<li><a href="MUSCL.html#minmod
+">minmod
+</a></li>
+<li><a href="MUSCL.html#superBee
+">superBee
+</a></li>
+<li><a href="MUSCL.html#computeLimiter
+">computeLimiter
+</a></li>
+<li><a href="MUSCL.html#MUSCL
+">MUSCL
+</a></li>
+</ul>
+</div>
+</li><li><a href="converter.html#">converter.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="converter.html#waveSpeed
+">waveSpeed
+</a></li>
+<li><a href="converter.html#pressure
+">pressure
+</a></li>
+<li><a href="converter.html#areaFromPressure
+">areaFromPressure
+</a></li>
+<li><a href="converter.html#riemannInvariants
+">riemannInvariants
+</a></li>
+<li><a href="converter.html#rI2uc
+">rI2uc
+</a></li>
+<li><a href="converter.html#calculatePrimitives
+">calculatePrimitives
+</a></li>
+</ul>
+</div>
+</li><li><a href="check_convergence.html#">check_convergence.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="check_convergence.html#checkAllQuantities
+">checkAllQuantities
+</a></li>
+<li><a href="check_convergence.html#extractWaveform
+">extractWaveform
+</a></li>
+<li><a href="check_convergence.html#resampleAndCalculateError
+">resampleAndCalculateError
+</a></li>
+</ul>
+</div>
+</li><li><a href="IOutils.html#">IOutils.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="IOutils.html#openTempFiles
+">openTempFiles
+</a></li>
+<li><a href="IOutils.html#closeTempFiles
+">closeTempFiles
+</a></li>
+<li><a href="IOutils.html#saveTempData
+">saveTempData
+</a></li>
+<li><a href="IOutils.html#transferTempToOut">transferTempToOut</a></li>
+</ul>
+</div>
+
+
+
+
+				</ul>
+			</div>
+		</li>
+		<li><a href="../doc-index.html">API Index</a></li>
+	</ul>
+</nav>
+  <div id="container">
+    <div id="background"></div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs" data-resizable-column-id="docs">
+            <h1>
+              check_convergence.jl
+            </h1>
+          </th>
+          <th class="code" data-resizable-column-id="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+<tr id="section-1">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-1">&#182;</a>
+  </div>
+  <p>Convergence is checked starting from the simulated third cardiac cycle. Waveforms are first loaded and subdivided depending on the number of cycles already passed. This task is accomplished by function <a href="check_convergence.html#extractWaveform"><code>extractWaveform</code></a>. Waveforms are then resampled in order to contain a smaller number of points. This would speed up the following error calculation. These two steps are taken by <a href="check_convergence.html#resampleAndCalculateError"><code>resampleAndCalculateError</code></a> function. Loading, re-sampling, and error calculation operations are done for all the quantities calculated by <code>openBF</code>. All these functions are wrapped into <a href="check_convergence.html#checkAllQuantities"><code>checkAllQuantities</code></a> which is called inside <a href="main.html#check_convergence">main.jl</a> loop.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-2">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-2">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>checkAllQuantities</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>max_error::Float</code></p>
+<table>
+<colgroup>
+<col width="21%" />
+<col width="78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>v</code></td>
+<td align="left"><code>::Vessel</code> vessel of which the error is being checked.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>passed_cycles</code></td>
+<td align="left"><code>::Int</code> number of cardiac cycles already passed.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>n_pts</code></td>
+<td align="left"><code>::Int</code> number of points in the resampled waveform.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="checkAllQuantities"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> checkAllQuantities</span><span class="p">(</span><span class="n">v</span>             <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span>
+                            <span class="n">passed_cycles</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span>
+                            <span class="n">n_pts</span>         <span class="p">::</span> <span class="kt">Int64</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-3">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-3">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>er</code> is an array which will contain the percentage error for each quantity in the current vessel. <code>qs</code> collection contains all the suffixes needed to build <code>.out</code> filenames for each quantity.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">er</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+  <span class="n">qs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;_P.out&quot;</span><span class="p">,</span> <span class="s">&quot;_Q.out&quot;</span><span class="p">,</span> <span class="s">&quot;_A.out&quot;</span><span class="p">,</span> <span class="s">&quot;_c.out&quot;</span><span class="p">,</span> <span class="s">&quot;_u.out&quot;</span><span class="p">]</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-4">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-4">&#182;</a>
+  </div>
+  <p>For each quantity <code>q</code> listed in <code>qs</code>, the <code>.out</code> filename is created by joining the <code>label</code> inside <code>v</code> and the suffix <code>q</code>. Then the desired waveforms are loaded by <a href="check_convergence.html#extractWaveform"><code>extractWaveform</code></a>, re-sampled, and the error is calculated by <a href="check_convergence.html#resampleAndCalculateError"><code>resampleAndCalculateError</code></a>. Eventually, the maximum error scored among all the quantities is returned.</p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>max_error</code></td>
+<td align="left"><code>::Float</code> maximum error within all the quantities in the current vessel.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">for</span> <span class="n">q</span> <span class="k">in</span> <span class="n">qs</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">join</span><span class="p">([</span><span class="n">v</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">q</span><span class="p">])</span>
+
+    <span class="n">W</span> <span class="o">=</span> <span class="n">extractWaveform</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">passed_cycles</span><span class="p">)</span>
+
+    <span class="n">er</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">resampleAndCalculateError</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">passed_cycles</span><span class="p">,</span> <span class="n">n_pts</span><span class="p">)</span>
+
+    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+  <span class="k">return</span> <span class="n">maximum</span><span class="p">(</span><span class="n">er</span><span class="p">)</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-5">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-5">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>checkAllQuantities</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>max_error::Float</code></p>
+<table>
+<colgroup>
+<col width="21%" />
+<col width="78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>vs</code></td>
+<td align="left"><code>::Array{Vessel, 1}</code> collection of vessels.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>passed_cycles</code></td>
+<td align="left"><code>::Int</code> number of cardiac cycles already passed.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>n_pts</code></td>
+<td align="left"><code>::Int</code> number of points in the resampled waveform.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">To compute the error for all the vessels, <code>checkAllQuantities</code> is re-defined to handle also a vector of <code>Vessel</code>s. <code>checkAllQuantities</code> is called recursively.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>max_error</code></td>
+<td align="left"><code>::Float</code> maximum error among all the vessels.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="checkAllQuantities2"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> checkAllQuantities</span><span class="p">(</span><span class="n">vs</span>            <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="n">Vessel</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+                            <span class="n">passed_cycles</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span>
+                            <span class="n">n_pts</span>         <span class="p">::</span> <span class="kt">Int64</span><span class="p">)</span>
+
+  <span class="n">ers</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">vs</span><span class="p">))</span>
+
+  <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">for</span> <span class="n">v</span> <span class="k">in</span> <span class="n">vs</span>
+
+    <span class="n">ers</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkAllQuantities</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">passed_cycles</span><span class="p">,</span> <span class="n">n_pts</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="k">end</span>
+
+  <span class="k">return</span> <span class="n">maximum</span><span class="p">(</span><span class="n">ers</span><span class="p">)</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-6">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-6">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>extractWaveform</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>Fx::Array{Array{Float, 2}}</code></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>filename</code></td>
+<td align="left"><code>::String</code> current time in seconds.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>cycles</code></td>
+<td align="left"><code>::Int</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="extractWaveform"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> extractWaveform</span><span class="p">(</span><span class="n">filename</span> <span class="p">::</span> <span class="n">ASCIIString</span><span class="p">,</span> <span class="n">cycles</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-7">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-7">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>filename</code> is a string referring to the <code>.out</code> file containing the waveform to be imported. This is read by <code>readdlm</code> function and stored into <code>F</code> array. <code>F</code> is a timesteps <span class="math inline">\(\times\)</span> 6 array; the first column contains the time variable, the remaining columns are one for each monitored node along the current vessel.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">F</span> <span class="o">=</span> <span class="n">readdlm</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-8">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-8">&#182;</a>
+  </div>
+  <p>These three lines find the cardiac period <code>t</code> by knowing how many cycles have already passed.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">sf1</span> <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">F</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">cycles</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">cycles</span><span class="p">)</span>
+  <span class="n">T1</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="n">sf1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">.-</span> <span class="n">F</span><span class="p">[</span><span class="n">sf1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">t</span> <span class="o">=</span> <span class="n">T1</span><span class="p">[</span><span class="k">end</span><span class="p">]</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-9">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-9">&#182;</a>
+  </div>
+  <p><code>Fx</code> is an empty array which will contain one array for each cardiac cycle.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">Fx</span> <span class="o">=</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}[]</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-10">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-10">&#182;</a>
+  </div>
+  <p>This loop skims through <code>F</code>, separates waveforms, and add them to <code>Fx</code>. <code>si</code> is the waveform source index, the index from which the waveform starts. <code>ti</code> is the waveform terminal index, the index at which the waveforms ends because a new cardiac cycle is due to start.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">si</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="n">ti</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">F</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">t</span><span class="o">*</span><span class="n">idx</span> <span class="o">&amp;&amp;</span> <span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">t</span><span class="o">*</span><span class="n">idx</span>
+      <span class="n">ti</span> <span class="o">=</span> <span class="n">i</span>
+      <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">Fx</span><span class="p">,</span> <span class="n">F</span><span class="p">[</span><span class="n">si</span><span class="p">:</span><span class="n">ti</span><span class="p">,:])</span>
+      <span class="n">si</span> <span class="o">=</span> <span class="n">ti</span>
+      <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-11">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-11">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>Fx</code></td>
+<td align="left"><code>::Array{Array{Float, 2}}</code></td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="k">return</span> <span class="n">Fx</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-12">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-12">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>resampleAndCalculateError</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>max_error::Float</code></p>
+<table>
+<colgroup>
+<col width="23%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>W</code></td>
+<td align="left"><code>::Array{Array{Float, 2}}</code> collection of all waveforms during the passed cardiac cycles for the current quantity.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>passed_cycles</code></td>
+<td align="left"><code>::Int</code> number of cardiac cycles already simulated.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>n_pts</code></td>
+<td align="left"><code>::Int</code> number of points to be contained in the re-sampled waveform.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="resampleAndCalculateError"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> resampleAndCalculateError</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">W</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span> <span class="mi">1</span><span class="p">},</span>
+                                   <span class="n">passed_cycles</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span>
+                                   <span class="n">n_pts</span>         <span class="p">::</span> <span class="kt">Int64</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-13">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-13">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>F</code> will contain the re-sampled waveform, <code>er</code> is an empty variable for the maximum error.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">F</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">n_pts</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="n">er</span> <span class="o">=</span> <span class="mi">0</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-14">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-14">&#182;</a>
+  </div>
+  <p>The error is computed for all the monitor nodes. Their values are stored in <code>W</code>’s columns from 2 to 6. Each waveform is re-sampled by using <a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample.html#scipy.signal.resample"><code>resample</code></a> function from <code>scipy.signal</code> library. In order to compute the error, only the last and the previous waveforms are analysed.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">2</span><span class="p">:</span><span class="mi">6</span>
+
+    <span class="n">F</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">][:,</span><span class="n">j</span><span class="p">],</span> <span class="n">n_pts</span><span class="p">,</span> <span class="n">W</span><span class="p">[</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">][:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">F</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="k">end</span>  <span class="p">][:,</span><span class="n">j</span><span class="p">],</span> <span class="n">n_pts</span><span class="p">,</span> <span class="n">W</span><span class="p">[</span><span class="k">end</span>  <span class="p">][:,</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">er</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">.-</span> <span class="n">F</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span><span class="o">./</span><span class="n">F</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+  <span class="k">end</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-15">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-15">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="16%" />
+<col width="83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>max_error</code></td>
+<td align="left"><code>::Float</code> maximum error on the current quantity along the the current vessel.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="k">return</span> <span class="n">maximum</span><span class="p">(</span><span class="n">er</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> checkConvergence</span><span class="p">(</span><span class="n">vessels</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="n">Vessel</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="n">convergence_tollerance</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">v</span> <span class="k">in</span> <span class="n">vessels</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">checkConvergence</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">convergence_tollerance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">&gt;</span> <span class="n">convergence_tollerance</span>
+      <span class="k">return</span> <span class="n">err</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="k">return</span> <span class="n">err</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> checkConvergence</span><span class="p">(</span><span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span>
+  <span class="n">convergence_tollerance</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+
+  <span class="n">qs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;_P&quot;</span><span class="p">,</span> <span class="s">&quot;_Q&quot;</span><span class="p">]</span>
+
+  <span class="k">for</span> <span class="n">q</span> <span class="k">in</span> <span class="n">qs</span>
+    <span class="n">filename_last</span> <span class="o">=</span> <span class="n">join</span><span class="p">([</span><span class="n">v</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="s">&quot;.last&quot;</span><span class="p">])</span>
+    <span class="n">filename_temp</span> <span class="o">=</span> <span class="n">join</span><span class="p">([</span><span class="n">v</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="s">&quot;.temp&quot;</span><span class="p">])</span>
+
+    <span class="n">err</span> <span class="o">=</span> <span class="n">checkQuantity</span><span class="p">(</span><span class="n">filename_last</span><span class="p">,</span> <span class="n">filename_temp</span><span class="p">,</span> <span class="n">convergence_tollerance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">&gt;</span> <span class="n">convergence_tollerance</span>
+      <span class="k">return</span> <span class="n">err</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="k">return</span> <span class="n">err</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> checkQuantity</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">convergence_tollerance</span><span class="p">)</span>
+
+  <span class="n">s1</span> <span class="o">=</span> <span class="n">readdlm</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+  <span class="n">s2</span> <span class="o">=</span> <span class="n">readdlm</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+  <span class="n">n_pts</span> <span class="o">=</span> <span class="mi">1000</span>
+
+  <span class="n">r1</span> <span class="o">=</span> <span class="n">n_pts</span><span class="o">/</span><span class="n">length</span><span class="p">(</span><span class="n">s1</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span>
+  <span class="n">r2</span> <span class="o">=</span> <span class="n">n_pts</span><span class="o">/</span><span class="n">length</span><span class="p">(</span><span class="n">s2</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span>
+  <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">2</span><span class="p">:</span><span class="mi">5</span>
+    <span class="n">sr1</span> <span class="o">=</span> <span class="n">resample</span><span class="p">(</span><span class="n">s1</span><span class="p">[:,</span><span class="n">j</span><span class="p">],</span> <span class="n">r1</span><span class="p">)</span>
+    <span class="n">sr2</span> <span class="o">=</span> <span class="n">resample</span><span class="p">(</span><span class="n">s2</span><span class="p">[:,</span><span class="n">j</span><span class="p">],</span> <span class="n">r2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">20</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">sr1</span><span class="p">)</span><span class="o">-</span><span class="mi">20</span>
+      <span class="n">err</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">sr2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">sr1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="n">sr1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+      <span class="k">if</span> <span class="n">err</span> <span class="o">&gt;</span> <span class="n">convergence_tollerance</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-16">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-16">&#182;</a>
+  </div>
+  <p>println(“”,err)</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>        <span class="k">return</span> <span class="n">err</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="k">return</span> <span class="mf">9.99</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+<nav>
+  <ul>
+    <li><a href="#">^</a></li>
+    <li><a href="../doc-index.html">API index</a></li>
+  </ul>
+</nav>
+</body>
+</html>

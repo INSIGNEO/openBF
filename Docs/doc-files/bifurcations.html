@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <link rel="icon" type="image/png" href="../../images/fish.png">
+  <title>bifurcations.jl</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" media="all" href="./jocco.css" />
+  <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <!-- jQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.min.js"></script>
+  <script>
+    $(function(){
+      $("table").resizableColumns({
+        store: window.store
+      });
+    });
+  </script>
+</head>
+<body>
+<nav>
+	<ul>
+		<li><a href="../index.html#">Home</a></li>
+		<li>
+      		<a href="openBF.html">openBF.jl <span class="caret"></span></a>
+			<div>
+				<ul>
+        <li><a href="main.html#">main.jl</a>
+
+<li><a href="BTypes.html#">BTypes.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="BTypes.html#::Vessel
+">::Vessel
+</a></li>
+<li><a href="BTypes.html#::Heart
+">::Heart
+</a></li>
+<li><a href="BTypes.html#::Blood
+">::Blood
+</a></li>
+</ul>
+</div>
+</li><li><a href="initialise.html#">initialise.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="initialise.html#projectPreamble
+">projectPreamble
+</a></li>
+<li><a href="initialise.html#writeScripts
+">writeScripts
+</a></li>
+<li><a href="initialise.html#cleanLibrary
+">cleanLibrary
+</a></li>
+<li><a href="initialise.html#readModelData
+">readModelData
+</a></li>
+<li><a href="initialise.html#initialiseVessel
+">initialiseVessel
+</a></li>
+<li><a href="initialise.html#loadInputData
+">loadInputData
+</a></li>
+<li><a href="initialise.html#loadGlobalConstants
+">loadGlobalConstants
+</a></li>
+</ul>
+</div>
+</li><li><a href="boundary_conditions.html#">boundary_conditions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="boundary_conditions.html#setInletBC
+">setInletBC
+</a></li>
+<li><a href="boundary_conditions.html#sinHeaviside
+">sinHeaviside
+</a></li>
+<li><a href="boundary_conditions.html#heaviside
+">heaviside
+</a></li>
+<li><a href="boundary_conditions.html#gauss
+">gauss
+</a></li>
+<li><a href="boundary_conditions.html#inputFromData
+">inputFromData
+</a></li>
+<li><a href="boundary_conditions.html#inletCompatibility
+">inletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#setOutletBC
+">setOutletBC
+</a></li>
+<li><a href="boundary_conditions.html#outletCompatibility
+">outletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#wk3
+">wk3
+</a></li>
+<li><a href="boundary_conditions.html#updateGhostCells
+">updateGhostCells
+</a></li>
+</ul>
+</div>
+</li><li><a href="junctions.html#">junctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="junctions.html#joinVessels
+">joinVessels
+</a></li>
+</ul>
+</div>
+</li><li><a href="conjunctions.html#">conjunctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="conjunctions.html#solveConjunction
+">solveConjunction
+</a></li>
+<li><a href="conjunctions.html#calculateWstarConj
+">calculateWstarConj
+</a></li>
+<li><a href="conjunctions.html#calculateFofUconj
+">calculateFofUconj
+</a></li>
+<li><a href="conjunctions.html#calculateJacobianConj
+">calculateJacobianConj
+</a></li>
+</ul>
+</div>
+</li><li><a href="bifurcations.html#">bifurcations.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="bifurcations.html#solveBifurcation
+">solveBifurcation
+</a></li>
+<li><a href="bifurcations.html#calculateWstarBif
+">calculateWstarBif
+</a></li>
+<li><a href="bifurcations.html#calculateFofUBif
+">calculateFofUBif
+</a></li>
+<li><a href="bifurcations.html#calculateJacobianBif
+">calculateJacobianBif
+</a></li>
+</ul>
+</div>
+</li><li><a href="godunov.html#">godunov.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="godunov.html#Godunov
+">Godunov
+</a></li>
+<li><a href="godunov.html#riemannSolver
+">riemannSolver
+</a></li>
+<li><a href="godunov.html#fL
+">fL
+</a></li>
+<li><a href="godunov.html#fR
+">fR
+</a></li>
+<li><a href="godunov.html#flux
+">flux
+</a></li>
+<li><a href="godunov.html#source
+">source
+</a></li>
+<li><a href="godunov.html#calculateDeltaT
+">calculateDeltaT
+</a></li>
+<li><a href="godunov.html#solveModel
+">solveModel
+</a></li>
+</ul>
+</div>
+</li><li><a href="MUSCL.html#">MUSCL.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="MUSCL.html#computeFlux
+">computeFlux
+</a></li>
+<li><a href="MUSCL.html#minMod
+">minMod
+</a></li>
+<li><a href="MUSCL.html#maxmod
+">maxmod
+</a></li>
+<li><a href="MUSCL.html#minmod
+">minmod
+</a></li>
+<li><a href="MUSCL.html#superBee
+">superBee
+</a></li>
+<li><a href="MUSCL.html#computeLimiter
+">computeLimiter
+</a></li>
+<li><a href="MUSCL.html#MUSCL
+">MUSCL
+</a></li>
+</ul>
+</div>
+</li><li><a href="converter.html#">converter.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="converter.html#waveSpeed
+">waveSpeed
+</a></li>
+<li><a href="converter.html#pressure
+">pressure
+</a></li>
+<li><a href="converter.html#areaFromPressure
+">areaFromPressure
+</a></li>
+<li><a href="converter.html#riemannInvariants
+">riemannInvariants
+</a></li>
+<li><a href="converter.html#rI2uc
+">rI2uc
+</a></li>
+<li><a href="converter.html#calculatePrimitives
+">calculatePrimitives
+</a></li>
+</ul>
+</div>
+</li><li><a href="check_convergence.html#">check_convergence.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="check_convergence.html#checkAllQuantities
+">checkAllQuantities
+</a></li>
+<li><a href="check_convergence.html#extractWaveform
+">extractWaveform
+</a></li>
+<li><a href="check_convergence.html#resampleAndCalculateError
+">resampleAndCalculateError
+</a></li>
+</ul>
+</div>
+</li><li><a href="IOutils.html#">IOutils.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="IOutils.html#openTempFiles
+">openTempFiles
+</a></li>
+<li><a href="IOutils.html#closeTempFiles
+">closeTempFiles
+</a></li>
+<li><a href="IOutils.html#saveTempData
+">saveTempData
+</a></li>
+<li><a href="IOutils.html#transferTempToOut">transferTempToOut</a></li>
+</ul>
+</div>
+
+
+
+
+				</ul>
+			</div>
+		</li>
+		<li><a href="../doc-index.html">API Index</a></li>
+	</ul>
+</nav>
+  <div id="container">
+    <div id="background"></div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs" data-resizable-column-id="docs">
+            <h1>
+              bifurcations.jl
+            </h1>
+          </th>
+          <th class="code" data-resizable-column-id="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+<tr id="section-1">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-1">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="images/bif.pdf.png" width="225">
+</div>
+<p>In a bifurcation, there is a <code>parent</code> vessel (indicated as 1 in the figure) and two <code>daughter</code> vessels (2 and 3).</p>
+<p>The bifurcation is solved by imposing the conservation of mass and of <strong><em>static</em></strong> pressure at the bifurcation node <span class="math inline">\(b\)</span>. Three additional relations are obtained by extrapolating the three outgoing characteristics. The solution process is the same described for the <a href="conjuncitons.html">conjunction</a> case.</p>
+<p><span class="math inline">\(U\)</span> and <span class="math inline">\(F\)</span> vectors read <span class="math display">\[
+  U = \{U_i\} = \left\{ \begin{array}{c}
+                          u_1 \\
+                          u_2 \\
+                          u_3 \\
+                          A_1^{1/4} \\
+                          A_2^{1/4} \\
+                          A_3^{1/4}
+                       \end{array} \right\} , \quad i =1, ..., 6,
+\]</span> <span class="math display">\[
+  F = \left\{f_i \right\} =
+  \begin{cases}
+    U_1 + 4k_1U_4 - W_1^* = 0, \\
+    U_2 - 4k_2U_5 - W_2^* = 0, \\
+    U_3 - 4k_3U_6 - W_3^* = 0, \\
+    U_1U_4^4 - U_2U_5^4 - U_3U_6^4 = 0, \\
+    \beta_1 \left(\tfrac{U_4^2}{A_{01}^{1/2}} -1 \right) -
+    \beta_2 \left(\tfrac{U_5^2}{A_{02}^{1/2}} -1 \right) = 0, \\
+    \beta_1 \left(\tfrac{U_4^2}{A_{01}^{1/2}} -1 \right) -
+    \beta_3 \left(\tfrac{U_6^2}{A_{03}^{1/2}} -1 \right) = 0, \\
+  \end{cases}
+\]</span> and the Jacobian reads <span class="math display">\[
+  J = \left[ \begin{array}{cccccc}
+        1 &amp; 0 &amp; 0 &amp; 4k_1 &amp; 0 &amp; 0 \\
+        0 &amp; 1 &amp; 0 &amp; 0 &amp; -4k_2 &amp; 0 \\
+        0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; -4k_3 \\
+        U_4^4 &amp; -U_5^4 &amp; -U_6^4 &amp; 4U_1 U_4^3 &amp; -4 U_2 U_5^3 &amp; -4U_3 U_6^3 \\
+        0 &amp; 0 &amp; 0 &amp; 2\beta_1 U_4/A_{01}^{1/2} &amp;
+                   -2\beta_2 U_5/A_{02}^{1/2} &amp; 0 \\
+        0 &amp; 0 &amp; 0 &amp; 2\beta_1 U_4/A_{01}^{1/2} &amp;
+                   -2\beta_2 U_5/A_{02}^{1/2} &amp; 0 \\
+      \end{array} \right].
+\]</span> The solution is performed by <a href="bifurcations.html#solveBifurcation"><code>solveBifurcation</code></a> and follows the same procedure of <a href="conjunctions.html#solveConjuntion"><code>solveConjunction</code></a> function. Refer to <a href="conjunctions.html">conjunctions.jl</a> documentation for further informations.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-2">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-2">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>solveBifurcation</code></strong></p>
+<table>
+<colgroup>
+<col width="26%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>v1</code></td>
+<td align="left"><code>::Vessel</code> data structure for the parent vessel.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>v2</code></td>
+<td align="left"><code>::Vessel</code> data structure for the first daughter vessel.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>v3</code></td>
+<td align="left"><code>::Vessel</code> data structure for the second daughter vessel.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">See <a href="conjunctions.html#solveConjunction"><code>solveConjunction</code></a> documentation for details.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="solveBifurcation"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> solveBifurcation</span><span class="p">(</span><span class="n">v1</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+
+  <span class="c">#Unknowns vector</span>
+  <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">v1</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="k">end</span><span class="p">],</span>
+       <span class="n">v2</span><span class="o">.</span><span class="n">u</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span>
+       <span class="n">v3</span><span class="o">.</span><span class="n">u</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span>
+       <span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">])),</span>
+       <span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v2</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">])),</span>
+       <span class="n">sqrt</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v3</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]))]</span>
+
+  <span class="c">#Parameters vector</span>
+  <span class="n">k1</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="n">v1</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>
+  <span class="n">k2</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="n">v2</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span> <span class="mi">1</span> <span class="p">])</span>
+  <span class="n">k3</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="n">v3</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span> <span class="mi">1</span> <span class="p">])</span>
+  <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">,</span> <span class="n">k3</span><span class="p">]</span>
+
+  <span class="n">W</span> <span class="o">=</span> <span class="n">calculateWstarBif</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+  <span class="n">J</span> <span class="o">=</span> <span class="n">calculateJacobianBif</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+  <span class="n">F</span> <span class="o">=</span> <span class="n">calculateFofUBif</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+
+  <span class="c">#Newton-Raphson</span>
+  <span class="n">nr_toll_U</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+  <span class="n">nr_toll_F</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+
+  <span class="k">while</span> <span class="n">true</span>
+    <span class="n">dU</span> <span class="o">=</span> <span class="n">J</span>\<span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="p">)</span>
+    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">dU</span>
+
+    <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">F</span><span class="p">)))</span>
+      <span class="n">println</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+      <span class="p">@</span><span class="n">printf</span> <span class="s">&quot;error at bifurcation with vessels %s, %s, and %s </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">v1</span><span class="o">.</span><span class="n">label</span> <span class="n">v2</span><span class="o">.</span><span class="n">label</span> <span class="n">v3</span><span class="o">.</span><span class="n">label</span>
+      <span class="k">break</span>
+    <span class="k">end</span>
+
+    <span class="n">u_ok</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">f_ok</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">abs</span><span class="p">(</span><span class="n">dU</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_U</span> <span class="o">||</span> <span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_F</span>
+        <span class="n">u_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">f_ok</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">u_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span> <span class="o">||</span> <span class="n">f_ok</span> <span class="o">==</span> <span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
+      <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
+      <span class="k">break</span>
+    <span class="k">else</span>
+      <span class="n">U</span> <span class="o">=</span> <span class="n">U_new</span>
+      <span class="n">W</span> <span class="o">=</span> <span class="n">calculateWstarBif</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+      <span class="n">F</span> <span class="o">=</span> <span class="n">calculateFofUBif</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c">#Update vessel quantities</span>
+  <span class="n">v1</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">v2</span><span class="o">.</span><span class="n">u</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">v3</span><span class="o">.</span><span class="n">u</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+  <span class="n">v1</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+  <span class="n">v2</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+  <span class="n">v3</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+  <span class="n">v1</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">v1</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="n">v1</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">]</span>
+  <span class="n">v2</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">v2</span><span class="o">.</span><span class="n">u</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span><span class="o">*</span><span class="n">v2</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span>
+  <span class="n">v3</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">v3</span><span class="o">.</span><span class="n">u</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span><span class="o">*</span><span class="n">v3</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span>
+
+  <span class="n">v1</span><span class="o">.</span><span class="n">P</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">pressure</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">v1</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">v1</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">v1</span><span class="o">.</span><span class="n">Pext</span><span class="p">)</span>
+  <span class="n">v2</span><span class="o">.</span><span class="n">P</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">pressure</span><span class="p">(</span><span class="n">v2</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v2</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v2</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v2</span><span class="o">.</span><span class="n">Pext</span><span class="p">)</span>
+  <span class="n">v3</span><span class="o">.</span><span class="n">P</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">pressure</span><span class="p">(</span><span class="n">v3</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v3</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v3</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v3</span><span class="o">.</span><span class="n">Pext</span><span class="p">)</span>
+
+  <span class="n">v1</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">v1</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>
+  <span class="n">v2</span><span class="o">.</span><span class="n">c</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">v2</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v2</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span> <span class="mi">1</span> <span class="p">])</span>
+  <span class="n">v3</span><span class="o">.</span><span class="n">c</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">v3</span><span class="o">.</span><span class="n">A</span><span class="p">[</span> <span class="mi">1</span> <span class="p">],</span> <span class="n">v3</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span> <span class="mi">1</span> <span class="p">])</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-3">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-3">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>calculateWstarBif</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>W::Array{Float, 1}</code></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>U</code></td>
+<td align="left"><code>::Array</code> junction unknown vector.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>k</code></td>
+<td align="left"><code>::Array</code> junction parameters vector.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Riemann invariants are computed starting from unknown and parameters vectors as <span class="math display">\[
+W_1 = u_1 + 4c_1, \quad W_2 = u_2 - 4c_2, \quad W_3 = u_3 - 4c_3.
+\]</span></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="84%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>W</code></td>
+<td align="left"><code>::Array</code> containing outgoing characteristics from the three vessels.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="calculateWstarBif"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateWstarBif</span><span class="p">(</span><span class="n">U</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span> <span class="n">k</span> <span class="p">::</span> <span class="n">Array</span><span class="p">)</span>
+
+  <span class="n">W1</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+  <span class="n">W2</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+  <span class="n">W3</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+  <span class="k">return</span> <span class="p">[</span><span class="n">W1</span><span class="p">,</span> <span class="n">W2</span><span class="p">,</span> <span class="n">W3</span><span class="p">]</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-4">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-4">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>calculateFofUBif</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>F::Array</code></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>b</code></td>
+<td align="left"><code>::Blood</code> data structure.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>v1</code></td>
+<td align="left"><code>::Vessel</code> parent vessel data structure.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>v2</code></td>
+<td align="left"><code>::Vessel</code> first daughter vessel data structure.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>v3</code></td>
+<td align="left"><code>::Vessel</code> second daughter vessel data structure.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>U</code></td>
+<td align="left"><code>::Array</code> junction unknown vector.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>k</code></td>
+<td align="left"><code>::Array</code> junction parameters vector.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>W</code></td>
+<td align="left"><code>::Array</code> outgoing characteristics array.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(F\)</span> array is computed by imposing the conservation of mass and static pressure at bifurcation node. <span class="math inline">\(F\)</span> reads <span class="math display">\[
+F = \left\{f_i \right\} =
+\begin{cases}
+U_1 + 4k_1U_4 - W_1^* = 0, \\
+U_2 - 4k_2U_5 - W_2^* = 0, \\
+U_3 - 4k_3U_6 - W_3^* = 0, \\
+U_1U_4^4 - U_2U_5^4 - U_3U_6^4 = 0, \\
+\beta_1 \left(\tfrac{U_4^2}{A_{01}^{1/2}} -1 \right) -
+\beta_2 \left(\tfrac{U_5^2}{A_{02}^{1/2}} -1 \right) = 0, \\
+\beta_1 \left(\tfrac{U_4^2}{A_{01}^{1/2}} -1 \right) -
+\beta_3 \left(\tfrac{U_6^2}{A_{03}^{1/2}} -1 \right) = 0, \\
+\end{cases}
+\]</span></td>
+</tr>
+</tbody>
+</table>
+<p>Total pressure conservation can be imposed by replacing <code>f5</code> and <code>f6</code> with</p>
+<pre><code>f5 = v1.beta*( U[4]^2 - sqrt(v1.A0) ) -
+   ( v2.beta*( U[5]^2 - sqrt(v2.A0) )
+
+f6 = v1.beta*( U[4]^2 - sqrt(v1.A0) ) -
+   ( v3.beta*( U[6]^2 - sqrt(v3.A0) )</code></pre>
+<p>respectively.</p>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="84%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>F</code></td>
+<td align="left"><code>::Array</code> Newton’s method relations.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="calculateFofUBif"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateFofUBif</span><span class="p">(</span><span class="n">v1</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span>
+                           <span class="n">U</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span>   <span class="n">k</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span>   <span class="n">W</span> <span class="p">::</span> <span class="n">Array</span><span class="p">)</span>
+
+  <span class="n">f1</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">-</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+  <span class="n">f2</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">-</span> <span class="n">W</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+  <span class="n">f3</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">-</span> <span class="n">W</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+  <span class="n">f4</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="o">-</span> <span class="n">U</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="o">-</span> <span class="n">U</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+
+  <span class="n">f5</span> <span class="o">=</span> <span class="n">v1</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>  <span class="o">-</span> <span class="mi">1</span>  <span class="p">)</span> <span class="o">-</span>
+     <span class="p">(</span> <span class="n">v2</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v2</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
+
+  <span class="n">f6</span> <span class="o">=</span> <span class="n">v1</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>  <span class="o">-</span> <span class="mi">1</span>  <span class="p">)</span> <span class="o">-</span>
+     <span class="p">(</span> <span class="n">v3</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v3</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">,</span> <span class="n">f5</span><span class="p">,</span> <span class="n">f6</span><span class="p">]</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-5">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-5">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>calculateJacobianBif</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>W::Array{Float, 1}</code></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>b</code></td>
+<td align="left"><code>::Blood</code> data structure.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>v1</code></td>
+<td align="left"><code>::Vessel</code> parent vessel data structure.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>v2</code></td>
+<td align="left"><code>::Vessel</code> daughter vessel data structure.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>U</code></td>
+<td align="left"><code>::Array</code> junction unknown vector.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>k</code></td>
+<td align="left"><code>::Array</code> junction parameters vector.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">The Jacobian is computed as <span class="math display">\[
+J = \left[ \begin{array}{cccccc}
+1 &amp; 0 &amp; 0 &amp; 4k_1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 0 &amp; -4k_2 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; -4k_3 \\
+U_4^4 &amp; -U_5^4 &amp; -U_6^4 &amp; 4U_1 U_4^3 &amp; -4 U_2 U_5^3 &amp; -4U_3 U_6^3 \\
+0 &amp; 0 &amp; 0 &amp; 2\beta_1 U_4/A_{01}^{1/2} &amp;
+-2\beta_2 U_5/A_{02}^{1/2} &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 2\beta_1 U_4/A_{01}^{1/2} &amp;
+-2\beta_2 U_5/A_{02}^{1/2} &amp; 0 \\
+\end{array} \right].
+\]</span></td>
+</tr>
+</tbody>
+</table>
+<p>The conservation of total pressure is imposed by setting the following elements different than zero:</p>
+<pre><code>J[5,1] =  rho*U[1]
+J[5,2] = -rho*U[2]
+J[5,4] =  2*v1.beta*U[4]
+J[5,5] = -2*v2.beta*U[5]
+
+J[6,1] =  rho*U[1]
+J[6,3] = -rho*U[3]
+J[6,4] =  2*v1.beta*U[4]
+J[6,6] = -2*v3.beta*U[6]</code></pre>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="84%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>J</code></td>
+<td align="left"><code>::Array{Float, 2}</code> Jacobian matrix.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="calculateJacobianBif"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateJacobianBif</span><span class="p">(</span><span class="n">v1</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span>
+                               <span class="n">U</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span>   <span class="n">k</span> <span class="p">::</span> <span class="n">Array</span><span class="p">)</span>
+
+  <span class="n">J</span> <span class="o">=</span> <span class="n">eye</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+  <span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+  <span class="n">J</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">4</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+
+  <span class="n">J</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="mf">0.</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span>  <span class="mf">0.</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">2</span><span class="o">*</span><span class="n">v1</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">v2</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v2</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+  <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="mf">0.</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span>  <span class="mf">0.</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">2</span><span class="o">*</span><span class="n">v1</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">])</span>
+  <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">v3</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v3</span><span class="o">.</span><span class="n">A0</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+  <span class="k">return</span> <span class="n">J</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+<nav>
+  <ul>
+    <li><a href="#">^</a></li>
+    <li><a href="../doc-index.html">API index</a></li>
+  </ul>
+</nav>
+</body>
+</html>

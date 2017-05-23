@@ -1,0 +1,433 @@
+@import url("font-awesome.min.css");
+
+/*
+ * This is a style file borrowed from the the lua port of
+ * [Docco](http://jashkenas.github.com/docco/) called
+ * [Locco](http://rgieseke.github.com/locco/).
+ */
+
+/*--------------------- Layout and Typography ----------------------------*/
+body {
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+  font-size: 15px;
+  line-height: 22px;
+  color: #252519;
+  margin: 0; padding: 0;
+}
+a {
+  color: #261a3b;
+}
+  a:visited {
+    color: #261a3b;
+  }
+p {
+  margin: 0 0 15px 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px 0 15px 0;
+}
+  h1 {
+    margin-top: 40px;
+  }
+#container {
+  position: relative;
+}
+#background {
+  background: #f5f5ff;
+  border-left: 1px solid #e5e5ee;
+  z-index: -1;
+}
+#jump_to, #jump_page {
+  background: white;
+  -webkit-box-shadow: 0 0 25px #777; -moz-box-shadow: 0 0 25px #777;
+  -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px;
+  font: 10px Arial;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: right;
+}
+img {
+  max-width: 100%;
+}
+#jump_to, #jump_wrapper {
+  position: fixed;
+  right: 0; top: 0;
+  padding: 5px 10px;
+}
+  #jump_wrapper {
+    padding: 0;
+    display: none;
+  }
+    #jump_to:hover #jump_wrapper {
+      display: block;
+    }
+    #jump_page {
+      padding: 5px 0 3px;
+      margin: 0 0 25px 25px;
+    }
+      #jump_page .source {
+        display: block;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-top: 1px solid #eee;
+      }
+        #jump_page .source:hover {
+          background: #f5f5ff;
+        }
+        #jump_page .source:first-child {
+        }
+table td {
+  border: 0;
+  outline: 0;
+}
+  td.docs, th.docs {
+    max-width: 500px;
+    min-width: 500px;
+    min-height: 5px;
+    padding: 10px 25px 1px 50px;
+    overflow-x: hidden;
+    vertical-align: top;
+    text-align: left;
+  }
+    .docs pre {
+      margin: 15px 0 15px;
+      padding-left: 15px;
+    }
+    .docs p tt, .docs p code {
+      background: #f8f8ff;
+      border: 1px solid #dedede;
+      font-size: 12px;
+      padding: 0 0.2em;
+    }
+    .pilwrap {
+      position: relative;
+    }
+      .pilcrow {
+        font: 12px Arial;
+        text-decoration: none;
+        color: #454545;
+        position: absolute;
+        top: 3px; left: -20px;
+        padding: 1px 2px;
+        opacity: 0;
+        -webkit-transition: opacity 0.2s linear;
+      }
+        td.docs:hover .pilcrow {
+          opacity: 1;
+        }
+  td.code, th.code {
+    padding: 14px 15px 16px 25px;
+    width: 100%;
+    vertical-align: top;
+    background: #F3F7F7;
+    border-left: 1px solid #e5e5ee;
+  }
+    pre, tt, code {
+      font-size: 12px; line-height: 18px;
+      font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+      margin: 0; padding: 0;
+    }
+
+
+/*---------------------- Syntax Highlighting -----------------------------*/
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+pre .hll { background-color: #ffffcc }
+pre .c { color: #408080; font-style: italic }  /* Comment */
+pre .err { border: 1px solid #FF0000 }         /* Error */
+pre .k { color: #954121 }                      /* Keyword */
+pre .o { color: #666666 }                      /* Operator */
+pre .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+pre .cp { color: #BC7A00 }                     /* Comment.Preproc */
+pre .c1 { color: #408080; font-style: italic } /* Comment.Single */
+pre .cs { color: #408080; font-style: italic } /* Comment.Special */
+pre .gd { color: #A00000 }                     /* Generic.Deleted */
+pre .ge { font-style: italic }                 /* Generic.Emph */
+pre .gr { color: #FF0000 }                     /* Generic.Error */
+pre .gh { color: #000080; font-weight: bold }  /* Generic.Heading */
+pre .gi { color: #00A000 }                     /* Generic.Inserted */
+pre .go { color: #808080 }                     /* Generic.Output */
+pre .gp { color: #000080; font-weight: bold }  /* Generic.Prompt */
+pre .gs { font-weight: bold }                  /* Generic.Strong */
+pre .gu { color: #800080; font-weight: bold }  /* Generic.Subheading */
+pre .gt { color: #0040D0 }                     /* Generic.Traceback */
+pre .kc { color: #954121 }                     /* Keyword.Constant */
+pre .kd { color: #954121; font-weight: bold }  /* Keyword.Declaration */
+pre .kn { color: #954121; font-weight: bold }  /* Keyword.Namespace */
+pre .kp { color: #954121 }                     /* Keyword.Pseudo */
+pre .kr { color: #954121; font-weight: bold }  /* Keyword.Reserved */
+pre .kt { color: #B00040 }                     /* Keyword.Type */
+pre .m { color: #666666 }                      /* Literal.Number */
+pre .s { color: #219161 }                      /* Literal.String */
+pre .na { color: #7D9029 }                     /* Name.Attribute */
+pre .nb { color: #954121 }                     /* Name.Builtin */
+pre .nc { color: #1A317F; font-weight: bold }  /* Name.Class */
+pre .no { color: #880000 }                     /* Name.Constant */
+pre .nd { color: #AA22FF }                     /* Name.Decorator */
+pre .ni { color: #999999; font-weight: bold }  /* Name.Entity */
+pre .ne { color: #D2413A; font-weight: bold }  /* Name.Exception */
+pre .nf { color: #0467cd; font-weight: bold }  /* Name.Function */
+pre .nl { color: #A0A000 }                     /* Name.Label */
+pre .nn { color: #0000FF; font-weight: bold }  /* Name.Namespace */
+pre .nt { color: #954121; font-weight: bold }  /* Name.Tag */
+pre .nv { color: #19469D }                     /* Name.Variable */
+pre .ow { color: #AA22FF; font-weight: bold }  /* Operator.Word */
+pre .w { color: #bbbbbb }                      /* Text.Whitespace */
+pre .mf { color: #666666 }                     /* Literal.Number.Float */
+pre .mh { color: #666666 }                     /* Literal.Number.Hex */
+pre .mi { color: #666666 }                     /* Literal.Number.Integer */
+pre .mo { color: #666666 }                     /* Literal.Number.Oct */
+pre .sb { color: #219161 }                     /* Literal.String.Backtick */
+pre .sc { color: #219161 }                     /* Literal.String.Char */
+pre .sd { color: #219161; font-style: italic } /* Literal.String.Doc */
+pre .s2 { color: #219161 }                     /* Literal.String.Double */
+pre .se { color: #BB6622; font-weight: bold }  /* Literal.String.Escape */
+pre .sh { color: #219161 }                     /* Literal.String.Heredoc */
+pre .si { color: #BB6688; font-weight: bold }  /* Literal.String.Interpol */
+pre .sx { color: #954121 }                     /* Literal.String.Other */
+pre .sr { color: #BB6688 }                     /* Literal.String.Regex */
+pre .s1 { color: #219161 }                     /* Literal.String.Single */
+pre .ss { color: #19469D }                     /* Literal.String.Symbol */
+pre .bp { color: #954121 }                     /* Name.Builtin.Pseudo */
+pre .vc { color: #19469D }                     /* Name.Variable.Class */
+pre .vg { color: #19469D }                     /* Name.Variable.Global */
+pre .vi { color: #19469D }                     /* Name.Variable.Instance */
+pre .il { color: #666666 }                     /* Literal.Number.Integer.Long */
+
+nav {
+  background-color: #fff;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
+  color: #888;
+  display: block;
+  margin: 8px 22px 8px 22px;
+  overflow: hidden;
+  width: 90%; 
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+}
+
+  nav ul li {
+    display: inline-block;
+    list-style-type: none;
+    
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s; 
+  }
+  
+    nav > ul > li > a {
+      color: #000;
+      display: block;
+      line-height: 56px;
+      padding: 0 24px;
+      text-decoration: none;
+    }
+
+nav > ul > li > a > .caret,
+	  nav > ul > li > div ul > li > a > .caret {
+  border-top: 4px solid #aaa;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  content: "";
+  display: inline-block;
+  height: 0;
+  width: 0;
+  vertical-align: middle;
+  
+  -webkit-transition: color 0.1s linear;
+  -moz-transition: color 0.1s linear;
+  -o-transition: color 0.1s linear;
+    transition: color 0.1s linear; 
+}
+
+  	nav > ul > li > div ul > li > a > .caret {
+			border-bottom: 4px solid transparent;
+			border-top: 4px solid transparent;
+			border-right: 4px solid transparent;
+			border-left: 4px solid #3A92A1;
+			margin: 0 0 0 8px;
+		}
+
+      nav > ul > li > a {
+        color: #000;
+        display: block;
+        line-height: 56px;
+        padding: 0 24px;
+        text-decoration: none;
+      }
+
+        nav > ul > li:hover {
+          background-color: #5CA3E8; /*rgb( 40, 44, 47 );*/
+        }
+
+        nav > ul > li:hover > a {
+          color: rgb( 255, 255, 255 );
+        }
+
+        nav > ul > li:hover > a > .caret {
+          border-top-color: rgb( 255, 255, 255 );
+        }
+		
+		nav > ul > li > div ul > li:hover > a > .caret {
+			border-left-color: rgb(255,255,255);
+		}
+
+
+nav > ul > li > div,
+	  nav > ul > li > div ul > li > div {
+  background-color: rgb(181, 218, 237); /*#bccacb; rgb( 40, 44, 47 );*/
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
+  display: none;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 210px;
+  visibility: hidden;
+  z-index: 100;
+  
+  -webkit-transiton: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -ms-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  -transition: opacity 0.2s;
+}
+
+	nav > ul > li > div ul > li > div {
+			background-color: rgb( 40, 44, 47 );
+			border-radius: 0 4px 4px 4px;
+			/*box-shadow: inset 2px 0 5px rgba(0,0,0,.15);*/
+			margin-top: -42px;
+			right: -165px;
+		}
+
+nav > ul > li:hover > div,
+		nav > ul > li > div ul > li:hover > div {
+          display: block;
+          opacity: 1;
+          visibility: visible;
+        }
+
+  nav > ul > li > div ul > li {
+    display: block;
+  }
+  
+    nav > ul > li > div ul > li > a {
+      color: #000;
+      display: block;
+      padding: 12px 24px;
+      text-decoration: none;
+    }
+  
+  nav > ul > li > div ul > li:hover > a {
+    background-color: rgba( 255, 255, 255, 0.1);
+  }
+
+nav > ul > li > div ul > li > div {
+			background-color: rgb( 217, 235, 245 );
+			/*border-radius: 0 4px 4px 4px;*/
+			/*box-shadow: inset 2px 0 5px rgba(0,0,0,.15);*/
+			margin-top: -42px;
+			right: -210px;
+		}
+
+nav > ul > li > div ul > li,
+		  nav > ul > li > div ul > li > div ul > li {
+            display: block;
+			position: relative;
+          }
+
+            nav > ul > li > div ul > li > a,
+			nav > ul > li > div ul > li > div ul > li > a {
+              color: #000;
+              display: block;
+              padding: 12px 24px;
+              text-decoration: none;
+            }
+
+              nav > ul > li > div ul > li:hover > a {
+                background-color: rgba( 255, 255, 255, 0.1);
+              }
+	
+
+  nav > ul > li:hover > div {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Icon */
+
+  .icon {
+    text-decoration: none;
+    border-bottom: none;
+    position: relative;
+  }
+
+    .icon:before {
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      font-family: FontAwesome;
+      font-style: normal;
+      font-weight: normal;
+      text-transform: none !important;
+    }
+
+    .icon > .label {
+      display: none;
+    }
+
+    .icon.style1:before {
+      color: #c3e895;
+    }
+
+    .icon.style2:before {
+      color: #8addaa;
+    }
+
+    .icon.style3:before {
+      color: #6bd4c8;
+    }
+
+    .icon.style4:before {
+      color: #57aed3;
+    }
+
+    .icon.style5:before {
+      color: #4a87d3;
+    }
+
+    .icon.style6:before {
+      color: #6b88e6;
+    }
+
+    .icon.major {
+      text-decoration: none;
+      color: #555;
+      cursor: default;
+      display: inline-block;
+      margin: 0 0 1.5em 0;
+    }
+
+      .icon.major:before {
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-family: FontAwesome;
+        font-style: normal;
+        font-weight: normal;
+        text-transform: none !important;
+      }
+
+      .icon.major:before {
+        font-size: 4em;
+        line-height: 1em;
+      }
+

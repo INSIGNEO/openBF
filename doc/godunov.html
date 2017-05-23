@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <link rel="icon" type="image/png" href="../../images/fish.png">
+  <title>godunov.jl</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" media="all" href="./jocco.css" />
+  <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <!-- jQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.min.js"></script>
+  <script>
+    $(function(){
+      $("table").resizableColumns({
+        store: window.store
+      });
+    });
+  </script>
+</head>
+<body>
+<nav>
+	<ul>
+		<li><a href="../index.html#">Home</a></li>
+		<li>
+      		<a href="openBF.html">openBF.jl <span class="caret"></span></a>
+			<div>
+				<ul>
+        <li><a href="main.html#">main.jl</a>
+
+<li><a href="BTypes.html#">BTypes.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="BTypes.html#::Vessel
+">::Vessel
+</a></li>
+<li><a href="BTypes.html#::Heart
+">::Heart
+</a></li>
+<li><a href="BTypes.html#::Blood
+">::Blood
+</a></li>
+</ul>
+</div>
+</li><li><a href="initialise.html#">initialise.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="initialise.html#projectPreamble
+">projectPreamble
+</a></li>
+<li><a href="initialise.html#writeScripts
+">writeScripts
+</a></li>
+<li><a href="initialise.html#cleanLibrary
+">cleanLibrary
+</a></li>
+<li><a href="initialise.html#readModelData
+">readModelData
+</a></li>
+<li><a href="initialise.html#initialiseVessel
+">initialiseVessel
+</a></li>
+<li><a href="initialise.html#loadInputData
+">loadInputData
+</a></li>
+<li><a href="initialise.html#loadGlobalConstants
+">loadGlobalConstants
+</a></li>
+</ul>
+</div>
+</li><li><a href="boundary_conditions.html#">boundary_conditions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="boundary_conditions.html#setInletBC
+">setInletBC
+</a></li>
+<li><a href="boundary_conditions.html#sinHeaviside
+">sinHeaviside
+</a></li>
+<li><a href="boundary_conditions.html#heaviside
+">heaviside
+</a></li>
+<li><a href="boundary_conditions.html#gauss
+">gauss
+</a></li>
+<li><a href="boundary_conditions.html#inputFromData
+">inputFromData
+</a></li>
+<li><a href="boundary_conditions.html#inletCompatibility
+">inletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#setOutletBC
+">setOutletBC
+</a></li>
+<li><a href="boundary_conditions.html#outletCompatibility
+">outletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#wk3
+">wk3
+</a></li>
+<li><a href="boundary_conditions.html#updateGhostCells
+">updateGhostCells
+</a></li>
+</ul>
+</div>
+</li><li><a href="junctions.html#">junctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="junctions.html#joinVessels
+">joinVessels
+</a></li>
+</ul>
+</div>
+</li><li><a href="conjunctions.html#">conjunctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="conjunctions.html#solveConjunction
+">solveConjunction
+</a></li>
+<li><a href="conjunctions.html#calculateWstarConj
+">calculateWstarConj
+</a></li>
+<li><a href="conjunctions.html#calculateFofUconj
+">calculateFofUconj
+</a></li>
+<li><a href="conjunctions.html#calculateJacobianConj
+">calculateJacobianConj
+</a></li>
+</ul>
+</div>
+</li><li><a href="bifurcations.html#">bifurcations.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="bifurcations.html#solveBifurcation
+">solveBifurcation
+</a></li>
+<li><a href="bifurcations.html#calculateWstarBif
+">calculateWstarBif
+</a></li>
+<li><a href="bifurcations.html#calculateFofUBif
+">calculateFofUBif
+</a></li>
+<li><a href="bifurcations.html#calculateJacobianBif
+">calculateJacobianBif
+</a></li>
+</ul>
+</div>
+</li><li><a href="godunov.html#">godunov.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="godunov.html#Godunov
+">Godunov
+</a></li>
+<li><a href="godunov.html#riemannSolver
+">riemannSolver
+</a></li>
+<li><a href="godunov.html#fL
+">fL
+</a></li>
+<li><a href="godunov.html#fR
+">fR
+</a></li>
+<li><a href="godunov.html#flux
+">flux
+</a></li>
+<li><a href="godunov.html#source
+">source
+</a></li>
+<li><a href="godunov.html#calculateDeltaT
+">calculateDeltaT
+</a></li>
+<li><a href="godunov.html#solveModel
+">solveModel
+</a></li>
+</ul>
+</div>
+</li><li><a href="MUSCL.html#">MUSCL.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="MUSCL.html#computeFlux
+">computeFlux
+</a></li>
+<li><a href="MUSCL.html#minMod
+">minMod
+</a></li>
+<li><a href="MUSCL.html#maxmod
+">maxmod
+</a></li>
+<li><a href="MUSCL.html#minmod
+">minmod
+</a></li>
+<li><a href="MUSCL.html#superBee
+">superBee
+</a></li>
+<li><a href="MUSCL.html#computeLimiter
+">computeLimiter
+</a></li>
+<li><a href="MUSCL.html#MUSCL
+">MUSCL
+</a></li>
+</ul>
+</div>
+</li><li><a href="converter.html#">converter.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="converter.html#waveSpeed
+">waveSpeed
+</a></li>
+<li><a href="converter.html#pressure
+">pressure
+</a></li>
+<li><a href="converter.html#areaFromPressure
+">areaFromPressure
+</a></li>
+<li><a href="converter.html#riemannInvariants
+">riemannInvariants
+</a></li>
+<li><a href="converter.html#rI2uc
+">rI2uc
+</a></li>
+<li><a href="converter.html#calculatePrimitives
+">calculatePrimitives
+</a></li>
+</ul>
+</div>
+</li><li><a href="check_convergence.html#">check_convergence.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="check_convergence.html#checkAllQuantities
+">checkAllQuantities
+</a></li>
+<li><a href="check_convergence.html#extractWaveform
+">extractWaveform
+</a></li>
+<li><a href="check_convergence.html#resampleAndCalculateError
+">resampleAndCalculateError
+</a></li>
+</ul>
+</div>
+</li><li><a href="IOutils.html#">IOutils.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="IOutils.html#openTempFiles
+">openTempFiles
+</a></li>
+<li><a href="IOutils.html#closeTempFiles
+">closeTempFiles
+</a></li>
+<li><a href="IOutils.html#saveTempData
+">saveTempData
+</a></li>
+<li><a href="IOutils.html#transferTempToOut">transferTempToOut</a></li>
+</ul>
+</div>
+
+
+
+
+				</ul>
+			</div>
+		</li>
+		<li><a href="../doc-index.html">API Index</a></li>
+	</ul>
+</nav>
+  <div id="container">
+    <div id="background"></div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs" data-resizable-column-id="docs">
+            <h1>
+              godunov.jl
+            </h1>
+          </th>
+          <th class="code" data-resizable-column-id="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+<tr id="section-1">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-1">&#182;</a>
+  </div>
+  <p>1D blood flow within elastic vessels is ruled by a system of hyperbolic partial derivative equations <span class="math display">\[
+  \begin{cases}
+    \dfrac{\partial A}{\partial t} + \dfrac{\partial Au}{\partial x} = 0, \\
+    \dfrac{\partial Au}{\partial t} + \dfrac{\partial Au^2}{\partial x}
+      \dfrac{A}{\rho}\dfrac{\partial P}{\partial x} = - Ru, \\
+    P(x, t) = P_e(x, t) + K_a \left[\left(\dfrac{A}{A_0} \right)^{1/2}
+    -1 \right],
+  \end{cases}
+\]</span> By defining <span class="math inline">\(\mathbf{U} = [A, u]^T\)</span>, the conservative form of the system can be written along with initial and boundary conditions as <span class="math display">\[
+  \begin{cases}
+    \mathbf{U}_t + \mathbf{F}(\mathbf{U})_x = \mathbf{S}(\mathbf{U}),
+      \quad x \in \big[0, L \big], \\
+    \mathbf{U}(x, 0) = \mathbf{U}^{(0)}(x), \quad t&gt;0, \\
+    \mathbf{U}(0, t) = \mathbf{U}_l(t), \mathbf{U}(L, t) = \mathbf{U}_r(t),
+  \end{cases}
+\]</span> where <span class="math inline">\(\mathbf{F}\)</span> is the <em>flux</em> term, and <span class="math inline">\(\mathbf{S}\)</span> is the <em>source</em> term. This set of equations and initial and boundary conditions is also called Initial Boundary Value Problem (IBVP). The IBVP is solved by means of the Godunov’s method <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, a conservative first order finite volume method. The method is applied on a computational domain (red) subdivided in <span class="math inline">\(M\)</span> <em>cell</em>s <span class="math inline">\(I_i\)</span> (gray).</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-2">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-2">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="images/comp_domain.pdf.png" width="400">
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-3">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-3">&#182;</a>
+  </div>
+  <p>Domain length is equal to vessel length <span class="math inline">\(L\)</span>, and cell length is given by <span class="math inline">\(\Delta x\)</span> size. The total simulation time <span class="math inline">\(T\)</span> defines domain height, hence cell height is given by <span class="math inline">\(\Delta t\)</span>. In each cell <span class="math inline">\(I_i\)</span> three points are defined: center point <span class="math inline">\(x_i\)</span>, left extreme <span class="math inline">\(x_{i-1/2}\)</span>, and right extreme <span class="math inline">\(x_{i+1/2}\)</span>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-4">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-4">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="images/cell_i.pdf.png" width="350">
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-5">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-5">&#182;</a>
+  </div>
+  <p>Godunov’s method assumes a piece-wise constant distribution of <span class="math inline">\(\mathbf{U}\)</span> at each <span class="math inline">\(t = t^n\)</span>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-6">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-6">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="images/piecewise.pdf.png" width="350">
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-7">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-7">&#182;</a>
+  </div>
+  <p>For a <em>small enough</em> <span class="math inline">\(\Delta t\)</span>, the method updates the solution as <span class="math display">\[
+  \mathbf{U}_i^{n+1} = \mathbf{U}_i^{n} + \frac{\Delta t}{\Delta x}
+    \left(\mathbf{F}_{i-1/2} - \mathbf{F}_{i+1/2} \right),
+\]</span> where <span class="math inline">\(\mathbf{F}_{i\pm 1/2} = \mathbf{F}\left(\mathbf{U}_{i\pm 1/2}(0) \right)\)</span> is the <em>numerical</em> flux. The argument of the numerical flux, <span class="math inline">\(\mathbf{U}_{i\pm 1/2}(0)\)</span>, is computed as the solution of a homogeneous ( the source term will be added later on) quasi-linear local Riemann problem (RP) at the interface of two cells. For <span class="math inline">\(\mathbf{U}_{i + 1/2}(0)\)</span> we have <span class="math display">\[
+  \begin{cases}
+    \mathbf{U}_t + \mathbf{F}_\mathbf{U} \mathbf{U}_x = 0, \\
+    \mathbf{U}(x_i, 0) = \mathbf{U}^{(0)}(x_i) = \begin{cases}
+      \mathbf{U}_L = \mathbf{U}(x_{i-1/2}), \quad x&lt;0, \\
+      \mathbf{U}_R = \mathbf{U}(x_{i+1/2}), \quad x&gt;0. \\
+    \end{cases}
+  \end{cases}
+\]</span> The solution of the RP is depicted below. <a name="RP_solution"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-8">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-8">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="images/rp_solution.pdf.png" width="400">
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-9">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-9">&#182;</a>
+  </div>
+  <p>The solution structure includes two families of waves associated to the two system Riemann invariants <span class="math inline">\(\lambda_1\)</span> and <span class="math inline">\(\lambda_2\)</span>, respectively. There are three constant states <span class="math inline">\(\mathbf{U}_L\)</span>, <span class="math inline">\(\mathbf{U}^*\)</span>, and <span class="math inline">\(\mathbf{U}_R\)</span>, of which <span class="math inline">\(\mathbf{U}^*\)</span> is unknown and refers to the solution in the star region (yellow). We need <em>jump</em> conditions to cross the waves and connect these states. Depending on the nature of each wave we have <em>shock</em> or <em>rarefaction</em> conditions.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-10">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-10">&#182;</a>
+  </div>
+  <p><a href="godunov.html#Godunov"><code>Godunov</code></a> function glues together all the functions needed to <a href="godunov.html#riemannSolver">solve the RP</a> at each interface and to compute the <a href="godunov.html#flux">numerical flux</a>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-11">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-11">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>Godunov</code></strong></p>
+<table>
+<colgroup>
+<col width="22%" />
+<col width="77%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>i</code></td>
+<td align="left"><code>::Int</code> cell index within the vessel numerical domain.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>v</code></td>
+<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>dt</code></td>
+<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>b</code></td>
+<td align="left"><code>::Blood</code> blood data structure.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning:</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">In order to solve the local RP, local boundary conditions should be retrieved at both left (<span class="math inline">\(i-1/2\)</span>) and right (<span class="math inline">\(i+1/2\)</span>) interfaces.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Godunov"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> Godunov</span><span class="p">(</span><span class="n">i</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span> <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-12">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-12">&#182;</a>
+  </div>
+  <div style="text-align:center">
+<img src="images/ghost_cells.pdf.png" width="400">
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-13">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-13">&#182;</a>
+  </div>
+  <p>First we compute the states <span class="math inline">\(\mathbf{U}_L\)</span> and <span class="math inline">\(\mathbf{U}_R\)</span> at the left hand side interface (<span class="math inline">\(i-1/2\)</span>). When we deal with the inlet node (<span class="math inline">\(i=1\)</span>), blue ghost cells are used to find left states. Right states are always inside the numerical domain and they do not need ghost cells.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="c">#i-1/2 local left</span>
+  <span class="k">if</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="mi">0</span>      <span class="c">#1st ghost cell</span>
+    <span class="n">UlA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">U00A</span>
+    <span class="n">UlQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">U00Q</span>
+
+  <span class="k">elseif</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="c">#2nd ghost cell</span>
+    <span class="n">UlA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">U01A</span>
+    <span class="n">UlQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">U01Q</span>
+
+  <span class="k">else</span>
+    <span class="n">UlA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">UlQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="c">#local right</span>
+  <span class="n">UrA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+  <span class="n">UrQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-14">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-14">&#182;</a>
+  </div>
+  <p>Once the local states have been computed, the solution of the RP at the left interface is found by <a href="godunov.html#riemannSolver"><code>riemannSolver</code></a> function.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">Al</span><span class="p">,</span> <span class="n">Ql</span> <span class="o">=</span> <span class="n">riemannSolver</span><span class="p">(</span><span class="n">UlA</span><span class="p">,</span> <span class="n">UlQ</span><span class="p">,</span> <span class="n">UrA</span><span class="p">,</span> <span class="n">UrQ</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-15">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-15">&#182;</a>
+  </div>
+  <p>The same process is applied to the local right interface.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="c">#i+1/2 local right</span>
+  <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">M</span><span class="o">+</span><span class="mi">1</span>     <span class="c">#1st ghost cell</span>
+    <span class="n">UrA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">UM1A</span>
+    <span class="n">UrQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">UM1Q</span>
+
+  <span class="k">elseif</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">M</span><span class="o">+</span><span class="mi">2</span> <span class="c">#2nd ghost cell</span>
+    <span class="n">UrA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">UM2A</span>
+    <span class="n">UrQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">UM2Q</span>
+
+  <span class="k">else</span>
+    <span class="n">UrA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">UrQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="c">#local left</span>
+  <span class="n">UlA</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+  <span class="n">UlQ</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+  <span class="n">Ar</span><span class="p">,</span> <span class="n">Qr</span> <span class="o">=</span> <span class="n">riemannSolver</span><span class="p">(</span><span class="n">UlA</span><span class="p">,</span> <span class="n">UlQ</span><span class="p">,</span> <span class="n">UrA</span><span class="p">,</span> <span class="n">UrQ</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-16">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-16">&#182;</a>
+  </div>
+  <p>When both interfaces are solved, left and right (<span class="math inline">\(\mathbf{F}_{i\mp 1/2}\)</span>) numerical fluxes are computed by <a href="godunov.html#flux"><code>flux</code></a> fucntion.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">Fl1</span><span class="p">,</span> <span class="n">Fl2</span> <span class="o">=</span> <span class="n">flux</span><span class="p">(</span><span class="n">Al</span><span class="p">,</span> <span class="n">Ql</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+  <span class="n">Fr1</span><span class="p">,</span> <span class="n">Fr2</span> <span class="o">=</span> <span class="n">flux</span><span class="p">(</span><span class="n">Ar</span><span class="p">,</span> <span class="n">Qr</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-17">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-17">&#182;</a>
+  </div>
+  <p>Conservative variables <code>A</code> and <code>Q</code> are updated by Godunov’s method formula.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dt</span><span class="o">/</span><span class="n">v</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fl1</span><span class="o">-</span><span class="n">Fr1</span><span class="p">)</span>
+  <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dt</span><span class="o">/</span><span class="n">v</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fl2</span><span class="o">-</span><span class="n">Fr2</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-18">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-18">&#182;</a>
+  </div>
+  <p>The source term is solved by <a href="godunov.html#source"><code>source</code></a> function and <code>Q</code> is directly updated. The source term is always zero for the continuity equation, hence <code>A</code> is not updated.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">source</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-19">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-19">&#182;</a>
+  </div>
+  <p>Eventually, primitive variables <code>P</code>, <code>u</code>, and <code>c</code> are updated accordingly to their definitions by <a href="converter.html#pressure"><code>pressure</code></a> and <a href="converter.html#waveSpeed"><code>waveSpeed</code></a> functions.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">v</span><span class="o">.</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pressure</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">A0</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">Pext</span><span class="p">)</span>
+  <span class="n">v</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+  <span class="n">v</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-20">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-20">&#182;</a>
+  </div>
+  <p>The <a href="godunov.html#RP_solution">RP solution</a> is herein coded. The Riemann solver computes the cross-sectional area in the star region <span class="math inline">\(A^*\)</span> starting from a guess solution (two rarefactions solution). The value of <span class="math inline">\(A^*\)</span> comes from the solution of the nonlinear equation <span class="math display">\[
+  f(A^*) = f_L(A^*) + f_R(A^*) + \Delta u = 0,
+\]</span> where <span class="math inline">\(\Delta u = u_R - u_L\)</span>, and <span class="math inline">\(f_L\)</span> and <span class="math inline">\(f_R\)</span> are the local fluxes computed by <a href="godunov.html#fl"><code>fl</code></a> and <a href="godunov.html#fr"><code>fr</code></a>, respectively.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-21">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-21">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>riemannSolver</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>As::Float</code>, <code>Qs::Float</code></p>
+<table>
+<colgroup>
+<col width="22%" />
+<col width="77%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>Al</code></td>
+<td align="left"><code>::Float</code> <code>A</code> value at the left side of the local cell interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Ql</code></td>
+<td align="left"><code>::Float</code> <code>Q</code> value at the left side of the local cell interface.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Ar</code></td>
+<td align="left"><code>::Float</code> <code>A</code> value at the right side of the local cell interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Qr</code></td>
+<td align="left"><code>::Float</code> <code>Q</code> value at the right side of the local cell interface.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>v</code></td>
+<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="riemannSolver"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> riemannSolver</span><span class="p">(</span><span class="n">Al</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Ql</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span>
+                       <span class="n">Ar</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Qr</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span>
+                        <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-22">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-22">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning:</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Primitives are initialised by their definitions, and the two rarefaction solution is applied to compute initial values for <span class="math inline">\(c^*\)</span> and <span class="math inline">\(A^*\)</span>.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="c">#initialise solution</span>
+  <span class="n">ur</span> <span class="o">=</span> <span class="n">Qr</span><span class="o">/</span><span class="n">Ar</span>
+  <span class="n">ul</span> <span class="o">=</span> <span class="n">Ql</span><span class="o">/</span><span class="n">Al</span>
+  <span class="n">cl</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">Al</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+  <span class="n">cr</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">Ar</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+  <span class="n">du</span> <span class="o">=</span> <span class="n">ur</span> <span class="o">-</span> <span class="n">ul</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-23">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-23">&#182;</a>
+  </div>
+  <pre><code>#vacuum</code></pre>
+<p>if ul + 4<em>cl &lt;= ur - 4</em>cr # println(“v”) # return (Al+Ar)<em>0.5, (Ql+Qr)</em>0.5 return v.A0, (Ql+Qr)*0.5 end</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+  <span class="c">#two rarefaction solution</span>
+  <span class="n">cs</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">cl</span> <span class="o">+</span> <span class="n">cr</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">ur</span> <span class="o">-</span> <span class="n">ul</span><span class="p">)</span><span class="o">*</span><span class="mf">0.125</span>
+  <span class="n">As</span> <span class="o">=</span> <span class="mi">4</span><span class="o">/</span><span class="mi">9</span> <span class="o">*</span> <span class="p">(</span><span class="n">cs</span><span class="o">^</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-24">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-24">&#182;</a>
+  </div>
+  <p>The nonlinear equation for the RP is defined and solved by Newton’s method.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">fun</span><span class="p">(</span><span class="n">As</span><span class="p">)</span> <span class="o">=</span> <span class="n">fL</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">Al</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="n">fR</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">Ar</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">cr</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="n">du</span>
+
+  <span class="n">As</span> <span class="o">=</span> <span class="n">newton</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">As</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-25">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-25">&#182;</a>
+  </div>
+  <p>Eventually, <span class="math inline">\(u^*\)</span> is computed as <span class="math display">\[
+  \frac{1}{2}\left(u_L + u_R\right) + \frac{1}{2}\left[f_R\left(A^*\right)
+    -f_L\left(A^* \right) \right],
+\]</span></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">us</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">ur</span><span class="o">+</span><span class="n">ul</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">fR</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">Ar</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">cr</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="n">fL</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">Al</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">v</span><span class="p">)))</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-26">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-26">&#182;</a>
+  </div>
+  <p><span class="math inline">\(Q^*\)</span> is calculated from its definition and returned.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">Qs</span> <span class="o">=</span> <span class="n">As</span> <span class="o">*</span> <span class="n">us</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-27">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-27">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="14%" />
+<col width="85%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>As</code></td>
+<td align="left"><code>::Float</code> cross-sectional area in the star region, solution of the RP at the interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Qs</code></td>
+<td align="left"><code>::Float</code> flow rate in the star region, solution of the RP at the interface.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="k">return</span> <span class="n">As</span><span class="p">,</span> <span class="n">Qs</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-28">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-28">&#182;</a>
+  </div>
+  <p>Local fluxes (left and right) are computed depending on the nature of the wave system located at the interface. In particular <span class="math display">\[
+  f_L = \begin{cases}
+      4\left(c^* - c_L\right), &amp; A^*\leq A_L \quad \text{(rarefaction)}, \\
+      \sqrt{\dfrac{\gamma\left(A^*-A_L\right)\left(A^{* 3/2}-
+        A_L^{3/2}\right)}{A_L A^*}}, &amp; A^*&gt;A_L \quad \text{(shock)},
+    \end{cases}
+\]</span> <span class="math display">\[
+  f_R = \begin{cases}
+      4\left(c^* - c_R\right), &amp; A^*\leq A_R \quad \text{(rarefaction)}, \\
+      \sqrt{\dfrac{\gamma\left(A^*-A_R\right)\left(A^{* 3/2}-
+        A_R^{3/2}\right)}{A_R A^*}}, &amp; A^*&gt;A_R \quad \text{(shock)},
+    \end{cases}
+\]</span></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-29">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-29">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>fL</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>left_flux::Float</code></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>A</code></td>
+<td align="left"><code>::Float</code> current value of <span class="math inline">\(A^*\)</span> at the left interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Al</code></td>
+<td align="left"><code>::Float</code> cross sectional area of the left cell.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>c</code></td>
+<td align="left"><code>::Float</code> current value of <span class="math inline">\(c^*\)</span> at the left interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>cl</code></td>
+<td align="left"><code>::Float</code> wave speed in the left cell.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>v</code></td>
+<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>left_flux</code></td>
+<td align="left"><code>::Float</code> local flux at the left interface.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="fL"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> fL</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Al</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">c</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">cl</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">A</span> <span class="o">&lt;=</span> <span class="n">Al</span>
+    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">cl</span><span class="p">)</span>
+
+  <span class="k">else</span>
+    <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">Al</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">A</span><span class="o">^</span><span class="mf">1.5</span> <span class="o">-</span> <span class="n">Al</span><span class="o">^</span><span class="mf">1.5</span><span class="p">))</span> <span class="o">/</span>
+                              <span class="p">(</span><span class="n">Al</span><span class="o">*</span><span class="n">A</span><span class="p">)</span>
+               <span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-30">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-30">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>fR</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>right_flux::Float</code></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>A</code></td>
+<td align="left"><code>::Float</code> current value of <span class="math inline">\(A^*\)</span> at the right interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Ar</code></td>
+<td align="left"><code>::Float</code> cross sectional area of the right cell.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>c</code></td>
+<td align="left"><code>::Float</code> current value of <span class="math inline">\(c^*\)</span> at the right interface.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>cr</code></td>
+<td align="left"><code>::Float</code> wave speed in the right cell.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>v</code></td>
+<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>right_flux</code></td>
+<td align="left"><code>::Float</code> local flux at the right interface.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="fR"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> fR</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Ar</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">c</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">cr</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">A</span> <span class="o">&lt;=</span> <span class="n">Ar</span>
+    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">cr</span><span class="p">)</span>
+
+  <span class="k">else</span>
+    <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">Ar</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">A</span><span class="o">^</span><span class="mf">1.5</span> <span class="o">-</span> <span class="n">Ar</span><span class="o">^</span><span class="mf">1.5</span><span class="p">))</span> <span class="o">/</span>
+                              <span class="p">(</span><span class="n">Ar</span><span class="o">*</span><span class="n">A</span><span class="p">)</span>
+               <span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-31">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-31">&#182;</a>
+  </div>
+  <p>The flux in conservative form reads <span class="math display">\[
+  \mathbf{F}(\mathbf{U}) = \left\{ \begin{array}{c}
+      Au \\
+      Au^2 + \gamma A^{3/2}
+    \end{array} \right\},
+\]</span> and its numerical form is computed by <a href="godunov.html#flux"><code>flux</code></a> function.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-32">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-32">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>flux</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>f1::Float</code>, <code>f2::Float</code></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>A</code></td>
+<td align="left"><code>::Float</code> cross sectional area along the cell.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Q</code></td>
+<td align="left"><code>::Float</code> flow rate within the cell.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>gamma</code></td>
+<td align="left"><code>::Vessel</code> elastic constant for <code>c</code> calculation.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="85%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>f1</code></td>
+<td align="left"><code>::Float</code> first component of the numerical flux.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>f2</code></td>
+<td align="left"><code>::Float</code> second component of the numerical flux.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="flux"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> flux</span><span class="p">(</span><span class="n">A</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Q</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">gamma</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+
+  <span class="n">f1</span> <span class="o">=</span> <span class="n">Q</span>
+  <span class="n">f2</span> <span class="o">=</span> <span class="n">Q</span><span class="o">*</span><span class="n">Q</span><span class="o">/</span><span class="n">A</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="n">A</span><span class="o">^</span><span class="mf">1.5</span>
+
+  <span class="k">return</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-33">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-33">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>source</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>S::Float</code></p>
+<table>
+<colgroup>
+<col width="16%" />
+<col width="83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>dt</code></td>
+<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>A</code></td>
+<td align="left"><code>::Float</code> cross sectional area along the cell.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>u</code></td>
+<td align="left"><code>::Vessel</code> longitudinal velocity along the cell.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>b</code></td>
+<td align="left"><code>::Blood</code> blood data structure.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">The numerical source is updated by means of a first order implicit backward Euler method.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="85%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>S</code></td>
+<td align="left"><code>::Float</code> source term.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="source"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> source</span><span class="p">(</span><span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">A</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">u</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="o">-</span><span class="n">b</span><span class="o">.</span><span class="n">Cf</span><span class="o">*</span><span class="n">u</span><span class="o">*</span><span class="n">dt</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-34">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-34">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>calculateDeltaT</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>DT::Float</code></p>
+<table>
+<colgroup>
+<col width="22%" />
+<col width="77%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>vessels</code></td>
+<td align="left"><code>::Array{Vessel, 1}</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">This function calculates the smallest <span class="math inline">\(\Delta t\)</span> allowed by all vessels geometries and properties.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="calculateDeltaT"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateDeltaT</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">})</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-35">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-35">&#182;</a>
+  </div>
+  <p>For each vessel the <span class="math inline">\(\Delta t\)</span> is computed as <span class="math display">\[
+  \Delta t = \frac{\Delta x}{S_{max}} C_{cfl}
+\]</span> where <span class="math inline">\(S_{max}\)</span> is the maximum between the forward and the backward characteristics, and <span class="math inline">\(C_{cfl}\)</span> is the Courant-Friedrichs-Lewy condition defined by the user.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">for</span> <span class="n">v</span> <span class="k">in</span> <span class="n">vessels</span>
+
+    <span class="n">lambdap</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">v</span><span class="o">.</span><span class="n">M</span>
+      <span class="n">lambdap</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+    <span class="k">end</span>
+
+    <span class="n">Smax</span> <span class="o">=</span> <span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">lambdap</span><span class="p">))</span>
+
+    <span class="n">dt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">Ccfl</span><span class="o">/</span><span class="n">Smax</span>
+
+    <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+  <span class="k">end</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-36">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-36">&#182;</a>
+  </div>
+  <table>
+<colgroup>
+<col width="16%" />
+<col width="83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Returns:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>DT</code></td>
+<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span> computed as the smallest between the smallest <span class="math inline">\(\Delta t\)</span> associated with each vessel and the <span class="math inline">\(\Delta t\)</span> limiter <span class="math inline">\(0.001\)</span>.</td>
+</tr>
+</tbody>
+</table>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="k">return</span> <span class="n">minimum</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-37">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-37">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>solveModel</code></strong></p>
+<table>
+<colgroup>
+<col width="21%" />
+<col width="78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>grafo</code></td>
+<td align="left"><code>::GenericGraph</code> graph data structure containing all the vessels.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>edgess</code></td>
+<td align="left"><code>::Array</code> collection of <code>edge</code> objects.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>vessels</code></td>
+<td align="left"><code>::Array{Vessel, 1}</code> collection of vessels in the system.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>heart</code></td>
+<td align="left"><code>::Heart</code> heart data structure.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>blood</code></td>
+<td align="left"><code>::Blood</code> blood data structure.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>dt</code></td>
+<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>current_time</code></td>
+<td align="left"><code>::Float</code> current simulation time.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">See the <a href="grafo.html">detailed example</a>.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="solveModel"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> solveModel</span><span class="p">(</span><span class="n">grafo</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span> <span class="p">::</span> <span class="n">Heart</span><span class="p">,</span>
+                    <span class="n">blood</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">heart</span><span class="p">)</span>
+    <span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-38">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-38">&#182;</a>
+  </div>
+  <p><em>Note</em>: <a href="MUSCL.html#MUSCL">MUSCL</a> solver is herein used. To use the first-order <a href="godunov.html#Godunov">Godunov</a> method, replace <code>openBF.MUSCL(vessels[i], dt, blood)</code> with</p>
+<div class="sourceCode"><pre class="sourceCode julia"><code class="sourceCode julia">  <span class="kw">for</span> j <span class="kw">in</span> <span class="fl">1</span>:vessels[i].M
+    openBF.Godunov(j, vessels[i], dt, blood)
+  <span class="kw">end</span></code></pre></div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
+        <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)])</span>
+
+      <span class="k">else</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">),</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">))</span>
+          <span class="n">a</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
+          <span class="n">b</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
+          <span class="n">c</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span>
+                        <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">2</span><span class="p">])])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> solveModel</span><span class="p">(</span><span class="n">grafo</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span>
+                    <span class="n">grafo_a</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess_a</span><span class="p">,</span> <span class="n">vessels_a</span><span class="p">,</span>
+                    <span class="n">blood</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">rn</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rn</span>
+      <span class="n">edg</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">rn</span><span class="p">,</span> <span class="n">grafo_a</span><span class="p">)</span>
+      <span class="n">src</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">edg</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo_a</span><span class="p">)</span>
+      <span class="n">artery</span> <span class="o">=</span> <span class="n">vessels_a</span><span class="p">[</span><span class="n">src</span><span class="p">]</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">artery</span><span class="o">.</span><span class="n">Pc</span><span class="p">,</span> <span class="n">artery</span><span class="o">.</span><span class="n">R2</span><span class="p">)</span>
+    <span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-39">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-39">&#182;</a>
+  </div>
+  <p><em>Note</em>: <a href="MUSCL.html#MUSCL">MUSCL</a> solver is herein used. To use the first-order <a href="godunov.html#Godunov">Godunov</a> method, replace <code>openBF.MUSCL(vessels[i], dt, blood)</code> with</p>
+<div class="sourceCode"><pre class="sourceCode julia"><code class="sourceCode julia">  <span class="kw">for</span> j <span class="kw">in</span> <span class="fl">1</span>:vessels[i].M
+    openBF.Godunov(j, vessels[i], dt, blood)
+  <span class="kw">end</span></code></pre></div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
+        <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)])</span>
+
+      <span class="k">else</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">),</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">))</span>
+          <span class="n">a</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
+          <span class="n">b</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
+          <span class="n">c</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span>
+                        <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">2</span><span class="p">])])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> pSolveModel</span><span class="p">(</span><span class="n">grafo</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span> <span class="p">::</span> <span class="n">Heart</span><span class="p">,</span>
+                    <span class="n">blood</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+
+  <span class="p">@</span><span class="n">parallel</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">heart</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
+        <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)])</span>
+
+      <span class="k">else</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">),</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">))</span>
+          <span class="n">a</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
+          <span class="n">b</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
+          <span class="n">c</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span>
+                        <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">2</span><span class="p">])])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
+    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-40">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-40">&#182;</a>
+  </div>
+  <h3 id="references">References</h3>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Toro, Eleuterio F. Riemann solvers and numerical methods for fluid dynamics: a practical introduction. Springer Science &amp; Business Media, 2009.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+
+</pre></div>
+</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+<nav>
+  <ul>
+    <li><a href="#">^</a></li>
+    <li><a href="../doc-index.html">API index</a></li>
+  </ul>
+</nav>
+</body>
+</html>

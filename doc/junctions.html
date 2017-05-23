@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <link rel="icon" type="image/png" href="../../images/fish.png">
+  <title>junctions.jl</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" media="all" href="./jocco.css" />
+  <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <!-- jQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.min.js"></script>
+  <script>
+    $(function(){
+      $("table").resizableColumns({
+        store: window.store
+      });
+    });
+  </script>
+</head>
+<body>
+<nav>
+	<ul>
+		<li><a href="../index.html#">Home</a></li>
+		<li>
+      		<a href="openBF.html">openBF.jl <span class="caret"></span></a>
+			<div>
+				<ul>
+        <li><a href="main.html#">main.jl</a>
+
+<li><a href="BTypes.html#">BTypes.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="BTypes.html#::Vessel
+">::Vessel
+</a></li>
+<li><a href="BTypes.html#::Heart
+">::Heart
+</a></li>
+<li><a href="BTypes.html#::Blood
+">::Blood
+</a></li>
+</ul>
+</div>
+</li><li><a href="initialise.html#">initialise.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="initialise.html#projectPreamble
+">projectPreamble
+</a></li>
+<li><a href="initialise.html#writeScripts
+">writeScripts
+</a></li>
+<li><a href="initialise.html#cleanLibrary
+">cleanLibrary
+</a></li>
+<li><a href="initialise.html#readModelData
+">readModelData
+</a></li>
+<li><a href="initialise.html#initialiseVessel
+">initialiseVessel
+</a></li>
+<li><a href="initialise.html#loadInputData
+">loadInputData
+</a></li>
+<li><a href="initialise.html#loadGlobalConstants
+">loadGlobalConstants
+</a></li>
+</ul>
+</div>
+</li><li><a href="boundary_conditions.html#">boundary_conditions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="boundary_conditions.html#setInletBC
+">setInletBC
+</a></li>
+<li><a href="boundary_conditions.html#sinHeaviside
+">sinHeaviside
+</a></li>
+<li><a href="boundary_conditions.html#heaviside
+">heaviside
+</a></li>
+<li><a href="boundary_conditions.html#gauss
+">gauss
+</a></li>
+<li><a href="boundary_conditions.html#inputFromData
+">inputFromData
+</a></li>
+<li><a href="boundary_conditions.html#inletCompatibility
+">inletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#setOutletBC
+">setOutletBC
+</a></li>
+<li><a href="boundary_conditions.html#outletCompatibility
+">outletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#wk3
+">wk3
+</a></li>
+<li><a href="boundary_conditions.html#updateGhostCells
+">updateGhostCells
+</a></li>
+</ul>
+</div>
+</li><li><a href="junctions.html#">junctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="junctions.html#joinVessels
+">joinVessels
+</a></li>
+</ul>
+</div>
+</li><li><a href="conjunctions.html#">conjunctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="conjunctions.html#solveConjunction
+">solveConjunction
+</a></li>
+<li><a href="conjunctions.html#calculateWstarConj
+">calculateWstarConj
+</a></li>
+<li><a href="conjunctions.html#calculateFofUconj
+">calculateFofUconj
+</a></li>
+<li><a href="conjunctions.html#calculateJacobianConj
+">calculateJacobianConj
+</a></li>
+</ul>
+</div>
+</li><li><a href="bifurcations.html#">bifurcations.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="bifurcations.html#solveBifurcation
+">solveBifurcation
+</a></li>
+<li><a href="bifurcations.html#calculateWstarBif
+">calculateWstarBif
+</a></li>
+<li><a href="bifurcations.html#calculateFofUBif
+">calculateFofUBif
+</a></li>
+<li><a href="bifurcations.html#calculateJacobianBif
+">calculateJacobianBif
+</a></li>
+</ul>
+</div>
+</li><li><a href="godunov.html#">godunov.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="godunov.html#Godunov
+">Godunov
+</a></li>
+<li><a href="godunov.html#riemannSolver
+">riemannSolver
+</a></li>
+<li><a href="godunov.html#fL
+">fL
+</a></li>
+<li><a href="godunov.html#fR
+">fR
+</a></li>
+<li><a href="godunov.html#flux
+">flux
+</a></li>
+<li><a href="godunov.html#source
+">source
+</a></li>
+<li><a href="godunov.html#calculateDeltaT
+">calculateDeltaT
+</a></li>
+<li><a href="godunov.html#solveModel
+">solveModel
+</a></li>
+</ul>
+</div>
+</li><li><a href="MUSCL.html#">MUSCL.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="MUSCL.html#computeFlux
+">computeFlux
+</a></li>
+<li><a href="MUSCL.html#minMod
+">minMod
+</a></li>
+<li><a href="MUSCL.html#maxmod
+">maxmod
+</a></li>
+<li><a href="MUSCL.html#minmod
+">minmod
+</a></li>
+<li><a href="MUSCL.html#superBee
+">superBee
+</a></li>
+<li><a href="MUSCL.html#computeLimiter
+">computeLimiter
+</a></li>
+<li><a href="MUSCL.html#MUSCL
+">MUSCL
+</a></li>
+</ul>
+</div>
+</li><li><a href="converter.html#">converter.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="converter.html#waveSpeed
+">waveSpeed
+</a></li>
+<li><a href="converter.html#pressure
+">pressure
+</a></li>
+<li><a href="converter.html#areaFromPressure
+">areaFromPressure
+</a></li>
+<li><a href="converter.html#riemannInvariants
+">riemannInvariants
+</a></li>
+<li><a href="converter.html#rI2uc
+">rI2uc
+</a></li>
+<li><a href="converter.html#calculatePrimitives
+">calculatePrimitives
+</a></li>
+</ul>
+</div>
+</li><li><a href="check_convergence.html#">check_convergence.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="check_convergence.html#checkAllQuantities
+">checkAllQuantities
+</a></li>
+<li><a href="check_convergence.html#extractWaveform
+">extractWaveform
+</a></li>
+<li><a href="check_convergence.html#resampleAndCalculateError
+">resampleAndCalculateError
+</a></li>
+</ul>
+</div>
+</li><li><a href="IOutils.html#">IOutils.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="IOutils.html#openTempFiles
+">openTempFiles
+</a></li>
+<li><a href="IOutils.html#closeTempFiles
+">closeTempFiles
+</a></li>
+<li><a href="IOutils.html#saveTempData
+">saveTempData
+</a></li>
+<li><a href="IOutils.html#transferTempToOut">transferTempToOut</a></li>
+</ul>
+</div>
+
+
+
+
+				</ul>
+			</div>
+		</li>
+		<li><a href="../doc-index.html">API Index</a></li>
+	</ul>
+</nav>
+  <div id="container">
+    <div id="background"></div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs" data-resizable-column-id="docs">
+            <h1>
+              junctions.jl
+            </h1>
+          </th>
+          <th class="code" data-resizable-column-id="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+<tr id="section-1">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-1">&#182;</a>
+  </div>
+  In <code>openBF</code> two types of junctions are provided: conjunctions
+<div style="text-align:center">
+<img src="images/conj.pdf.png" width="225">
+</div>
+and bifurcations.
+<div style="text-align:center">
+<img src="images/bif.pdf.png" width="225">
+</div>
+<p><code>joinVessels</code> function calls the right solver depending on the number of vessels involved in the junction.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-2">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-2">&#182;</a>
+  </div>
+  <p><em>function</em> <strong><code>joinVessels</code></strong></p>
+<table>
+<colgroup>
+<col width="26%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameters:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>b</code></td>
+<td align="left"><code>::Blood</code> model matrix row.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>vessels...</code></td>
+<td align="left">Collection of<code>::Vessel</code> data structures involved in the junction system.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Functioning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A collection containing two vessels refers to a conjunction and is solved by <a href="conjunctions.html#solveConjunction"><code>solveConjunction</code></a> function. When there are three vessels the junction is a bifurcation and it is solved by <a href="bifurcations.html#solveBifurcation"><code>solveBifurcation</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="joinVessels"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">function</span><span class="nf"> joinVessels</span><span class="p">(</span><span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">vessels</span><span class="o">...</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">solveConjunction</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+  <span class="k">elseif</span> <span class="n">length</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="n">solveBifurcation</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+<nav>
+  <ul>
+    <li><a href="#">^</a></li>
+    <li><a href="../doc-index.html">API index</a></li>
+  </ul>
+</nav>
+</body>
+</html>

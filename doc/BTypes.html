@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <link rel="icon" type="image/png" href="../../images/fish.png">
+  <title>BTypes.jl</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" media="all" href="./jocco.css" />
+  <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <!-- jQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.min.js"></script>
+  <script>
+    $(function(){
+      $("table").resizableColumns({
+        store: window.store
+      });
+    });
+  </script>
+</head>
+<body>
+<nav>
+	<ul>
+		<li><a href="../index.html#">Home</a></li>
+		<li>
+      		<a href="openBF.html">openBF.jl <span class="caret"></span></a>
+			<div>
+				<ul>
+        <li><a href="main.html#">main.jl</a>
+
+<li><a href="BTypes.html#">BTypes.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="BTypes.html#::Vessel
+">::Vessel
+</a></li>
+<li><a href="BTypes.html#::Heart
+">::Heart
+</a></li>
+<li><a href="BTypes.html#::Blood
+">::Blood
+</a></li>
+</ul>
+</div>
+</li><li><a href="initialise.html#">initialise.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="initialise.html#projectPreamble
+">projectPreamble
+</a></li>
+<li><a href="initialise.html#writeScripts
+">writeScripts
+</a></li>
+<li><a href="initialise.html#cleanLibrary
+">cleanLibrary
+</a></li>
+<li><a href="initialise.html#readModelData
+">readModelData
+</a></li>
+<li><a href="initialise.html#initialiseVessel
+">initialiseVessel
+</a></li>
+<li><a href="initialise.html#loadInputData
+">loadInputData
+</a></li>
+<li><a href="initialise.html#loadGlobalConstants
+">loadGlobalConstants
+</a></li>
+</ul>
+</div>
+</li><li><a href="boundary_conditions.html#">boundary_conditions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="boundary_conditions.html#setInletBC
+">setInletBC
+</a></li>
+<li><a href="boundary_conditions.html#sinHeaviside
+">sinHeaviside
+</a></li>
+<li><a href="boundary_conditions.html#heaviside
+">heaviside
+</a></li>
+<li><a href="boundary_conditions.html#gauss
+">gauss
+</a></li>
+<li><a href="boundary_conditions.html#inputFromData
+">inputFromData
+</a></li>
+<li><a href="boundary_conditions.html#inletCompatibility
+">inletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#setOutletBC
+">setOutletBC
+</a></li>
+<li><a href="boundary_conditions.html#outletCompatibility
+">outletCompatibility
+</a></li>
+<li><a href="boundary_conditions.html#wk3
+">wk3
+</a></li>
+<li><a href="boundary_conditions.html#updateGhostCells
+">updateGhostCells
+</a></li>
+</ul>
+</div>
+</li><li><a href="junctions.html#">junctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="junctions.html#joinVessels
+">joinVessels
+</a></li>
+</ul>
+</div>
+</li><li><a href="conjunctions.html#">conjunctions.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="conjunctions.html#solveConjunction
+">solveConjunction
+</a></li>
+<li><a href="conjunctions.html#calculateWstarConj
+">calculateWstarConj
+</a></li>
+<li><a href="conjunctions.html#calculateFofUconj
+">calculateFofUconj
+</a></li>
+<li><a href="conjunctions.html#calculateJacobianConj
+">calculateJacobianConj
+</a></li>
+</ul>
+</div>
+</li><li><a href="bifurcations.html#">bifurcations.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="bifurcations.html#solveBifurcation
+">solveBifurcation
+</a></li>
+<li><a href="bifurcations.html#calculateWstarBif
+">calculateWstarBif
+</a></li>
+<li><a href="bifurcations.html#calculateFofUBif
+">calculateFofUBif
+</a></li>
+<li><a href="bifurcations.html#calculateJacobianBif
+">calculateJacobianBif
+</a></li>
+</ul>
+</div>
+</li><li><a href="godunov.html#">godunov.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="godunov.html#Godunov
+">Godunov
+</a></li>
+<li><a href="godunov.html#riemannSolver
+">riemannSolver
+</a></li>
+<li><a href="godunov.html#fL
+">fL
+</a></li>
+<li><a href="godunov.html#fR
+">fR
+</a></li>
+<li><a href="godunov.html#flux
+">flux
+</a></li>
+<li><a href="godunov.html#source
+">source
+</a></li>
+<li><a href="godunov.html#calculateDeltaT
+">calculateDeltaT
+</a></li>
+<li><a href="godunov.html#solveModel
+">solveModel
+</a></li>
+</ul>
+</div>
+</li><li><a href="MUSCL.html#">MUSCL.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="MUSCL.html#computeFlux
+">computeFlux
+</a></li>
+<li><a href="MUSCL.html#minMod
+">minMod
+</a></li>
+<li><a href="MUSCL.html#maxmod
+">maxmod
+</a></li>
+<li><a href="MUSCL.html#minmod
+">minmod
+</a></li>
+<li><a href="MUSCL.html#superBee
+">superBee
+</a></li>
+<li><a href="MUSCL.html#computeLimiter
+">computeLimiter
+</a></li>
+<li><a href="MUSCL.html#MUSCL
+">MUSCL
+</a></li>
+</ul>
+</div>
+</li><li><a href="converter.html#">converter.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="converter.html#waveSpeed
+">waveSpeed
+</a></li>
+<li><a href="converter.html#pressure
+">pressure
+</a></li>
+<li><a href="converter.html#areaFromPressure
+">areaFromPressure
+</a></li>
+<li><a href="converter.html#riemannInvariants
+">riemannInvariants
+</a></li>
+<li><a href="converter.html#rI2uc
+">rI2uc
+</a></li>
+<li><a href="converter.html#calculatePrimitives
+">calculatePrimitives
+</a></li>
+</ul>
+</div>
+</li><li><a href="check_convergence.html#">check_convergence.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="check_convergence.html#checkAllQuantities
+">checkAllQuantities
+</a></li>
+<li><a href="check_convergence.html#extractWaveform
+">extractWaveform
+</a></li>
+<li><a href="check_convergence.html#resampleAndCalculateError
+">resampleAndCalculateError
+</a></li>
+</ul>
+</div>
+</li><li><a href="IOutils.html#">IOutils.jl<span class="caret"></span></a>
+<div>
+<ul><li><a href="IOutils.html#openTempFiles
+">openTempFiles
+</a></li>
+<li><a href="IOutils.html#closeTempFiles
+">closeTempFiles
+</a></li>
+<li><a href="IOutils.html#saveTempData
+">saveTempData
+</a></li>
+<li><a href="IOutils.html#transferTempToOut">transferTempToOut</a></li>
+</ul>
+</div>
+
+
+
+
+				</ul>
+			</div>
+		</li>
+		<li><a href="../doc-index.html">API Index</a></li>
+	</ul>
+</nav>
+  <div id="container">
+    <div id="background"></div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs" data-resizable-column-id="docs">
+            <h1>
+              BTypes.jl
+            </h1>
+          </th>
+          <th class="code" data-resizable-column-id="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+<tr id="section-1">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-1">&#182;</a>
+  </div>
+  <p>A model in <code>openBF</code> consists of a collection of vessels, a heart, and a description of blood mechanical properties. Vessels should be defined to be of type <code>Vessel</code>, the inlet boundary condition is of type <code>Heart</code>, and the blood properties are contained in a <code>Blood</code> instance.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">module</span> <span class="n">BTypes</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-2">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-2">&#182;</a>
+  </div>
+  <p>Instances of <code>BTypes</code> data structures can be created as</p>
+<pre><code>BTypes.Vessel(args...)
+BTypes.Heart(args...)
+BTypes.Blood(args...)</code></pre>
+<p>where the <code>args...</code> are specified for each data structure in the following. Functions in <a href="initialise.html">initialise.jl</a> generate instances of <code>BTypes</code> data structures.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">export</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">Heart</span><span class="p">,</span> <span class="n">Blood</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-3">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-3">&#182;</a>
+  </div>
+  <p>Each vessel in the arterial system is represented by a single instance of type <code>Vessel</code>.</p>
+<table>
+<colgroup>
+<col width="23%" />
+<col width="70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Arguments:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>label</code></td>
+<td align="left">Vessel clinical name. It is used in <a href="initialise.html#initialiseVessel"><code>initialiseVessel</code></a> to generate output file names.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>ID</code></td>
+<td align="left">Vessel ID within the <code>Graph</code> structure defined in <a href="main.html#grafo">main.jl</a>. Unique integer.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>sn</code></td>
+<td align="left">Source node ID within the <code>Graph</code> structure. Unique integer.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>tn</code></td>
+<td align="left">Terminal node ID within the <code>Graph</code> structure. Unique integer.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>M</code></td>
+<td align="left">Number of nodes along the vessel. This is user defined in the project <code>project_model.csv</code> file.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>dx</code></td>
+<td align="left"><span class="math inline">\(\Delta x\)</span> gives the spatial discretisation and it is computed once in <a href="initialise.html#dx">initialise.jl</a>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Ccfl</code></td>
+<td align="left">Courant-Friedrichs-Lewy (CFL) number. It is used to compute the <span class="math inline">\(\Delta t\)</span> by <a href="godunov.html#calculateDeltaT"><code>calculateDeltaT</code></a> at each time step. The CFL is always in the interval <span class="math inline">\([0,1]\)</span>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>beta</code></td>
+<td align="left">Elastic constant used to compute the trans-mural <a href="converter.html#pressure"><code>pressure</code></a> <code>P</code>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>gamma</code></td>
+<td align="left">Elastic constant used by <a href="converter.html#waveSpeed"><code>waveSpeed</code></a> to compute <code>c</code>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>R0</code></td>
+<td align="left">Unstressed lumen radius.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>A0</code></td>
+<td align="left">Unstressed cross-sectional area.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>A</code></td>
+<td align="left">Cross-sectional area at each node along the vessel.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Q</code></td>
+<td align="left">Flow-rate at each node along the vessel.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>u</code></td>
+<td align="left">Axial velocity at each node along the vessel.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>c</code></td>
+<td align="left">Wave speed at each node along the vessel.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>P</code></td>
+<td align="left">Trans-mural pressure at each node along the vessel.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>W1M0</code></td>
+<td align="left">Backward Riemann invariant at <span class="math inline">\(x=L\)</span>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>W2M0</code></td>
+<td align="left">Forward Riemann invariant.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>U00A</code></td>
+<td align="left"><code>A</code> in the ghost cell between 0 and -1. Ghost cells are used in <a href="godunov.html">godunov.jl</a> to compute correctly the solution at boundaries cells.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>U01A</code></td>
+<td align="left"><code>A</code> in the ghost cell between -1 and -2.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>UM1A</code></td>
+<td align="left"><code>A</code> in the ghost cell between <code>M</code> and <code>M+1</code>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>UM2A</code></td>
+<td align="left"><code>A</code> in the ghost cell between <code>M+1</code> and <code>M+2</code>. Ghost cells are defined for <code>Q</code> in the same manner.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>temp_P_name</code></td>
+<td align="left">Name of temporary file where to store <code>P</code> values while running the solution. Temporary files (<code>.temp</code>) are created for all the variables (<code>Q</code>, <code>A</code>, <code>u</code>, <code>c</code>). Temporary files are handled by functions defined in <a href="IOutilities.html">IOutilities.jl</a>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>out_P_name</code></td>
+<td align="left">Name of final output file where to store <code>P</code> values. Every variable has its own <code>.out</code> file.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>temp_P</code></td>
+<td align="left">Julia handle to direct the output writing operation. Every variable has its own <code>IOStream</code>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Rt</code></td>
+<td align="left">Outlet reflection coefficient. See <a href="boundary_conditions.html">boundary_conditions.jl</a>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>R1</code></td>
+<td align="left">Three element windkessel proximal resistance.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>R2</code></td>
+<td align="left">Peripheral resistance.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Cc</code></td>
+<td align="left">Peripheral compliance.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Pc</code></td>
+<td align="left">Pressure through peripheral compliance.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Vessel"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">type</span><span class="nc"> Vessel</span>
+  <span class="n">label</span> <span class="p">::</span> <span class="n">String</span>
+
+  <span class="c">#Topological notation</span>
+  <span class="n">ID</span> <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">sn</span> <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">tn</span> <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">rn</span> <span class="p">::</span> <span class="kt">Int64</span>
+
+  <span class="c">#Numerical constants</span>
+  <span class="n">M</span>       <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">dx</span>      <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">invDx</span>   <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">halfDx</span>  <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">Ccfl</span>    <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="c">#Physical constants</span>
+  <span class="n">beta</span>  <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">gamma</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">gamma_ghost</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">A0</span>    <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">dA0dx</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">dTaudx</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">Pext</span>  <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="c">#Iterative solution</span>
+  <span class="n">A</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">Q</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">u</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">c</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">P</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="c">#Riemann invariants</span>
+  <span class="n">W1M0</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">W2M0</span> <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="c">#Ghost cells</span>
+  <span class="n">U00A</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">U00Q</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">U01A</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">U01Q</span> <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="n">UM1A</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">UM1Q</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">UM2A</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">UM2Q</span> <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="c">#Temporary files name</span>
+  <span class="n">temp_P_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">temp_Q_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">temp_A_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">temp_c_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">temp_u_name</span> <span class="p">::</span> <span class="n">String</span>
+
+  <span class="n">last_P_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">last_Q_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">last_A_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">last_c_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">last_u_name</span> <span class="p">::</span> <span class="n">String</span>
+
+  <span class="c">#Output files name</span>
+  <span class="n">out_P_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">out_Q_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">out_A_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">out_c_name</span> <span class="p">::</span> <span class="n">String</span>
+  <span class="n">out_u_name</span> <span class="p">::</span> <span class="n">String</span>
+
+  <span class="c">#Temporary files IOstreams</span>
+  <span class="n">temp_P</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">temp_Q</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">temp_A</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">temp_c</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">temp_u</span> <span class="p">::</span> <span class="n">IOStream</span>
+
+  <span class="n">last_P</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">last_Q</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">last_A</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">last_c</span> <span class="p">::</span> <span class="n">IOStream</span>
+  <span class="n">last_u</span> <span class="p">::</span> <span class="n">IOStream</span>
+
+  <span class="c">#Saving locations</span>
+  <span class="n">node2</span> <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">node3</span> <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">node4</span> <span class="p">::</span> <span class="kt">Int64</span>
+
+  <span class="c">#Peripheral boundary condition</span>
+  <span class="n">Rt</span> <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="n">R1</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">R2</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">Cc</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">Pc</span> <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="c">#Slope</span>
+  <span class="n">slope</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="c">#MUSCLArrays</span>
+  <span class="n">flux</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+  <span class="n">uStar</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+
+  <span class="n">vA</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">vQ</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="n">dU</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+
+  <span class="n">slopesA</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">slopesQ</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="n">Al</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">Ar</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="n">Ql</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+  <span class="n">Qr</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+
+  <span class="n">Fl</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+  <span class="n">Fr</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-4">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-4">&#182;</a>
+  </div>
+  <p>The inlet boundary condition is applied to the first vessel in the model. A <code>Heart</code> instance contains all inlet information.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="69%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Arguments:</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>BC_switch</code></td>
+<td align="left">Integer flag to select inlet boundary condition. It takes values from 1 to 4 and it is chosen by the user in the <code>project_constants.jl</code> file.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>cardiac_T</code></td>
+<td align="left">Cardiac period.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>sys_T</code></td>
+<td align="left">Length of systole.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>initial_flow</code></td>
+<td align="left"><code>Q</code> (ml/s) initial value to be set within all the vessels.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>flow_amplitude</code></td>
+<td align="left"><code>Q</code> maximum amplitude (ml/s) for the user-defined inlet boundary condition.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>input_data</code></td>
+<td align="left">Matrix defined as <code>[time::Array, flow::Array]</code> to be used as inlet boundary condition.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Heart"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">type</span><span class="nc"> Heart</span>
+  <span class="n">BC_switch</span>  <span class="p">::</span> <span class="kt">Int64</span>
+  <span class="n">inlet_type</span> <span class="p">::</span> <span class="n">ASCIIString</span>
+
+  <span class="n">cardiac_T</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">sys_T</span>     <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="n">initial_flow</span>   <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">flow_amplitude</span> <span class="p">::</span> <span class="kt">Float64</span>
+
+  <span class="n">input_data</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-5">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-5">&#182;</a>
+  </div>
+  <p>Blood mechanical properties.</p>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Arguments</th>
+<th align="left">:</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>mu</code></td>
+<td align="left">Dynamic viscosity (poise)</td>
+</tr>
+<tr class="even">
+<td align="left"><code>rho</code></td>
+<td align="left">Density (kg/m<span class="math inline">\(^3\)</span>)</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Cf</code></td>
+<td align="left">Viscous loss coefficient (see <a href="initialise.html#loadGlobalConstants"><code>loadGlobalConstants</code></a> and <a href="godunov.html#source"><code>source</code></a>).</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Blood"></a></p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">type</span><span class="nc"> Blood</span>
+  <span class="n">mu</span>  <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">rho</span> <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">Cf</span>  <span class="p">::</span> <span class="kt">Float64</span>
+  <span class="n">gamma_profile</span> <span class="p">::</span> <span class="kt">Float64</span>
+<span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-6">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-6">&#182;</a>
+  </div>
+  
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="k">end</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+<nav>
+  <ul>
+    <li><a href="#">^</a></li>
+    <li><a href="../doc-index.html">API index</a></li>
+  </ul>
+</nav>
+</body>
+</html>

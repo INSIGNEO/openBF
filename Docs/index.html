@@ -1,0 +1,493 @@
+<!DOCTYPE HTML>
+<!--
+	Strata by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<HEAD>
+<SCRIPT language="JavaScript">
+<!--hide
+
+var password;
+
+var pass1="moonlike";
+
+password=prompt('Please enter password to view documentation','');
+
+if (password==pass1)
+  alert('Click OK to enter');
+else
+   {
+    window.location="../error.html";
+    }
+
+//-->
+</SCRIPT>
+</HEAD>
+
+<html>
+	<head>
+		<link rel="icon" type="image/png" href="../images/fish.png">
+		<title>openBF docs</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body id="top">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../index.html" class="image avatar"><img src="images/boris.png" alt="openBF!" /></a>
+				<h1><strong>openBF</strong><br/>
+				<a href="#start">installation</a>,<br />
+				<a href="#tutorial">tutorial</a>,<br/>
+				and <a href="doc-files/openBF.html">docs</a></h1>
+			</header>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- One -->
+					<section id="one">
+						<header class="major">
+							<h2>openBF documentation</h2>
+						</header>
+						<ul>
+							<li><a href="#start">Installation</a></li>
+							<li><a href="#tutorial">Tutorial</a></li>
+							<li><a href="doc-files/openBF.html">Docs</a> - <a href="doc-index.html">API Index</a></li>
+						</ul>
+						<!-- <ul class="actions">
+							<li><a href="../index.html" class="button special icon fa-home">Home</a></li>
+							<li><a href="doc-files/index.html" class="button icon fa-book">Docs</a></li>
+						</ul> -->
+					</section>
+
+				<!-- Four -->
+
+<p><strong>openBF</strong> has been developed by A. Melis under the supervision of Dr. A. Marzo as part of the PhD project on cardiovascular modelling at Department of Mechanical Engineering of The University of Sheffield. 
+				
+					<section id="start">
+						<h2>Installation</h2>
+
+						<section>
+
+<p><strong>openBF</strong> has been developed and tested on <strong>Ubuntu 14.04</strong> and written with <strong>julia 0.3.2</strong>. To install <strong>julia</strong> please refer to its <a href="http://julialang.org/downloads/">official page</a>.
+</p>
+
+<p>Additional packages required by <strong>openBF</strong> are listed <a href="doc-files/openBF.html">here</a>. To install additional packages, start a julia interactive session by typing <code>julia</code> in a terminal window, and use the command <code>Pkg.add("package name")</code> to install. For further informations see <a href="http://julia.readthedocs.org/en/latest/manual/packages/">julia
+documentation</a>.
+</p>
+
+<p><strong>openBF</strong> uses signal processing functions from <code>scipy.signal</code> library. This library requires <strong>Python 2.7.3</strong>. To install <a href="https://www.python.org/">Python</a> and <a href="http://www.scipy.org/">SciPy</a> please refer to their linked websites.</p>
+
+<p>Next, download and unpack <strong>openBF</strong> folder. To create an alias for the <strong>main.jl</strong> file, start a terminal
+session and type <code>gedit .bashrc &</code>. Then, add the following line to end of the file
+<pre><code>alias openBF='cp path-to-openBF-folder. . -rf && julia main.jl $1'</code></pre>
+Save <code>.bashrc</code> and close the text editor. Execute <code>source ~/.bashrc</code> in the terminal. </br>Now a simulation is started simply by typing</p> <pre><code>openBF project_name</code></pre>
+
+<p>Otherwise, start an interactive julia session in openBF folder, and type <code>include("main.jl")</code> to run a simulation.</p>
+
+</section>
+
+<section id="tutorial">
+<h2>Tutorial</h2>
+
+<section>
+<p>
+	This tutorial goes through all the pre-processing, solution, and post-processing steps required by a <strong>openBF</strong> simulation. The case under study is that of a iliac bifurcation with a coupled peripheral vasculature model.
+</p>
+	<div style="text-align:center">
+		<img src="images/tutorial/bif.pdf.png" width="600">
+	</div>
+<p>
+	A parent vessel (red) connected to two daughter vessels (blue and green). A three element windkessel model is coupled to both outlets. The inlet boundary condition is provided as a flow waveform (Q<sub>in</sub>).
+</p>
+<h3>Pre-processing</h3>
+	A <strong>openBF</strong> project requires three files to be present in the working directory:
+	<ul>
+		<li><a href="#project">tutorial.csv</a></li>
+		<li><a href="#project_constants">tutorial_constants.jl</a></li>
+		<li><a href="#project_inlet">tutorial_inlet.dat</a></li>
+	</ul>
+
+<h4 id="project">tutorial.csv</h4>
+<p>
+	This file contains geometrical and material properties for each vessel. Columns should be organised as follows
+
+    <pre><code>
+name, sn, tn, L,      M,  R0,             h0,       E,      R,          C,
+P,    1,  2,  8.6e-2, 86, 0.758242250e-2, 1.032e-3, 500.e3, 0.,         0.,
+d1,   2,  3,  8.5e-2, 85, 0.549287167e-2, 0.720e-3, 700.e3, 3.169423e9, 3.6664e-10,
+d2,   2,  4,  8.5e-2, 85, 0.549287167e-2, 0.720e-3, 700.e3, 3.169423e9, 3.6664e-10,
+</code></pre>
+
+System topology is built by specifying <i>source</i> and <i>terminal</i> nodes of each segment (vessel). In this example, the parent vessel
+starts from node 1 and ends at node 2. Node 2 is the bifurcation nodes from which two daughter vessels start. The first daughter vessel ends at
+node 3 and the second daughter vessel ends at node 3.
+</p>
+
+<h4 id="project_constants">tutorial_constants.jl</h4>
+<p>
+This file contains all the constant parameters that can be fixed for the entire length of the simulation.
+</p>
+<pre>
+<code>
+#= inlet bc selector
+3: from data
+=#
+const inlet_BC_switch = 3
+
+# numerical domain
+const Ccfl   = 0.9         # Courant number
+const cycles = 10
+
+# blood properties
+const rho = 1060.    # density [kg/m3]
+const mu  = 4.e-3   # dynamic viscosity [Pa⋅s]
+
+# vessel properties
+const Pext = 0.			     # external pressure [Pa]
+const initial_pressure = 0.
+</code>
+</pre>
+
+<h4 id="project_inlet">tutorial_inlet.dat</h4>
+<p>This is a text file containing the inlet flow waveform to be used as boundary condition.
+The first column contains time steps and the second column contains the flow rate in cubic meters per second.</p>
+<pre>
+<code>
+0.000000000000000000e+00 -5.239489231023915536e-07
+1.111111111111111154e-02 -1.810043543947649782e-06
+2.222222222222222307e-02 -4.106752263203652509e-06
+	.							.
+	.							.
+1.100000000000000089e+00 -5.239489231024034121e-07
+</code>
+</pre>
+<div style="text-align:center">
+		<img src="images/tutorial/f_waveform.png" width="600">
+	</div>
+
+<h3>Simulation</h3>
+<p>Once all the files are in the working directory, a simulation is started by
+<pre><code>julia path-to-openBF-folder/main.jl tutorial</code></pre> command, where <code>tutorial</code> is the name of our project. If an alias was created (see <a href="#start">installation instructions</a>), the simulation is called simply by <pre><code>openBF tutorial</code></pre>. <strong>openBF</strong> will take care of everything. Results will be 
+saved in <code>tutorial_results</code> folder.</p>
+
+<h3>Post-processing</h3>
+<p><code>.out</code> files contained in results folder are readable text files which can be plotted by any plotting software. Here we show the results by using <a href="https://github.com/stevengj/PyPlot.jl">PyPlot</a> julia port.</p>
+
+<div style="text-align:center">
+<img src="images/tutorial/results.png" width="800">
+</div>
+
+						</section>
+
+						
+					</section>
+
+						<!-- <section>
+							<h4>Lists</h4>
+							<div class="row">
+								<div class="6u 12u$(xsmall)">
+									<h5>Unordered</h5>
+									<ul>
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Sagittis adipiscing lorem eleifend.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+									</ul>
+									<h5>Alternate</h5>
+									<ul class="alt">
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Sagittis adipiscing lorem eleifend.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+									</ul>
+								</div>
+								<div class="6u$ 12u$(xsmall)">
+									<h5>Ordered</h5>
+									<ol>
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Etiam vel felis at lorem sed viverra.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+										<li>Dolor pulvinar etiam magna etiam.</li>
+										<li>Etiam vel felis at lorem sed viverra.</li>
+										<li>Felis enim feugiat dolore viverra.</li>
+									</ol>
+									<h5>Icons</h5>
+									<ul class="icons">
+										<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+										<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+										<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+										<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+										<li><a href="#" class="icon fa-tumblr"><span class="label">Tumblr</span></a></li>
+									</ul>
+								</div>
+							</div>
+							<h5>Actions</h5>
+							<ul class="actions">
+								<li><a href="#" class="button special">Default</a></li>
+								<li><a href="#" class="button">Default</a></li>
+							</ul>
+							<ul class="actions small">
+								<li><a href="#" class="button special small">Small</a></li>
+								<li><a href="#" class="button small">Small</a></li>
+							</ul>
+							<div class="row">
+								<div class="6u 12u$(small)">
+									<ul class="actions vertical">
+										<li><a href="#" class="button special">Default</a></li>
+										<li><a href="#" class="button">Default</a></li>
+									</ul>
+								</div>
+								<div class="6u$ 12u$(small)">
+									<ul class="actions vertical small">
+										<li><a href="#" class="button special small">Small</a></li>
+										<li><a href="#" class="button small">Small</a></li>
+									</ul>
+								</div>
+								<div class="6u 12u$(small)">
+									<ul class="actions vertical">
+										<li><a href="#" class="button special fit">Default</a></li>
+										<li><a href="#" class="button fit">Default</a></li>
+									</ul>
+								</div>
+								<div class="6u$ 12u$(small)">
+									<ul class="actions vertical small">
+										<li><a href="#" class="button special small fit">Small</a></li>
+										<li><a href="#" class="button small fit">Small</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<h4>Table</h4>
+							<h5>Default</h5>
+							<div class="table-wrapper">
+								<table>
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Description</th>
+											<th>Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Item One</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Two</td>
+											<td>Vis ac commodo adipiscing arcu aliquet.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Three</td>
+											<td> Morbi faucibus arcu accumsan lorem.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Four</td>
+											<td>Vitae integer tempus condimentum.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Five</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="2"></td>
+											<td>100.00</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+
+							<h5>Alternate</h5>
+							<div class="table-wrapper">
+								<table class="alt">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Description</th>
+											<th>Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Item One</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Two</td>
+											<td>Vis ac commodo adipiscing arcu aliquet.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Three</td>
+											<td> Morbi faucibus arcu accumsan lorem.</td>
+											<td>29.99</td>
+										</tr>
+										<tr>
+											<td>Item Four</td>
+											<td>Vitae integer tempus condimentum.</td>
+											<td>19.99</td>
+										</tr>
+										<tr>
+											<td>Item Five</td>
+											<td>Ante turpis integer aliquet porttitor.</td>
+											<td>29.99</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="2"></td>
+											<td>100.00</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</section>
+
+						<section>
+							<h4>Buttons</h4>
+							<ul class="actions">
+								<li><a href="#" class="button special">Special</a></li>
+								<li><a href="#" class="button">Default</a></li>
+							</ul>
+							<ul class="actions">
+								<li><a href="#" class="button big">Big</a></li>
+								<li><a href="#" class="button">Default</a></li>
+								<li><a href="#" class="button small">Small</a></li>
+							</ul>
+							<ul class="actions fit">
+								<li><a href="#" class="button special fit">Fit</a></li>
+								<li><a href="#" class="button fit">Fit</a></li>
+							</ul>
+							<ul class="actions fit small">
+								<li><a href="#" class="button special fit small">Fit + Small</a></li>
+								<li><a href="#" class="button fit small">Fit + Small</a></li>
+							</ul>
+							<ul class="actions">
+								<li><a href="#" class="button special icon fa-download">Icon</a></li>
+								<li><a href="#" class="button icon fa-download">Icon</a></li>
+							</ul>
+							<ul class="actions">
+								<li><span class="button special disabled">Special</span></li>
+								<li><span class="button disabled">Default</span></li>
+							</ul>
+						</section>
+
+						<section>
+							<h4>Form</h4>
+							<form method="post" action="#">
+								<div class="row uniform 50%">
+									<div class="6u 12u$(xsmall)">
+										<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
+									</div>
+									<div class="6u$ 12u$(xsmall)">
+										<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
+									</div>
+									<div class="12u$">
+										<div class="select-wrapper">
+											<select name="demo-category" id="demo-category">
+												<option value="">- Category -</option>
+												<option value="1">Manufacturing</option>
+												<option value="1">Shipping</option>
+												<option value="1">Administration</option>
+												<option value="1">Human Resources</option>
+											</select>
+										</div>
+									</div>
+									<div class="4u 12u$(small)">
+										<input type="radio" id="demo-priority-low" name="demo-priority" checked>
+										<label for="demo-priority-low">Low Priority</label>
+									</div>
+									<div class="4u 12u$(small)">
+										<input type="radio" id="demo-priority-normal" name="demo-priority">
+										<label for="demo-priority-normal">Normal Priority</label>
+									</div>
+									<div class="4u$ 12u(small)">
+										<input type="radio" id="demo-priority-high" name="demo-priority">
+										<label for="demo-priority-high">High Priority</label>
+									</div>
+									<div class="6u 12u$(small)">
+										<input type="checkbox" id="demo-copy" name="demo-copy">
+										<label for="demo-copy">Email me a copy of this message</label>
+									</div>
+									<div class="6u$ 12u$(small)">
+										<input type="checkbox" id="demo-human" name="demo-human" checked>
+										<label for="demo-human">I am a human and not a robot</label>
+									</div>
+									<div class="12u$">
+										<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+									</div>
+									<div class="12u$">
+										<ul class="actions">
+											<li><input type="submit" value="Send Message" class="special" /></li>
+											<li><input type="reset" value="Reset" /></li>
+										</ul>
+									</div>
+								</div>
+							</form>
+						</section>
+
+						<section>
+							<h4>Image</h4>
+							<h5>Fit</h5>
+							<div class="box alt">
+								<div class="row 50% uniform">
+									<div class="12u$"><span class="image fit"><img src="images/fulls/05.jpg" alt="" /></span></div>
+									<div class="4u"><span class="image fit"><img src="images/thumbs/01.jpg" alt="" /></span></div>
+									<div class="4u"><span class="image fit"><img src="images/thumbs/02.jpg" alt="" /></span></div>
+									<div class="4u$"><span class="image fit"><img src="images/thumbs/03.jpg" alt="" /></span></div>
+									<div class="4u"><span class="image fit"><img src="images/thumbs/04.jpg" alt="" /></span></div>
+									<div class="4u"><span class="image fit"><img src="images/thumbs/05.jpg" alt="" /></span></div>
+									<div class="4u$"><span class="image fit"><img src="images/thumbs/06.jpg" alt="" /></span></div>
+									<div class="4u"><span class="image fit"><img src="images/thumbs/03.jpg" alt="" /></span></div>
+									<div class="4u"><span class="image fit"><img src="images/thumbs/02.jpg" alt="" /></span></div>
+									<div class="4u$"><span class="image fit"><img src="images/thumbs/01.jpg" alt="" /></span></div>
+								</div>
+							</div>
+							<h5>Left &amp; Right</h5>
+							<p><span class="image left"><img src="images/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
+							<p><span class="image right"><img src="images/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
+						</section> -->
+
+					</section>
+				
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+<!-- 				<ul class="icons">
+					<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+					<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+					<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+					<li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+				</ul>
+				<ul class="copyright">
+					<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+				</ul> -->
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
