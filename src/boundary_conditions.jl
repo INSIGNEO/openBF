@@ -1,3 +1,21 @@
+#= Copyright (C) 2017 Alessandro Melis.
+
+  This file is part of openBF.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Bash.  If not, see <http://www.gnu.org/licenses/>.
+=#
+
 # Inlet and outlet boundary conditions are applied at the beginning and at the
 # ending of each time step respectively
 # (see [`solveModel`](godunov.html#solveModel)). Inlet (outlet) condition is
@@ -525,7 +543,7 @@ function wk3(dt :: Float64, v :: Vessel)
 	sgamma =  2*sqrt(6*v.gamma[end])
 	sA0 = sqrt(v.A0[end])
 	bA0 = v.beta[end]/sA0
-	
+
 	fun(As) = As*v.R1*(ul + sgamma * (ssAl - sqrt(sqrt(As)))) -
 		(v.Pext + bA0*(sqrt(As) - sA0)) + v.Pc
 
