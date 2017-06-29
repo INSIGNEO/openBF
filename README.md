@@ -2,13 +2,16 @@
 
 [![License: LGPL v2.1](https://camo.githubusercontent.com/1ea289570b11d27cbe3dfb3c9fdde5eeabac9751/687474703a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4c47504c76322e312d627269676874677265656e2e737667)](http://www.gnu.org/licenses/lgpl-2.1)
 
-**openBF** stable version runs on [Julia v0.3](http://julialang.org/downloads/oldreleases.html) (look also [here](https://caretdashcaret.com/2015/10/13/rolling-back-to-julia-v0-3-11/)) and it requires the following additional packages
+**openBF** stable version runs on [Julia v0.3](http://julialang.org/downloads/oldreleases.html) (installation instructions [here](https://caretdashcaret.com/2015/10/13/rolling-back-to-julia-v0-3-11/)) and it requires the following additional packages
 
 - [Graphs.jl](https://github.com/JuliaLang/Graphs.jl)
 - [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl)
 
-
 To install additional packages, start a Julia interactive session and enter `Pkg.add("package_name")`. For further informations refer to [Julia docs](http://docs.julialang.org/en/release-0.4/manual/packages/).
+
+### Docs
+
+Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorial.
 
 ### Linux installation
 
@@ -81,7 +84,3 @@ This requires the following files to be in the same directory of `main.jl`:
 The file `test/plot.py` is a simple Matplotlib script to print the results.
 
 The `main.jl` file can be copied and used as it is for different simulations. The variables `project_name` must be changed accordingly to the `.csv` files name.
-
-### Docs
-
-For the library documentation check the [Docs](https://INSIGNEO.github.io/openBF/Docs/index.html).
