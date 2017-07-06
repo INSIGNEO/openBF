@@ -1,6 +1,6 @@
 ![openBF](https://alemelis.github.io/openbf.jl/images/openBF.svg)
 
-[![License: LGPL v2.1](https://camo.githubusercontent.com/1ea289570b11d27cbe3dfb3c9fdde5eeabac9751/687474703a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4c47504c76322e312d627269676874677265656e2e737667)](http://www.gnu.org/licenses/lgpl-2.1)
+[![License: LGPL v2.1](https://img.shields.io/badge/license-LGPL%202.1-green.svg)](http://www.gnu.org/licenses/lgpl-2.1)
 
 **openBF** stable version runs on [Julia v0.3](http://julialang.org/downloads/oldreleases.html) (installation instructions [here](https://caretdashcaret.com/2015/10/13/rolling-back-to-julia-v0-3-11/)) and it requires the following additional packages
 
