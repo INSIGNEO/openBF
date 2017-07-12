@@ -1,0 +1,17 @@
+language: julia
+os:
+  - linux
+  - osx
+julia:
+  - 0.3.11
+  - release
+notifications:
+  email: false
+script:
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia -e 'Pkg.clone(pwd())'
+  - cd test/
+  - julia runtests.jl
+after_success:
+  - julia -e 'cd(Pkg.dir("PkgName")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  # - bash <(curl -s https://codecov.io/bash) -t e6644b12-b397-49be-8f79-16c59a3a9S
