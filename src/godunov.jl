@@ -517,7 +517,8 @@ end
 #
 # ----------------------------------------------------------------------------
 # <a name="solveModel"></a>
-function solveModel(grafo :: GenericGraph, edgess, vessels, heart :: Heart,
+function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
+                    vessels, heart :: Heart,
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
   for i in 1:length(edgess)
@@ -563,9 +564,10 @@ function solveModel(grafo :: GenericGraph, edgess, vessels, heart :: Heart,
   end
 end
 
-function solveModel(grafo :: GenericGraph, edgess, vessels,
-                    grafo_a :: GenericGraph, edgess_a, vessels_a,
-                    blood :: Blood, dt :: Float64, current_time :: Float64)
+function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
+                    vessels, grafo_a :: LightGraphs.SimpleGraphs.SimpleGraph,
+                    edgess_a, vessels_a, blood :: Blood, dt :: Float64,
+                    current_time :: Float64)
 
   for i in 1:length(edgess)
     s = Graphs.source(edgess[i])
@@ -614,8 +616,9 @@ function solveModel(grafo :: GenericGraph, edgess, vessels,
   end
 end
 
-function pSolveModel(grafo :: GenericGraph, edgess, vessels, heart :: Heart,
-                    blood :: Blood, dt :: Float64, current_time :: Float64)
+function pSolveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
+                    vessels, heart :: Heart, blood :: Blood, dt :: Float64,
+                    current_time :: Float64)
 
   @parallel for i in 1:length(edgess)
     s = Graphs.source(edgess[i])
