@@ -471,7 +471,7 @@ function calculateDeltaT(vessels, dt :: Array{Float64, 1})
       lambdap[j] = v.u[j] + v.c[j]
     end
 
-    Smax = maximum(abs(lambdap))
+    Smax = maximum(abs.(lambdap))
 
     dt[i] = v.dx*v.Ccfl/Smax
 
@@ -522,10 +522,10 @@ function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
   for i in 1:length(edgess)
-    s = Graphs.source(edgess[i])
-    t = Graphs.target(edgess[i])
+    s = LightGraphs.src(edgess[i])
+    t = LightGraphs.dst(edgess[i])
 
-    if Graphs.in_degree(s, grafo) == 0
+    if LightGraphs.indegree(grafo, s) == 0
       openBF.setInletBC(current_time, dt, vessels[i], heart)
     end
 
@@ -539,25 +539,25 @@ function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
     #   end
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     openBF.MUSCL(vessels[i], dt, blood)
-    if Graphs.out_degree(t, grafo) == 0
+    if LightGraphs.outdegree(grafo, t) == 0
       openBF.setOutletBC(dt, vessels[i])
 
-    elseif Graphs.out_degree(t, grafo) == 1
-      if length(in_edges(t, grafo)) == 1
-        o = Graphs.out_edges(t, grafo)
-        openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(o[1], grafo)])
+    elseif LightGraphs.outdegree(grafo, t) == 1
+      if length(LightGraphs.in_neighbors(grafo, t)) == 1
+        o = LightGraphs.out_neighbors(grafo, t)
+        openBF.joinVessels(blood, vessels[i], vessels[LightGraphs.edge_index(o[1], grafo)])
 
       else
-        es = Graphs.in_edges(t, grafo)
+        es = LightGraphs.in_neighbors(grafo, t)
         if i == max(Graphs.edge_index(es[1], grafo), Graphs.edge_index(es[2], grafo))
           a = Graphs.edge_index(es[1], grafo)
           b = Graphs.edge_index(es[2], grafo)
-          c = Graphs.edge_index(Graphs.out_edges(t, grafo)[1])
+          c = Graphs.edge_index(LightGraphs.out_neighbors(grafo, t)[1])
           openBF.solveAnastomosis(vessels[a], vessels[b], vessels[c])
         end
       end
 
-    elseif Graphs.out_degree(t, grafo) == 2
+    elseif LightGraphs.outdegree(grafo, t) == 2
       openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[1])],
                         vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
     end

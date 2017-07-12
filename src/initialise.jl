@@ -214,7 +214,7 @@ end
 #                     local $\Delta t$](godunov.html#calculateDeltaT).
 # ----------------------------------------------------------------------------
 # <a name="initialiseVessel"></a>
-function initialiseVessel(m :: Array{Any, 2}, ID :: Int64, h :: Heart,
+function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
                               b :: Blood,
                               initial_pressure :: Float64,
                               Ccfl :: Float64)
@@ -227,11 +227,11 @@ function initialiseVessel(m :: Array{Any, 2}, ID :: Int64, h :: Heart,
   # needed.
   # --------------------------------------------------------------------------
   vessel_name =     m[1]
-  sn          = int(m[2])
-  tn          = int(m[3])
-  rn         = int(m[4])
+  sn          = convert(Int, m[2])
+  tn          = convert(Int, m[3])
+  rn          = convert(Int, m[4])
   L           =     m[5]
-  M           = int(m[6])
+  M           = convert(Int, m[6])
   Rp          =     m[7]
   Rd = m[8]
 #   h0          =     m[7]
@@ -283,7 +283,7 @@ function initialiseVessel(m :: Array{Any, 2}, ID :: Int64, h :: Heart,
   #   \beta = \sqrt{\frac{\pi}{A_0}} \frac{h_0 E}{1 - \sigma^2}, \quad
   #   \gamma = \frac{\beta}{3 \rho R_0 \sqrt{\pi}} .
   # $$
-  beta  = sqrt(pi./A0) .* h0*E / (1 - sigma*sigma)
+  beta  = sqrt.(pi./A0) .* h0*E / (1 - sigma*sigma)
   gamma = beta ./ (3*b.rho*R0*sqrt(pi))
 
   gamma_ghost = zeros(Float64, M+2)
@@ -370,9 +370,9 @@ function initialiseVessel(m :: Array{Any, 2}, ID :: Int64, h :: Heart,
   out_c = open(out_c_name, "w")
   out_P = open(out_P_name, "w")
 
-  node2 = int(M*0.25)
-  node3 = int(M*0.5)
-  node4 = int(M*0.75)
+  node2 = convert(Int, floor(M*0.25))
+  node3 = convert(Int, floor(M*0.5))
+  node4 = convert(Int, floor(M*0.75))
 
   close(last_A)
   close(last_Q)
