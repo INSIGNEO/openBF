@@ -135,7 +135,7 @@ end
 # `cycles`      `::Int` $\Delta t$, current time step.
 # ----------------------------------------------------------------------------
 # <a name="extractWaveform"></a>
-function extractWaveform(filename :: ASCIIString, cycles :: Int64)
+function extractWaveform(filename :: String, cycles :: Int64)
   # --------------------------------------------------------------------------
   # Functioning
   # --------------------------------------------------------------------------
