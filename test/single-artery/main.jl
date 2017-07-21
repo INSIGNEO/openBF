@@ -82,7 +82,7 @@ heart, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
 # ----------------------------------------------------------------------------
 #
 # <a name="grafo"></a>
-grafo = Graphs.simple_graph(length(model[:,1])+1)
+grafo = LightGraphs.Graph(length(model[:,1])+1)
 
 # Two data structures are used to describe the arterial system. One is a
 # collection of [`BTypes`](BTypes.html)`.Vessel` instances, and the second
@@ -103,7 +103,7 @@ vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
 #
 # `tn`        `::Int64` edge terminal node.
 # ----------------------------------------------------------------------------
-Graphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
+LightGraphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
 
 # The model matrix is read iteratively starting from the second row, the first
 # row contains column headers.
@@ -114,11 +114,11 @@ for i in 2:length(model[:,1])
   push!(vessels, openBF.initialiseVessel(model[i,:], i, heart, blood_prop,
     initial_pressure, Ccfl))
 
-  Graphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
+  LightGraphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
 end
 
 # `edgess` is a list of all the edges in `grafo`
-edgess = Graphs.edges(grafo)
+edgess = LightGraphs.edges(grafo)
 
 # Before starting the main loop the counter`current_time` is set to zero. It
 # will be updated to keep track of time within the simulation.
@@ -167,7 +167,7 @@ else
   venous_model = false
 end
 
-prog = ProgressMeter.Progress(int(total_time/dt), 1, "Running ", 50)
+prog = ProgressMeter.Progress(Int(ceil(total_time/dt)), 1, "Running ", 50)
 
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.

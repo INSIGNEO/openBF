@@ -517,13 +517,17 @@ end
 #
 # ----------------------------------------------------------------------------
 # <a name="solveModel"></a>
-function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
+function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph,
+                    edgess :: LightGraphs.SimpleGraphs.SimpleEdgeIter,
                     vessels, heart :: Heart,
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
-  for i in 1:length(edgess)
-    s = LightGraphs.src(edgess[i])
-    t = LightGraphs.dst(edgess[i])
+  # for i in 1:length(edgess)
+    # edge = edgess[i]
+  i = 1
+  for e in edgess
+    s = LightGraphs.src(e)
+    t = LightGraphs.dst(e)
 
     if LightGraphs.indegree(grafo, s) == 0
       openBF.setInletBC(current_time, dt, vessels[i], heart)
@@ -562,6 +566,7 @@ function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
                         vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
     end
   end
+  i += 1
 end
 
 function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
