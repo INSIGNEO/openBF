@@ -4,7 +4,7 @@ function runTest(test_folder)
 
   cd(test_folder)
   try
-    run(`julia main.jl`)
+    run(`julia6 main.jl`)
     cd("..")
     return true
 
@@ -21,8 +21,8 @@ println("\nTest 1")
 @time @test runTest("single-artery")
 
 println("\nTest 2")
-@time @test runTest("artery-vein")
+@time @test runTest("bifurcation")
 
 println("\nTest 3")
-@time @test runTest("bifurcation")
+@time @test runTest("external-pressure")
 toc()
