@@ -270,7 +270,7 @@ end
 # <a name="Heart"></a>
 type Heart
   BC_switch  :: Int64
-  inlet_type :: ASCIIString
+  inlet_type :: String
 
   cardiac_T :: Float64
   sys_T     :: Float64

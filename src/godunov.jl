@@ -471,7 +471,7 @@ function calculateDeltaT(vessels, dt :: Array{Float64, 1})
       lambdap[j] = v.u[j] + v.c[j]
     end
 
-    Smax = maximum(abs(lambdap))
+    Smax = maximum(abs.(lambdap))
 
     dt[i] = v.dx*v.Ccfl/Smax
 
@@ -517,55 +517,127 @@ end
 #
 # ----------------------------------------------------------------------------
 # <a name="solveModel"></a>
-function solveModel(grafo :: GenericGraph, edgess, vessels, heart :: Heart,
+function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleDiGraph,
+                    vessels, heart :: Heart,
+                    edge_list, edge_map, node_map,
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
-  for i in 1:length(edgess)
-    s = Graphs.source(edgess[i])
-    t = Graphs.target(edgess[i])
+  # for i in 1:length(edgess)
+    # edge = edgess[i]
 
-    if Graphs.in_degree(s, grafo) == 0
+
+  # edge_index(e::Edge) = edgemap[e]
+  # i = 1
+  # for e in LightGraphs.edges(grafo)
+  #   s = LightGraphs.src(e)
+  #   t = LightGraphs.dst(e)
+  #
+  #   if LightGraphs.indegree(grafo, s) == 0
+  #     openBF.setInletBC(current_time, dt, vessels[i], heart)
+  #   end
+  #
+  #   # *Note*: [MUSCL](MUSCL.html#MUSCL) solver is herein used. To use the first-order
+  #   # [Godunov](godunov.html#Godunov) method,
+  #   # replace `openBF.MUSCL(vessels[i], dt, blood)` with
+  #   #
+  #   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.julia}
+  #   #   for j in 1:vessels[i].M
+  #   #     openBF.Godunov(j, vessels[i], dt, blood)
+  #   #   end
+  #   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #   openBF.MUSCL(vessels[i], dt, blood)
+  #   if LightGraphs.outdegree(grafo, t) == 0
+  #     openBF.setOutletBC(dt, vessels[i])
+  #
+  #   elseif LightGraphs.outdegree(grafo, t) == 1
+  #     if length(LightGraphs.in_neighbors(grafo, t)) == 1
+  #       o = LightGraphs.out_neighbors(grafo, t)
+  #       openBF.joinVessels(blood, vessels[i], vessels[edgemap[o]])
+  #
+  #     else
+  #       es = LightGraphs.in_neighbors(grafo, t)
+  #       if i == max(Graphs.edge_index(es[1], grafo), Graphs.edge_index(es[2], grafo))
+  #         a = Graphs.edge_index(es[1], grafo)
+  #         b = Graphs.edge_index(es[2], grafo)
+  #         c = Graphs.edge_index(LightGraphs.out_neighbors(grafo, t)[1])
+  #         openBF.solveAnastomosis(vessels[a], vessels[b], vessels[c])
+  #       end
+  #     end
+  #
+  #   elseif LightGraphs.outdegree(grafo, t) == 2
+  #     openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[1])],
+  #                       vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
+  #   end
+  # end
+  # i += 1
+  for e in edge_list
+    i = edge_map[e]
+    s = LightGraphs.src(e)
+    t = LightGraphs.dst(e)
+
+    in_degree = LightGraphs.indegree(grafo, s)
+    out_degree = LightGraphs.outdegree(grafo, t)
+
+    dst_out_neighbors = LightGraphs.out_neighbors(grafo, t)
+    dst_in_neighbors = LightGraphs.in_neighbors(grafo, t)
+
+    # println("Edge $i: $s - $t; in_degree = $in_degree; out_degree = $out_degree;")
+
+    if in_degree == 0
       openBF.setInletBC(current_time, dt, vessels[i], heart)
+      # println("\t Inlet vessel - Compute inlet BC")
     end
 
-    # *Note*: [MUSCL](MUSCL.html#MUSCL) solver is herein used. To use the first-order
-    # [Godunov](godunov.html#Godunov) method,
-    # replace `openBF.MUSCL(vessels[i], dt, blood)` with
-    #
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.julia}
-    #   for j in 1:vessels[i].M
-    #     openBF.Godunov(j, vessels[i], dt, blood)
-    #   end
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     openBF.MUSCL(vessels[i], dt, blood)
-    if Graphs.out_degree(t, grafo) == 0
+    # println("\t Solve vessel")
+
+    if out_degree == 0
       openBF.setOutletBC(dt, vessels[i])
+      # println("\t Outlet vessel - Compute outlet BC")
+    end
 
-    elseif Graphs.out_degree(t, grafo) == 1
-      if length(in_edges(t, grafo)) == 1
-        o = Graphs.out_edges(t, grafo)
-        openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(o[1], grafo)])
-
-      else
-        es = Graphs.in_edges(t, grafo)
-        if i == max(Graphs.edge_index(es[1], grafo), Graphs.edge_index(es[2], grafo))
-          a = Graphs.edge_index(es[1], grafo)
-          b = Graphs.edge_index(es[2], grafo)
-          c = Graphs.edge_index(Graphs.out_edges(t, grafo)[1])
-          openBF.solveAnastomosis(vessels[a], vessels[b], vessels[c])
+    if length(vessels) > 1
+      if out_degree == 1
+        if length(dst_out_neighbors) == 1 # one edge out of target node
+          if length(dst_in_neighbors) == 1 # one edge into the target node: junction
+            n = dst_out_neighbors[1]
+            j = node_map[(t, n)]
+            openBF.joinVessels(blood, vessels[i], vessels[j])
+            # println("\t\t Junction at node $t between vessels $i and $j")
+          end
         end
-      end
 
-    elseif Graphs.out_degree(t, grafo) == 2
-      openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[1])],
-                        vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
+      elseif out_degree == 2 # two edges out of the targe node: bifurcation
+        n1 = dst_out_neighbors[1]
+        d1 = node_map[(t, n1)]
+
+        n2 = dst_out_neighbors[2]
+        d2 = node_map[(t, n2)]
+
+        openBF.joinVessels(blood, vessels[i], vessels[d1], vessels[d2])
+        # println("\t\t Bifurcation at node $t between vessels $i, $d1, and $d2")
+
+      elseif in_degree == 2 # two edges into the source node: anastomosis
+        src_in_neighbors = LightGraphs.in_neighbors(grafo, s)
+
+        n1 = src_in_neighbors[1]
+        p1 = node_map[(n1, s)]
+
+        n2 = src_in_neighbors[2]
+        p2 = node_map[(n2, s)]
+        openBF.solveAnastomosis(vessels[p1], vessels[p2], vessels[i])
+        # println("\t\t Anastomosis at node $s between vessels $p1, $p2, and $i")
+      end
     end
   end
 end
 
-function solveModel(grafo :: GenericGraph, edgess, vessels,
-                    grafo_a :: GenericGraph, edgess_a, vessels_a,
-                    blood :: Blood, dt :: Float64, current_time :: Float64)
+# !
+function solveModel(grafo :: LightGraphs.SimpleGraphs.SimpleGraph, edgess,
+                    vessels, grafo_a :: LightGraphs.SimpleGraphs.SimpleGraph,
+                    edgess_a, vessels_a, blood :: Blood, dt :: Float64,
+                    current_time :: Float64,
+                    edge_map, node_map, edge_map_v, node_map_v)
 
   for i in 1:length(edgess)
     s = Graphs.source(edgess[i])
@@ -612,47 +684,6 @@ function solveModel(grafo :: GenericGraph, edgess, vessels,
                         vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
     end
   end
-end
-
-function pSolveModel(grafo :: GenericGraph, edgess, vessels, heart :: Heart,
-                    blood :: Blood, dt :: Float64, current_time :: Float64)
-
-  @parallel for i in 1:length(edgess)
-    s = Graphs.source(edgess[i])
-    t = Graphs.target(edgess[i])
-
-    if s == 1
-      openBF.setInletBC(current_time, dt, vessels[i], heart)
-    end
-
-    if Graphs.out_degree(t, grafo) == 0
-      openBF.setOutletBC(dt, vessels[i])
-
-    elseif Graphs.out_degree(t, grafo) == 1
-      if length(in_edges(t, grafo)) == 1
-        o = Graphs.out_edges(t, grafo)
-        openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(o[1], grafo)])
-
-      else
-        es = Graphs.in_edges(t, grafo)
-        if i == max(Graphs.edge_index(es[1], grafo), Graphs.edge_index(es[2], grafo))
-          a = Graphs.edge_index(es[1], grafo)
-          b = Graphs.edge_index(es[2], grafo)
-          c = Graphs.edge_index(Graphs.out_edges(t, grafo)[1])
-          openBF.solveAnastomosis(vessels[a], vessels[b], vessels[c])
-        end
-      end
-
-    elseif Graphs.out_degree(t, grafo) == 2
-      openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[1])],
-                        vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
-    end
-  end
-
-  for i in 1:length(edgess)
-    openBF.MUSCL(vessels[i], dt, blood)
-  end
-
 end
 
 # ### References

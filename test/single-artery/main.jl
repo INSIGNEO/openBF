@@ -82,7 +82,7 @@ heart, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
 # ----------------------------------------------------------------------------
 #
 # <a name="grafo"></a>
-grafo = Graphs.simple_graph(length(model[:,1])+1)
+grafo = LightGraphs.DiGraph(length(model[:,1])+1)
 
 # Two data structures are used to describe the arterial system. One is a
 # collection of [`BTypes`](BTypes.html)`.Vessel` instances, and the second
@@ -103,7 +103,7 @@ vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
 #
 # `tn`        `::Int64` edge terminal node.
 # ----------------------------------------------------------------------------
-Graphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
+LightGraphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
 
 # The model matrix is read iteratively starting from the second row, the first
 # row contains column headers.
@@ -114,11 +114,21 @@ for i in 2:length(model[:,1])
   push!(vessels, openBF.initialiseVessel(model[i,:], i, heart, blood_prop,
     initial_pressure, Ccfl))
 
-  Graphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
+  LightGraphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
 end
 
-# `edgess` is a list of all the edges in `grafo`
-edgess = Graphs.edges(grafo)
+# # `edge_list` is a list of all the edges in `grafo`
+edge_list = collect(LightGraphs.edges(grafo))
+edge_map = Dict{LightGraphs.SimpleGraphs.SimpleEdge, Int}(e=>i
+  for (i, e) in enumerate(edge_list))
+node_map = Dict{Tuple{Int, Int}, Int}()
+n_i = 1
+for e in edge_list
+  s = LightGraphs.src(e)
+  t = LightGraphs.dst(e)
+  node_map[(s,t)] = n_i
+  n_i += 1
+end
 
 # Before starting the main loop the counter`current_time` is set to zero. It
 # will be updated to keep track of time within the simulation.
@@ -131,7 +141,7 @@ current_time = 0
 # and used to compute the number or total iterations before the end of the
 # simulation. See [ProgressMeter](https://github.com/timholy/ProgressMeter.jl)
 # documentation for `Progress` options.
-dts  = zeros(Float64, length(edgess))
+dts  = zeros(Float64, length(edge_list))
 dt = openBF.calculateDeltaT(vessels, dts)
 
 # ### Venous system
@@ -155,9 +165,9 @@ if (isfile(v_model)) == true
     Graphs.add_edge!(grafo_v, vessels_v[end].sn, vessels_v[end].tn)
   end
 
-  edgess_v = Graphs.edges(grafo_v)
+  edge_list_v = Graphs.edges(grafo_v)
 
-  dts_v  = zeros(Float64, length(edgess_v))
+  dts_v  = zeros(Float64, length(edge_list_v))
   dt_v = openBF.calculateDeltaT(vessels_v, dts_v)
 
   dt = minimum([dt, dt_v])
@@ -167,7 +177,7 @@ else
   venous_model = false
 end
 
-prog = ProgressMeter.Progress(int(total_time/dt), 1, "Running ", 50)
+prog = ProgressMeter.Progress(Int(ceil(total_time/dt)), 1, "Running ", 50)
 
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.
@@ -195,7 +205,8 @@ while true
   # and runs the solver for each part of it. This function can distinguish
   # between inlet, bifurcation, conjunction, anastomosis, and outlet.
   #Solve arteries
-  openBF.solveModel(grafo, edgess, vessels, heart,
+  openBF.solveModel(grafo, vessels, heart,
+                    edge_list, edge_map, node_map,
                     blood_prop, dt, current_time)
 
   # [`updateGhostCells`](boundary_conditions.html#updateGhostCells)
@@ -214,8 +225,8 @@ while true
 
   #Solve veins
   if venous_model
-    openBF.solveModel(grafo_v, edgess_v, vessels_v,
-                      grafo, edgess, vessels,
+    openBF.solveModel(grafo_v, edge_list_v, vessels_v,
+                      grafo, edge_list, vessels,
                       blood_prop, dt, current_time)
     openBF.updateGhostCells(vessels_v)
 
