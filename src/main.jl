@@ -33,7 +33,7 @@ reload("openBF")
 #     julia main.jl project_name
 #
 # `project_name` is a string used to initialise all the output files.
-project_name = "modelathon"
+project_name = ARGS[1]
 
 # In `main.jl` all functions from `openBF` library are called using the dot
 # notation: `library.function(parameters)`. Function
@@ -150,32 +150,22 @@ v_model = join([project_name, "_veins.csv"])
 if (isfile(v_model)) == true
   model_v = openBF.readModelData(join([project_name, "_veins.csv"]))
 
-  grafo_v = LightGraphs.DiGraph(length(model_v[:,1])+1)
+  grafo_v = Graphs.simple_graph(length(model_v[:,1])+1)
 
   vessels_v = [openBF.initialiseVessel(model_v[1,:], 1, heart, blood_prop,
     initial_pressure, Ccfl)]
 
-  LightGraphs.add_edge!(grafo_v, vessels_v[1].sn, vessels_v[1].tn)
+  Graphs.add_edge!(grafo_v, vessels_v[1].sn, vessels_v[1].tn)
 
   for i in 2:length(model_v[:,1])
 
     push!(vessels_v, openBF.initialiseVessel(model_v[i,:], i, heart, blood_prop,
       initial_pressure, Ccfl))
 
-    LightGraphs.add_edge!(grafo_v, vessels_v[end].sn, vessels_v[end].tn)
+    Graphs.add_edge!(grafo_v, vessels_v[end].sn, vessels_v[end].tn)
   end
 
-  edge_list_v = collect(LightGraphs.edges(grafo))
-  edge_map_v = Dict{LightGraphs.SimpleGraphs.SimpleEdge, Int}(e=>i
-    for (i, e) in enumerate(edge_list_v))
-  node_map_v = Dict{Tuple{Int, Int}, Int}()
-  n_i = 1
-  for e in edge_list_v
-    s = LightGraphs.src(e)
-    t = LightGraphs.dst(e)
-    node_map_v[(s,t)] = n_i
-    n_i += 1
-  end
+  edge_list_v = Graphs.edges(grafo_v)
 
   dts_v  = zeros(Float64, length(edge_list_v))
   dt_v = openBF.calculateDeltaT(vessels_v, dts_v)
@@ -237,8 +227,7 @@ while true
   if venous_model
     openBF.solveModel(grafo_v, edge_list_v, vessels_v,
                       grafo, edge_list, vessels,
-                      blood_prop, dt, current_time,
-                      edge_map, node_map, edge_map_v, node_map_v)
+                      blood_prop, dt, current_time)
     openBF.updateGhostCells(vessels_v)
 
     if counter_v == 100
