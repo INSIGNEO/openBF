@@ -20,7 +20,7 @@
 # [`openBF`](openBF.html) library is needed to be imported.
 # Until the official `openBF` Julia `Pkg` is created, the
 # library is loaded locally.
-push!(LOAD_PATH, "../../src/")
+push!(LOAD_PATH, "src/")
 using openBF
 reload("openBF")
 
