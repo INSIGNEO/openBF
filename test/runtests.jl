@@ -4,7 +4,7 @@ function runTest(test_folder)
 
   cd(test_folder)
   try
-    run(`julia6 main.jl`)
+    run(`julia main.jl`)
     cd("..")
     return true
 
