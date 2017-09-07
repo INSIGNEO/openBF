@@ -520,54 +520,6 @@ end
 function solveModel(vessels, heart :: Heart, edge_list,
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
-  # for i in 1:length(edgess)
-    # edge = edgess[i]
-
-
-  # edge_index(e::Edge) = edgemap[e]
-  # i = 1
-  # for e in LightGraphs.edges(grafo)
-  #   s = LightGraphs.src(e)
-  #   t = LightGraphs.dst(e)
-  #
-  #   if LightGraphs.indegree(grafo, s) == 0
-  #     openBF.setInletBC(current_time, dt, vessels[i], heart)
-  #   end
-  #
-  #   # *Note*: [MUSCL](MUSCL.html#MUSCL) solver is herein used. To use the first-order
-  #   # [Godunov](godunov.html#Godunov) method,
-  #   # replace `openBF.MUSCL(vessels[i], dt, blood)` with
-  #   #
-  #   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.julia}
-  #   #   for j in 1:vessels[i].M
-  #   #     openBF.Godunov(j, vessels[i], dt, blood)
-  #   #   end
-  #   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   openBF.MUSCL(vessels[i], dt, blood)
-  #   if LightGraphs.outdegree(grafo, t) == 0
-  #     openBF.setOutletBC(dt, vessels[i])
-  #
-  #   elseif LightGraphs.outdegree(grafo, t) == 1
-  #     if length(LightGraphs.in_neighbors(grafo, t)) == 1
-  #       o = LightGraphs.out_neighbors(grafo, t)
-  #       openBF.joinVessels(blood, vessels[i], vessels[edgemap[o]])
-  #
-  #     else
-  #       es = LightGraphs.in_neighbors(grafo, t)
-  #       if i == max(Graphs.edge_index(es[1], grafo), Graphs.edge_index(es[2], grafo))
-  #         a = Graphs.edge_index(es[1], grafo)
-  #         b = Graphs.edge_index(es[2], grafo)
-  #         c = Graphs.edge_index(LightGraphs.out_neighbors(grafo, t)[1])
-  #         openBF.solveAnastomosis(vessels[a], vessels[b], vessels[c])
-  #       end
-  #     end
-  #
-  #   elseif LightGraphs.outdegree(grafo, t) == 2
-  #     openBF.joinVessels(blood, vessels[i], vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[1])],
-  #                       vessels[Graphs.edge_index(Graphs.out_edges(t,grafo)[2])])
-  #   end
-  # end
-  # i += 1
   for j in 1:size(edge_list)[1]
     i = edge_list[j,1]
     s = edge_list[j,2]
@@ -604,7 +556,7 @@ function solveModel(vessels, heart :: Heart, edge_list,
       if maximum([p1_i, p2_i]) == i
         p2_i = minimum([p1_i, p2_i])
         d = find(edge_list[:,2] .== t)[1]
-        openBF.joinVessels(blood, v, vessels[p2_i], vessels[d])
+        openBF.solveAnastomosis(v, vessels[p2_i], vessels[d])
         # println("\t\t Anastomosis at node $s between vessels $i, $p2_i, and $d")
       end
     end

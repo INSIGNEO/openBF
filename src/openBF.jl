@@ -31,7 +31,7 @@ module openBF
 # Julia package that provides graph types and algorithms."
 # It is used for arterial tree parsing and described in
 # [utilities.jl](godunov.html#solveModel).
-using LightGraphs
+# using LightGraphs
 
 # [__ProgressMeter__](https://github.com/timholy/ProgressMeter.jl)
 # provides a simple implementation of a loading bar to be shown while

@@ -31,9 +31,9 @@ function solveAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
        sqrt(sqrt(v3.A[ 1 ]))]
 
   #Parameters vector
-  k1 = sqrt(0.5*3*v1.gamma)
-  k2 = sqrt(0.5*3*v2.gamma)
-  k3 = sqrt(0.5*3*v3.gamma)
+  k1 = sqrt(0.5*3*v1.gamma[end])
+  k2 = sqrt(0.5*3*v2.gamma[end])
+  k3 = sqrt(0.5*3*v3.gamma[ 1 ])
   k = [k1, k2, k3]
 
   W = calculateWstarAn(U, k)
@@ -120,10 +120,10 @@ function calculateFofUAn(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
   f4 = U[1]*(U[4]*U[4]*U[4]*U[4]) + U[2]*(U[5]*U[5]*U[5]*U[5]) - U[3]*(U[6]*U[6]*U[6]*U[6])
 
   f5 = v1.beta[end]*( U[4]^2/sqrt(v1.A0[end])  - 1  ) -
-     ( v3.beta[1]*((U[6])^2/sqrt(v3.A0[1]) - 1) )
+     ( v3.beta[ 1 ]*((U[6])^2/sqrt(v3.A0[1]) - 1) )
 
   f6 = v2.beta[end]*( U[5]^2/sqrt(v2.A0[end])  - 1  ) -
-     ( v3.beta[1]*((U[6]^2)/sqrt(v3.A0[1]) - 1) )
+     ( v3.beta[ 1 ]*((U[6]^2)/sqrt(v3.A0[1]) - 1) )
 
   return [f1, f2, f3, f4, f5, f6]
 end
