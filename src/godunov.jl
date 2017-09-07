@@ -517,8 +517,7 @@ end
 #
 # ----------------------------------------------------------------------------
 # <a name="solveModel"></a>
-function solveModel(vessels, heart :: Heart,
-                    edge_list, edge_map, node_map,
+function solveModel(vessels, heart :: Heart, edge_list,
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
   # for i in 1:length(edgess)
@@ -583,7 +582,7 @@ function solveModel(vessels, heart :: Heart,
     openBF.MUSCL(v, dt, blood)
 
     if size(find(edge_list[:,2] .== t))[1] == 0
-      openBF.setOutletBC(dt, v])
+      openBF.setOutletBC(dt, v)
       # println("\t Outlet vessel - Compute outlet BC")
 
     elseif size(find(edge_list[:,2] .== t))[1] == 2

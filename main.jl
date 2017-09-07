@@ -147,7 +147,7 @@ current_time = 0
 # and used to compute the number or total iterations before the end of the
 # simulation. See [ProgressMeter](https://github.com/timholy/ProgressMeter.jl)
 # documentation for `Progress` options.
-dts  = zeros(Float64, length(edge_list))
+dts  = zeros(Float64, length(edge_list[:,1]))
 dt = openBF.calculateDeltaT(vessels, dts)
 
 # ### Venous system
@@ -211,9 +211,7 @@ while true
   # and runs the solver for each part of it. This function can distinguish
   # between inlet, bifurcation, conjunction, anastomosis, and outlet.
   #Solve arteries
-  openBF.solveModel(vessels, heart,
-                    edge_list, edge_map, node_map,
-                    blood_prop, dt, current_time)
+  openBF.solveModel(vessels, heart, edge_list, blood_prop, dt, current_time)
 
   # [`updateGhostCells`](boundary_conditions.html#updateGhostCells)
   # updates all vessels ghost cells after the solver ends one iteration.
