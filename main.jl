@@ -91,6 +91,10 @@ grafo = LightGraphs.DiGraph(length(model[:,1])+1)
 # vessel is inserted by hand.
 vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
   initial_pressure, Ccfl)]
+edge_list = zeros(Int8, length(model[:,1]), 3)
+edge_list[1,1] = vessels[1].ID
+edge_list[1,2] = vessels[1].sn
+edge_list[1,3] = vessels[1].tn
 
 # The graph is built with `Graphs.add_edge!` function.
 #
@@ -103,7 +107,7 @@ vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
 #
 # `tn`        `::Int64` edge terminal node.
 # ----------------------------------------------------------------------------
-LightGraphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
+# LightGraphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
 
 # The model matrix is read iteratively starting from the second row, the first
 # row contains column headers.
@@ -113,22 +117,24 @@ for i in 2:length(model[:,1])
   # `vessels` collection.
   push!(vessels, openBF.initialiseVessel(model[i,:], i, heart, blood_prop,
     initial_pressure, Ccfl))
-
-  LightGraphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
+  edge_list[i,1] = vessels[i].ID
+  edge_list[i,2] = vessels[i].sn
+  edge_list[i,3] = vessels[i].tn
+  # LightGraphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
 end
 
 # # `edge_list` is a list of all the edges in `grafo`
-edge_list = collect(LightGraphs.edges(grafo))
-edge_map = Dict{LightGraphs.SimpleGraphs.SimpleEdge, Int}(e=>i
-  for (i, e) in enumerate(edge_list))
-node_map = Dict{Tuple{Int, Int}, Int}()
-n_i = 1
-for e in edge_list
-  s = LightGraphs.src(e)
-  t = LightGraphs.dst(e)
-  node_map[(s,t)] = n_i
-  n_i += 1
-end
+# edge_list = collect(LightGraphs.edges(grafo))
+# edge_map = Dict{LightGraphs.SimpleGraphs.SimpleEdge, Int}(e=>i
+#   for (i, e) in enumerate(edge_list))
+# node_map = Dict{Tuple{Int, Int}, Int}()
+# n_i = 1
+# for e in edge_list
+#   s = LightGraphs.src(e)
+#   t = LightGraphs.dst(e)
+#   node_map[(s,t)] = n_i
+#   n_i += 1
+# end
 
 # Before starting the main loop the counter`current_time` is set to zero. It
 # will be updated to keep track of time within the simulation.
@@ -205,7 +211,7 @@ while true
   # and runs the solver for each part of it. This function can distinguish
   # between inlet, bifurcation, conjunction, anastomosis, and outlet.
   #Solve arteries
-  openBF.solveModel(grafo, vessels, heart,
+  openBF.solveModel(vessels, heart,
                     edge_list, edge_map, node_map,
                     blood_prop, dt, current_time)
 
