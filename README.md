@@ -8,7 +8,6 @@ linux/OS X: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-
 
 **openBF** runs on [Julia](https://julialang.org/downloads/) and it requires the following additional packages
 
-- [LightGraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl)
 - [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl)
 
 To install additional packages, start a Julia interactive session and enter `Pkg.add("package_name")`. For further informations refer to [Julia docs](http://docs.julialang.org/en/release-0.4/manual/packages/).
