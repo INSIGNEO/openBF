@@ -9,7 +9,7 @@
   <link rel="stylesheet" media="all" href="./jocco.css" />
   <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
   <script type="text/javascript"
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
   <!-- jQuery -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -276,13 +276,11 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-1">&#182;</a>
   </div>
-  <p>The <code>main.jl</code> file is where <code>openBF</code> is implemented. Only <a href="openBF.html"><code>openBF</code></a> library is needed to be imported. Until the official <code>openBF</code> Julia <code>Pkg</code> is created, the library is loaded locally.</p>
+  <p>The <code>main.jl</code> file is where <code>openBF</code> is implemented. Only <a href="openBF.html"><code>openBF</code></a> library is needed to be imported.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">LOAD_PATH</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">)</span>
-<span class="k">using</span> <span class="n">openBF</span>
-<span class="n">reload</span><span class="p">(</span><span class="s">&quot;openBF&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">openBF</span>
 
 
 </pre></div>
@@ -300,7 +298,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">project_name</span> <span class="o">=</span> <span class="s">&quot;project_name&quot;</span>
+<div class="highlight"><pre><span class="n">project_name</span> <span class="o">=</span> <span class="nb">ARGS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 
 </pre></div>
@@ -312,7 +310,7 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-3">&#182;</a>
   </div>
-  <p>In <code>main.jl</code> all functions from <code>openBF</code> library are called using the dot notation: <code>library.function(parameters)</code>. Function <a href="initialise.html#projectPreamble"><code>projectPreamble</code></a> checks for all the files needed by the simulation and warns whether any is missing, it prints the initial <code>openBF</code> logo, and makes the directory structure to save temporary and final results.</p>
+  <p>In <code>main.jl</code> all functions from <code>openBF</code> library are called using the dot notation: <code>library.function(parameters)</code>. Function <a href="initialise.html#projectPreamble"><code>projectPreamble</code></a> checks for all the files needed by the simulation and warns whether any is missing, and makes the directory structure to save temporary and final results.</p>
 
 </td>
 <td class="code">
@@ -332,7 +330,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">println</span><span class="p">(</span><span class="s">&quot;Load project </span><span class="si">$</span><span class="s">project_name files&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span class="n">println</span><span class="p">(</span><span class="s">&quot;Load project </span><span class="si">$project_name</span><span class="s"> files&quot;</span><span class="p">)</span>
 <span class="n">include</span><span class="p">(</span><span class="n">join</span><span class="p">([</span><span class="n">project_name</span><span class="p">,</span> <span class="s">&quot;_constants.jl&quot;</span><span class="p">]))</span>
 
 
@@ -379,44 +377,16 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-7">&#182;</a>
   </div>
-  <p>The arterial tree is represented as a graph by means of <code>Graphs</code> library ( see <a href="grafo.html">grafo.jl</a> for a detailed example). <code>simple_graph</code> creates an empty <code>GenericGraph</code> with a user defined number of nodes.</p>
-<table>
-<colgroup>
-<col width="15%" />
-<col width="84%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Parameters</th>
-<th align="left"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><code>nodes</code></td>
-<td align="left"><code>::Int64</code> number of total nodes in the graph. Here an estimate of this number is taken by counting <code>model</code> matrix rows (one for each vessel) and adding one extra node.</td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr class="header">
-<th align="left">Returns</th>
-<th align="left"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><code>graph</code></td>
-<td align="left"><code>::GenericGraph</code> empty graph data structure.</td>
-</tr>
-</tbody>
-</table>
-<p><a name="grafo"></a></p>
+  <p>Two data structures are used to describe the arterial system. One is a collection of <a href="BTypes.html"><code>BTypes</code></a><code>.Vessel</code> instances, and <code>vessels</code> collection is filled by using <a href="initialise.html#initialiseVessel"><code>initialiseVessel</code></a>. The first vessel is inserted by hand.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">grafo</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">simple_graph</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">model</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight"><pre><span class="n">vessels</span> <span class="o">=</span> <span class="p">[</span><span class="n">openBF</span><span class="o">.</span><span class="n">initialiseVessel</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span>
+  <span class="n">initial_pressure</span><span class="p">,</span> <span class="n">Ccfl</span><span class="p">)]</span>
+<span class="n">edge_list</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int8</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">edge_list</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ID</span>
+<span class="n">edge_list</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sn</span>
+<span class="n">edge_list</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tn</span>
 
 
 </pre></div>
@@ -428,12 +398,11 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-8">&#182;</a>
   </div>
-  <p>Two data structures are used to describe the arterial system. One is a collection of <a href="BTypes.html"><code>BTypes</code></a><code>.Vessel</code> instances, and the second is the <code>grafo</code> structure. <code>vessels</code> collection is filled by using <a href="initialise.html#initialiseVessel"><code>initialiseVessel</code></a>. The first vessel is inserted by hand.</p>
+  <p>The model matrix is read iteratively starting from the second row, the first row contains column headers.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">vessels</span> <span class="o">=</span> <span class="p">[</span><span class="n">openBF</span><span class="o">.</span><span class="n">initialiseVessel</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span>
-  <span class="n">initial_pressure</span><span class="p">,</span> <span class="n">Ccfl</span><span class="p">)]</span>
+<div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 
 
 </pre></div>
@@ -445,37 +414,17 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-9">&#182;</a>
   </div>
-  <p>The graph is built with <code>Graphs.add_edge!</code> function.</p>
-<table>
-<colgroup>
-<col width="15%" />
-<col width="84%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Parameters</th>
-<th align="left"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><code>grafo</code></td>
-<td align="left"><code>::GenericGraph</code> arterial system graph structure.</td>
-</tr>
-<tr class="even">
-<td align="left"><code>sn</code></td>
-<td align="left"><code>::Int64</code> edge source node stored in <code>Vessel</code> structure.</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>tn</code></td>
-<td align="left"><code>::Int64</code> edge terminal node.</td>
-</tr>
-</tbody>
-</table>
+  <p>Each new <code>vessel</code> is instantiated and <code>push!</code>ed at the bottom of <code>vessels</code> collection.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">Graphs</span><span class="o">.</span><span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">grafo</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sn</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tn</span><span class="p">)</span>
+<div class="highlight"><pre>  <span class="n">push!</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">openBF</span><span class="o">.</span><span class="n">initialiseVessel</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span>
+    <span class="n">initial_pressure</span><span class="p">,</span> <span class="n">Ccfl</span><span class="p">))</span>
+  <span class="n">edge_list</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ID</span>
+  <span class="n">edge_list</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sn</span>
+  <span class="n">edge_list</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tn</span>
+
+<span class="k">end</span>
 
 
 </pre></div>
@@ -486,92 +435,6 @@
 <td class="docs">
   <div class="pilwrap">
     <a class="pilcrow" href="#section-10">&#182;</a>
-  </div>
-  <p>The model matrix is read iteratively starting from the second row, the first row contains column headers.</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">model</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-11">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-11">&#182;</a>
-  </div>
-  <p>Each new <code>vessel</code> is instantiated and <code>push!</code>ed at the bottom of <code>vessels</code> collection.</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>  <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">openBF</span><span class="o">.</span><span class="n">initialiseVessel</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span> <span class="n">i</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span>
-    <span class="n">Pext</span><span class="p">,</span> <span class="n">initial_pressure</span><span class="p">,</span> <span class="n">Ccfl</span><span class="p">))</span>
-
-  <span class="n">Graphs</span><span class="o">.</span><span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">grafo</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">.</span><span class="n">sn</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">.</span><span class="n">tn</span><span class="p">)</span>
-<span class="k">end</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-12">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-12">&#182;</a>
-  </div>
-  <p><code>edgess</code> is a list of all the edges in <code>grafo</code></p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre><span class="n">edgess</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">grafo</span><span class="p">)</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-13">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-13">&#182;</a>
-  </div>
-  <h3 id="venous-system">Venous system</h3>
-<p>Same as the arterial system</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre><span class="n">model_v</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">readModelData</span><span class="p">(</span><span class="n">join</span><span class="p">([</span><span class="n">project_name</span><span class="p">,</span> <span class="s">&quot;_veins.csv&quot;</span><span class="p">]))</span>
-
-<span class="n">grafo_v</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">simple_graph</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">model_v</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="n">vessels_v</span> <span class="o">=</span> <span class="p">[</span><span class="n">openBF</span><span class="o">.</span><span class="n">initialiseVessel</span><span class="p">(</span><span class="n">model_v</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span>
-  <span class="n">initial_pressure</span><span class="p">,</span> <span class="n">Ccfl</span><span class="p">)]</span>
-
-<span class="n">Graphs</span><span class="o">.</span><span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">grafo_v</span><span class="p">,</span> <span class="n">vessels_v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sn</span><span class="p">,</span> <span class="n">vessels_v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tn</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">model_v</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
-
-  <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">,</span> <span class="n">openBF</span><span class="o">.</span><span class="n">initialiseVessel</span><span class="p">(</span><span class="n">model_v</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span> <span class="n">i</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span>
-    <span class="n">initial_pressure</span><span class="p">,</span> <span class="n">Ccfl</span><span class="p">))</span>
-
-  <span class="n">Graphs</span><span class="o">.</span><span class="n">add_edge</span><span class="o">!</span><span class="p">(</span><span class="n">grafo_v</span><span class="p">,</span> <span class="n">vessels_v</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">.</span><span class="n">sn</span><span class="p">,</span> <span class="n">vessels_v</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">.</span><span class="n">tn</span><span class="p">)</span>
-<span class="k">end</span>
-
-<span class="n">edgess_v</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">grafo_v</span><span class="p">)</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-14">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-14">&#182;</a>
   </div>
   <p>Before starting the main loop the counter<code>current_time</code> is set to zero. It will be updated to keep track of time within the simulation.</p>
 
@@ -585,24 +448,90 @@
 </td>
 </tr>
 
-<tr id="section-15">
+<tr id="section-11">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-15">&#182;</a>
+    <a class="pilcrow" href="#section-11">&#182;</a>
   </div>
   <p>In order to show the progress bar an initial estimate of the total running time is needed. Thus, <span class="math inline">\(\Delta t\)</span> is calculated with system initial conditions and used to compute the number or total iterations before the end of the simulation. See <a href="https://github.com/timholy/ProgressMeter.jl">ProgressMeter</a> documentation for <code>Progress</code> options.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">dts</span>  <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">))</span>
-<span class="n">dts_v</span>  <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">edgess_v</span><span class="p">))</span>
-
+<div class="highlight"><pre><span class="n">dts</span>  <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
 <span class="n">dt</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">calculateDeltaT</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">dts</span><span class="p">)</span>
-<span class="n">dt_v</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">calculateDeltaT</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">,</span> <span class="n">dts_v</span><span class="p">)</span>
 
-<span class="n">dt</span> <span class="o">=</span> <span class="n">minimum</span><span class="p">([</span><span class="n">dt</span><span class="p">,</span> <span class="n">dt_v</span><span class="p">])</span>
+<span class="n">prog</span> <span class="o">=</span> <span class="n">ProgressMeter</span><span class="o">.</span><span class="n">Progress</span><span class="p">(</span><span class="kt">Int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">total_time</span><span class="o">/</span><span class="n">dt</span><span class="p">)),</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Running &quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 
-<span class="n">prog</span> <span class="o">=</span> <span class="n">ProgressMeter</span><span class="o">.</span><span class="n">Progress</span><span class="p">(</span><span class="n">int</span><span class="p">(</span><span class="n">total_time</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Running &quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-12">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-12">&#182;</a>
+  </div>
+  <p>The simulation is ran in a <code>while</code> loop to be ended whether the simulation reached convergence or a user defined finish time.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre><span class="n">passed_cycles</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">tic</span><span class="p">()</span>
+<span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">counter_v</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="kc">true</span>
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-13">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-13">&#182;</a>
+  </div>
+  <p>At the beginning of each time step the <span class="math inline">\(\Delta t\)</span> is computed with <a href="godunov.html#calculateDeltaT"><code>calculateDeltaT</code></a>. This is because during the simulation the local properties of each vessel will change and, as a consequence, also the <span class="math inline">\(\Delta t\)</span> will change. The <code>current_time</code> is then calculated by incrementing it with the new <code>dt</code>.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">dt</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">calculateDeltaT</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">dts</span><span class="p">)</span>
+
+  <span class="n">current_time</span> <span class="o">+=</span> <span class="n">dt</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-14">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-14">&#182;</a>
+  </div>
+  <p><a href="godunov.html#solveModel"><code>solveModel</code></a> reads the <code>grafo</code> object and runs the solver for each part of it. This function can distinguish between inlet, bifurcation, conjunction, anastomosis, and outlet.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="c">#Solve arteries</span>
+  <span class="n">openBF</span><span class="o">.</span><span class="n">solveModel</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span> <span class="n">edge_list</span><span class="p">,</span> <span class="n">blood_prop</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">current_time</span><span class="p">)</span>
+
+
+</pre></div>
+</td>
+</tr>
+
+<tr id="section-15">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-15">&#182;</a>
+  </div>
+  <p><a href="boundary_conditions.html#updateGhostCells"><code>updateGhostCells</code></a> updates all vessels ghost cells after the solver ends one iteration.</p>
+
+</td>
+<td class="code">
+<div class="highlight"><pre>  <span class="n">openBF</span><span class="o">.</span><span class="n">updateGhostCells</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
 
 
 </pre></div>
@@ -614,13 +543,20 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-16">&#182;</a>
   </div>
-  <p>The simulation is ran in a <code>while</code> loop to be ended whether the simulation reached convergence or a user defined finish time.</p>
+  <p>All quantities in each vessel are stored by <a href="IOutils.html#saveTempData"><code>saveTempData</code></a> in <code>.temp</code> files until the end of the cardiac cycle.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="n">passed_cycles</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">tic</span><span class="p">()</span>
-<span class="k">while</span> <span class="n">true</span>
+<div class="highlight"><pre>  <span class="k">if</span> <span class="n">counter</span> <span class="o">==</span> <span class="mi">100</span>
+    <span class="n">openBF</span><span class="o">.</span><span class="n">saveTempData</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">vessels</span><span class="p">)</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">else</span>
+    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+  <span class="c">#Progress bar update</span>
+  <span class="n">ProgressMeter</span><span class="o">.</span><span class="n">next!</span><span class="p">(</span><span class="n">prog</span><span class="p">)</span>
+
 
 </pre></div>
 </td>
@@ -631,14 +567,21 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-17">&#182;</a>
   </div>
-  <p>At the beginning of each time step the <span class="math inline">\(\Delta t\)</span> is computed with <a href="godunov.html#calculateDeltaT"><code>calculateDeltaT</code></a>. This is because during the simulation the local properties of each vessel will change and, as a consequence, also the <span class="math inline">\(\Delta t\)</span> will change. The <code>current_time</code> is then calculated by incrementing it with the new <code>dt</code>.</p>
+  <p>Every time a cardiac cycle has been simulated, this condition returns <code>true</code> and data from <code>.temp</code> files are transferred to <code>.out</code> files ( see <a href="IOutils.html">IOutils.jl</a>).</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="n">dt</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">calculateDeltaT</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">dts</span><span class="p">)</span>
-  <span class="n">dt_v</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">calculateDeltaT</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">,</span> <span class="n">dts_v</span><span class="p">)</span>
-  <span class="n">dt</span> <span class="o">=</span> <span class="n">minimum</span><span class="p">([</span><span class="n">dt</span><span class="p">,</span> <span class="n">dt_v</span><span class="p">])</span>
-  <span class="n">current_time</span> <span class="o">+=</span> <span class="n">dt</span>
+<div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span><span class="o">*</span><span class="n">passed_cycles</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span> <span class="o">&amp;&amp;</span>
+      <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span><span class="o">*</span><span class="n">passed_cycles</span> <span class="o">+</span> <span class="n">dt</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span>
+
+      <span class="n">openBF</span><span class="o">.</span><span class="n">closeTempFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">transferLastToOut</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">openCloseLastFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">transferTempToLast</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">openTempFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+
+    <span class="n">passed_cycles</span> <span class="o">+=</span> <span class="mi">1</span>
 
 
 </pre></div>
@@ -650,13 +593,11 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-18">&#182;</a>
   </div>
-  <p><a href="godunov.html#solveModel"><code>solveModel</code></a> reads the <code>grafo</code> object and runs the solver for each part of it. This function can distinguish between inlet, bifurcation, conjunction, anastomosis, and outlet.</p>
+  <p>When at least 3 cardiac cycles have been simulated, waveforms are checked for convergence.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="c">#Solve arteries</span>
-  <span class="n">openBF</span><span class="o">.</span><span class="n">solveModel</span><span class="p">(</span><span class="n">grafo</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span><span class="p">,</span>
-                    <span class="n">blood_prop</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">current_time</span><span class="p">)</span>
+<div class="highlight"><pre>    <span class="k">if</span> <span class="n">passed_cycles</span> <span class="o">&gt;=</span> <span class="mi">3</span>
 
 
 </pre></div>
@@ -668,17 +609,11 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-19">&#182;</a>
   </div>
-  <p><a href="boundary_conditions.html#updateGhostCells"><code>updateGhostCells</code></a> updates all vessels ghost cells after the solver ends one iteration.</p>
+  <p>The error is computed for all vessels in the system by <a href="check_convergence.html#checkAllQuantities"><code>checkAllQuantities</code></a> function. <a name="check_convergence"></a> err = openBF.checkAllQuantities(vessels, passed_cycles, 1000)</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="n">openBF</span><span class="o">.</span><span class="n">updateGhostCells</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-
-  <span class="c">#Solve veins</span>
-  <span class="n">openBF</span><span class="o">.</span><span class="n">solveModel</span><span class="p">(</span><span class="n">grafo_v</span><span class="p">,</span> <span class="n">edgess_v</span><span class="p">,</span> <span class="n">vessels_v</span><span class="p">,</span>
-                    <span class="n">grafo</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span>
-                    <span class="n">blood_prop</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">current_time</span><span class="p">)</span>
-  <span class="n">openBF</span><span class="o">.</span><span class="n">updateGhostCells</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
+<div class="highlight"><pre>      <span class="n">err</span> <span class="o">=</span> <span class="n">openBF</span><span class="o">.</span><span class="n">checkConvergence</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="mf">5.</span><span class="p">)</span>
 
 
 </pre></div>
@@ -690,15 +625,20 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-20">&#182;</a>
   </div>
-  <p>All quantities in each vessel are stored by <a href="IOutils.html#saveTempData"><code>saveTempData</code></a> in <code>.temp</code> files until the end of the cardiac cycle.</p>
+  <p>The convergence is reached when the difference (the error) between two consecutive waveforms is less than 5%. In this case, the main loop is exited.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="n">openBF</span><span class="o">.</span><span class="n">saveTempData</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">vessels</span><span class="p">)</span>
-  <span class="n">openBF</span><span class="o">.</span><span class="n">saveTempData</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">vessels_v</span><span class="p">)</span>
+<div class="highlight"><pre>      <span class="k">if</span> <span class="n">err</span> <span class="o">&lt;</span> <span class="mf">5.</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Converged in </span><span class="si">$passed_cycles</span><span class="s"> cycles, end!&quot;</span><span class="p">)</span>
+        <span class="k">break</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
 
-  <span class="c">#Progress bar update</span>
-  <span class="n">ProgressMeter</span><span class="o">.</span><span class="n">next</span><span class="o">!</span><span class="p">(</span><span class="n">prog</span><span class="p">)</span>
+    <span class="n">openBF</span><span class="o">.</span><span class="n">openCloseLastFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+    <span class="n">openBF</span><span class="o">.</span><span class="n">transferTempToLast</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+    <span class="n">openBF</span><span class="o">.</span><span class="n">openTempFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
+  <span class="k">end</span>
 
 
 </pre></div>
@@ -710,30 +650,20 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-21">&#182;</a>
   </div>
-  <p>Every time a cardiac cycle has been simulated, this condition returns <code>true</code> and data from <code>.temp</code> files are transferred to <code>.out</code> files ( see <a href="IOutils.html">IOutils.jl</a>).</p>
+  <p>When the <code>current_time</code> is equal to the <code>total_time</code> defined by the user exit from <code>while</code> loop. This would also mean that an error smaller than 5% has not been achieved. The main is exited by raising an error containing the error value.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>
-  <span class="k">if</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span><span class="o">*</span><span class="n">passed_cycles</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span> <span class="o">&amp;&amp;</span>
-      <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span><span class="o">*</span><span class="n">passed_cycles</span> <span class="o">+</span> <span class="n">dt</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">heart</span><span class="o">.</span><span class="n">cardiac_T</span>
+<div class="highlight"><pre>  <span class="k">if</span> <span class="n">current_time</span> <span class="o">&gt;=</span> <span class="n">total_time</span>
+    <span class="n">erlog</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&quot;error.log&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">erlog</span><span class="p">,</span> <span class="s">&quot;Not converged after </span><span class="si">$passed_cycles</span><span class="s"> cycles, End!&quot;</span><span class="p">)</span>
+    <span class="n">close</span><span class="p">(</span><span class="n">erlog</span><span class="p">)</span>
+    <span class="k">break</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="nd">@printf</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="n">toc</span><span class="p">()</span>
 
-      <span class="n">openBF</span><span class="o">.</span><span class="n">closeTempFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">closeTempFiles</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-
-      <span class="n">openBF</span><span class="o">.</span><span class="n">transferLastToOut</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">transferLastToOut</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-
-      <span class="n">openBF</span><span class="o">.</span><span class="n">openCloseLastFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">openCloseLastFiles</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-
-      <span class="n">openBF</span><span class="o">.</span><span class="n">transferTempToLast</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">transferTempToLast</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-
-      <span class="n">openBF</span><span class="o">.</span><span class="n">openTempFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">openTempFiles</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-
-    <span class="n">passed_cycles</span> <span class="o">+=</span> <span class="mi">1</span>
 
 </pre></div>
 </td>
@@ -744,114 +674,12 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-22">&#182;</a>
   </div>
-  <h1 id="when-at-least-3-cardiac-cycles-have-been-simulated-waveforms-are">When at least 3 cardiac cycles have been simulated, waveforms are</h1>
-<h1 id="checked-for-convergence.">checked for convergence.</h1>
-<p>if passed_cycles &gt;= 3</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-23">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-23">&#182;</a>
-  </div>
-  <p># The error is computed for all vessels in the system by # <a href="check_convergence.html#checkAllQuantities"><code>checkAllQuantities</code></a> # function. # <a name="check_convergence"></a> # err = openBF.checkAllQuantities(vessels, passed_cycles, 1000) err = openBF.checkConvergence(vessels, 5.)</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-24">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-24">&#182;</a>
-  </div>
-  <p># The convergence is reached when the difference (the error) # between two consecutive waveforms is less than 5%. In this case, the # main loop is exited. if err &lt; 5. println(“in $passed_cycles cycles, end!”) break end end</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-25">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-25">&#182;</a>
-  </div>
-  <p>openBF.openCloseLastFiles(vessels) openBF.transferTempToLast(vessels) openBF.openTempFiles(vessels)</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>  <span class="k">end</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-26">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-26">&#182;</a>
-  </div>
-  <p>When the <code>current_time</code> is equal to the <code>total_time</code> defined by the user exit from <code>while</code> loop. This would also mean that an error smaller than 5% has not been achieved. The main is exited by raising an error containing the error value.</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>  <span class="k">if</span> <span class="n">current_time</span> <span class="o">&gt;=</span> <span class="n">total_time</span>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-27">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-27">&#182;</a>
-  </div>
-  <p>erlog = open(“error.log”, “w”) write(erlog, “Not converged after $passed_cycles cycles, End!”) close(erlog)</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>    <span class="k">break</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-<span class="n">toc</span><span class="p">()</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-28">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-28">&#182;</a>
-  </div>
   <p>Make sure that data from <code>.temp</code> files are transferred.</p>
 
 </td>
 <td class="code">
 <div class="highlight"><pre><span class="n">openBF</span><span class="o">.</span><span class="n">closeTempFiles</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
 <span class="n">openBF</span><span class="o">.</span><span class="n">transferTempToOut</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span>
-
-<span class="n">openBF</span><span class="o">.</span><span class="n">closeTempFiles</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-<span class="n">openBF</span><span class="o">.</span><span class="n">transferTempToOut</span><span class="p">(</span><span class="n">vessels_v</span><span class="p">)</span>
-
-<span class="n">cd</span><span class="p">(</span><span class="s">&quot;..&quot;</span><span class="p">)</span>
 
 
 </pre></div>

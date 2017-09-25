@@ -9,7 +9,7 @@
   <link rel="stylesheet" media="all" href="./jocco.css" />
   <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
   <script type="text/javascript"
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
   <!-- jQuery -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -280,7 +280,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">module</span> <span class="n">openBF</span>
+<div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">openBF</span>
 
 
 </pre></div>
@@ -292,7 +292,7 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-2">&#182;</a>
   </div>
-  <h3 id="import-external-libraries">Import external libraries</h3>
+  <h3 id="import-external-library">Import external library</h3>
 
 </td>
 <td class="code">
@@ -307,38 +307,6 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-3">&#182;</a>
   </div>
-  <p><a href="https://github.com/JuliaLang/Roots.jl"><strong>Roots</strong></a> “contains simple routines for finding roots of continuous scalar functions of a single real variable.” It is used for the solution of interface problems in <a href="conjunctions.html">conjunctions.jl</a> and <a href="bifurcations.html">bifurcations.jl</a>.</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre><span class="k">using</span> <span class="n">Roots</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-4">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-4">&#182;</a>
-  </div>
-  <p><a href="https://github.com/JuliaLang/Graphs.jl"><strong>Graphs</strong></a> “is a Julia package that provides graph types and algorithms.” It is used for arterial tree parsing and described in <a href="godunov.html#solveModel">utilities.jl</a>.</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre><span class="k">using</span> <span class="n">Graphs</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-5">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-5">&#182;</a>
-  </div>
   <p><a href="https://github.com/timholy/ProgressMeter.jl"><strong>ProgressMeter</strong></a> provides a simple implementation of a loading bar to be shown while running the solution.</p>
 
 </td>
@@ -350,26 +318,10 @@
 </td>
 </tr>
 
-<tr id="section-6">
+<tr id="section-4">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-6">&#182;</a>
-  </div>
-  <p><a href="https://github.com/stevengj/PyCall.jl"><strong>PyCall</strong></a> “provides a <span class="citation">@pyimport</span> macro that mimics a Python import statement: it imports a Python module and provides Julia wrappers for all of the functions and constants therein, including automatic conversion of types between Julia and Python.” It is used to import <a href="http://docs.scipy.org/doc/scipy/reference/signal.html"><code>scipy.signal</code></a> which is used in <a href="check_convergence.html">check_convergence.jl</a>. using PyCall <span class="citation">@pyimport</span> scipy.signal as signal</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre><span class="k">using</span> <span class="n">DSP</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-7">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-7">&#182;</a>
+    <a class="pilcrow" href="#section-4">&#182;</a>
   </div>
   <h3 id="import-openbf-files">Import openBF’ files</h3>
 
@@ -381,10 +333,10 @@
 </td>
 </tr>
 
-<tr id="section-8">
+<tr id="section-5">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-8">&#182;</a>
+    <a class="pilcrow" href="#section-5">&#182;</a>
   </div>
   <p>OpenBF’ own types are contained in <a href="BTypes.html">BTypes.jl</a> where data structures for vessels, blood, and numerical scheme are specified.</p>
 
@@ -397,10 +349,10 @@
 </td>
 </tr>
 
-<tr id="section-9">
+<tr id="section-6">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-9">&#182;</a>
+    <a class="pilcrow" href="#section-6">&#182;</a>
   </div>
   <p>Data structures and output files are initialised at the beginning of each simulation. <a href="initialise.html">initialise.jl</a> contains all the functions needed to read model description and the global settings.</p>
 
@@ -413,10 +365,10 @@
 </td>
 </tr>
 
-<tr id="section-10">
+<tr id="section-7">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-10">&#182;</a>
+    <a class="pilcrow" href="#section-7">&#182;</a>
   </div>
   <p>Inlet and outlets boundary conditions are applied at each time step, and vessels extremity nodes are updated with functions defined in <a href="boundary_conditions.html">boundary_conditions.jl</a>.</p>
 
@@ -429,28 +381,29 @@
 </td>
 </tr>
 
-<tr id="section-11">
+<tr id="section-8">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-11">&#182;</a>
+    <a class="pilcrow" href="#section-8">&#182;</a>
   </div>
-  <p>Interface problems (junctions and bifurcations) are solved via the method of characteristics. The function in <a href="junctions.html">junctions.jl</a> discriminates between <a href="conjunctions.html">conjunctions</a> and <a href="bifurcations.jl">bifurcations</a>, and calls the appropriate solver.</p>
+  <p>Interface problems (junctions and bifurcations) are solved via the method of characteristics. The function in <a href="junctions.html">junctions.jl</a> discriminates between <a href="conjunctions.html">conjunctions</a>, <a href="anastomosis.jl">anastomosis</a>, and <a href="bifurcations.jl">bifurcations</a>, and calls the appropriate solver.</p>
 
 </td>
 <td class="code">
 <div class="highlight"><pre><span class="n">include</span><span class="p">(</span><span class="s">&quot;junctions.jl&quot;</span><span class="p">)</span>
 <span class="n">include</span><span class="p">(</span><span class="s">&quot;conjunctions.jl&quot;</span><span class="p">)</span>
 <span class="n">include</span><span class="p">(</span><span class="s">&quot;bifurcations.jl&quot;</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">&quot;anastomosis.jl&quot;</span><span class="p">)</span>
 
 
 </pre></div>
 </td>
 </tr>
 
-<tr id="section-12">
+<tr id="section-9">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-12">&#182;</a>
+    <a class="pilcrow" href="#section-9">&#182;</a>
   </div>
   <p><a href="godunov.html">godunov.jl</a> contains Godunov’ method functions.</p>
 
@@ -463,10 +416,10 @@
 </td>
 </tr>
 
-<tr id="section-13">
+<tr id="section-10">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-13">&#182;</a>
+    <a class="pilcrow" href="#section-10">&#182;</a>
   </div>
   <p><a href="MUSCL.html">MUSCL.jl</a> is where the MUSCL method is implemented.</p>
 
@@ -479,10 +432,10 @@
 </td>
 </tr>
 
-<tr id="section-14">
+<tr id="section-11">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-14">&#182;</a>
+    <a class="pilcrow" href="#section-11">&#182;</a>
   </div>
   <p>Conversions from pressure to cross-sectional area (and vice versa), or from cross-sectional area to wave speed (and vice versa) are handled by functions in <a href="converter.html">converter.jl</a>; Riemann invariants are computed in the same location as well.</p>
 
@@ -495,10 +448,10 @@
 </td>
 </tr>
 
-<tr id="section-15">
+<tr id="section-12">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-15">&#182;</a>
+    <a class="pilcrow" href="#section-12">&#182;</a>
   </div>
   <p>Input and output writing functions are stored defined in <a href="IOutils.html">IOutils.jl</a>.</p>
 
@@ -511,18 +464,16 @@
 </td>
 </tr>
 
-<tr id="section-16">
+<tr id="section-13">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-16">&#182;</a>
+    <a class="pilcrow" href="#section-13">&#182;</a>
   </div>
   <p>Convergence check functions are all defined in <a href="check_convergence.html">check_convergence.jl</a>.</p>
 
 </td>
 <td class="code">
 <div class="highlight"><pre><span class="n">include</span><span class="p">(</span><span class="s">&quot;check_convergence.jl&quot;</span><span class="p">)</span>
-
-<span class="n">include</span><span class="p">(</span><span class="s">&quot;anastomosis.jl&quot;</span><span class="p">)</span>
 
 <span class="k">end</span>
 

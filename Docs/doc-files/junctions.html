@@ -9,7 +9,7 @@
   <link rel="stylesheet" media="all" href="./jocco.css" />
   <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
   <script type="text/javascript"
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
   <!-- jQuery -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -288,7 +288,7 @@ and bifurcations.
 
 </td>
 <td class="code">
-<div class="highlight"><pre>
+<div class="highlight"><pre><span></span>
 </pre></div>
 </td>
 </tr>
@@ -307,17 +307,17 @@ and bifurcations.
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>b</code></td>
-<td align="left"><code>::Blood</code> model matrix row.</td>
+<td><code>::Blood</code> model matrix row.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>vessels...</code></td>
-<td align="left">Collection of<code>::Vessel</code> data structures involved in the junction system.</td>
+<td>Collection of<code>::Vessel</code> data structures involved in the junction system.</td>
 </tr>
 </tbody>
 </table>
@@ -340,7 +340,7 @@ and bifurcations.
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> joinVessels</span><span class="p">(</span><span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">vessels</span><span class="o">...</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">joinVessels</span><span class="p">(</span><span class="n">b</span> <span class="o">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">vessels</span><span class="o">...</span><span class="p">)</span>
 
   <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">vessels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
     <span class="n">solveConjunction</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>

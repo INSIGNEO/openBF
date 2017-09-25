@@ -9,7 +9,7 @@
   <link rel="stylesheet" media="all" href="./jocco.css" />
   <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
   <script type="text/javascript"
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
   <!-- jQuery -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -317,7 +317,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>
+<div class="highlight"><pre><span></span>
 </pre></div>
 </td>
 </tr>
@@ -336,21 +336,21 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>v1</code></td>
-<td align="left"><code>::Vessel</code> data structure for the parent vessel.</td>
+<td><code>::Vessel</code> data structure for the parent vessel.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>v2</code></td>
-<td align="left"><code>::Vessel</code> data structure for the first daughter vessel.</td>
+<td><code>::Vessel</code> data structure for the first daughter vessel.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>v3</code></td>
-<td align="left"><code>::Vessel</code> data structure for the second daughter vessel.</td>
+<td><code>::Vessel</code> data structure for the second daughter vessel.</td>
 </tr>
 </tbody>
 </table>
@@ -373,7 +373,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> solveBifurcation</span><span class="p">(</span><span class="n">v1</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">solveBifurcation</span><span class="p">(</span><span class="n">v1</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">)</span>
 
   <span class="c">#Unknowns vector</span>
   <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">v1</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="k">end</span><span class="p">],</span>
@@ -394,22 +394,22 @@
   <span class="n">F</span> <span class="o">=</span> <span class="n">calculateFofUBif</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
 
   <span class="c">#Newton-Raphson</span>
-  <span class="n">nr_toll_U</span> <span class="o">=</span> <span class="mf">1.e-5</span>
-  <span class="n">nr_toll_F</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+  <span class="n">nr_toll_U</span> <span class="o">=</span> <span class="mf">1e-5</span>
+  <span class="n">nr_toll_F</span> <span class="o">=</span> <span class="mf">1e-5</span>
 
-  <span class="k">while</span> <span class="n">true</span>
-    <span class="n">dU</span> <span class="o">=</span> <span class="n">J</span>\<span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="p">)</span>
-    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">dU</span>
+  <span class="k">while</span> <span class="kc">true</span>
+    <span class="n">dU</span> <span class="o">=</span> <span class="n">J</span><span class="o">\</span><span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="p">)</span>
+    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="n">dU</span>
 
     <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">F</span><span class="p">)))</span>
       <span class="n">println</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
-      <span class="p">@</span><span class="n">printf</span> <span class="s">&quot;error at bifurcation with vessels %s, %s, and %s </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">v1</span><span class="o">.</span><span class="n">label</span> <span class="n">v2</span><span class="o">.</span><span class="n">label</span> <span class="n">v3</span><span class="o">.</span><span class="n">label</span>
+      <span class="nd">@printf</span> <span class="s">&quot;error at bifurcation with vessels </span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">, and </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="n">v1</span><span class="o">.</span><span class="n">label</span> <span class="n">v2</span><span class="o">.</span><span class="n">label</span> <span class="n">v3</span><span class="o">.</span><span class="n">label</span>
       <span class="k">break</span>
     <span class="k">end</span>
 
     <span class="n">u_ok</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">f_ok</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">dU</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">abs</span><span class="p">(</span><span class="n">dU</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_U</span> <span class="o">||</span> <span class="n">abs</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">nr_toll_F</span>
         <span class="n">u_ok</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">f_ok</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -468,17 +468,17 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>U</code></td>
-<td align="left"><code>::Array</code> junction unknown vector.</td>
+<td><code>::Array</code> junction unknown vector.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>k</code></td>
-<td align="left"><code>::Array</code> junction parameters vector.</td>
+<td><code>::Array</code> junction parameters vector.</td>
 </tr>
 </tbody>
 </table>
@@ -507,13 +507,13 @@ W_1 = u_1 + 4c_1, \quad W_2 = u_2 - 4c_2, \quad W_3 = u_3 - 4c_3.
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>W</code></td>
-<td align="left"><code>::Array</code> containing outgoing characteristics from the three vessels.</td>
+<td><code>::Array</code> containing outgoing characteristics from the three vessels.</td>
 </tr>
 </tbody>
 </table>
@@ -521,7 +521,7 @@ W_1 = u_1 + 4c_1, \quad W_2 = u_2 - 4c_2, \quad W_3 = u_3 - 4c_3.
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateWstarBif</span><span class="p">(</span><span class="n">U</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span> <span class="n">k</span> <span class="p">::</span> <span class="n">Array</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">calculateWstarBif</span><span class="p">(</span><span class="n">U</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">,</span> <span class="n">k</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">)</span>
 
   <span class="n">W1</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
   <span class="n">W2</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
@@ -549,37 +549,37 @@ W_1 = u_1 + 4c_1, \quad W_2 = u_2 - 4c_2, \quad W_3 = u_3 - 4c_3.
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>b</code></td>
-<td align="left"><code>::Blood</code> data structure.</td>
+<td><code>::Blood</code> data structure.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>v1</code></td>
-<td align="left"><code>::Vessel</code> parent vessel data structure.</td>
+<td><code>::Vessel</code> parent vessel data structure.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>v2</code></td>
-<td align="left"><code>::Vessel</code> first daughter vessel data structure.</td>
+<td><code>::Vessel</code> first daughter vessel data structure.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>v3</code></td>
-<td align="left"><code>::Vessel</code> second daughter vessel data structure.</td>
+<td><code>::Vessel</code> second daughter vessel data structure.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>U</code></td>
-<td align="left"><code>::Array</code> junction unknown vector.</td>
+<td><code>::Array</code> junction unknown vector.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>k</code></td>
-<td align="left"><code>::Array</code> junction parameters vector.</td>
+<td><code>::Array</code> junction parameters vector.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>W</code></td>
-<td align="left"><code>::Array</code> outgoing characteristics array.</td>
+<td><code>::Array</code> outgoing characteristics array.</td>
 </tr>
 </tbody>
 </table>
@@ -625,13 +625,13 @@ f6 = v1.beta*( U[4]^2 - sqrt(v1.A0) ) -
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>F</code></td>
-<td align="left"><code>::Array</code> Newton’s method relations.</td>
+<td><code>::Array</code> Newton’s method relations.</td>
 </tr>
 </tbody>
 </table>
@@ -639,8 +639,8 @@ f6 = v1.beta*( U[4]^2 - sqrt(v1.A0) ) -
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateFofUBif</span><span class="p">(</span><span class="n">v1</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span>
-                           <span class="n">U</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span>   <span class="n">k</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span>   <span class="n">W</span> <span class="p">::</span> <span class="n">Array</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">calculateFofUBif</span><span class="p">(</span><span class="n">v1</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span>
+                           <span class="n">U</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">,</span>   <span class="n">k</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">,</span>   <span class="n">W</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">)</span>
 
   <span class="n">f1</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">U</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">-</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -678,29 +678,29 @@ f6 = v1.beta*( U[4]^2 - sqrt(v1.A0) ) -
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>b</code></td>
-<td align="left"><code>::Blood</code> data structure.</td>
+<td><code>::Blood</code> data structure.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>v1</code></td>
-<td align="left"><code>::Vessel</code> parent vessel data structure.</td>
+<td><code>::Vessel</code> parent vessel data structure.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>v2</code></td>
-<td align="left"><code>::Vessel</code> daughter vessel data structure.</td>
+<td><code>::Vessel</code> daughter vessel data structure.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>U</code></td>
-<td align="left"><code>::Array</code> junction unknown vector.</td>
+<td><code>::Array</code> junction unknown vector.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>k</code></td>
-<td align="left"><code>::Array</code> junction parameters vector.</td>
+<td><code>::Array</code> junction parameters vector.</td>
 </tr>
 </tbody>
 </table>
@@ -748,13 +748,13 @@ J[6,6] = -2*v3.beta*U[6]</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>J</code></td>
-<td align="left"><code>::Array{Float, 2}</code> Jacobian matrix.</td>
+<td><code>::Array{Float, 2}</code> Jacobian matrix.</td>
 </tr>
 </tbody>
 </table>
@@ -762,8 +762,8 @@ J[6,6] = -2*v3.beta*U[6]</code></pre>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateJacobianBif</span><span class="p">(</span><span class="n">v1</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span>
-                               <span class="n">U</span> <span class="p">::</span> <span class="n">Array</span><span class="p">,</span>   <span class="n">k</span> <span class="p">::</span> <span class="n">Array</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">calculateJacobianBif</span><span class="p">(</span><span class="n">v1</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v2</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">v3</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span>
+                               <span class="n">U</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">,</span>   <span class="n">k</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">)</span>
 
   <span class="n">J</span> <span class="o">=</span> <span class="n">eye</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
 

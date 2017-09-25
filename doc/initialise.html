@@ -9,7 +9,7 @@
   <link rel="stylesheet" media="all" href="./jocco.css" />
   <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
   <script type="text/javascript"
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
   <!-- jQuery -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -280,7 +280,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>
+<div class="highlight"><pre><span></span>
 </pre></div>
 </td>
 </tr>
@@ -299,13 +299,13 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>project_name</code></td>
-<td align="left"><code>::String</code> project name.</td>
+<td><code>::String</code> project name.</td>
 </tr>
 </tbody>
 </table>
@@ -328,7 +328,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> projectPreamble</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">projectPreamble</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
 
 
 </pre></div>
@@ -362,16 +362,16 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">p_const</span><span class="p">))</span> <span class="o">==</span> <span class="n">false</span>
-    <span class="nb">error</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$</span><span class="s">p_const file missing&quot;</span><span class="p">)</span>
+<div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">p_const</span><span class="p">))</span> <span class="o">==</span> <span class="kc">false</span>
+    <span class="n">error</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$p_const</span><span class="s"> file missing&quot;</span><span class="p">)</span>
   <span class="k">end</span>
 
-  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">p_inlet</span><span class="p">))</span> <span class="o">==</span> <span class="n">false</span>
-    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$</span><span class="s">p_inlet file missing&quot;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">p_inlet</span><span class="p">))</span> <span class="o">==</span> <span class="kc">false</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$p_inlet</span><span class="s"> file missing&quot;</span><span class="p">)</span>
   <span class="k">end</span>
 
-  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">p_model</span><span class="p">))</span> <span class="o">==</span> <span class="n">false</span>
-    <span class="nb">error</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$</span><span class="s">p_model file missing&quot;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">p_model</span><span class="p">))</span> <span class="o">==</span> <span class="kc">false</span>
+    <span class="n">error</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$p_model</span><span class="s"> file missing&quot;</span><span class="p">)</span>
   <span class="k">end</span>
 
 </pre></div>
@@ -402,7 +402,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="n">isdir</span><span class="p">(</span><span class="n">r_folder</span><span class="p">))</span> <span class="o">==</span> <span class="n">false</span>
+<div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="n">isdir</span><span class="p">(</span><span class="n">r_folder</span><span class="p">))</span> <span class="o">==</span> <span class="kc">false</span>
     <span class="n">mkdir</span><span class="p">(</span><span class="n">r_folder</span><span class="p">)</span>
   <span class="k">end</span>
 
@@ -422,7 +422,7 @@
 <div class="highlight"><pre>  <span class="n">cp</span><span class="p">(</span><span class="n">p_const</span><span class="p">,</span> <span class="n">join</span><span class="p">([</span><span class="n">r_folder</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">p_const</span><span class="p">]))</span>
   <span class="n">cp</span><span class="p">(</span><span class="n">p_inlet</span><span class="p">,</span> <span class="n">join</span><span class="p">([</span><span class="n">r_folder</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">p_inlet</span><span class="p">]))</span>
   <span class="n">cp</span><span class="p">(</span><span class="n">p_model</span><span class="p">,</span> <span class="n">join</span><span class="p">([</span><span class="n">r_folder</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">p_model</span><span class="p">]))</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">v_model</span><span class="p">))</span> <span class="o">==</span> <span class="n">true</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">v_model</span><span class="p">))</span> <span class="o">==</span> <span class="kc">true</span>
     <span class="n">cp</span><span class="p">(</span><span class="n">v_model</span><span class="p">,</span> <span class="n">join</span><span class="p">([</span><span class="n">r_folder</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">v_model</span><span class="p">]))</span>
   <span class="k">end</span>
 
@@ -440,6 +440,7 @@
 </td>
 <td class="code">
 <div class="highlight"><pre>  <span class="n">cleanLibrary</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
+  <span class="n">run</span><span class="p">(</span><span class="sb">`rm clean_lib.sh`</span><span class="p">)</span>
 
 </pre></div>
 </td>
@@ -529,11 +530,11 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> writeScripts</span><span class="p">()</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">writeScripts</span><span class="p">()</span>
 
   <span class="n">appsh</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&quot;appender.sh&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
   <span class="n">write</span><span class="p">(</span><span class="n">appsh</span><span class="p">,</span> <span class="s">&quot;#!/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-  <span class="n">write</span><span class="p">(</span><span class="n">appsh</span><span class="p">,</span> <span class="s">&quot;cat \</span><span class="si">$1</span><span class="s"> &gt;&gt; \</span><span class="si">$2</span><span class="s">&quot;</span><span class="p">)</span>
+  <span class="n">write</span><span class="p">(</span><span class="n">appsh</span><span class="p">,</span> <span class="s">&quot;cat </span><span class="se">\$</span><span class="s">1 &gt;&gt; </span><span class="se">\$</span><span class="s">2&quot;</span><span class="p">)</span>
   <span class="n">close</span><span class="p">(</span><span class="n">appsh</span><span class="p">)</span>
 
   <span class="n">clesh</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&quot;cleaner.sh&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
@@ -562,13 +563,13 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>project_name</code></td>
-<td align="left"><code>::String</code> project name.</td>
+<td><code>::String</code> project name.</td>
 </tr>
 </tbody>
 </table>
@@ -591,15 +592,13 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> cleanLibrary</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">cleanLibrary</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
 
   <span class="n">clibsh</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&quot;clean_lib.sh&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
   <span class="n">write</span><span class="p">(</span><span class="n">clibsh</span><span class="p">,</span> <span class="s">&quot;#!/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-  <span class="n">write</span><span class="p">(</span><span class="n">clibsh</span><span class="p">,</span> <span class="s">&quot;find . -type f -not -name &#39;*</span><span class="si">$</span><span class="s">project_name*&#39; | xargs rm -rf&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+  <span class="n">write</span><span class="p">(</span><span class="n">clibsh</span><span class="p">,</span> <span class="s">&quot;find . -type f -not -name &#39;*</span><span class="si">$project_name</span><span class="s">*&#39; | xargs rm -rf&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
   <span class="n">write</span><span class="p">(</span><span class="n">clibsh</span><span class="p">,</span> <span class="s">&quot;rm -rf doc/&quot;</span><span class="p">)</span>
   <span class="n">close</span><span class="p">(</span><span class="n">clibsh</span><span class="p">)</span>
-
-  <span class="c">#run(`sh clean_lib.sh`)</span>
 
 <span class="k">end</span>
 
@@ -622,13 +621,13 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>model_data</code></td>
-<td align="left"><code>.csv</code> file containing model data (see <a href="../index.html#project">tutorial.jl</a>).</td>
+<td><code>.csv</code> file containing model data (see <a href="../index.html#project">tutorial.jl</a>).</td>
 </tr>
 </tbody>
 </table>
@@ -655,13 +654,13 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>m</code></td>
-<td align="left"><code>::Array{Any, 2}</code> model matrix.</td>
+<td><code>::Array{Any, 2}</code> model matrix.</td>
 </tr>
 </tbody>
 </table>
@@ -669,10 +668,10 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> readModelData</span><span class="p">(</span><span class="n">model_data</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">readModelData</span><span class="p">(</span><span class="n">model_data</span><span class="p">)</span>
 
   <span class="n">m</span> <span class="o">=</span> <span class="n">readdlm</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="sc">&#39;,&#39;</span><span class="p">)</span>
-  <span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
   <span class="k">return</span> <span class="n">m</span>
 <span class="k">end</span>
@@ -696,37 +695,37 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>m</code></td>
-<td align="left"><code>::Array{Any, 2}</code> model matrix row.</td>
+<td><code>::Array{Any, 2}</code> model matrix row.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>ID</code></td>
-<td align="left"><code>::Int</code> topological ID of the vessel in the arterial tree.</td>
+<td><code>::Int</code> topological ID of the vessel in the arterial tree.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>h</code></td>
-<td align="left"><a href="BTypes.html#Heart"><code>::Heart</code></a> data structure containing inlet boundary conditions.</td>
+<td><a href="BTypes.html#Heart"><code>::Heart</code></a> data structure containing inlet boundary conditions.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>b</code></td>
-<td align="left"><a href="BTypes.html#Blood"><code>::Blood</code></a> data structure containing blood mechanical properties.</td>
+<td><a href="BTypes.html#Blood"><code>::Blood</code></a> data structure containing blood mechanical properties.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>Pext</code></td>
-<td align="left"><code>::Float</code> external pressure.</td>
+<td><code>::Float</code> external pressure.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>initial_pressure</code></td>
-<td align="left"><code>::Float</code> initial pressure to be set along the entire vessel.</td>
+<td><code>::Float</code> initial pressure to be set along the entire vessel.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>Ccfl</code></td>
-<td align="left"><code>::Float</code> Courant-Friedrichs-Lewy number to <a href="godunov.html#calculateDeltaT">compute local <span class="math inline">\(\Delta t\)</span></a>.</td>
+<td><code>::Float</code> Courant-Friedrichs-Lewy number to <a href="godunov.html#calculateDeltaT">compute local <span class="math inline">\(\Delta t\)</span></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -734,10 +733,10 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> initialiseVessel</span><span class="p">(</span><span class="n">m</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Any</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span> <span class="n">ID</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span> <span class="n">h</span> <span class="p">::</span> <span class="n">Heart</span><span class="p">,</span>
-                              <span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span>
-                              <span class="n">initial_pressure</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span>
-                              <span class="n">Ccfl</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">initialiseVessel</span><span class="p">(</span><span class="n">m</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">{</span><span class="kt">Any</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span> <span class="n">ID</span> <span class="o">::</span> <span class="kt">Int64</span><span class="p">,</span> <span class="n">h</span> <span class="o">::</span> <span class="n">Heart</span><span class="p">,</span>
+                              <span class="n">b</span> <span class="o">::</span> <span class="n">Blood</span><span class="p">,</span>
+                              <span class="n">initial_pressure</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span>
+                              <span class="n">Ccfl</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">)</span>
 
 
 </pre></div>
@@ -768,11 +767,11 @@
 </td>
 <td class="code">
 <div class="highlight"><pre>  <span class="n">vessel_name</span> <span class="o">=</span>     <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-  <span class="n">sn</span>          <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-  <span class="n">tn</span>          <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-  <span class="n">rn</span>         <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+  <span class="n">sn</span>          <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+  <span class="n">tn</span>          <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+  <span class="n">rn</span>          <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
   <span class="n">L</span>           <span class="o">=</span>     <span class="n">m</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-  <span class="n">M</span>           <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+  <span class="n">M</span>           <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
   <span class="n">Rp</span>          <span class="o">=</span>     <span class="n">m</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
   <span class="n">Rd</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
 
@@ -834,42 +833,11 @@
   <div class="pilwrap">
     <a class="pilcrow" href="#section-20">&#182;</a>
   </div>
-  <p>Unstressed cross-sectional area <code>A0</code> is computed from <code>R0</code>. A0 = pi<em>R0</em>R0</p>
+  <p>Unstressed cross-sectional area <code>A0</code> is computed from <code>R0</code>.</p>
 
 </td>
 <td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-21">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-21">&#182;</a>
-  </div>
-  <p>Rp = 4e-3 Rd = 2e-3</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-22">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-22">&#182;</a>
-  </div>
-  <p>Rp = r0 Rd = r0</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-  <span class="n">A0</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+<div class="highlight"><pre>  <span class="n">A0</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
   <span class="n">R0</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
   <span class="n">h0</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
 
@@ -880,7 +848,7 @@
   <span class="n">bh</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.053e2</span>
   <span class="n">ch</span> <span class="o">=</span> <span class="mf">0.1324</span>
   <span class="n">dh</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.1114e2</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">M</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span>
     <span class="n">R0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">radius_slope</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span> <span class="o">+</span> <span class="n">Rp</span>
     <span class="n">h0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">R0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">ah</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">bh</span><span class="o">*</span><span class="n">R0</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">ch</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">dh</span><span class="o">*</span><span class="n">R0</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="c">#1e-3</span>
     <span class="n">A0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pi</span><span class="o">*</span><span class="n">R0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">R0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -893,25 +861,10 @@
 </td>
 </tr>
 
-<tr id="section-23">
+<tr id="section-21">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-23">&#182;</a>
-  </div>
-  <p>println(dA0dx[end])</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-24">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-24">&#182;</a>
+    <a class="pilcrow" href="#section-21">&#182;</a>
   </div>
   <p>Elastic constants for trans-mural <a href="converter.html#pressure">pressure</a> (<code>beta</code>) and <a href="converter.html#waveSpeed">wave speed</a> (<code>gamma</code>) calculation: <span class="math display">\[
   \beta = \sqrt{\frac{\pi}{A_0}} \frac{h_0 E}{1 - \sigma^2}, \quad
@@ -920,11 +873,11 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>  <span class="n">beta</span>  <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">pi</span><span class="o">./</span><span class="n">A0</span><span class="p">)</span> <span class="o">.*</span> <span class="n">h0</span><span class="o">*</span><span class="n">E</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">*</span><span class="n">sigma</span><span class="p">)</span>
+<div class="highlight"><pre>  <span class="n">beta</span>  <span class="o">=</span> <span class="n">sqrt</span><span class="o">.</span><span class="p">(</span><span class="nb">pi</span><span class="o">./</span><span class="n">A0</span><span class="p">)</span> <span class="o">.*</span> <span class="n">h0</span><span class="o">*</span><span class="n">E</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">*</span><span class="n">sigma</span><span class="p">)</span>
   <span class="n">gamma</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">./</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">rho</span><span class="o">*</span><span class="n">R0</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pi</span><span class="p">))</span>
 
   <span class="n">gamma_ghost</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">M</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
-  <span class="n">gamma_ghost</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="n">M</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span>
+  <span class="n">gamma_ghost</span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="n">M</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span>
   <span class="n">gamma_ghost</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
   <span class="n">gamma_ghost</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">]</span>
 
@@ -933,10 +886,10 @@
 </td>
 </tr>
 
-<tr id="section-25">
+<tr id="section-22">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-25">&#182;</a>
+    <a class="pilcrow" href="#section-22">&#182;</a>
   </div>
   <p>Initialise conservative (<code>A</code> and <code>Q</code>) and primitive (<code>u</code>, <code>c</code>, and <code>P</code>) variables arrays with initial values. <code>A</code> is taken as the unstressed cross-sectional area <code>A0</code> and <code>Q</code> is everywhere the <code>initial_flow</code> specified in <a href="../index.html#project_constants"><code>project_constants.jl</code></a>. The longitudinal velocity <code>u</code> comes from the definition of <code>Q</code> <span class="math display">\[
     Q = u A .
@@ -956,10 +909,10 @@
 </td>
 </tr>
 
-<tr id="section-26">
+<tr id="section-23">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-26">&#182;</a>
+    <a class="pilcrow" href="#section-23">&#182;</a>
   </div>
   <p><a href="godunov.html">Ghost cells</a> are initialised as the internal nodes.</p>
 
@@ -979,10 +932,10 @@
 </td>
 </tr>
 
-<tr id="section-27">
+<tr id="section-24">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-27">&#182;</a>
+    <a class="pilcrow" href="#section-24">&#182;</a>
   </div>
   <p>Forward and backward <a href="converter.html#riemannInvariants">Riemann invariants</a> at the vessel outlet node.</p>
 
@@ -995,10 +948,10 @@
 </td>
 </tr>
 
-<tr id="section-28">
+<tr id="section-25">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-28">&#182;</a>
+    <a class="pilcrow" href="#section-25">&#182;</a>
   </div>
   <p>Temporary files names are built by <code>join</code>ing the vessel <code>label</code> and a string referring to the quantity stored, and a <code>.temp</code> extension. Same procedure is followed for results files with <code>.out</code> extension. Data input and output are handled by <a href="IOutils.html"><code>IOutils.jl</code></a> functions.</p>
 
@@ -1026,10 +979,10 @@
 </td>
 </tr>
 
-<tr id="section-29">
+<tr id="section-26">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-29">&#182;</a>
+    <a class="pilcrow" href="#section-26">&#182;</a>
   </div>
   <p>Temporary data and output files are created with <code>open</code> command. Data from temporary files to output files are <a href="IOutils.jl#transferTempToOut">transferred</a> by means of a bash script. Thus, the <code>IOStream</code> to <code>.out</code> files must be <code>close</code>d. Writing in <code>.temp</code> is handled within julia, hence <code>.temp</code> are left open, ready to be written.</p>
 
@@ -1053,9 +1006,9 @@
   <span class="n">out_c</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">out_c_name</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
   <span class="n">out_P</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">out_P_name</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
 
-  <span class="n">node2</span> <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="mf">0.25</span><span class="p">)</span>
-  <span class="n">node3</span> <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>
-  <span class="n">node4</span> <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="mf">0.75</span><span class="p">)</span>
+  <span class="n">node2</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="mf">0.25</span><span class="p">))</span>
+  <span class="n">node3</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="mf">0.5</span><span class="p">))</span>
+  <span class="n">node4</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="mf">0.75</span><span class="p">))</span>
 
   <span class="n">close</span><span class="p">(</span><span class="n">last_A</span><span class="p">)</span>
   <span class="n">close</span><span class="p">(</span><span class="n">last_Q</span><span class="p">)</span>
@@ -1073,10 +1026,10 @@
 </td>
 </tr>
 
-<tr id="section-30">
+<tr id="section-27">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-30">&#182;</a>
+    <a class="pilcrow" href="#section-27">&#182;</a>
   </div>
   <p>The outlet boundary condition is specified by the last columns in the <code>project.csv</code> file.</p>
 <p>9 columns means that only the reflection coefficient <code>Rt</code> has been specified. Since the three elements windkessel parameters must be specified anyway, they are set to zero.</p>
@@ -1095,10 +1048,10 @@
 </td>
 </tr>
 
-<tr id="section-31">
+<tr id="section-28">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-31">&#182;</a>
+    <a class="pilcrow" href="#section-28">&#182;</a>
   </div>
   <p>10 columns means that the three element windkessel is specified with Reymond (2009) notation. Peripheral resistance (<code>R2</code>) is supplied along with the outlet impedance (<code>R1</code>). To decouple these two parameters, <code>R1</code> is computed as the vessel characteristic impedance <span class="math display">\[
   R_1 = Z_c = \rho \frac{c}{A_0}.
@@ -1109,7 +1062,6 @@
 <div class="highlight"><pre>  <span class="k">elseif</span> <span class="n">length</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span>
 
     <span class="n">R1</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">rho</span><span class="o">*</span><span class="n">waveSpeed</span><span class="p">(</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">gamma</span><span class="p">[</span><span class="k">end</span><span class="p">])</span><span class="o">/</span><span class="n">A0</span><span class="p">[</span><span class="k">end</span><span class="p">]</span>
-    <span class="c">#R1 = 1e5 #b.rho * 13.3/(A0*(2*R0*1e3)^0.3)</span>
     <span class="n">R2</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">-</span> <span class="n">R1</span>
     <span class="n">Cc</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
 
@@ -1119,10 +1071,10 @@
 </td>
 </tr>
 
-<tr id="section-32">
+<tr id="section-29">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-32">&#182;</a>
+    <a class="pilcrow" href="#section-29">&#182;</a>
   </div>
   <p>11 columns means that the three parameters are specified.</p>
 
@@ -1143,107 +1095,10 @@
 </td>
 </tr>
 
-<tr id="section-33">
+<tr id="section-30">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-33">&#182;</a>
-  </div>
-  <pre><code>elseif length(m) == 10</code></pre>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-34">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-34">&#182;</a>
-  </div>
-  <pre><code>R1 = b.rho*waveSpeed(A0[end], gamma[end])/A0[end]
-#R1 = 1e5 #b.rho * 13.3/(A0*(2*R0*1e3)^0.3)
-R2 = m[ 9] - R1
-Cc = m[10]</code></pre>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-35">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-35">&#182;</a>
-  </div>
-  <pre><code>Rt = 0.</code></pre>
-<p># 11 columns means that the three parameters are specified. elseif length(m) &gt;= 11</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-36">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-36">&#182;</a>
-  </div>
-  <pre><code>R1 = b.rho*waveSpeed(A0[end], gamma[end])/A0[end] #m[ 9]
-R2 = m[ 9] +m[10]#- R1 #m[10]
-Cc = m[11]</code></pre>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-37">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-37">&#182;</a>
-  </div>
-  <pre><code>Rt = 0.</code></pre>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-38">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-38">&#182;</a>
-  </div>
-  <p>end</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-39">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-39">&#182;</a>
+    <a class="pilcrow" href="#section-30">&#182;</a>
   </div>
   <p><code>Pcn</code> is the pressure through the peripheral compliance of the three elements windkessel. It is set to zero to simulate the pressure at the artery-vein interface.</p>
 
@@ -1259,10 +1114,10 @@ Cc = m[11]</code></pre>
 </td>
 </tr>
 
-<tr id="section-40">
+<tr id="section-31">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-40">&#182;</a>
+    <a class="pilcrow" href="#section-31">&#182;</a>
   </div>
   <p>MUSCL arrays</p>
 
@@ -1292,10 +1147,10 @@ Cc = m[11]</code></pre>
 </td>
 </tr>
 
-<tr id="section-41">
+<tr id="section-32">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-41">&#182;</a>
+    <a class="pilcrow" href="#section-32">&#182;</a>
   </div>
   <table>
 <colgroup>
@@ -1305,13 +1160,13 @@ Cc = m[11]</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>vessel_data</code></td>
-<td align="left"><a href="BTypes.html#Vessel"><code>::Vessel</code></a> data structure containing vessel mechanical and geometrical properties.</td>
+<td><a href="BTypes.html#Vessel"><code>::Vessel</code></a> data structure containing vessel mechanical and geometrical properties.</td>
 </tr>
 </tbody>
 </table>
@@ -1324,21 +1179,7 @@ Cc = m[11]</code></pre>
                     <span class="n">dx</span><span class="p">,</span> <span class="n">invDx</span><span class="p">,</span> <span class="n">halfDx</span><span class="p">,</span>
                     <span class="n">Ccfl</span><span class="p">,</span>
                     <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">gamma_ghost</span><span class="p">,</span>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-42">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-42">&#182;</a>
-  </div>
-  <pre><code>                R0,</code></pre>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>                    <span class="n">A0</span><span class="p">,</span> <span class="n">dA0dx</span><span class="p">,</span> <span class="n">dTaudx</span><span class="p">,</span> <span class="n">Pext</span><span class="p">,</span>
+                    <span class="n">A0</span><span class="p">,</span> <span class="n">dA0dx</span><span class="p">,</span> <span class="n">dTaudx</span><span class="p">,</span> <span class="n">Pext</span><span class="p">,</span>
                     <span class="n">A</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span>
                     <span class="n">u</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span>
                     <span class="n">W1M0</span><span class="p">,</span> <span class="n">W2M0</span><span class="p">,</span>
@@ -1369,10 +1210,10 @@ Cc = m[11]</code></pre>
 </td>
 </tr>
 
-<tr id="section-43">
+<tr id="section-33">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-43">&#182;</a>
+    <a class="pilcrow" href="#section-33">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>loadInputData</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>::Array{Float, 2}</code></p>
 <table>
@@ -1383,13 +1224,13 @@ Cc = m[11]</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>project_name</code></td>
-<td align="left"><code>project</code> name string.</td>
+<td><code>project</code> name string.</td>
 </tr>
 </tbody>
 </table>
@@ -1416,13 +1257,13 @@ Cc = m[11]</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>in_data</code> condition.</td>
-<td align="left"><code>::Array{Float, 2}</code> <code>[time, flow]</code> matrix for inlet boundary</td>
+<td><code>::Array{Float, 2}</code> <code>[time, flow]</code> matrix for inlet boundary</td>
 </tr>
 </tbody>
 </table>
@@ -1430,7 +1271,7 @@ Cc = m[11]</code></pre>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> loadInputData</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">loadInputData</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
   <span class="n">in_data</span> <span class="o">=</span> <span class="n">readdlm</span><span class="p">(</span><span class="n">join</span><span class="p">([</span><span class="n">project_name</span><span class="p">,</span> <span class="s">&quot;_inlet.dat&quot;</span><span class="p">]))</span>
   <span class="k">return</span> <span class="n">in_data</span>
 <span class="k">end</span>
@@ -1440,10 +1281,10 @@ Cc = m[11]</code></pre>
 </td>
 </tr>
 
-<tr id="section-44">
+<tr id="section-34">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-44">&#182;</a>
+    <a class="pilcrow" href="#section-34">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>loadGlobalConstants</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>::Heart</code>, <code>::Blood</code>, <code>::Float</code></p>
 <table>
@@ -1454,41 +1295,41 @@ Cc = m[11]</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>project_name</code></td>
-<td align="left"><code>project</code> name string.</td>
+<td><code>project</code> name string.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>inlet_BC_switch</code></td>
-<td align="left"><code>::Int</code> inlet boundary condtion selector:</td>
+<td><code>::Int</code> inlet boundary condtion selector:</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td align="left">1 <span class="math inline">\(\rightarrow\)</span> heaviside sine function</td>
+<td>1 <span class="math inline">\(\rightarrow\)</span> heaviside sine function</td>
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td align="left">2 <span class="math inline">\(\rightarrow\)</span> gaussian</td>
+<td>2 <span class="math inline">\(\rightarrow\)</span> gaussian</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td align="left">3 <span class="math inline">\(\rightarrow\)</span> from <code>project_inlet.dat</code></td>
+<td>3 <span class="math inline">\(\rightarrow\)</span> from <code>project_inlet.dat</code></td>
 </tr>
 <tr class="even">
 <td align="left"><code>cycles</code></td>
-<td align="left"><code>::Int</code> number of cardiac cycles to be simulated.</td>
+<td><code>::Int</code> number of cardiac cycles to be simulated.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>rho</code></td>
-<td align="left"><code>::Float</code> blood density</td>
+<td><code>::Float</code> blood density</td>
 </tr>
 <tr class="even">
 <td align="left"><code>mu</code></td>
-<td align="left"><code>::Float</code> blood dynamic viscosity</td>
+<td><code>::Float</code> blood dynamic viscosity</td>
 </tr>
 </tbody>
 </table>
@@ -1511,20 +1352,20 @@ Cc = m[11]</code></pre>
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> loadGlobalConstants</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span>
-                             <span class="n">inlet_BC_switch</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span>
-                             <span class="n">inlet_type</span> <span class="p">::</span> <span class="n">ASCIIString</span><span class="p">,</span>
-                             <span class="n">cycles</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span>
-                             <span class="n">rho</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">mu</span><span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">gamma_profile</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">loadGlobalConstants</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span>
+                             <span class="n">inlet_BC_switch</span> <span class="o">::</span> <span class="kt">Int64</span><span class="p">,</span>
+                             <span class="n">inlet_type</span> <span class="o">::</span> <span class="n">String</span><span class="p">,</span>
+                             <span class="n">cycles</span> <span class="o">::</span> <span class="kt">Int64</span><span class="p">,</span>
+                             <span class="n">rho</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">mu</span><span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">gamma_profile</span> <span class="o">::</span> <span class="kt">Int64</span><span class="p">)</span>
 
 </pre></div>
 </td>
 </tr>
 
-<tr id="section-45">
+<tr id="section-35">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-45">&#182;</a>
+    <a class="pilcrow" href="#section-35">&#182;</a>
   </div>
   <p><code>heart</code> data structure is filled depending on the inlet boundary condition chosen by the user. When the inlet flow function is given (<code>inlet_BC_swithc</code>=3), the flow waveform is imported by <a href="initialise.html#loadInputData"><code>loadInputData</code></a> function. The <code>cardiac_period</code> is taken as the last row in the time column of the input file. <code>sys_T</code>, <code>initial_flow</code>, and <code>flow_amplitude</code> quantities will not be used and they are set to zero.</p>
 
@@ -1532,24 +1373,6 @@ Cc = m[11]</code></pre>
 <td class="code">
 <div class="highlight"><pre>  <span class="k">if</span> <span class="n">inlet_BC_switch</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="n">input_data</span> <span class="o">=</span> <span class="n">loadInputData</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-46">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-46">&#182;</a>
-  </div>
-  <pre><code>if input_data[1,2] &lt; 1e-6
-  error(&quot;Inlet flow initial value &lt; 1e-6&quot;)
-end</code></pre>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
     <span class="n">cardiac_period</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="k">end</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">sys_T</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="n">initial_flow</span> <span class="o">=</span> <span class="mf">0.</span>
@@ -1559,10 +1382,10 @@ end</code></pre>
 </td>
 </tr>
 
-<tr id="section-47">
+<tr id="section-36">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-47">&#182;</a>
+    <a class="pilcrow" href="#section-36">&#182;</a>
   </div>
   <p>In any other case, all the parameters are take from <code>project_constants.jl</code> file. <code>input_data</code> array is initialised to zero and it will not be used.</p>
 
@@ -1577,10 +1400,10 @@ end</code></pre>
 </td>
 </tr>
 
-<tr id="section-48">
+<tr id="section-37">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-48">&#182;</a>
+    <a class="pilcrow" href="#section-37">&#182;</a>
   </div>
   <p>The total simulation time <code>total_time</code> is calculated as number of cycles times the cardiac period in seconds.</p>
 
@@ -1599,10 +1422,10 @@ end</code></pre>
 </td>
 </tr>
 
-<tr id="section-49">
+<tr id="section-38">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-49">&#182;</a>
+    <a class="pilcrow" href="#section-38">&#182;</a>
   </div>
   <p>Kinematic viscosity <code>nu</code> and viscous resitance term <code>Cf</code> are calculated as <span class="math display">\[
   \nu = \frac{\mu}{\rho}, \quad C_f = 8\pi\nu.
@@ -1620,10 +1443,10 @@ end</code></pre>
 </td>
 </tr>
 
-<tr id="section-50">
+<tr id="section-39">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-50">&#182;</a>
+    <a class="pilcrow" href="#section-39">&#182;</a>
   </div>
   <table>
 <colgroup>
@@ -1633,21 +1456,21 @@ end</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>heart_data</code></td>
-<td align="left"><code>::Heart</code></td>
+<td><code>::Heart</code></td>
 </tr>
 <tr class="even">
 <td align="left"><code>blood_data</code></td>
-<td align="left"><code>::Blood</code></td>
+<td><code>::Blood</code></td>
 </tr>
 <tr class="odd">
 <td align="left"><code>total_time</code></td>
-<td align="left"><code>::Float</code></td>
+<td><code>::Float</code></td>
 </tr>
 </tbody>
 </table>

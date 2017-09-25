@@ -9,7 +9,7 @@
   <link rel="stylesheet" media="all" href="./jocco.css" />
   <link rel="stylesheet" href="http://dobtco.github.io/jquery-resizable-columns/dist/jquery.resizableColumns.css">
   <script type="text/javascript"
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
   </script>
   <!-- jQuery -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -295,7 +295,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre>
+<div class="highlight"><pre><span></span>
 </pre></div>
 </td>
 </tr>
@@ -468,25 +468,25 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>i</code></td>
-<td align="left"><code>::Int</code> cell index within the vessel numerical domain.</td>
+<td><code>::Int</code> cell index within the vessel numerical domain.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>v</code></td>
-<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+<td><code>::Vessel</code> current vessel data structure.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>dt</code></td>
-<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+<td><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>b</code></td>
-<td align="left"><code>::Blood</code> blood data structure.</td>
+<td><code>::Blood</code> blood data structure.</td>
 </tr>
 </tbody>
 </table>
@@ -509,7 +509,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> Godunov</span><span class="p">(</span><span class="n">i</span> <span class="p">::</span> <span class="kt">Int64</span><span class="p">,</span> <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">Godunov</span><span class="p">(</span><span class="n">i</span> <span class="o">::</span> <span class="kt">Int64</span><span class="p">,</span> <span class="n">v</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">,</span> <span class="n">dt</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">b</span> <span class="o">::</span> <span class="n">Blood</span><span class="p">)</span>
 
 
 </pre></div>
@@ -715,29 +715,29 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>Al</code></td>
-<td align="left"><code>::Float</code> <code>A</code> value at the left side of the local cell interface.</td>
+<td><code>::Float</code> <code>A</code> value at the left side of the local cell interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Ql</code></td>
-<td align="left"><code>::Float</code> <code>Q</code> value at the left side of the local cell interface.</td>
+<td><code>::Float</code> <code>Q</code> value at the left side of the local cell interface.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>Ar</code></td>
-<td align="left"><code>::Float</code> <code>A</code> value at the right side of the local cell interface.</td>
+<td><code>::Float</code> <code>A</code> value at the right side of the local cell interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Qr</code></td>
-<td align="left"><code>::Float</code> <code>Q</code> value at the right side of the local cell interface.</td>
+<td><code>::Float</code> <code>Q</code> value at the right side of the local cell interface.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>v</code></td>
-<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+<td><code>::Vessel</code> current vessel data structure.</td>
 </tr>
 </tbody>
 </table>
@@ -745,9 +745,9 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> riemannSolver</span><span class="p">(</span><span class="n">Al</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Ql</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span>
-                       <span class="n">Ar</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Qr</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span>
-                        <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">riemannSolver</span><span class="p">(</span><span class="n">Al</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Ql</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span>
+                       <span class="n">Ar</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Qr</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span>
+                        <span class="n">v</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">)</span>
 
 </pre></div>
 </td>
@@ -783,6 +783,9 @@
   <span class="n">cr</span> <span class="o">=</span> <span class="n">waveSpeed</span><span class="p">(</span><span class="n">Ar</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
   <span class="n">du</span> <span class="o">=</span> <span class="n">ur</span> <span class="o">-</span> <span class="n">ul</span>
 
+  <span class="c">#two rarefaction solution</span>
+  <span class="n">cs</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">cl</span> <span class="o">+</span> <span class="n">cr</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">ur</span> <span class="o">-</span> <span class="n">ul</span><span class="p">)</span><span class="o">*</span><span class="mf">0.125</span>
+  <span class="n">As</span> <span class="o">=</span> <span class="mi">4</span><span class="o">/</span><span class="mi">9</span> <span class="o">*</span> <span class="p">(</span><span class="n">cs</span><span class="o">^</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
 
 </pre></div>
 </td>
@@ -792,25 +795,6 @@
 <td class="docs">
   <div class="pilwrap">
     <a class="pilcrow" href="#section-23">&#182;</a>
-  </div>
-  <pre><code>#vacuum</code></pre>
-<p>if ul + 4<em>cl &lt;= ur - 4</em>cr # println(“v”) # return (Al+Ar)<em>0.5, (Ql+Qr)</em>0.5 return v.A0, (Ql+Qr)*0.5 end</p>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>
-  <span class="c">#two rarefaction solution</span>
-  <span class="n">cs</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">cl</span> <span class="o">+</span> <span class="n">cr</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">ur</span> <span class="o">-</span> <span class="n">ul</span><span class="p">)</span><span class="o">*</span><span class="mf">0.125</span>
-  <span class="n">As</span> <span class="o">=</span> <span class="mi">4</span><span class="o">/</span><span class="mi">9</span> <span class="o">*</span> <span class="p">(</span><span class="n">cs</span><span class="o">^</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-24">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-24">&#182;</a>
   </div>
   <p>The nonlinear equation for the RP is defined and solved by Newton’s method.</p>
 
@@ -825,10 +809,10 @@
 </td>
 </tr>
 
-<tr id="section-25">
+<tr id="section-24">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-25">&#182;</a>
+    <a class="pilcrow" href="#section-24">&#182;</a>
   </div>
   <p>Eventually, <span class="math inline">\(u^*\)</span> is computed as <span class="math display">\[
   \frac{1}{2}\left(u_L + u_R\right) + \frac{1}{2}\left[f_R\left(A^*\right)
@@ -843,10 +827,10 @@
 </td>
 </tr>
 
-<tr id="section-26">
+<tr id="section-25">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-26">&#182;</a>
+    <a class="pilcrow" href="#section-25">&#182;</a>
   </div>
   <p><span class="math inline">\(Q^*\)</span> is calculated from its definition and returned.</p>
 
@@ -858,10 +842,10 @@
 </td>
 </tr>
 
-<tr id="section-27">
+<tr id="section-26">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-27">&#182;</a>
+    <a class="pilcrow" href="#section-26">&#182;</a>
   </div>
   <table>
 <colgroup>
@@ -871,17 +855,17 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>As</code></td>
-<td align="left"><code>::Float</code> cross-sectional area in the star region, solution of the RP at the interface.</td>
+<td><code>::Float</code> cross-sectional area in the star region, solution of the RP at the interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Qs</code></td>
-<td align="left"><code>::Float</code> flow rate in the star region, solution of the RP at the interface.</td>
+<td><code>::Float</code> flow rate in the star region, solution of the RP at the interface.</td>
 </tr>
 </tbody>
 </table>
@@ -896,10 +880,10 @@
 </td>
 </tr>
 
-<tr id="section-28">
+<tr id="section-27">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-28">&#182;</a>
+    <a class="pilcrow" href="#section-27">&#182;</a>
   </div>
   <p>Local fluxes (left and right) are computed depending on the nature of the wave system located at the interface. In particular <span class="math display">\[
   f_L = \begin{cases}
@@ -923,10 +907,10 @@
 </td>
 </tr>
 
-<tr id="section-29">
+<tr id="section-28">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-29">&#182;</a>
+    <a class="pilcrow" href="#section-28">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>fL</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>left_flux::Float</code></p>
 <table>
@@ -937,29 +921,29 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>A</code></td>
-<td align="left"><code>::Float</code> current value of <span class="math inline">\(A^*\)</span> at the left interface.</td>
+<td><code>::Float</code> current value of <span class="math inline">\(A^*\)</span> at the left interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Al</code></td>
-<td align="left"><code>::Float</code> cross sectional area of the left cell.</td>
+<td><code>::Float</code> cross sectional area of the left cell.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>c</code></td>
-<td align="left"><code>::Float</code> current value of <span class="math inline">\(c^*\)</span> at the left interface.</td>
+<td><code>::Float</code> current value of <span class="math inline">\(c^*\)</span> at the left interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>cl</code></td>
-<td align="left"><code>::Float</code> wave speed in the left cell.</td>
+<td><code>::Float</code> wave speed in the left cell.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>v</code></td>
-<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+<td><code>::Vessel</code> current vessel data structure.</td>
 </tr>
 </tbody>
 </table>
@@ -971,13 +955,13 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>left_flux</code></td>
-<td align="left"><code>::Float</code> local flux at the left interface.</td>
+<td><code>::Float</code> local flux at the left interface.</td>
 </tr>
 </tbody>
 </table>
@@ -985,7 +969,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> fL</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Al</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">c</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">cl</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">fL</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Al</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">c</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">cl</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">)</span>
 
   <span class="k">if</span> <span class="n">A</span> <span class="o">&lt;=</span> <span class="n">Al</span>
     <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">cl</span><span class="p">)</span>
@@ -1004,10 +988,10 @@
 </td>
 </tr>
 
-<tr id="section-30">
+<tr id="section-29">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-30">&#182;</a>
+    <a class="pilcrow" href="#section-29">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>fR</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>right_flux::Float</code></p>
 <table>
@@ -1018,29 +1002,29 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>A</code></td>
-<td align="left"><code>::Float</code> current value of <span class="math inline">\(A^*\)</span> at the right interface.</td>
+<td><code>::Float</code> current value of <span class="math inline">\(A^*\)</span> at the right interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Ar</code></td>
-<td align="left"><code>::Float</code> cross sectional area of the right cell.</td>
+<td><code>::Float</code> cross sectional area of the right cell.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>c</code></td>
-<td align="left"><code>::Float</code> current value of <span class="math inline">\(c^*\)</span> at the right interface.</td>
+<td><code>::Float</code> current value of <span class="math inline">\(c^*\)</span> at the right interface.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>cr</code></td>
-<td align="left"><code>::Float</code> wave speed in the right cell.</td>
+<td><code>::Float</code> wave speed in the right cell.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>v</code></td>
-<td align="left"><code>::Vessel</code> current vessel data structure.</td>
+<td><code>::Vessel</code> current vessel data structure.</td>
 </tr>
 </tbody>
 </table>
@@ -1052,13 +1036,13 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>right_flux</code></td>
-<td align="left"><code>::Float</code> local flux at the right interface.</td>
+<td><code>::Float</code> local flux at the right interface.</td>
 </tr>
 </tbody>
 </table>
@@ -1066,7 +1050,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> fR</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Ar</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">c</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">cr</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span> <span class="p">::</span> <span class="n">Vessel</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">fR</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Ar</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">c</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">cr</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span> <span class="o">::</span> <span class="n">Vessel</span><span class="p">)</span>
 
   <span class="k">if</span> <span class="n">A</span> <span class="o">&lt;=</span> <span class="n">Ar</span>
     <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">cr</span><span class="p">)</span>
@@ -1085,10 +1069,10 @@
 </td>
 </tr>
 
-<tr id="section-31">
+<tr id="section-30">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-31">&#182;</a>
+    <a class="pilcrow" href="#section-30">&#182;</a>
   </div>
   <p>The flux in conservative form reads <span class="math display">\[
   \mathbf{F}(\mathbf{U}) = \left\{ \begin{array}{c}
@@ -1105,10 +1089,10 @@
 </td>
 </tr>
 
-<tr id="section-32">
+<tr id="section-31">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-32">&#182;</a>
+    <a class="pilcrow" href="#section-31">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>flux</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>f1::Float</code>, <code>f2::Float</code></p>
 <table>
@@ -1119,21 +1103,21 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>A</code></td>
-<td align="left"><code>::Float</code> cross sectional area along the cell.</td>
+<td><code>::Float</code> cross sectional area along the cell.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Q</code></td>
-<td align="left"><code>::Float</code> flow rate within the cell.</td>
+<td><code>::Float</code> flow rate within the cell.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>gamma</code></td>
-<td align="left"><code>::Vessel</code> elastic constant for <code>c</code> calculation.</td>
+<td><code>::Vessel</code> elastic constant for <code>c</code> calculation.</td>
 </tr>
 </tbody>
 </table>
@@ -1145,17 +1129,17 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>f1</code></td>
-<td align="left"><code>::Float</code> first component of the numerical flux.</td>
+<td><code>::Float</code> first component of the numerical flux.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>f2</code></td>
-<td align="left"><code>::Float</code> second component of the numerical flux.</td>
+<td><code>::Float</code> second component of the numerical flux.</td>
 </tr>
 </tbody>
 </table>
@@ -1163,7 +1147,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> flux</span><span class="p">(</span><span class="n">A</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Q</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">gamma</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">flux</span><span class="p">(</span><span class="n">A</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">Q</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">)</span>
 
   <span class="n">f1</span> <span class="o">=</span> <span class="n">Q</span>
   <span class="n">f2</span> <span class="o">=</span> <span class="n">Q</span><span class="o">*</span><span class="n">Q</span><span class="o">/</span><span class="n">A</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="n">A</span><span class="o">^</span><span class="mf">1.5</span>
@@ -1176,10 +1160,10 @@
 </td>
 </tr>
 
-<tr id="section-33">
+<tr id="section-32">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-33">&#182;</a>
+    <a class="pilcrow" href="#section-32">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>source</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>S::Float</code></p>
 <table>
@@ -1190,25 +1174,25 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>dt</code></td>
-<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+<td><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>A</code></td>
-<td align="left"><code>::Float</code> cross sectional area along the cell.</td>
+<td><code>::Float</code> cross sectional area along the cell.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>u</code></td>
-<td align="left"><code>::Vessel</code> longitudinal velocity along the cell.</td>
+<td><code>::Vessel</code> longitudinal velocity along the cell.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>b</code></td>
-<td align="left"><code>::Blood</code> blood data structure.</td>
+<td><code>::Blood</code> blood data structure.</td>
 </tr>
 </tbody>
 </table>
@@ -1235,13 +1219,13 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>S</code></td>
-<td align="left"><code>::Float</code> source term.</td>
+<td><code>::Float</code> source term.</td>
 </tr>
 </tbody>
 </table>
@@ -1249,7 +1233,7 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> source</span><span class="p">(</span><span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">A</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">u</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">b</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">source</span><span class="p">(</span><span class="n">dt</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">A</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">u</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">b</span> <span class="o">::</span> <span class="n">Blood</span><span class="p">)</span>
 
   <span class="k">return</span> <span class="o">-</span><span class="n">b</span><span class="o">.</span><span class="n">Cf</span><span class="o">*</span><span class="n">u</span><span class="o">*</span><span class="n">dt</span>
 
@@ -1260,10 +1244,10 @@
 </td>
 </tr>
 
-<tr id="section-34">
+<tr id="section-33">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-34">&#182;</a>
+    <a class="pilcrow" href="#section-33">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>calculateDeltaT</code></strong> <span class="math inline">\(\rightarrow\)</span> <code>DT::Float</code></p>
 <table>
@@ -1274,13 +1258,13 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>vessels</code></td>
-<td align="left"><code>::Array{Vessel, 1}</code></td>
+<td><code>::Array{Vessel, 1}</code></td>
 </tr>
 </tbody>
 </table>
@@ -1303,17 +1287,17 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> calculateDeltaT</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">})</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">calculateDeltaT</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">dt</span> <span class="o">::</span> <span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">})</span>
 
 
 </pre></div>
 </td>
 </tr>
 
-<tr id="section-35">
+<tr id="section-34">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-35">&#182;</a>
+    <a class="pilcrow" href="#section-34">&#182;</a>
   </div>
   <p>For each vessel the <span class="math inline">\(\Delta t\)</span> is computed as <span class="math display">\[
   \Delta t = \frac{\Delta x}{S_{max}} C_{cfl}
@@ -1322,14 +1306,14 @@
 </td>
 <td class="code">
 <div class="highlight"><pre>  <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-  <span class="k">for</span> <span class="n">v</span> <span class="k">in</span> <span class="n">vessels</span>
+  <span class="k">for</span> <span class="n">v</span> <span class="kp">in</span> <span class="n">vessels</span>
 
     <span class="n">lambdap</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">v</span><span class="o">.</span><span class="n">M</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">v</span><span class="o">.</span><span class="n">M</span>
       <span class="n">lambdap</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
     <span class="k">end</span>
 
-    <span class="n">Smax</span> <span class="o">=</span> <span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">lambdap</span><span class="p">))</span>
+    <span class="n">Smax</span> <span class="o">=</span> <span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">lambdap</span><span class="p">))</span>
 
     <span class="n">dt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">Ccfl</span><span class="o">/</span><span class="n">Smax</span>
 
@@ -1340,10 +1324,10 @@
 </td>
 </tr>
 
-<tr id="section-36">
+<tr id="section-35">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-36">&#182;</a>
+    <a class="pilcrow" href="#section-35">&#182;</a>
   </div>
   <table>
 <colgroup>
@@ -1353,13 +1337,13 @@
 <thead>
 <tr class="header">
 <th align="left">Returns:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>DT</code></td>
-<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span> computed as the smallest between the smallest <span class="math inline">\(\Delta t\)</span> associated with each vessel and the <span class="math inline">\(\Delta t\)</span> limiter <span class="math inline">\(0.001\)</span>.</td>
+<td><code>::Float</code> <span class="math inline">\(\Delta t\)</span> computed as the smallest between the smallest <span class="math inline">\(\Delta t\)</span> associated with each vessel and the <span class="math inline">\(\Delta t\)</span> limiter <span class="math inline">\(0.001\)</span>.</td>
 </tr>
 </tbody>
 </table>
@@ -1375,10 +1359,10 @@
 </td>
 </tr>
 
-<tr id="section-37">
+<tr id="section-36">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-37">&#182;</a>
+    <a class="pilcrow" href="#section-36">&#182;</a>
   </div>
   <p><em>function</em> <strong><code>solveModel</code></strong></p>
 <table>
@@ -1389,37 +1373,37 @@
 <thead>
 <tr class="header">
 <th align="left">Parameters:</th>
-<th align="left"></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>grafo</code></td>
-<td align="left"><code>::GenericGraph</code> graph data structure containing all the vessels.</td>
+<td><code>::GenericGraph</code> graph data structure containing all the vessels.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>edgess</code></td>
-<td align="left"><code>::Array</code> collection of <code>edge</code> objects.</td>
+<td><code>::Array</code> collection of <code>edge</code> objects.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>vessels</code></td>
-<td align="left"><code>::Array{Vessel, 1}</code> collection of vessels in the system.</td>
+<td><code>::Array{Vessel, 1}</code> collection of vessels in the system.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>heart</code></td>
-<td align="left"><code>::Heart</code> heart data structure.</td>
+<td><code>::Heart</code> heart data structure.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>blood</code></td>
-<td align="left"><code>::Blood</code> blood data structure.</td>
+<td><code>::Blood</code> blood data structure.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>dt</code></td>
-<td align="left"><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
+<td><code>::Float</code> <span class="math inline">\(\Delta t\)</span>, current time step.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>current_time</code></td>
-<td align="left"><code>::Float</code> current simulation time.</td>
+<td><code>::Float</code> current simulation time.</td>
 </tr>
 </tbody>
 </table>
@@ -1442,158 +1426,46 @@
 
 </td>
 <td class="code">
-<div class="highlight"><pre><span class="k">function</span><span class="nf"> solveModel</span><span class="p">(</span><span class="n">grafo</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span> <span class="p">::</span> <span class="n">Heart</span><span class="p">,</span>
-                    <span class="n">blood</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
+<div class="highlight"><pre><span class="k">function</span> <span class="n">solveModel</span><span class="p">(</span><span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span> <span class="o">::</span> <span class="n">Heart</span><span class="p">,</span> <span class="n">edge_list</span><span class="p">,</span>
+                    <span class="n">blood</span> <span class="o">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="o">::</span> <span class="kt">Float64</span><span class="p">)</span>
 
-  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+  <span class="k">for</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">size</span><span class="p">(</span><span class="n">edge_list</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">edge_list</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">edge_list</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">edge_list</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">lbl</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">label</span>
 
-    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">heart</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">.==</span> <span class="n">s</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">heart</span><span class="p">)</span>
     <span class="k">end</span>
 
+    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
 
-</pre></div>
-</td>
-</tr>
+    <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-<tr id="section-38">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-38">&#182;</a>
-  </div>
-  <p><em>Note</em>: <a href="MUSCL.html#MUSCL">MUSCL</a> solver is herein used. To use the first-order <a href="godunov.html#Godunov">Godunov</a> method, replace <code>openBF.MUSCL(vessels[i], dt, blood)</code> with</p>
-<div class="sourceCode"><pre class="sourceCode julia"><code class="sourceCode julia">  <span class="kw">for</span> j <span class="kw">in</span> <span class="fl">1</span>:vessels[i].M
-    openBF.Godunov(j, vessels[i], dt, blood)
-  <span class="kw">end</span></code></pre></div>
+    <span class="k">elseif</span> <span class="n">size</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+      <span class="n">d1_i</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">d2_i</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
 
-</td>
-<td class="code">
-<div class="highlight"><pre>    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">d1_i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">d2_i</span><span class="p">])</span>
 
-    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-      <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="n">o</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
-        <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)])</span>
+    <span class="k">elseif</span> <span class="n">size</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+      <span class="n">d_i</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-      <span class="k">else</span>
-        <span class="n">es</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">),</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">))</span>
-          <span class="n">a</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
-          <span class="n">b</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
-          <span class="n">c</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-          <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
-        <span class="k">end</span>
+      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">d_i</span><span class="p">])</span>
+
+    <span class="k">elseif</span> <span class="n">size</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+      <span class="n">p1_i</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">p2_i</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+      <span class="k">if</span> <span class="n">maximum</span><span class="p">([</span><span class="n">p1_i</span><span class="p">,</span> <span class="n">p2_i</span><span class="p">])</span> <span class="o">==</span> <span class="n">i</span>
+        <span class="n">p2_i</span> <span class="o">=</span> <span class="n">minimum</span><span class="p">([</span><span class="n">p1_i</span><span class="p">,</span> <span class="n">p2_i</span><span class="p">])</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">edge_list</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">.==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">p2_i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">d</span><span class="p">])</span>
       <span class="k">end</span>
-
-    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span>
-                        <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">2</span><span class="p">])])</span>
     <span class="k">end</span>
   <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="k">function</span><span class="nf"> solveModel</span><span class="p">(</span><span class="n">grafo</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span>
-                    <span class="n">grafo_a</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess_a</span><span class="p">,</span> <span class="n">vessels_a</span><span class="p">,</span>
-                    <span class="n">blood</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
-
-  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_degree</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="n">rn</span> <span class="o">=</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rn</span>
-      <span class="n">edg</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">rn</span><span class="p">,</span> <span class="n">grafo_a</span><span class="p">)</span>
-      <span class="n">src</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">edg</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo_a</span><span class="p">)</span>
-      <span class="n">artery</span> <span class="o">=</span> <span class="n">vessels_a</span><span class="p">[</span><span class="n">src</span><span class="p">]</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">artery</span><span class="o">.</span><span class="n">Pc</span><span class="p">,</span> <span class="n">artery</span><span class="o">.</span><span class="n">R2</span><span class="p">)</span>
-    <span class="k">end</span>
-
-
-</pre></div>
-</td>
-</tr>
-
-<tr id="section-39">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-39">&#182;</a>
-  </div>
-  <p><em>Note</em>: <a href="MUSCL.html#MUSCL">MUSCL</a> solver is herein used. To use the first-order <a href="godunov.html#Godunov">Godunov</a> method, replace <code>openBF.MUSCL(vessels[i], dt, blood)</code> with</p>
-<div class="sourceCode"><pre class="sourceCode julia"><code class="sourceCode julia">  <span class="kw">for</span> j <span class="kw">in</span> <span class="fl">1</span>:vessels[i].M
-    openBF.Godunov(j, vessels[i], dt, blood)
-  <span class="kw">end</span></code></pre></div>
-
-</td>
-<td class="code">
-<div class="highlight"><pre>    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-      <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="n">o</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
-        <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)])</span>
-
-      <span class="k">else</span>
-        <span class="n">es</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">),</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">))</span>
-          <span class="n">a</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
-          <span class="n">b</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
-          <span class="n">c</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-          <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
-        <span class="k">end</span>
-      <span class="k">end</span>
-
-    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span>
-                        <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">2</span><span class="p">])])</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="k">function</span><span class="nf"> pSolveModel</span><span class="p">(</span><span class="n">grafo</span> <span class="p">::</span> <span class="n">GenericGraph</span><span class="p">,</span> <span class="n">edgess</span><span class="p">,</span> <span class="n">vessels</span><span class="p">,</span> <span class="n">heart</span> <span class="p">::</span> <span class="n">Heart</span><span class="p">,</span>
-                    <span class="n">blood</span> <span class="p">::</span> <span class="n">Blood</span><span class="p">,</span> <span class="n">dt</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">,</span> <span class="n">current_time</span> <span class="p">::</span> <span class="kt">Float64</span><span class="p">)</span>
-
-  <span class="p">@</span><span class="n">parallel</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">edgess</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">setInletBC</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">heart</span><span class="p">)</span>
-    <span class="k">end</span>
-
-    <span class="k">if</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">setOutletBC</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-      <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="n">o</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
-        <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)])</span>
-
-      <span class="k">else</span>
-        <span class="n">es</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">),</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">))</span>
-          <span class="n">a</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
-          <span class="n">b</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">es</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">grafo</span><span class="p">)</span>
-          <span class="n">c</span> <span class="o">=</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-          <span class="n">openBF</span><span class="o">.</span><span class="n">solveAnastomosis</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
-        <span class="k">end</span>
-      <span class="k">end</span>
-
-    <span class="k">elseif</span> <span class="n">Graphs</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">grafo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-      <span class="n">openBF</span><span class="o">.</span><span class="n">joinVessels</span><span class="p">(</span><span class="n">blood</span><span class="p">,</span> <span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span>
-                        <span class="n">vessels</span><span class="p">[</span><span class="n">Graphs</span><span class="o">.</span><span class="n">edge_index</span><span class="p">(</span><span class="n">Graphs</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">grafo</span><span class="p">)[</span><span class="mi">2</span><span class="p">])])</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edgess</span><span class="p">)</span>
-    <span class="n">openBF</span><span class="o">.</span><span class="n">MUSCL</span><span class="p">(</span><span class="n">vessels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">blood</span><span class="p">)</span>
-  <span class="k">end</span>
-
 <span class="k">end</span>
 
 
@@ -1601,10 +1473,10 @@
 </td>
 </tr>
 
-<tr id="section-40">
+<tr id="section-37">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-40">&#182;</a>
+    <a class="pilcrow" href="#section-37">&#182;</a>
   </div>
   <h3 id="references">References</h3>
 <div class="footnotes">
