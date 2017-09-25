@@ -12,17 +12,6 @@ linux/OS X: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-
 
 To install it, start a Julia interactive session and enter `Pkg.add("package_name")`. For further informations refer to [Julia docs](http://docs.julialang.org/en/release-0.4/manual/packages/).
 
-<!-- #### Install julia v0.6.0-1 with ananaconda
-```bash
-$ conda config --add channels defaults
-$ conda config --add channels conda-forge
-$ conda config --add channels brown-data-science
-$ conda create -n julia
-$ source activate julia
-$ conda install -c brown-data-science julia
-$ source deactivate
-``` -->
-
 ### Docs
 
 Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
