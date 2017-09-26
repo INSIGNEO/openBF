@@ -9,7 +9,7 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 ### Installation
 
-- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/); on Linux
+- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/); on linux
 ```bash
 $ cd ~/Dowloads
 $ wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
@@ -24,19 +24,19 @@ $ julia
 ```julia
 julia> Pkg.add("ProgressMeter")
 ```
-- clone this repository and copy openBF source files in `.julia/v0.6/` folder; on linux/OSX
+- clone this repository and copy openBF source files in `.julia/v0.6/` folder; on linux
 ```bash
 $ git clone https://github.com/INSIGNEO/openBF
 $ cd openBF
-$ cp -r src ~/.julia/v0.6/openBF
-$ mkdir ~/.julia/v0.6/BTypes
-$ cp src/BTypes.jl ~/.julia/v0.6/BTypes/
-$ julia
+$ mkdir -p ~/.julia/v0.6/openBF
+$ cp -r src ~/.julia/v0.6/openBF/
+$ cp main.jl ~/.julia/v0.6/openBF/
+$ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
+$ mkdir -p ~/.julia/v0.6/BTypes/src
+$ cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
+$ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
+$ source ~/.bashrc
 ```
-```julia
-julia> using openBF
-```
-
 
 ### Docs
 
