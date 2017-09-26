@@ -2,15 +2,41 @@
 
 [![License: LGPL v2.1](https://img.shields.io/badge/license-LGPL%202.1-yellow.svg)](http://www.gnu.org/licenses/lgpl-2.1)
 
-linux/OS X: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html)
+linux/OSX: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html)
 [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/)
 
+openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [LGPL v2.1](http://www.gnu.org/licenses/lgpl-2.1) free software license.
 
-**openBF** runs on [Julia](https://julialang.org/downloads/) and it requires the following additional package
+### Installation
 
-- [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl)
+- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/); on Linux
+```bash
+$ cd ~/Dowloads
+$ wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
+$ tar -xzvf julia-0.6.0-linux-x86_64.tar.gz
+$ mv julia-0.6.0-linux-x86_64 ~/julia0.6
+$ rm julia-0.6.0-linux-x86_64.tar.gz
+$ echo "alias julia='~/julia0.6/bin/julia'" > ~/.bashrc
+$ source ~/.bashrc
+$ julia
+```
+- openBF requires [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl) library. This can be installed from Julia REPL as
+```julia
+julia> Pkg.add("ProgressMeter")
+```
+- clone this repository and copy openBF source files in `.julia/v0.6/` folder; on linux/OSX
+```bash
+$ git clone https://github.com/INSIGNEO/openBF
+$ cd openBF
+$ cp -r src ~/.julia/v0.6/openBF
+$ mkdir ~/.julia/v0.6/BTypes
+$ cp src/BTypes.jl ~/.julia/v0.6/BTypes/
+$ julia
+```
+```julia
+julia> using openBF
+```
 
-To install it, start a Julia interactive session and enter `Pkg.add("package_name")`. For further informations refer to [Julia docs](http://docs.julialang.org/en/release-0.4/manual/packages/).
 
 ### Docs
 
