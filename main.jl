@@ -20,7 +20,7 @@
 # [`openBF`](openBF.html) library is needed to be imported.
 # Until the official `openBF` Julia `Pkg` is created, the
 # library is loaded locally.
-push!(LOAD_PATH, "src/")
+# push!(LOAD_PATH, "src/")
 using openBF
 # reload("openBF")
 
@@ -190,8 +190,9 @@ prog = ProgressMeter.Progress(Int(ceil(total_time/dt)), 1, "Running ", 50)
 passed_cycles = 0
 
 tic()
-counter = 0
+counter = 1
 counter_v = 0
+timepoints = linspace(0, heart.cardiac_T, 80)
 while true
   # At the beginning of each time step the $\Delta t$ is computed with
   # [`calculateDeltaT`](godunov.html#calculateDeltaT). This is because
@@ -220,10 +221,8 @@ while true
   # All quantities in each vessel are stored by
   # [`saveTempData`](IOutils.html#saveTempData) in `.temp` files until the
   # end of the cardiac cycle.
-  if counter == 100
+  if current_time >= timepoints[counter]
     openBF.saveTempData(current_time, vessels)
-    counter = 0
-  else
     counter += 1
   end
 
@@ -268,6 +267,9 @@ while true
       # end
 
     passed_cycles += 1
+
+    timepoints += heart.cardiac_T
+    counter = 1
     # # When at least 3 cardiac cycles have been simulated, waveforms are
     # # checked for convergence.
     # if passed_cycles >= 3
@@ -317,3 +319,4 @@ openBF.transferTempToOut(vessels)
 # end
 
 cd("..")
+run(`rm main.jl`)
