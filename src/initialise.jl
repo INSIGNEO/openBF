@@ -575,6 +575,7 @@ function loadGlobalConstants(project_name,
                              inlet_BC_switch :: Int64,
                              inlet_type :: String,
                              cycles :: Int64,
+                             jump :: Int64,
                              rho :: Float64, mu:: Float64, gamma_profile :: Int64)
   # `heart` data structure is filled depending on the inlet boundary condition
   # chosen by the user. When the inlet flow function is given
@@ -608,6 +609,7 @@ function loadGlobalConstants(project_name,
   heart_data = BTypes.Heart(inlet_BC_switch,
                             inlet_type,
                             cardiac_period, sys_T,
+                            jump,
                             initial_flow, flow_amplitude,
                             input_data)
   # Kinematic viscosity `nu` and viscous resitance term `Cf` are calculated as
