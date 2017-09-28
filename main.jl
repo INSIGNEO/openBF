@@ -255,28 +255,28 @@ while true
       openBF.closeTempFiles(vessels)
 
 
-    #   err = 100
-    #   if passed_cycles >= 1
-      #
-    #       w_last = readdlm("1-Ascendingaorta_A.last")
-    #       w_temp = readdlm("1-Ascendingaorta_A.temp")
-      #
-    #       if length(w_last[:,1]) == length(w_temp[:,1])
-    #           err = maximum(abs.((w_last[2:end,:].-w_temp[2:end,:])./w_last[2:end,:])*100)
-    #           println("\n",err)
-    #       else
-    #           println(length(w_last), length(w_temp))
-    #       end
-    #   end
+      err = 100
+      if passed_cycles >= 1
+
+          w_last = readdlm("1-Ascendingaorta_A.last")
+          w_temp = readdlm("1-Ascendingaorta_A.temp")
+
+          if length(w_last[:,1]) == length(w_temp[:,1])
+              err = maximum(abs.((w_last[2:end,:].-w_temp[2:end,:])./w_last[2:end,:])*100)
+              println("\n",passed_cycles, " ", err,"%")
+        #   else
+        #       println(length(w_last), length(w_temp))
+          end
+      end
 
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
       openBF.transferTempToLast(vessels)
       openBF.openTempFiles(vessels)
 
-    #   if err < 20.
-    #       break
-    #   end
+      if err < 20.
+          break
+      end
 
       # if venous_model
       #   openBF.closeTempFiles(vessels_v)
