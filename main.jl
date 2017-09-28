@@ -13,7 +13,7 @@
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with Bash.  If not, see <http://www.gnu.org/licenses/>.
+  along with open.  If not, see <http://www.gnu.org/licenses/>.
 =#
 
 # The `main.jl` file is where `openBF` is implemented. Only
@@ -22,7 +22,7 @@
 # library is loaded locally.
 push!(LOAD_PATH, "src/")
 using openBF
-reload("openBF")
+# reload("openBF")
 
 # The project name must be specified by the user when launching
 # the simulation.
