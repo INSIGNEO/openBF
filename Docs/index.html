@@ -74,19 +74,37 @@
 
 						<section>
 
-<p><strong>openBF</strong> has been developed and tested on <strong>Ubuntu 14.04</strong> and written with <strong>julia 0.3.2</strong>. To install <strong>julia</strong> please refer to its <a href="http://julialang.org/downloads/">official page</a>.
+<p><strong>openBF</strong> has been developed and tested on <strong>Ubuntu 14.04/16.04</strong> and <strong>MacOSX 10.13</strong> and written with <strong>julia 0.3.2-0.6.0</strong>.
 </p>
 
 <p>Additional packages required by <strong>openBF</strong> are listed <a href="doc-files/openBF.html">here</a>. To install additional packages, start a julia interactive session by typing <code>julia</code> in a terminal window, and use the command <code>Pkg.add("package name")</code> to install. For further informations see <a href="http://julia.readthedocs.org/en/latest/manual/packages/">julia
 documentation</a>.
 </p>
 
-<p><strong>openBF</strong> uses signal processing functions from <code>scipy.signal</code> library. This library requires <strong>Python 2.7.3</strong>. To install <a href="https://www.python.org/">Python</a> and <a href="http://www.scipy.org/">SciPy</a> please refer to their linked websites.</p>
-
-<p>Next, download and unpack <strong>openBF</strong> folder. To create an alias for the <strong>main.jl</strong> file, start a terminal
-session and type <code>gedit .bashrc &</code>. Then, add the following line to end of the file
-<pre><code>alias openBF='cp path-to-openBF-folder. . -rf && julia main.jl $1'</code></pre>
-Save <code>.bashrc</code> and close the text editor. Execute <code>source ~/.bashrc</code> in the terminal. </br>Now a simulation is started simply by typing</p> <pre><code>openBF project_name</code></pre>
+<p>A basic installation on Linux/OSX reads
+<pre><code>
+$ cd ~/Dowloads
+$ wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
+$ tar -xzvf julia-0.6.0-linux-x86_64.tar.gz
+$ mv julia-0.6.0-linux-x86_64 ~/julia0.6
+$ rm julia-0.6.0-linux-x86_64.tar.gz
+$ echo "alias julia='~/julia0.6/bin/julia'" > ~/.bashrc
+$ source ~/.bashrc
+$ julia
+julia> Pkg.add("ProgressMeter")
+julia> exit
+$ git clone https://github.com/INSIGNEO/openBF
+$ cd openBF
+$ mkdir -p ~/.julia/v0.6/openBF
+$ cp -r src ~/.julia/v0.6/openBF/
+$ cp main.jl ~/.julia/v0.6/openBF/
+$ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
+$ mkdir -p ~/.julia/v0.6/BTypes/src
+$ cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
+$ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
+$ source ~/.bashrc
+</code></pre>
+ </br>Now a simulation is started simply by typing</p> <pre><code>openBF project_name</code></pre>
 
 <p>Otherwise, start an interactive julia session in openBF folder, and type <code>include("main.jl")</code> to run a simulation.</p>
 
@@ -97,7 +115,7 @@ Save <code>.bashrc</code> and close the text editor. Execute <code>source ~/.bas
 
 <section>
 <p>
-	This tutorial goes through all the pre-processing, solution, and post-processing steps required by a <strong>openBF</strong> simulation. The case under study is that of a iliac bifurcation with a coupled peripheral vasculature model.
+	This tutorial goes through all the pre-processing, solution, and post-processing steps required by a <strong>openBF</strong> simulation. The case under study is that of a iliac bifurcation with a coupled peripheral vasculature model. All the tutorial files can be found in the <a href="https://github.com/alemelis/openBF-hub/tree/master/models/boilleau2015benchmark/iliac_bifurcation"><strong>openBF-hub</strong> repository</a>.
 </p>
 	<div style="text-align:center">
 		<img src="images/tutorial/bif.pdf.png" width="600">
@@ -117,11 +135,11 @@ Save <code>.bashrc</code> and close the text editor. Execute <code>source ~/.bas
 <p>
 	This file contains geometrical and material properties for each vessel. Columns should be organised as follows
 
-    <pre><code>
-name, sn, tn, L,      M,  R0,             h0,       E,      R,          C,
-P,    1,  2,  8.6e-2, 86, 0.758242250e-2, 1.032e-3, 500.e3, 0.,         0.,
-d1,   2,  3,  8.5e-2, 85, 0.549287167e-2, 0.720e-3, 700.e3, 3.169423e9, 3.6664e-10,
-d2,   2,  4,  8.5e-2, 85, 0.549287167e-2, 0.720e-3, 700.e3, 3.169423e9, 3.6664e-10,
+<pre><code>
+name, sn, tn, wkn, L,      M,  Rp,        Rd,        E,      Pext, R1,       R2,       C,
+P,    1,  2,  0,   8.6e-2, 86, 0.7581e-2, 0.7581e-2, 500.e3, 0.,   0.,       0.,       0.,
+d1,   2,  3,  0,   8.5e-2, 85, 0.5492e-2, 0.5492e-2, 700.e3, 0.,   6.8123e7, 3.1013e9, 3.6664e-10,
+d2,   2,  4,  0,   8.5e-2, 85, 0.5492e-2, 0.5492e-2, 700.e3, 0.,   6.8123e7, 3.1013e9, 3.6664e-10,
 </code></pre>
 
 System topology is built by specifying <i>source</i> and <i>terminal</i> nodes of each segment (vessel). In this example, the parent vessel
@@ -142,14 +160,13 @@ const inlet_BC_switch = 3
 
 # numerical domain
 const Ccfl   = 0.9         # Courant number
-const cycles = 10
+const cycles = 100
 
 # blood properties
 const rho = 1060.    # density [kg/m3]
 const mu  = 4.e-3   # dynamic viscosity [Pa⋅s]
 
 # vessel properties
-const Pext = 0.			     # external pressure [Pa]
 const initial_pressure = 0.
 </code>
 </pre>
