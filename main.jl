@@ -62,7 +62,7 @@ model = openBF.readModelData(join([project_name, ".csv"]))
 # specified) are used to create instances of [`BTypes`](BTypes.html) data
 # structures by [`loadGlobalConstants`](initialise.html#loadGlobalConstants).
 heart, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
-  inlet_BC_switch, inlet_type, cycles, jump, rho, mu, gamma_profile)
+  inlet_BC_switch, inlet_type, cycles, rho, mu, gamma_profile)
 
 # The arterial tree is represented as a graph by means of `Graphs` library (
 # see [grafo.jl](grafo.html) for a detailed example).
@@ -192,7 +192,8 @@ passed_cycles = 0
 tic()
 counter = 1
 counter_v = 0
-timepoints = linspace(0, heart.cardiac_T, heart.jump)
+jump = 100
+timepoints = linspace(0, heart.cardiac_T, jump)
 while true
   # At the beginning of each time step the $\Delta t$ is computed with
   # [`calculateDeltaT`](godunov.html#calculateDeltaT). This is because
@@ -254,27 +255,15 @@ while true
 
       openBF.closeTempFiles(vessels)
 
-
-      err = 100
-      if passed_cycles >= 1
-
-          w_last = readdlm("1-Ascendingaorta_A.last")
-          w_temp = readdlm("1-Ascendingaorta_A.temp")
-
-          if length(w_last[:,1]) == length(w_temp[:,1])
-              err = maximum(abs.((w_last[2:end,:].-w_temp[2:end,:])./w_last[2:end,:])*100)
-              println("\n",passed_cycles, " ", err,"%")
-        #   else
-        #       println(length(w_last), length(w_temp))
-          end
-      end
+      err = openBF.checkConvergence(edge_list, vessels, passed_cycles)
+      println("Iteration: ", passed_cycles, " Error: ", err,"%")
 
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
       openBF.transferTempToLast(vessels)
       openBF.openTempFiles(vessels)
 
-      if err < 20.
+      if err < 5.
           break
       end
 
@@ -339,4 +328,3 @@ openBF.transferTempToOut(vessels)
 # end
 
 cd("..")
-run(`rm main.jl`)

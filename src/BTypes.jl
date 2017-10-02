@@ -274,7 +274,6 @@ type Heart
 
   cardiac_T :: Float64
   sys_T     :: Float64
-  jump      :: Int64
 
   initial_flow   :: Float64
   flow_amplitude :: Float64

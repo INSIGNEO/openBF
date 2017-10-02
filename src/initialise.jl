@@ -226,20 +226,25 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
   # mechanical properties; conversion to `::Int` type is operated where
   # needed.
   # --------------------------------------------------------------------------
-  vessel_name =     m[1]
-  sn          = convert(Int, m[2])
-  tn          = convert(Int, m[3])
-  rn          = convert(Int, m[4])
-  L           =     m[5]
-  M           = convert(Int, m[6])
-  Rp          =     m[7]
+  vessel_name = m[1]
+  sn = convert(Int, m[2])
+  tn = convert(Int, m[3])
+  rn = convert(Int, m[4])
+  L = m[5]
+
+  # M           = convert(Int, m[6])
+  M = maximum([5, convert(Int, ceil(L/1000))])
+
+  Rp = m[7]
   Rd = m[8]
+
 #   h0          =     m[7]
-  E           =     m[9]
-  Pext        = m[10]
+
+  E = m[9]
+  Pext = m[10]
   # Poisson's ratio `sigma` is set by default to 0.5 because vessel wall is
   # assumed to be incompressible.
-  sigma  = 0.5
+  sigma = 0.5
   # $\Delta x$ for local numerical discretisation: lenght/number of nodes.
   # <a name="dx"></a>
   dx = L/M
@@ -575,7 +580,6 @@ function loadGlobalConstants(project_name,
                              inlet_BC_switch :: Int64,
                              inlet_type :: String,
                              cycles :: Int64,
-                             jump :: Int64,
                              rho :: Float64, mu:: Float64, gamma_profile :: Int64)
   # `heart` data structure is filled depending on the inlet boundary condition
   # chosen by the user. When the inlet flow function is given
@@ -609,7 +613,6 @@ function loadGlobalConstants(project_name,
   heart_data = BTypes.Heart(inlet_BC_switch,
                             inlet_type,
                             cardiac_period, sys_T,
-                            jump,
                             initial_flow, flow_amplitude,
                             input_data)
   # Kinematic viscosity `nu` and viscous resitance term `Cf` are calculated as

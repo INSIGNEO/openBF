@@ -276,3 +276,26 @@ function checkQuantity(last, temp, convergence_tollerance)
   end
   return 9.99
 end
+
+function checkConvergence(edge_list, vessels :: Array{Vessel, 1}, passed_cycles :: Int64)
+    qs = "_A"
+    err = zeros(size(edge_list)[1]).+100
+    if passed_cycles >= 2
+
+        for i in 1:size(edge_list)[1]
+            v = vessels[i]
+            lbl = v.label
+
+            filename_last = join([lbl, qs, ".last"])
+            filename_temp = join([lbl, qs, ".temp"])
+            w_last = readdlm(filename_last)
+            w_temp = readdlm(filename_temp)
+
+            if length(w_last[:,1]) == length(w_temp[:,1])
+                err[i] = maximum(abs.((w_last[2:end,:].-w_temp[2:end,:])./w_last[2:end,:])*100)
+            end
+
+        end
+    end
+    return maximum(err)
+end
