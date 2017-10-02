@@ -233,7 +233,7 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
   L = m[5]
 
   # M           = convert(Int, m[6])
-  M = maximum([5, convert(Int, ceil(L/1000))])
+  M = maximum([5, convert(Int, ceil(L*1e3))])
 
   Rp = m[7]
   Rd = m[8]
