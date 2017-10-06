@@ -275,6 +275,12 @@ function calculateFofUBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
   f6 = v1.beta[end]*(U[4]*U[4]/sqrt(v1.A0[end])  - 1  ) -
      ( v3.beta[ 1 ]*(U[6]*U[6]/sqrt(v3.A0[1]) - 1) )
 
+  # f5 = v1.beta[end]*(U[4]*U[4]/sqrt(v1.A0[end])  - 1  ) -
+  #    ( v2.beta[ 1 ]*(U[5]*U[5]/sqrt(v2.A0[1]) - 1) ) + 1060*0.5*(U[1]*U[1]-U[2]*U[2])
+  #
+  # f6 = v1.beta[end]*(U[4]*U[4]/sqrt(v1.A0[end])  - 1  ) -
+  #    ( v3.beta[ 1 ]*(U[6]*U[6]/sqrt(v3.A0[1]) - 1) ) + 1060*0.5*(U[1]*U[1]-U[3]*U[3])
+
   return [f1, f2, f3, f4, f5, f6]
 end
 
@@ -349,12 +355,21 @@ function calculateJacobianBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
   J[4,6] = -4*U[3]*(U[6]*U[6]*U[6])
 
   J[5,1] =  0.
+  # J[5,1] = 1060*U[1]
+
   J[5,2] =  0.
+  # J[5,2] = -1060*U[2]
+
   J[5,4] =  2*v1.beta[end]*U[4]/sqrt(v1.A0[end])
   J[5,5] = -2*v2.beta[ 1 ]*U[5]/sqrt(v2.A0[1])
 
   J[6,1] =  0.
+  # J[6,1] = 1060*U[1]
+
   J[6,3] =  0.
+  # J[6,3] = -1060U[3]
+
+
   J[6,4] =  2*v1.beta[end]*U[4]/sqrt(v1.A0[end])
   J[6,6] = -2*v3.beta[ 1 ]*U[6]/sqrt(v3.A0[1])
 
