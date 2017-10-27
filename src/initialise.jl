@@ -64,11 +64,11 @@ function projectPreamble(project_name)
     mkdir(r_folder)
   end
   # Project files are moved to the results directory.
-  cp(p_const, join([r_folder, "/", p_const]))
-  cp(p_inlet, join([r_folder, "/", p_inlet]))
-  cp(p_model, join([r_folder, "/", p_model]))
+  cp(p_const, join([r_folder, "/", p_const]), remove_destination=true)
+  cp(p_inlet, join([r_folder, "/", p_inlet]), remove_destination=true)
+  cp(p_model, join([r_folder, "/", p_model]), remove_destination=true)
   if (isfile(v_model)) == true
-    cp(v_model, join([r_folder, "/", v_model]))
+    cp(v_model, join([r_folder, "/", v_model]), remove_destination=true)
   end
   # All files in the working directory are deleted except those containing
   # the `project_name` string by the
@@ -226,20 +226,25 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
   # mechanical properties; conversion to `::Int` type is operated where
   # needed.
   # --------------------------------------------------------------------------
-  vessel_name =     m[1]
-  sn          = convert(Int, m[2])
-  tn          = convert(Int, m[3])
-  rn          = convert(Int, m[4])
-  L           =     m[5]
+  vessel_name = m[1]
+  sn = convert(Int, m[2])
+  tn = convert(Int, m[3])
+  rn = convert(Int, m[4])
+  L = m[5]
+
   M           = convert(Int, m[6])
-  Rp          =     m[7]
+  # M = maximum([5, convert(Int, ceil(L*1e3))])
+
+  Rp = m[7]
   Rd = m[8]
+
 #   h0          =     m[7]
-  E           =     m[9]
-  Pext        = m[10]
+
+  E = m[9]
+  Pext = m[10]
   # Poisson's ratio `sigma` is set by default to 0.5 because vessel wall is
   # assumed to be incompressible.
-  sigma  = 0.5
+  sigma = 0.5
   # $\Delta x$ for local numerical discretisation: lenght/number of nodes.
   # <a name="dx"></a>
   dx = L/M

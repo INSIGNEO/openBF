@@ -7,7 +7,18 @@ linux/OSX: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-b
 
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [LGPL v2.1](http://www.gnu.org/licenses/lgpl-2.1) free software license.
 
-### Installation
+
+### Docs
+
+Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
+
+
+### Models
+
+A collection of 1D networks (from the literature) solved by means of openBF can be found in the [openBF-hub](https://github.com/alemelis/openBF-hub) repository
+
+
+### Julia and openBF installation
 
 - Obtain latest Julia release for your platform [here](https://julialang.org/downloads/); on linux
 ```bash
@@ -37,10 +48,6 @@ $ cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
 $ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 ```
-
-### Docs
-
-Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
 
 ### Tests
 

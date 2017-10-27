@@ -13,16 +13,16 @@
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with Bash.  If not, see <http://www.gnu.org/licenses/>.
+  along with open.  If not, see <http://www.gnu.org/licenses/>.
 =#
 
 # The `main.jl` file is where `openBF` is implemented. Only
 # [`openBF`](openBF.html) library is needed to be imported.
 # Until the official `openBF` Julia `Pkg` is created, the
 # library is loaded locally.
-push!(LOAD_PATH, "src/")
+# push!(LOAD_PATH, "src/")
 using openBF
-reload("openBF")
+# reload("openBF")
 
 # The project name must be specified by the user when launching
 # the simulation.
@@ -190,8 +190,10 @@ prog = ProgressMeter.Progress(Int(ceil(total_time/dt)), 1, "Running ", 50)
 passed_cycles = 0
 
 tic()
-counter = 0
+counter = 1
 counter_v = 0
+jump = 100
+timepoints = linspace(0, heart.cardiac_T, jump)
 while true
   # At the beginning of each time step the $\Delta t$ is computed with
   # [`calculateDeltaT`](godunov.html#calculateDeltaT). This is because
@@ -220,10 +222,8 @@ while true
   # All quantities in each vessel are stored by
   # [`saveTempData`](IOutils.html#saveTempData) in `.temp` files until the
   # end of the cardiac cycle.
-  if counter == 100
+  if current_time >= timepoints[counter]
     openBF.saveTempData(current_time, vessels)
-    counter = 0
-  else
     counter += 1
   end
 
@@ -254,10 +254,18 @@ while true
       (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
       openBF.closeTempFiles(vessels)
+
+      err = openBF.checkConvergence(edge_list, vessels, passed_cycles)
+      println("Iteration: ", passed_cycles, " Error: ", err,"%")
+
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
       openBF.transferTempToLast(vessels)
       openBF.openTempFiles(vessels)
+
+      if err < 5.
+          break
+      end
 
       # if venous_model
       #   openBF.closeTempFiles(vessels_v)
@@ -268,17 +276,20 @@ while true
       # end
 
     passed_cycles += 1
+
+    timepoints += heart.cardiac_T
+    counter = 1
     # # When at least 3 cardiac cycles have been simulated, waveforms are
     # # checked for convergence.
     # if passed_cycles >= 3
-
+    #
     #   # The error is computed for all vessels in the system by
     #   # [`checkAllQuantities`](check_convergence.html#checkAllQuantities)
     #   # function.
     #   # <a name="check_convergence"></a>
     #   # err = openBF.checkAllQuantities(vessels, passed_cycles, 1000)
     #   err = openBF.checkConvergence(vessels, 5.)
-
+    #
     #   # The convergence is reached when the difference (the error)
     #   # between two consecutive waveforms is less than 5%. In this case, the
     #   # main loop is exited.
