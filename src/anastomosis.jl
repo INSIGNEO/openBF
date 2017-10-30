@@ -13,7 +13,7 @@
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with Bash.  If not, see <http://www.gnu.org/licenses/>.
+  along with openBF.  If not, see <http://www.gnu.org/licenses/>.
 =#
 
 # The anastomosis is solved as a reversed bifurcation. Refer to [bifurcations](bifurcations.html)

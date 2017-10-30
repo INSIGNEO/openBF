@@ -13,7 +13,7 @@
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with open.  If not, see <http://www.gnu.org/licenses/>.
+  along with openBF.  If not, see <http://www.gnu.org/licenses/>.
 =#
 
 # The `main.jl` file is where `openBF` is implemented. Only
@@ -328,3 +328,4 @@ openBF.transferTempToOut(vessels)
 # end
 
 cd("..")
+run(`rm main.jl`)
