@@ -1,6 +1,6 @@
 ![openBF](https://alemelis.github.io/openbf.jl/images/openBF.svg)
 
-[![License: LGPL v2.1](https://img.shields.io/badge/license-LGPL%202.1-yellow.svg)](http://www.gnu.org/licenses/lgpl-2.1)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 linux/OSX: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html)
 [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/)
