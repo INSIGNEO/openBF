@@ -32,11 +32,6 @@ $ source ~/.bashrc
 $ julia
 ```
 
-- openBF requires [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl) library. This can be installed from Julia REPL as
-```julia
-julia> Pkg.add("ProgressMeter")
-```
-
 - clone this repository and copy openBF source files in `.julia/v0.6/` folder; on linux
 ```bash
 $ git clone https://github.com/INSIGNEO/openBF
