@@ -87,6 +87,7 @@ heart, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
 # is the `grafo` structure. `vessels` collection is filled by using
 # [`initialiseVessel`](initialise.html#initialiseVessel). The first
 # vessel is inserted by hand.
+println("Build arterial network")
 vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
   initial_pressure, Ccfl)]
 edge_list = zeros(Int8, length(model[:,1]), 3)
@@ -181,11 +182,10 @@ dt = openBF.calculateDeltaT(vessels, dts)
 #   venous_model = false
 # end
 
-prog = ProgressMeter.Progress(Int(ceil(total_time/dt)), 1, "Running ", 50)
-
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.
 passed_cycles = 0
+@printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
 tic()
 counter = 1
@@ -241,9 +241,6 @@ while true
   #
   # end
 
-  #Progress bar update
-  ProgressMeter.next!(prog)
-
   # Every time a cardiac cycle has been simulated, this condition returns
   # `true` and data from `.temp` files are transferred to `.out` files (
   # see [IOutils.jl](IOutils.html)).
@@ -254,14 +251,15 @@ while true
       openBF.closeTempFiles(vessels)
 
       err = openBF.checkConvergence(edge_list, vessels, passed_cycles)
-      println("Iteration: ", passed_cycles, " Error: ", err,"%")
+    #   println("Iteration: ", passed_cycles, " Error: ", err[1:5],"%")
+      @printf(" - Error = %4.2f%%\n", err)
 
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
       openBF.transferTempToLast(vessels)
       openBF.openTempFiles(vessels)
 
-      if err < 5.
+      if err <= 5.
           break
       end
 
@@ -274,6 +272,7 @@ while true
       # end
 
     passed_cycles += 1
+    @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
     timepoints += heart.cardiac_T
     counter = 1
@@ -307,9 +306,7 @@ while true
   # has not been achieved. The main is exited by raising an error containing
   # the error value.
   if current_time >= total_time
-    # erlog = open("error.log", "w")
-    # write(erlog, "Not converged after $passed_cycles cycles, End!")
-    # close(erlog)
+    println("Not converged after $passed_cycles cycles, End!")
     break
   end
 end

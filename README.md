@@ -31,10 +31,12 @@ $ echo "alias julia='~/julia0.6/bin/julia'" > ~/.bashrc
 $ source ~/.bashrc
 $ julia
 ```
+
 - openBF requires [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl) library. This can be installed from Julia REPL as
 ```julia
 julia> Pkg.add("ProgressMeter")
 ```
+
 - clone this repository and copy openBF source files in `.julia/v0.6/` folder; on linux
 ```bash
 $ git clone https://github.com/INSIGNEO/openBF
@@ -52,9 +54,11 @@ $ source ~/.bashrc
 ### Tests
 
 To use openBF, clone or download this repository. Go to the chosen test `openBF/test/<testname>` folder and launch the simulation as
+
 ```
-julia main.jl
+$ julia main.jl
 ```
+
 This requires the following files to be in the same directory of `main.jl`:
 
 - `<testname>.csv` contains the description of the arterial system;

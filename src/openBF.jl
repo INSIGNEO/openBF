@@ -23,19 +23,6 @@ limitations under the License.
 # [main.jl](main.html) file and its documentation.
 module openBF
 
-# ### Import external libraries
-
-# [__Graphs__](https://github.com/JuliaLang/Graphs.jl) "is a
-# Julia package that provides graph types and algorithms."
-# It is used for arterial tree parsing and described in
-# [utilities.jl](godunov.html#solveModel).
-# using LightGraphs
-
-# [__ProgressMeter__](https://github.com/timholy/ProgressMeter.jl)
-# provides a simple implementation of a loading bar to be shown while
-# running the solution.
-using ProgressMeter
-
 # ### Import openBF' files
 
 # OpenBF' own types are contained in [BTypes.jl](BTypes.html) where

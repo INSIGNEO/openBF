@@ -6,7 +6,7 @@ const inlet_type = "Q"
 
 # numerical domain
 const Ccfl   = 0.9         # Courant number
-const cycles = 15
+const cycles = 100
 
 # blood properties
 const rho = 1060.    # density [kg/m3]
