@@ -32,6 +32,7 @@ using openBF
 #
 # `project_name` is a string used to initialise all the output files.
 project_name = ARGS[1]
+verbose = false
 
 # In `main.jl` all functions from `openBF` library are called using the dot
 # notation: `library.function(parameters)`. Function
@@ -46,7 +47,9 @@ openBF.projectPreamble(project_name)
 # where the simulation is started (see [tutorial](../index.html#tutorial)
 # page). Here `project_constants.jl` content is loaded in memory for further
 # use.
-println("Load project $project_name files")
+if verbose
+    println("Load project $project_name files")
+end
 include(join([project_name, "_constants.jl"]))
 
 # ### Arterial system
@@ -87,7 +90,9 @@ heart, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
 # is the `grafo` structure. `vessels` collection is filled by using
 # [`initialiseVessel`](initialise.html#initialiseVessel). The first
 # vessel is inserted by hand.
-println("Build arterial network")
+if verbose
+    println("Build arterial network")
+end
 vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
   initial_pressure, Ccfl)]
 edge_list = zeros(Int8, length(model[:,1]), 3)
@@ -137,7 +142,9 @@ end
 
 # Before starting the main loop the counter`current_time` is set to zero. It
 # will be updated to keep track of time within the simulation.
-println("Start simulation \n")
+if verbose
+    println("Start simulation \n")
+end
 current_time = 0
 
 # In order to show the progress bar an initial estimate of the total running
@@ -185,9 +192,10 @@ dt = openBF.calculateDeltaT(vessels, dts)
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.
 passed_cycles = 0
-@printf("Solving cardiac cycle no: %d", passed_cycles + 1)
-
-tic()
+if verbose
+    @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
+    tic()
+end
 counter = 1
 counter_v = 0
 jump = 100
@@ -252,7 +260,9 @@ while true
 
       err = openBF.checkConvergence(edge_list, vessels, passed_cycles)
     #   println("Iteration: ", passed_cycles, " Error: ", err[1:5],"%")
-      @printf(" - Error = %4.2f%%\n", err)
+      if verbose
+          @printf(" - Error = %4.2f%%\n", err)
+      end
 
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
@@ -272,7 +282,9 @@ while true
       # end
 
     passed_cycles += 1
-    @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
+    if verbose
+        @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
+    end
 
     timepoints += heart.cardiac_T
     counter = 1
@@ -306,12 +318,16 @@ while true
   # has not been achieved. The main is exited by raising an error containing
   # the error value.
   if current_time >= total_time
-    println("Not converged after $passed_cycles cycles, End!")
+    if verbose
+        println("Not converged after $passed_cycles cycles, End!")
+    end
     break
   end
 end
+if verbose
 @printf "\n"
-toc()
+    toc()
+end
 
 # Make sure that data from `.temp` files are transferred.
 openBF.closeTempFiles(vessels)
