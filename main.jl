@@ -33,6 +33,8 @@ using openBF
 # `project_name` is a string used to initialise all the output files.
 project_name = ARGS[1]
 verbose = false
+no_out = true
+no_inputs = true
 
 # In `main.jl` all functions from `openBF` library are called using the dot
 # notation: `library.function(parameters)`. Function
@@ -41,7 +43,7 @@ verbose = false
 # needed by the simulation and warns whether any is missing, it prints
 # the initial `openBF` logo, and makes the directory structure to save
 # temporary and final results.
-openBF.projectPreamble(project_name)
+openBF.projectPreamble(project_name, no_out, no_inputs)
 
 # `project_constants.jl` file is user defined and must be in the same folder
 # where the simulation is started (see [tutorial](../index.html#tutorial)
@@ -332,6 +334,8 @@ end
 # Make sure that data from `.temp` files are transferred.
 openBF.closeTempFiles(vessels)
 openBF.transferTempToOut(vessels)
+run(`sh cleaner.sh`)
+run(`rm cleaner.sh`)
 
 # if venous_model
 #   openBF.closeTempFiles(vessels_v)

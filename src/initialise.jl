@@ -33,7 +33,7 @@ limitations under the License.
 # screen.
 # ----------------------------------------------------------------------------
 # <a name="projectPreamble"></a>
-function projectPreamble(project_name)
+function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bool)
 
   # `project_constants.jl`, `project_inlet.dat`, and `project.csv` file names
   # strings are created with `project_name` variable.
@@ -77,7 +77,7 @@ function projectPreamble(project_name)
   cd(r_folder)
   # Bash scripts to handle I/O are written and saved in the working directory
   # by [`writeScripts`](initialise.html#writeScripts) function.
-  writeScripts()
+  writeScripts(no_out, no_inputs)
 
 end
 
@@ -113,7 +113,7 @@ end
 # These `.sh` are saved in the working directory and used through the `julia`
 # command `run`.
 # <a name="writeScripts"></a>
-function writeScripts()
+function writeScripts(no_out :: Bool, no_inputs :: Bool)
 
   appsh = open("appender.sh", "w")
   write(appsh, "#!/bin/bash", "\n")
@@ -122,7 +122,16 @@ function writeScripts()
 
   clesh = open("cleaner.sh", "w")
   write(clesh, "#!/bin/bash", "\n")
-  write(clesh, "rm *.temp")
+  write(clesh, "rm *.temp\n")
+  write(clesh, "rm appender.sh")
+  if no_out == true
+      write(clesh, "\nrm *.out")
+  end
+  if no_inputs == true
+      write(clesh, "\nrm *.csv")
+      write(clesh, "\nrm *.dat")
+      write(clesh, "\nrm *.jl")
+  end
   close(clesh)
 
 end
