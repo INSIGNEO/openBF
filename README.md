@@ -43,6 +43,7 @@ $ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
 $ mkdir -p ~/.julia/v0.6/BTypes/src
 $ cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
 $ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
+$ echo "alias openBF-fast='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia --check-bounds=no --math-mode=fast main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 ```
 
