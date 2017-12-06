@@ -5,14 +5,14 @@ function runTest(test_folder)
   cd(test_folder)
   try
     run(`cp ../../main.jl main.jl`)
-    run(`cp ../../src/BTypes.jl BTypes.jl`)
+    # run(`cp ../../src/BTypes.jl BTypes.jl`)
     run(`julia main.jl $test_folder`)
     run(`rm BTypes.jl`)
     cd("..")
     return true
 
   catch
-    run(`rm BTypes.jl`)
+    # run(`rm BTypes.jl`)
     cd("..")
     return false
   end
