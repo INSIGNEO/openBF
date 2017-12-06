@@ -1,7 +1,6 @@
 language: julia
 os:
   - linux
-  - osx
 julia:
   - 0.6
 notifications:
@@ -16,5 +15,6 @@ script:
   - cd test/
   - julia --code-coverage runtests.jl
 after_success:
-  - julia -e 'cd(Pkg.dir("openBF")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+  - echo "done!"
+  # - julia -e 'cd(Pkg.dir("openBF")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
   # - bash <(curl -s https://codecov.io/bash) -t e6644b12-b397-49be-8f79-16c59a3a9S

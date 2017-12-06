@@ -1,4 +1,5 @@
 using Base.Test
+using openBF
 
 function runTest(test_folder)
 
