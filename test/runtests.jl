@@ -4,11 +4,14 @@ function runTest(test_folder)
 
   cd(test_folder)
   try
-    run(`julia main.jl`)
+    run(`cp ../../main.jl main.jl`)
+    run(`julia main.jl $test_folder`)
+    run(`rm main.jl`)
     cd("..")
     return true
 
   catch
+    run(`rm main.jl`)
     cd("..")
     return false
   end
@@ -17,12 +20,12 @@ end
 # Run tests
 
 tic()
-println("\nTest 1")
+println("\nTest 1 - Single artery")
 @time @test runTest("single-artery")
 
-println("\nTest 2")
+println("\nTest 2 - Bifurcation")
 @time @test runTest("bifurcation")
 
-println("\nTest 3")
+println("\nTest 3 - External pressure")
 @time @test runTest("external-pressure")
 toc()
