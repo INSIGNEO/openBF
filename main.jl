@@ -32,8 +32,8 @@ using openBF
 #
 # `project_name` is a string used to initialise all the output files.
 project_name = ARGS[1]
-verbose = false
-no_out = true
+verbose = true
+no_out = false
 no_inputs = true
 
 # In `main.jl` all functions from `openBF` library are called using the dot
