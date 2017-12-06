@@ -4,21 +4,41 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-linux/OSX: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html)
+\*nix: [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html)
 [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/)
 
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
-
 
 ### Docs
 
 Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
 
 
-### Models
+### Ecosystem
 
-A collection of 1D networks (from the literature) solved by means of openBF can be found in the [openBF-hub](https://github.com/alemelis/openBF-hub) repository
+- A collection of 1D networks (from literature) solved by means of openBF can be found in the [openBF-hub](https://github.com/alemelis/openBF-hub) repository.
+- The scripts to generate a virtual population of ADAN56s can be found in [openBF-db](https://github.com/alemelis/openBF-db) repository.
 
+### Publications
+
+openBF has been used in the following works:
+
+- Melis A, Clayton RH, Marzo A. [Bayesian sensitivity analysis of a 1D vascular model with Gaussian process emulators](http://rdcu.be/AqLm). _International Journal for Numerical Methods in Biomedical Engineering_, 2017.
+- Melis A, Clayton RH, Marzo A. [A more efficient approach to perform sensitivity analyses in 0D/1D cardiovascular models](http://www.compbiomed.net/2015/cmbe-proceedings.htm), _CMBE_ July 2015, Cachan, FR. _In proceedings_
+
+Have you used openBF for your research? Let us know!
+
+### Citation
+
+```
+@article{melis2017bayesian,
+  title={Bayesian sensitivity analysis of a 1D vascular model with Gaussian process emulators},
+  author={Melis, Alessandro and Clayton, Richard H and Marzo, Alberto},
+  journal={International Journal for Numerical Methods in Biomedical Engineering},
+  year={2017},
+  publisher={Wiley Online Library}
+}
+```
 
 ### Julia and openBF installation
 
