@@ -28,7 +28,7 @@ module openBF
 # OpenBF' own types are contained in [BTypes.jl](BTypes.html) where
 # data structures for vessels, blood, and numerical scheme
 # are specified.
-using  BTypes
+using BTypes
 
 # Data structures and output files are initialised at the beginning
 # of each simulation. [initialise.jl](initialise.html) contains all
