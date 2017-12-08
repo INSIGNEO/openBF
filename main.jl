@@ -32,7 +32,7 @@ using openBF
 #
 # `project_name` is a string used to initialise all the output files.
 project_name = ARGS[1]
-verbose = true
+verbose = false
 no_out = false
 no_inputs = true
 
