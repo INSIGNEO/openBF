@@ -27,4 +27,10 @@ println("\nTest 2 - Bifurcation")
 
 println("\nTest 3 - External pressure")
 @time @test runTest("external-pressure")
+
+println("\nTest 4 - Anastomosis")
+@time @test runTest("anastomosis")
+
+println("\nTest 5 - Conjunction")
+@time @test runTest("conjunction")
 toc()
