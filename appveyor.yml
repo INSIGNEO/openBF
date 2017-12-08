@@ -42,7 +42,7 @@ build_script:
   - xcopy src C:\projects\.julia\v0.6\openBF\
   - mkdir C:\projects\.julia\v0.6\BTypes\src
   - cd src
-  - xcopy /F BTypes.jl C:\projects\.julia\v0.6\BTypes\src\BTypes.jl
+  - copy BTypes.jl C:\projects\.julia\v0.6\BTypes\src\
   - cd ..
 
 test_script:
