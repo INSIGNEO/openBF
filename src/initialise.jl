@@ -71,13 +71,13 @@ function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bo
   # All files in the working directory are deleted except those containing
   # the `project_name` string by the
   # [`cleanLibrary`](initialise.html#cleanLibrary) function.
-  cleanLibrary(project_name)
-  run(`rm clean_lib.sh`)
+  # cleanLibrary(project_name)
+  # run(`rm clean_lib.sh`)
   # The working directory is changed to the results directory.
   cd(r_folder)
   # Bash scripts to handle I/O are written and saved in the working directory
   # by [`writeScripts`](initialise.html#writeScripts) function.
-  writeScripts(no_out, no_inputs)
+  # writeScripts(no_out, no_inputs)
 
 end
 
@@ -120,19 +120,19 @@ function writeScripts(no_out :: Bool, no_inputs :: Bool)
   write(appsh, "cat \$1 >> \$2")
   close(appsh)
 
-  clesh = open("cleaner.sh", "w")
-  write(clesh, "#!/bin/bash", "\n")
-  write(clesh, "rm *.temp\n")
-  write(clesh, "rm appender.sh")
-  if no_out == true
-      write(clesh, "\nrm *.out")
-  end
-  if no_inputs == true
-      write(clesh, "\nrm *.csv")
-      write(clesh, "\nrm *.dat")
-      write(clesh, "\nrm *.jl")
-  end
-  close(clesh)
+  # clesh = open("cleaner.sh", "w")
+  # write(clesh, "#!/bin/bash", "\n")
+  # write(clesh, "rm *.temp\n")
+  # write(clesh, "rm appender.sh")
+  # if no_out == true
+  #     write(clesh, "\nrm *.out")
+  # end
+  # if no_inputs == true
+  #     write(clesh, "\nrm *.csv")
+  #     write(clesh, "\nrm *.dat")
+  #     write(clesh, "\nrm *.jl")
+  # end
+  # close(clesh)
 
 end
 
@@ -240,7 +240,7 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
   L = m[5]
 
   #M = convert(Int, m[6])
-  M = maximum([5, convert(Int, ceil(L*1e3))])
+  M = maximum([5, convert(Int, m[6]), convert(Int, ceil(L*1e3))])
 
   Rp = m[7]
   Rd = m[8]

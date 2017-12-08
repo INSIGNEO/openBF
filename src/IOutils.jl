@@ -33,11 +33,11 @@ limitations under the License.
 # <a name="openTempFiles"></a>
 function openTempFiles(v :: Vessel)
 
-	v.temp_P      = open(v.temp_P_name,      "w")
-	v.temp_Q      = open(v.temp_Q_name,      "w")
-	v.temp_A      = open(v.temp_A_name,      "w")
-	v.temp_c      = open(v.temp_c_name,      "w")
-	v.temp_u      = open(v.temp_u_name,      "w")
+	v.temp_P = open(v.temp_P_name, "w")
+	v.temp_Q = open(v.temp_Q_name, "w")
+	v.temp_A = open(v.temp_A_name, "w")
+	v.temp_c = open(v.temp_c_name, "w")
+	v.temp_u = open(v.temp_u_name, "w")
 
 end
 
@@ -231,18 +231,28 @@ function transferTempToOut(v :: Vessel)
 	tempA = v.temp_A_name
 	tempc = v.temp_c_name
 	tempu = v.temp_u_name
+	temps = [tempP, tempQ, tempA, tempc, tempu]
 
 	outP  = v.out_P_name
 	outQ  = v.out_Q_name
 	outA  = v.out_A_name
 	outc  = v.out_c_name
 	outu  = v.out_u_name
+	outs = [outP, outQ, outA, outc, outu]
 
-	run(`sh appender.sh $tempP $outP`)
-	run(`sh appender.sh $tempQ $outQ`)
-	run(`sh appender.sh $tempA $outA`)
-	run(`sh appender.sh $tempc $outc`)
-	run(`sh appender.sh $tempu $outu`)
+	for (a, b) in zip(outs, temps)
+		out_file = open(a, "a")
+		temp_file = open(b, "r")
+		write(out_file, temp_file)
+		close(out_file)
+		close(temp_file)
+	end
+	#
+	# run(`sh appender.sh $tempP $outP`)
+	# run(`sh appender.sh $tempQ $outQ`)
+	# run(`sh appender.sh $tempA $outA`)
+	# run(`sh appender.sh $tempc $outc`)
+	# run(`sh appender.sh $tempu $outu`)
 
 end
 
@@ -253,18 +263,28 @@ function transferLastToOut(v :: Vessel)
 	lastA = v.last_A_name
 	lastc = v.last_c_name
 	lastu = v.last_u_name
+	lasts = [lastP, lastQ, lastA, lastc, lastu]
 
 	outP  = v.out_P_name
 	outQ  = v.out_Q_name
 	outA  = v.out_A_name
 	outc  = v.out_c_name
 	outu  = v.out_u_name
+	outs = [outP, outQ, outA, outc, outu]
 
-	run(`sh appender.sh $lastP $outP`)
-	run(`sh appender.sh $lastQ $outQ`)
-	run(`sh appender.sh $lastA $outA`)
-	run(`sh appender.sh $lastc $outc`)
-	run(`sh appender.sh $lastu $outu`)
+	for (a, b) in zip(outs, lasts)
+		out_file = open(a, "a")
+		last_file = open(b, "r")
+		write(out_file, last_file)
+		close(out_file)
+		close(last_file)
+	end
+
+	# run(`sh appender.sh $lastP $outP`)
+	# run(`sh appender.sh $lastQ $outQ`)
+	# run(`sh appender.sh $lastA $outA`)
+	# run(`sh appender.sh $lastc $outc`)
+	# run(`sh appender.sh $lastu $outu`)
 
 end
 
@@ -306,18 +326,28 @@ function transferTempToLast(v :: Vessel)
 	tempA = v.temp_A_name
 	tempc = v.temp_c_name
 	tempu = v.temp_u_name
+	temps = [tempP, tempQ, tempA, tempc, tempu]
 
 	lastP  = v.last_P_name
 	lastQ  = v.last_Q_name
 	lastA  = v.last_A_name
 	lastc  = v.last_c_name
 	lastu  = v.last_u_name
+	lasts = [lastP, lastQ, lastA, lastc, lastu]
 
-	run(`sh appender.sh $tempP $lastP`)
-	run(`sh appender.sh $tempQ $lastQ`)
-	run(`sh appender.sh $tempA $lastA`)
-	run(`sh appender.sh $tempc $lastc`)
-	run(`sh appender.sh $tempu $lastu`)
+	# run(`sh appender.sh $tempP $lastP`)
+	# run(`sh appender.sh $tempQ $lastQ`)
+	# run(`sh appender.sh $tempA $lastA`)
+	# run(`sh appender.sh $tempc $lastc`)
+	# run(`sh appender.sh $tempu $lastu`)
+
+	for (a, b) in zip(temps, lasts)
+		temp_file = open(a, "r")
+		last_file = open(b, "w")
+		write(last_file, temp_file)
+		close(temp_file)
+		close(last_file)
+	end
 
 end
 
@@ -325,6 +355,52 @@ function transferTempToLast(vessels :: Array{Vessel, 1})
 
 	for v in vessels
 		transferTempToLast(v)
+	end
+
+end
+
+function cleanTemps(vessels :: Array{Vessel, 1})
+
+	for v in vessels
+		cleanTemps(v)
+	end
+
+end
+
+function cleanTemps(v :: Vessel)
+
+	tempP = v.temp_P_name
+	tempQ = v.temp_Q_name
+	tempA = v.temp_A_name
+	tempc = v.temp_c_name
+	tempu = v.temp_u_name
+	temps = [tempP, tempQ, tempA, tempc, tempu]
+
+	for temp in temps
+		rm(temp)
+	end
+
+end
+
+function cleanOuts(vessels :: Array{Vessel, 1})
+
+	for v in vessels
+		cleanOuts(v)
+	end
+
+end
+
+function cleanOuts(v :: Vessel)
+
+	outP = v.out_P_name
+	outQ = v.out_Q_name
+	outA = v.out_A_name
+	outc = v.out_c_name
+	outu = v.out_u_name
+	outs = [outP, outQ, outA, outc, outu]
+
+	for out in outs
+		rm(out)
 	end
 
 end

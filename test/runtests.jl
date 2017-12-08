@@ -6,7 +6,7 @@ function runTest(test_folder)
   cd(test_folder)
   try
     run(`cp ../../main.jl main.jl`)
-    run(`julia main.jl $test_folder`)
+    run(`$JULIA_HOME/julia main.jl $test_folder`)
     cd("..")
     return true
 

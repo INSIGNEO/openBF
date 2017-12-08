@@ -32,7 +32,7 @@ using openBF
 #
 # `project_name` is a string used to initialise all the output files.
 project_name = ARGS[1]
-verbose = false
+verbose = true
 no_out = false
 no_inputs = true
 
@@ -334,8 +334,23 @@ end
 # Make sure that data from `.temp` files are transferred.
 openBF.closeTempFiles(vessels)
 openBF.transferTempToOut(vessels)
-run(`sh cleaner.sh`)
-run(`rm cleaner.sh`)
+# run(`sh cleaner.sh`)
+# run(`rm cleaner.sh`)
+
+if no_out == true
+    # rm("*.out")
+    cleanOuts(vessels)
+    cleanTemps(vessels)
+    # rm("*.temp")
+end
+
+if no_inputs == true
+    rm("$project_name.csv")
+    rm("$project_name\_inlet.dat")
+    rm("$project_name\_constants.jl")
+end
+
+# rm("appender.sh")
 
 # if venous_model
 #   openBF.closeTempFiles(vessels_v)
@@ -343,4 +358,4 @@ run(`rm cleaner.sh`)
 # end
 
 cd("..")
-run(`rm main.jl`)
+# run(`rm main.jl`)
