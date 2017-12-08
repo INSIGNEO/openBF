@@ -248,7 +248,7 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
 #   h0          =     m[7]
 
   E = m[9]
-  Pext = convert(Float, m[10])
+  Pext = convert(Float64, m[10])
   # Poisson's ratio `sigma` is set by default to 0.5 because vessel wall is
   # assumed to be incompressible.
   sigma = 0.5
