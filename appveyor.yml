@@ -38,11 +38,11 @@ build_script:
 # Need to convert from shallow to complete for Pkg.clone to work
   - IF EXIST .git\shallow (git fetch --unshallow)
   - C:\projects\julia\bin\julia -e "versioninfo(); Pkg.clone(pwd())
-  - mkdir C:\projects\.julia\v0.6\openBF
-  - xcopy src C:\projects\.julia\v0.6\openBF\
-  - mkdir C:\projects\.julia\v0.6\BTypes\src
+  - mkdir C:\Users\appveyor\.julia\v0.6\openBF
+  - xcopy src C:\Users\appveyor\.julia\v0.6\openBF\
+  - mkdir C:\Users\appveyor\.julia\v0.6\BTypes\src
   - cd src
-  - copy BTypes.jl C:\projects\.julia\v0.6\BTypes\src\
+  - copy BTypes.jl C:\Users\appveyor\.julia\v0.6\BTypes\src\
   - cd ..
 
 test_script:
