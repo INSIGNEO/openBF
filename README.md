@@ -6,10 +6,10 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-:green_apple: :penguin: [![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) | win64: [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true)](https://ci.appveyor.com/project/alemelis/openbf)
+\*nix: [![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) || [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) || [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-green.svg)](https://julialang.org/downloads/)
 
-[![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html)
-[![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/)
+<!-- [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html) -->
+
 
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
