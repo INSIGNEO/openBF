@@ -46,9 +46,9 @@ Have you used openBF for your research? Let us know!
 }
 ```
 
-### Julia and openBF installation
+### Julia and openBF installation (Linux)
 
-- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/); on linux
+- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/) and create a command alias; for example, Julia 0.6.0
 ```bash
 $ cd ~/Dowloads
 $ wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
@@ -71,16 +71,30 @@ $ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
 $ mkdir -p ~/.julia/v0.6/BTypes/src
 $ cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
 $ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
-$ echo "alias openBF-fast='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia --check-bounds=no --math-mode=fast main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 ```
+
+<!-- $ echo "alias openBF-fast='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia --check-bounds=no --math-mode=fast main.jl $1'" >> ~/.bashrc -->
+
+### Julia and openBF installation (Windows)
+
+- Download and install Julia 64-bit version from [here](https://julialang.org/downloads/)
+- [Add Julia to your system path](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/). Now you are able to run Julia by typing `julia` in a command prompt
+- Download openBF from this repository
+- Copy openBF folder in `C:\Users\<username>\.julia\`
+- Create the directory `C:\Users\<username>\.julia\BTypes\src` and copy `openBF\src\BTypes.jl` in it
+- Start a julia session and type
+```julia
+julia> using openBF
+```
+- If no errors are shown you are all set. You can use openBF from the command prompt by typing `julia main.jl <project_name>` where `main.jl` is in openBF folder.
 
 ### Tests
 
 To use openBF, clone or download this repository. Go to the chosen test `openBF/test/<testname>` folder and launch the simulation as
 
 ```
-$ julia main.jl
+$ julia main.jl <testname>
 ```
 
 This requires the following files to be in the same directory of `main.jl`:
