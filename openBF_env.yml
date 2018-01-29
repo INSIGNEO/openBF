@@ -1,0 +1,8 @@
+name: openBF
+dependencies:
+    - python==3.5.2
+    - numpy
+    - matplotlib
+    - scipy
+    - seaborn
+    - pandas
