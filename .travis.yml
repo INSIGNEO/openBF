@@ -8,11 +8,11 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(pwd())'
-  - mkdir -p ~/.julia/v0.6/openBF
-  - cp -r src ~/.julia/v0.6/openBF/
+  - julia -e 'Pkg.clone(https://github.com/INSIGNEO/openBF.git)'
+  # - mkdir -p ~/.julia/v0.6/openBF
+  # - cp -r src ~/.julia/v0.6/openBF/
   - cd test/
   - julia --code-coverage runtests.jl
 after_success:
   - echo "done!"
-  - julia -e 'cd(Pkg.dir("MyPkg")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'cd(Pkg.dir("openBF")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
