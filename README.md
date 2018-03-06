@@ -29,6 +29,7 @@ Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) f
 
 openBF has been used in the following works:
 
+- Melis A. [Gaussian process emulators for 1D vascular models](http://etheses.whiterose.ac.uk/19175/). _PhD Thesis_, 2017.
 - Melis A, Clayton RH, Marzo A. [Bayesian sensitivity analysis of a 1D vascular model with Gaussian process emulators](http://rdcu.be/AqLm). _International Journal for Numerical Methods in Biomedical Engineering_, 2017. DOI: 10.1002/cnm.2882
 - Melis A, Clayton RH, Marzo A. [A more efficient approach to perform sensitivity analyses in 0D/1D cardiovascular models](http://www.compbiomed.net/2015/cmbe-proceedings.htm), _CMBE_ July 2015, Cachan, FR. _In proceedings_
 
