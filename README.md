@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-\*nix: [![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) || [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) || [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-green.svg)](https://julialang.org/downloads/)
+[![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) || [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) || [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-green.svg)](https://julialang.org/downloads/)
 
 <!-- [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html) -->
 
@@ -61,13 +61,11 @@ $ source ~/.bashrc
 $ julia
 ```
 
-- clone this repository and copy openBF source files in `.julia/v0.6/` folder; on linux
+- Add openBF
 ```bash
-$ git clone https://github.com/INSIGNEO/openBF
-$ cd openBF
-$ mkdir -p ~/.julia/v0.6/openBF
-$ cp -r src ~/.julia/v0.6/openBF/
-$ cp main.jl ~/.julia/v0.6/openBF/
+$ julia -e 'Pkg.clone("https://github.com/INSIGNEO/openBF.git")'
+$ cd ~/.julia/v0.6/openBF/
+$ wget https://github.com/INSIGNEO/openBF/blob/master/main.jl
 $ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
 $ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
