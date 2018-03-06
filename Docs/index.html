@@ -136,8 +136,8 @@ $ source ~/.bashrc
 	This file contains geometrical and material properties for each vessel. Columns should be organised as follows
 
 <pre><code>
-name, sn, tn, wkn, L,      M,  Rp,        Rd,        E,      Pext, R1,       R2,       C,
-P,    1,  2,  0,   8.6e-2, 86, 0.7581e-2, 0.7581e-2, 500.e3, 0.,   0.,       0.,       0.,
+name, sn, tn, in, L,      M,  Rp,        Rd,        E,      Pext, R1,       R2,       C,
+P,    1,  2,  1,   8.6e-2, 86, 0.7581e-2, 0.7581e-2, 500.e3, 0.,   0.,       0.,       0.,
 d1,   2,  3,  0,   8.5e-2, 85, 0.5492e-2, 0.5492e-2, 700.e3, 0.,   6.8123e7, 3.1013e9, 3.6664e-10,
 d2,   2,  4,  0,   8.5e-2, 85, 0.5492e-2, 0.5492e-2, 700.e3, 0.,   6.8123e7, 3.1013e9, 3.6664e-10,
 </code></pre>
@@ -146,6 +146,9 @@ System topology is built by specifying <i>source</i> and <i>terminal</i> nodes o
 starts from node 1 and ends at node 2. Node 2 is the bifurcation nodes from which two daughter vessels start. The first daughter vessel ends at
 node 3 and the second daughter vessel ends at node 3.
 </p>
+
+<h5 id="project_inlet">Multiple inlets</h5>
+<p>The <code>in</code> column is used to indicate whether a vessel is a inlet vessel or not. Set <code>in = 1</code> for the principal inlet vessel (i.e. the only one in case of a single inlet).</p>
 
 <h4 id="project_constants">tutorial_constants.jl</h4>
 <p>
@@ -157,6 +160,7 @@ This file contains all the constant parameters that can be fixed for the entire 
 3: from data
 =#
 const inlet_BC_switch = 3
+const number_of_inlets = 1
 
 # numerical domain
 const Ccfl   = 0.9         # Courant number
@@ -187,6 +191,9 @@ The first column contains time steps and the second column contains the flow rat
 <div style="text-align:center">
 		<img src="images/tutorial/f_waveform.png" width="600">
 	</div>
+
+<h5 id="project_inlet">Multiple inlets</h5>
+<p>You need a <code>_x_inlet.dat</code> file for each new inlet, where <code>x</code> is the number of the inlet other than the principal one, e.g. 2 for the second, 3 for the third and so on.</p>
 
 <h3>Simulation</h3>
 <p>Once all the files are in the working directory, a simulation is started by
