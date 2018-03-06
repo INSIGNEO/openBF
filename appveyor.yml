@@ -40,10 +40,6 @@ build_script:
   - C:\projects\julia\bin\julia -e "versioninfo(); Pkg.clone(pwd())
   # - mkdir C:\Users\appveyor\.julia\v0.6\openBF
   - xcopy src C:\Users\appveyor\.julia\v0.6\openBF\
-  - mkdir C:\Users\appveyor\.julia\v0.6\BTypes\src
-  - cd src
-  - copy BTypes.jl C:\Users\appveyor\.julia\v0.6\BTypes\src\
-  - cd ..
 
 test_script:
   - cd test

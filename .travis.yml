@@ -11,8 +11,6 @@ script:
   - julia -e 'Pkg.clone(pwd())'
   - mkdir -p ~/.julia/v0.6/openBF
   - cp -r src ~/.julia/v0.6/openBF/
-  - mkdir -p ~/.julia/v0.6/BTypes/src
-  - cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
   - cd test/
   - julia --code-coverage runtests.jl
 after_success:
