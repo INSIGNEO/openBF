@@ -33,4 +33,7 @@ println("\nTest 4 - Anastomosis")
 
 println("\nTest 5 - Conjunction")
 @time @test runTest("conjunction")
+
+println("\nTest 5 - Aspirator")
+@time @test runTest("aspirator")
 toc()

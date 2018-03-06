@@ -130,7 +130,7 @@ type Vessel
   ID :: Int64
   sn :: Int64
   tn :: Int64
-  rn :: Int64
+  inlet_idx :: Int64
 
   #Numerical constants
   M       :: Int64

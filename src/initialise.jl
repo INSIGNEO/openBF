@@ -33,12 +33,20 @@ limitations under the License.
 # screen.
 # ----------------------------------------------------------------------------
 # <a name="projectPreamble"></a>
-function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bool)
+function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bool, number_of_inlets :: Int64)
 
   # `project_constants.jl`, `project_inlet.dat`, and `project.csv` file names
   # strings are created with `project_name` variable.
   p_const = join([project_name, "_constants.jl"])
   p_inlet = join([project_name, "_inlet.dat"])
+
+  if number_of_inlets > 1
+      p_inlets = []
+      for inlet_idx = 2:number_of_inlets
+          push!(p_inlets, join([project_name, "_", inlet_idx, "_inlet.dat"]))
+      end
+  end
+
   p_model = join([project_name, ".csv"])
   v_model = join([project_name, "_veins.csv"])
   # The existence of these three files is checked in the working directory.
@@ -64,6 +72,13 @@ function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bo
   # Project files are moved to the results directory.
   cp(p_const, join([r_folder, "/", p_const]), remove_destination=true)
   cp(p_inlet, join([r_folder, "/", p_inlet]), remove_destination=true)
+
+  if number_of_inlets > 1
+     for i = 1:number_of_inlets-1
+         cp(p_inlets[i], join([r_folder, "/", p_inlets[i]]), remove_destination=true)
+     end
+  end
+
   cp(p_model, join([r_folder, "/", p_model]), remove_destination=true)
   if (isfile(v_model)) == true
     cp(v_model, join([r_folder, "/", v_model]), remove_destination=true)
@@ -587,7 +602,8 @@ function loadGlobalConstants(project_name,
                              inlet_BC_switch :: Int64,
                              inlet_type :: String,
                              cycles :: Int64,
-                             rho :: Float64, mu:: Float64, gamma_profile :: Int64)
+                             rho :: Float64, mu:: Float64, gamma_profile :: Int64,
+                             number_of_inlets :: Int64)
   # `heart` data structure is filled depending on the inlet boundary condition
   # chosen by the user. When the inlet flow function is given
   # (`inlet_BC_swithc`=3), the flow waveform is imported by
@@ -622,6 +638,15 @@ function loadGlobalConstants(project_name,
                             cardiac_period, sys_T,
                             initial_flow, flow_amplitude,
                             input_data)
+
+  inlets = [heart_data]
+  if number_of_inlets > 1
+      for inlet_number = 2:number_of_inlets
+          input_data = loadInputData(join([project_name, "_", inlet_number]))
+          push!(inlets, loadGlobalConstants(project_name, inlet_number, inlet_BC_switch :: Int64, inlet_type :: String))
+      end
+  end
+
   # Kinematic viscosity `nu` and viscous resitance term `Cf` are calculated as
   # $$
   #   \nu = \frac{\mu}{\rho}, \quad C_f = 8\pi\nu.
@@ -642,5 +667,26 @@ function loadGlobalConstants(project_name,
   #
   # `total_time`   `::Float`
   # --------------------------------------------------------------------------
-  return heart_data, blood_data, total_time
+  return inlets, blood_data, total_time
+end
+
+function loadGlobalConstants(project_name, inlet_number,
+                             inlet_BC_switch :: Int64,
+                             inlet_type :: String)
+
+    input_data = loadInputData(join([project_name, "_", inlet_number]))
+
+    cardiac_period = input_data[end, 1]
+    sys_T = 0.0
+    initial_flow = 0.0
+    flow_amplitude = 0.0
+
+    #Initialise heart data structure
+    heart_data = BTypes.Heart(inlet_BC_switch,
+                            inlet_type,
+                            cardiac_period, sys_T,
+                            initial_flow, flow_amplitude,
+                            input_data)
+
+      return heart_data
 end

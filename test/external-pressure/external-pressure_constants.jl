@@ -3,6 +3,7 @@
 =#
 const inlet_BC_switch = 3
 const inlet_type = "Q"
+const number_of_inlets = 1
 
 # numerical domain
 const Ccfl   = 0.9         # Courant number
