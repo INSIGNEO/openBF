@@ -68,8 +68,6 @@ $ mkdir -p ~/.julia/v0.6/openBF
 $ cp -r src ~/.julia/v0.6/openBF/
 $ cp main.jl ~/.julia/v0.6/openBF/
 $ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
-$ mkdir -p ~/.julia/v0.6/BTypes/src
-$ cp src/BTypes.jl ~/.julia/v0.6/BTypes/src/
 $ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 ```
@@ -82,7 +80,6 @@ $ source ~/.bashrc
 - [Add Julia to your system path](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/). Now you are able to run Julia by typing `julia` in a command prompt
 - Download openBF from this repository
 - Copy openBF folder in `C:\Users\<username>\.julia\`
-- Create the directory `C:\Users\<username>\.julia\BTypes\src` and copy `openBF\src\BTypes.jl` in it
 - Start a julia session and type
 ```julia
 julia> using openBF

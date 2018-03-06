@@ -211,7 +211,7 @@ function readModelData(model_data)
 end
 
 # *function* __`initialiseVessel`__ $\rightarrow$
-# `vessel::`[`Vessel`](BTypes.html#Vessel)
+# `vessel::`[`Vessel`]( html#Vessel)
 #
 # ----------------------------------------------------------------------------
 # Parameters:
@@ -221,10 +221,10 @@ end
 # `ID`                `::Int` topological ID of the vessel in the arterial
 #                     tree.
 #
-# `h`                 [`::Heart`](BTypes.html#Heart) data structure
+# `h`                 [`::Heart`]( html#Heart) data structure
 #                     containing inlet boundary conditions.
 #
-# `b`                 [`::Blood`](BTypes.html#Blood) data structure
+# `b`                 [`::Blood`]( html#Blood) data structure
 #                     containing blood mechanical properties.
 #
 # `Pext`              `::Float` external pressure.
@@ -503,10 +503,10 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
 # ----------------------------------------------------------------------------
 # Returns:
 # -------------- -------------------------------------------------------------
-# `vessel_data`  [`::Vessel`](BTypes.html#Vessel) data structure
+# `vessel_data`  [`::Vessel`]( html#Vessel) data structure
 #                containing vessel mechanical and geometrical properties.
 # ----------------------------------------------------------------------------
-  vessel_data = BTypes.Vessel(vessel_name,
+  vessel_data =  Vessel(vessel_name,
                     ID, sn, tn, rn,
                     M,
                     dx, invDx, halfDx,
@@ -593,8 +593,8 @@ end
 # --------------------------------------------------------------------------
 # Functioning
 # --------------------------------------------------------------------------
-# This function load into [heart](BTypes.html#Heart) and
-# [blood](BTypes.html#Blood) datastructures the parameters constant
+# This function load into [heart]( html#Heart) and
+# [blood]( html#Blood) datastructures the parameters constant
 # within all vessels.
 # --------------------------------------------------------------------------
 # <a name="loadGlobalConstants"></a>
@@ -633,7 +633,7 @@ function loadGlobalConstants(project_name,
   const total_time = cycles*cardiac_period
 
   #Initialise heart data structure
-  heart_data = BTypes.Heart(inlet_BC_switch,
+  heart_data =  Heart(inlet_BC_switch,
                             inlet_type,
                             cardiac_period, sys_T,
                             initial_flow, flow_amplitude,
@@ -657,7 +657,7 @@ function loadGlobalConstants(project_name,
   const Cf = 8*pi*nu
 
   #Initialise blood data structure
-  blood_data = BTypes.Blood(mu, rho, Cf, gamma_profile)
+  blood_data =  Blood(mu, rho, Cf, gamma_profile)
   # --------------------------------------------------------------------------
   # Returns:
   # -------------- -----------------------------------------------------------
@@ -682,7 +682,7 @@ function loadGlobalConstants(project_name, inlet_number,
     flow_amplitude = 0.0
 
     #Initialise heart data structure
-    heart_data = BTypes.Heart(inlet_BC_switch,
+    heart_data = Heart(inlet_BC_switch,
                             inlet_type,
                             cardiac_period, sys_T,
                             initial_flow, flow_amplitude,
