@@ -8,7 +8,7 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(https://github.com/INSIGNEO/openBF.git)'
+  - julia -e 'Pkg.clone("https://github.com/INSIGNEO/openBF.git")'
   # - mkdir -p ~/.julia/v0.6/openBF
   # - cp -r src ~/.julia/v0.6/openBF/
   - cd test/
