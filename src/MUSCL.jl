@@ -166,27 +166,17 @@ function MUSCL(v :: Vessel, dt :: Float64, b :: Blood)
   end
 
   #source term
-  rho_inv = 1./b.rho
-  viscT = 2*(b.gamma_profile + 2)*pi*b.mu
+  # rho_inv = 1./b.rho
+  # viscT = 2*(b.gamma_profile + 2)*pi*b.mu
   for i = 1:v.M
-    s_A0_inv = sqrt(1./v.A0[i])
     s_A = sqrt(v.A[i])
     s_A_inv = 1./s_A
-    # v.Q[i] -= 2*(b.gamma_profile+2)*pi*b.mu*v.Q[i]/(v.A[i])*rho_inv*dt   #viscosity
-    # # v.Q[i] += dt*0.5*v.beta[i]*v.A[i]^1.5/(v.A0[i]*b.rho)*v.dA0dx[i]   #dP/dA0
-    # v.Q[i] += dt*0.5*v.beta[i]*v.A[i]^1.5*A0_inv*rho_inv*v.dA0dx[i]   #dP/dA0
-    # v.Q[i] -= dt*(v.A[i]*rho_inv)*(sqrt(v.A[i]*A0_inv)-1.)*v.dTaudx[i]  #dP/dh0
-    # v.Q[i] += dt*v.A[i]*s_A*rho_inv *
-    #           (0.5*v.beta[i]*s_A0_inv*s_A0_inv*v.dA0dx[i] -
-    #           (s_A0_inv - s_A_inv)*v.dTaudx[i] -
-    #            2*(b.gamma_profile + 2)*pi*b.mu*v.Q[i]*
-    #            s_A_inv*s_A_inv*s_A_inv*s_A_inv*s_A_inv )
+    s_A_over_A0 = s_A*v.s_inv_A0[i]
 
-    v.Q[i] += dt*rho_inv*( -viscT*v.Q[i]*s_A_inv*s_A_inv +
-                        v.A[i]*(v.beta[i]*0.5*v.dA0dx[i] -
-                                (s_A*s_A0_inv-1.)*v.dTaudx[i]))
+    v.Q[i] += dt*b.rho_inv*( -b.viscT*v.Q[i]*s_A_inv*s_A_inv +
+                        v.A[i]*(v.half_beta_dA0dx[i] - (s_A_over_A0 - 1.)*v.dTaudx[i]))
 
-    v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
+    v.P[i] = pressure(s_A_over_A0, v.beta[i], v.Pext)
     v.u[i] = v.Q[i]/v.A[i]
     v.c[i] = waveSpeed(v.A[i], v.gamma[i])
   end

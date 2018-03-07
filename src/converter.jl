@@ -121,6 +121,12 @@ function pressure(A    :: Float64, A0   :: Float64,
 
 end
 
+function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
+
+  return Pext + beta*(s_A_over_A0 - 1.)
+
+end
+
 # *function* __`pressure`__ $\rightarrow$ `P::Array{Float, 1}`
 #
 # ----------------------------------------------------------------------------

@@ -145,7 +145,10 @@ type Vessel
   beta  :: Array{Float64, 1}
   gamma :: Array{Float64, 1}
   gamma_ghost :: Array{Float64, 1}
+  half_beta_dA0dx :: Array{Float64, 1}
   A0    :: Array{Float64, 1}
+  inv_A0    :: Array{Float64, 1}
+  s_inv_A0    :: Array{Float64, 1}
   dA0dx :: Array{Float64, 1}
   dTaudx :: Array{Float64, 1}
   Pext  :: Float64
@@ -298,8 +301,10 @@ end
 type Blood
   mu  :: Float64
   rho :: Float64
+  rho_inv :: Float64
   Cf  :: Float64
   gamma_profile :: Float64
+  viscT :: Float64
 end
 
 # ### Import openBF' files

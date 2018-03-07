@@ -283,25 +283,10 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
 #   Rd = r0
 
   A0 = zeros(Float64, M)
+  inv_A0 = zeros(Float64, M)
+  s_inv_A0 = zeros(Float64, M)
   R0 = zeros(Float64, M)
   h0 = zeros(Float64, M)
-
-  dA0dx = zeros(Float64, M)
-  dTaudx = zeros(Float64, M)
-  radius_slope = (Rd-Rp)/(M-1)
-  ah = 0.2802
-  bh = -5.053e2
-  ch = 0.1324
-  dh = -0.1114e2
-  for i = 1:M
-    R0[i] = radius_slope*(i-1)*dx + Rp
-    h0[i] = R0[i] * (ah * exp(bh*R0[i]) + ch * exp(dh*R0[i])) #1e-3
-    A0[i] = pi*R0[i]*R0[i]
-    dA0dx[i] = 2*pi*R0[i]*radius_slope
-    dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0[i]/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
-  end
-
-#   println(dA0dx[end])
 
   # Elastic constants for trans-mural [pressure](converter.html#pressure)
   # (`beta`) and [wave speed](converter.html#waveSpeed) (`gamma`)
@@ -310,8 +295,33 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
   #   \beta = \sqrt{\frac{\pi}{A_0}} \frac{h_0 E}{1 - \sigma^2}, \quad
   #   \gamma = \frac{\beta}{3 \rho R_0 \sqrt{\pi}} .
   # $$
-  beta  = sqrt.(pi./A0) .* h0*E / (1 - sigma*sigma)
-  gamma = beta ./ (3*b.rho*R0*sqrt(pi))
+  beta = zeros(Float64, M)
+  gamma = zeros(Float64, M)
+
+  dA0dx = zeros(Float64, M)
+  dTaudx = zeros(Float64, M)
+  radius_slope = (Rd-Rp)/(M-1)
+  ah = 0.2802
+  bh = -5.053e2
+  ch = 0.1324
+  dh = -0.1114e2
+
+  half_beta_dA0dx = zeros(Float64, M)
+
+  for i = 1:M
+    R0[i] = radius_slope*(i-1)*dx + Rp
+    h0[i] = R0[i] * (ah * exp(bh*R0[i]) + ch * exp(dh*R0[i])) #1e-3
+    A0[i] = pi*R0[i]*R0[i]
+    inv_A0[i] = 1/A0[i]
+    s_inv_A0[i] = sqrt(inv_A0[i])
+    dA0dx[i] = 2*pi*R0[i]*radius_slope
+    dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0[i]/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+
+    beta[i] = sqrt(pi/A0[i])*h0[i]*E/(1 - sigma*sigma)
+    gamma[i] = beta[i]/(3*b.rho*R0[i]*sqrt(pi))
+
+    half_beta_dA0dx[i] = beta[i]*0.5*dA0dx[i]
+  end
 
   gamma_ghost = zeros(Float64, M+2)
   gamma_ghost[2:M+1] = gamma
@@ -511,9 +521,9 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
                     M,
                     dx, invDx, halfDx,
                     Ccfl,
-                    beta, gamma, gamma_ghost,
+                    beta, gamma, gamma_ghost, half_beta_dA0dx,
 #                     R0,
-                    A0, dA0dx, dTaudx, Pext,
+                    A0, inv_A0, s_inv_A0, dA0dx, dTaudx, Pext,
                     A, Q,
                     u, c, P,
                     W1M0, W2M0,
@@ -655,9 +665,11 @@ function loadGlobalConstants(project_name,
   # along the radial direction.
   const nu = mu/rho
   const Cf = 8*pi*nu
+  rho_inv = 1/rho
+  viscT = 2*(gamma_profile + 2)*pi*mu
 
   #Initialise blood data structure
-  blood_data =  Blood(mu, rho, Cf, gamma_profile)
+  blood_data =  Blood(mu, rho, rho_inv, Cf, gamma_profile, viscT)
   # --------------------------------------------------------------------------
   # Returns:
   # -------------- -----------------------------------------------------------

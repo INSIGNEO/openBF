@@ -4,6 +4,7 @@ os:
   - osx
 julia:
   - 0.6
+  - nightly
 notifications:
   email: false
 script:
@@ -11,6 +12,12 @@ script:
   - julia -e 'Pkg.clone("https://github.com/INSIGNEO/openBF.git")'
   - cd test/
   - julia --code-coverage runtests.jl
+  - cd ../
 after_success:
   - echo "done!"
   - julia -e 'Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+matrix:
+  fast_finish: true
+  allow_failures:
+    - julia: nightly
+    - os: osx
