@@ -14,169 +14,168 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+# check basic files
+function checkInputFiles(project_name :: String)
+    f_const = join([project_name, "_constants.yml"])
+    f_inlet = join([project_name, "_inlet.dat"])
+    f_model = join([project_name, ".csv"])
+
+    # check if all the input files are in the current folder
+    for f in [f_const, f_inlet, f_model]
+        if isfile(f) == false
+            error("$f file missing")
+        end
+    end
+end
+
+# check additional inlets
+function checkInletFiles(project_name :: String, number_of_inlets :: Int64,
+                         inlets :: Array{String, 1})
+
+    for inlet_idx = 2:number_of_inlets
+        f_additional_inlet = join([project_name, "_", inlet_idx, "_inlet.dat"])
+
+        if isfile(f_additional_inlet) == false
+            error("number_of_inlets = $number_of_inlets, but $f file is missing")
+        end
+
+        push!(inlets, f_additional_inlet)
+    end
+
+    return inlets
+end
+
+# create new folder for results and copy input files
+function copyInputFilesToResultsFolder(project_name :: String, inlets :: Array{String, 1})
+    # make results folder
+    r_folder = join([project_name, "_results"])
+    if isdir(r_folder) == false
+      mkdir(r_folder)
+    end
+
+    # copy input files in results folder
+    f_const = join([project_name, "_constants.yml"])
+    cp(f_const, join([r_folder, "/", f_const]), remove_destination=true)
+
+    f_model = join([project_name, ".csv"])
+    cp(f_model, join([r_folder, "/", f_model]), remove_destination=true)
+
+    for f_inlet in inlets
+        cp(f_inlet, join([r_folder, "/", f_inlet]), remove_destination=true)
+    end
+
+    cd(r_folder)
+end
+
+function loadInletData(inlet_file :: String)
+    return readdlm(inlet_file)
+end
+
+
+function buildHeart(project_constants :: Dict{Any,Any}, inlet_data :: Array{Float64,2},
+                    inlet_number :: Int64)
+
+    cardiac_period = inlet_data[end, 1]
+    initial_flow = inlet_data[1, 2]
+
+    return Heart(project_constants["inlet_type"], cardiac_period, inlet_data,
+                 initial_flow, inlet_number)
+end
+
+function buildHearts(project_constants :: Dict{Any,Any}, inlet_names :: Array{String, 1})
+
+    hearts = []
+    for i = 1:length(inlet_names)
+        inlet_file = inlet_names[i]
+        inlet_data = loadInletData(inlet_file)
+        push!(hearts, buildHeart(project_constants, inlet_data, i))
+    end
+
+    return hearts
+end
+
+
+function buildBlood(project_constants :: Dict{Any,Any})
+    mu = project_constants["mu"]
+    rho = project_constants["rho"]
+    gamma_profile = project_constants["gamma_profile"]
+
+    nu = mu/rho
+    Cf = 8*pi*nu
+    rho_inv = 1/rho
+    viscT = 2*(gamma_profile + 2)*pi*mu
+
+    return Blood(mu, rho, rho_inv, Cf, gamma_profile, viscT)
+end
+
+function checkConstants(project_constants :: Dict{Any,Any})
+
+    fundamental_parameters = ["inlet_type", "mu", "rho", "number_of_inlets"]
+    for key in fundamental_parameters
+        if ~haskey(project_constants, key)
+            error("$key not defined in <project>.yml")
+        end
+    end
+
+    not_so_important_parameters = ["gamma_profile", "Ccfl", "cycles", "initial_pressure"]
+    default_values = [9, 0.9, 100, 0.0]
+    for i = 1:length(not_so_important_parameters)
+        key = not_so_important_parameters[i]
+        if ~haskey(project_constants, key)
+            default_value = default_values[i]
+            warn("$key not defined in <project>.yml, assuming $default_value")
+            project_constants[key] = default_values[i]
+        end
+    end
+
+    return project_constants
+end
+
+function loadConstants(project_constants_file :: String)
+    return YAML.load(open(project_constants_file))
+end
+
+function loadSimulationFiles(project_name :: String)
+
+    checkInputFiles(project_name)
+
+    f_inlet = join([project_name, "_inlet.dat"])
+    inlets = [f_inlet]
+
+    # load constants
+    f_const = join([project_name, "_constants.yml"])
+    project_constants = loadConstants(f_const)
+    project_constants = checkConstants(project_constants)
+
+    # check for additional inlets
+    number_of_inlets = project_constants["number_of_inlets"]
+    if number_of_inlets > 1
+        inlets = checkInletFiles(project_name, number_of_inlets, inlets)
+    end
+
+    # load inlets data
+    hearts = buildHearts(project_constants, inlets)
+
+    # load blood data
+    blood = buildBlood(project_constants)
+
+    # estimate total simulation time
+    total_time = project_constants["cycles"]*hearts[1].cardiac_T
+
+    # make results folder and copy input files
+    copyInputFilesToResultsFolder(project_name, inlets)
+
+    f_model = join([project_name, ".csv"])
+    model = readModelData(f_model)
+
+    return [project_constants, model, hearts, blood, total_time]
+end
+
+
+
 # All the pre-processing and initialisation functions are herein contained.
 
-# *function* __`projectPreamble`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ---------------- -----------------------------------------------------------
-# `project_name`   `::String` project name.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# This function checks whether all the project files are present in the
-# working directory. Then, the directory structure to save the output files
-# is created. Eventually, `openBF` logo and version information are printed to
-# screen.
-# ----------------------------------------------------------------------------
-# <a name="projectPreamble"></a>
-function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bool, number_of_inlets :: Int64)
 
-  # `project_constants.jl`, `project_inlet.dat`, and `project.csv` file names
-  # strings are created with `project_name` variable.
-  p_const = join([project_name, "_constants.jl"])
-  p_inlet = join([project_name, "_inlet.dat"])
-
-  if number_of_inlets > 1
-      p_inlets = []
-      for inlet_idx = 2:number_of_inlets
-          push!(p_inlets, join([project_name, "_", inlet_idx, "_inlet.dat"]))
-      end
-  end
-
-  p_model = join([project_name, ".csv"])
-  v_model = join([project_name, "_veins.csv"])
-  # The existence of these three files is checked in the working directory.
-  # If a file is missing an error is raised.
-  if (isfile(p_const)) == false
-    error("$p_const file missing")
-  end
-
-  if (isfile(p_inlet)) == false
-    println("$p_inlet file missing")
-  end
-
-  if (isfile(p_model)) == false
-    error("$p_model file missing")
-  end
-  # `r_folder` is the string used to create the directory containing the
-  # results.
-  r_folder = join([project_name, "_results"])
-  # If the results directory does not exist, it is created.
-  if (isdir(r_folder)) == false
-    mkdir(r_folder)
-  end
-  # Project files are moved to the results directory.
-  cp(p_const, join([r_folder, "/", p_const]), remove_destination=true)
-  cp(p_inlet, join([r_folder, "/", p_inlet]), remove_destination=true)
-
-  if number_of_inlets > 1
-     for i = 1:number_of_inlets-1
-         cp(p_inlets[i], join([r_folder, "/", p_inlets[i]]), remove_destination=true)
-     end
-  end
-
-  cp(p_model, join([r_folder, "/", p_model]), remove_destination=true)
-  if (isfile(v_model)) == true
-    cp(v_model, join([r_folder, "/", v_model]), remove_destination=true)
-  end
-  # All files in the working directory are deleted except those containing
-  # the `project_name` string by the
-  # [`cleanLibrary`](initialise.html#cleanLibrary) function.
-  # cleanLibrary(project_name)
-  # run(`rm clean_lib.sh`)
-  # The working directory is changed to the results directory.
-  cd(r_folder)
-  # Bash scripts to handle I/O are written and saved in the working directory
-  # by [`writeScripts`](initialise.html#writeScripts) function.
-  # writeScripts(no_out, no_inputs)
-
-end
-
-# Two bash scripts are written in two `.sh` files.
-#
-# *   `appender.sh` is used to concatenate two files which names should be
-#     given as script arguments. It can be used as
-#
-#         sh appender.sh file1 file2
-#
-# *   `cleaner.sh` is used at the end of the simulation to remove all the
-#     temporary files from the working directory.
-#
-# These `.sh` are saved in the working directory and used through the `julia`
-# command `run`.
-
-# *function* __`writeScripts`__
-#
-# ----------------------------------------------------------------------------
-# Functioning
-# ----------------------------------------------------------------------------
-# Two bash scripts are written in two `.sh` files.
-# ----------------------------------------------------------------------------
-#
-# *   `appender.sh` is used to concatenate two files which names should be
-#     given as script arguments. It can be used as
-#
-#         sh appender.sh file1 file2
-#
-# *   `cleaner.sh` is used at the end of the simulation to remove all the
-#     temporary files from the working directory.
-#
-# These `.sh` are saved in the working directory and used through the `julia`
-# command `run`.
-# <a name="writeScripts"></a>
-function writeScripts(no_out :: Bool, no_inputs :: Bool)
-
-  appsh = open("appender.sh", "w")
-  write(appsh, "#!/bin/bash", "\n")
-  write(appsh, "cat \$1 >> \$2")
-  close(appsh)
-
-  # clesh = open("cleaner.sh", "w")
-  # write(clesh, "#!/bin/bash", "\n")
-  # write(clesh, "rm *.temp\n")
-  # write(clesh, "rm appender.sh")
-  # if no_out == true
-  #     write(clesh, "\nrm *.out")
-  # end
-  # if no_inputs == true
-  #     write(clesh, "\nrm *.csv")
-  #     write(clesh, "\nrm *.dat")
-  #     write(clesh, "\nrm *.jl")
-  # end
-  # close(clesh)
-
-end
-
-# *function* __`cleanLibrary`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ---------------- -----------------------------------------------------------
-# `project_name`   `::String` project name.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# This function writes and executes a bash scripts which delete all the
-# files with the name not containing the string `project_name`.
-# ----------------------------------------------------------------------------
-# <a name="cleanLibrary"></a>
-function cleanLibrary(project_name)
-
-  clibsh = open("clean_lib.sh", "w")
-  write(clibsh, "#!/bin/bash", "\n")
-  write(clibsh, "find . -type f -not -name '*$project_name*' | xargs rm -rf", "\n")
-  write(clibsh, "rm -rf doc/")
-  close(clibsh)
-
-  #run(`sh clean_lib.sh`)
-
-end
 
 # *function* __`readModelData`__ $\rightarrow$ `model_matrix::Array{Any, 2}`
 #
@@ -202,9 +201,9 @@ end
 # `m`              `::Array{Any, 2}` model matrix.
 # ----------------------------------------------------------------------------
 # <a name="readModelData"></a>
-function readModelData(model_data)
+function readModelData(model_csv :: String)
 
-  m = readdlm(model_data, ',')
+  m = readdlm(model_csv, ',')
   m = m[2:end, 1:end-1]
 
   return m
@@ -547,158 +546,4 @@ function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
                     Al, Ar, Ql, Qr, Fl, Fr)
 
   return vessel_data
-end
-
-# *function* __`loadInputData`__ $\rightarrow$ `::Array{Float, 2}`
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ------------------- --------------------------------------------------------
-# `project_name`      `project` name string.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning
-# ----------------------------------------------------------------------------
-# `project_inlet.dat` is parsed by `readdlm` function and its content is
-# saved in a `in_data` matrix. Its first column contains time and the second
-# column contains flow waveform data.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Returns:
-# --------- ------------------------------------------------------------------
-# `in_data` `::Array{Float, 2}` `[time, flow]` matrix for inlet boundary
-# condition.
-# ----------------------------------------------------------------------------
-# <a name="loadInputData"></a>
-function loadInputData(project_name)
-  in_data = readdlm(join([project_name, "_inlet.dat"]))
-  return in_data
-end
-
-# *function* __`loadGlobalConstants`__ $\rightarrow$ `::Heart`,
-# `::Blood`, `::Float`
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# --------------------- ------------------------------------------------------
-# `project_name`        `project` name string.
-#
-# `inlet_BC_switch`     `::Int` inlet boundary condtion selector:
-#
-#                        1 $\rightarrow$ heaviside sine function
-#
-#                        2 $\rightarrow$ gaussian
-#
-#                        3 $\rightarrow$ from `project_inlet.dat`
-#
-# `cycles`              `::Int` number of cardiac cycles to be simulated.
-#
-# `rho`                 `::Float` blood density
-#
-# `mu`                  `::Float` blood dynamic viscosity
-# ----------------------------------------------------------------------------
-#
-# --------------------------------------------------------------------------
-# Functioning
-# --------------------------------------------------------------------------
-# This function load into [heart]( html#Heart) and
-# [blood]( html#Blood) datastructures the parameters constant
-# within all vessels.
-# --------------------------------------------------------------------------
-# <a name="loadGlobalConstants"></a>
-function loadGlobalConstants(project_name,
-                             inlet_BC_switch :: Int64,
-                             inlet_type :: String,
-                             cycles :: Int64,
-                             rho :: Float64, mu:: Float64, gamma_profile :: Int64,
-                             number_of_inlets :: Int64)
-  # `heart` data structure is filled depending on the inlet boundary condition
-  # chosen by the user. When the inlet flow function is given
-  # (`inlet_BC_swithc`=3), the flow waveform is imported by
-  # [`loadInputData`](initialise.html#loadInputData) function. The
-  # `cardiac_period` is taken as the last row in the time column of the input
-  # file. `sys_T`, `initial_flow`, and `flow_amplitude` quantities will not
-  # be used and they are set to zero.
-  if inlet_BC_switch == 3
-    input_data = loadInputData(project_name)
-
-#     if input_data[1,2] < 1e-6
-#       error("Inlet flow initial value < 1e-6")
-#     end
-
-    cardiac_period = input_data[end, 1]
-    sys_T = 0.
-    initial_flow = 0.
-    flow_amplitude = 0.
-  # In any other case, all the parameters are take from `project_constants.jl`
-  # file. `input_data` array is initialised to zero and it will not be used.
-  else
-    include(join([project_name, "_constants.jl"]))
-    input_data = zeros(Float64, 1,1)
-  end
-  # The total simulation time `total_time` is calculated as number of cycles
-  # times the cardiac period in seconds.
-  const total_time = cycles*cardiac_period
-
-  #Initialise heart data structure
-  heart_data =  Heart(inlet_BC_switch,
-                            inlet_type,
-                            cardiac_period, sys_T,
-                            initial_flow, flow_amplitude,
-                            input_data)
-
-  inlets = [heart_data]
-  if number_of_inlets > 1
-      for inlet_number = 2:number_of_inlets
-          input_data = loadInputData(join([project_name, "_", inlet_number]))
-          push!(inlets, loadGlobalConstants(project_name, inlet_number, inlet_BC_switch :: Int64, inlet_type :: String))
-      end
-  end
-
-  # Kinematic viscosity `nu` and viscous resitance term `Cf` are calculated as
-  # $$
-  #   \nu = \frac{\mu}{\rho}, \quad C_f = 8\pi\nu.
-  # $$
-  # where `Cf` is computed by assuming a parabolic velocity profile
-  # along the radial direction.
-  const nu = mu/rho
-  const Cf = 8*pi*nu
-  rho_inv = 1/rho
-  viscT = 2*(gamma_profile + 2)*pi*mu
-
-  #Initialise blood data structure
-  blood_data =  Blood(mu, rho, rho_inv, Cf, gamma_profile, viscT)
-  # --------------------------------------------------------------------------
-  # Returns:
-  # -------------- -----------------------------------------------------------
-  # `heart_data`   `::Heart`
-  #
-  # `blood_data`   `::Blood`
-  #
-  # `total_time`   `::Float`
-  # --------------------------------------------------------------------------
-  return inlets, blood_data, total_time
-end
-
-function loadGlobalConstants(project_name, inlet_number,
-                             inlet_BC_switch :: Int64,
-                             inlet_type :: String)
-
-    input_data = loadInputData(join([project_name, "_", inlet_number]))
-
-    cardiac_period = input_data[end, 1]
-    sys_T = 0.0
-    initial_flow = 0.0
-    flow_amplitude = 0.0
-
-    #Initialise heart data structure
-    heart_data = Heart(inlet_BC_switch,
-                            inlet_type,
-                            cardiac_period, sys_T,
-                            initial_flow, flow_amplitude,
-                            input_data)
-
-      return heart_data
 end

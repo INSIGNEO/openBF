@@ -51,22 +51,37 @@ no_inputs = true
 if verbose
     println("Load project $project_name files")
 end
-include(join([project_name, "_constants.jl"]))
+# include(join([project_name, "_constants.jl"]))
 
-openBF.projectPreamble(project_name, no_out, no_inputs, number_of_inlets)
+# openBF.projectPreamble(project_name, no_out, no_inputs, number_of_inlets)
 
 # ### Arterial system
 # Arterial model and structure is encoded in a `.csv` file user defined. It
 # must be in the same folder in which the simulation is started.
 # [`readModelData`](initialise.html#readModelData) reads the
 # `.csv` file and fill a 2D matrix with all the informations.
-model = openBF.readModelData(join([project_name, ".csv"]))
+# model = openBF.readModelData(join([project_name, ".csv"]))
+
+# project_inputs = openBF.loadSimulationFiles(project_name)
 
 # Data from `project.csv`, `project_constants.jl`, and `project_inlet.dat` (if
 # specified) are used to create instances of [`BTypes`](BTypes.html) data
 # structures by [`loadGlobalConstants`](initialise.html#loadGlobalConstants).
-inlets, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
-  inlet_BC_switch, inlet_type, cycles, rho, mu, gamma_profile, number_of_inlets)
+# inlets, blood_prop, total_time = openBF.loadGlobalConstants(project_name,
+#   inlet_BC_switch, inlet_type, cycles, rho, mu, gamma_profile, number_of_inlets)
+
+
+inputs = openBF.loadSimulationFiles(project_name)
+
+constants = inputs[1]
+model = inputs[2]
+inlets = inputs[3]
+blood_prop = inputs[4]
+total_time = inputs[5]
+
+Ccfl = constants["Ccfl"]
+initial_pressure = constants["initial_pressure"]
+
 heart = inlets[1]
 if length(inlets) == 1
     inlets = inlets[1]
@@ -354,7 +369,7 @@ end
 if no_inputs == true
     rm("$project_name.csv")
     rm("$project_name\_inlet.dat")
-    rm("$project_name\_constants.jl")
+    rm("$project_name\_constants.yml")
 end
 
 # rm("appender.sh")

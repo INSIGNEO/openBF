@@ -50,21 +50,11 @@ limitations under the License.
 function setInletBC(t :: Float64, dt :: Float64,
                     v :: Vessel,  h  :: Heart)
 
-	if h.BC_switch == 1
-		v.Q[1] = sinHeaviside(t, h)
-
-	elseif h.BC_switch == 2
-		v.Q[1] = gauss(t, h)
-
-	elseif h.BC_switch == 3
-
   	if h.inlet_type == "Q"
 			v.Q[1] = inputFromData(t, h)
   	else
 			v.P[1] = inputFromData(t, h)
   	end
-
-	end
 
 	inletCompatibility(dt, v, h)
 end

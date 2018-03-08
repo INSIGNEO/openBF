@@ -272,16 +272,11 @@ end
 # --------------------------------------------------------------------
 # <a name="Heart"></a>
 type Heart
-  BC_switch  :: Int64
   inlet_type :: String
-
   cardiac_T :: Float64
-  sys_T     :: Float64
-
-  initial_flow   :: Float64
-  flow_amplitude :: Float64
-
   input_data :: Array{Float64, 2}
+  initial_flow :: Float64
+  inlet_number :: Int64
 end
 
 # Blood mechanical properties.
@@ -313,6 +308,7 @@ end
 # data structures for vessels, blood, and numerical scheme
 # are specified.
 # using BTypes
+using YAML
 
 # Data structures and output files are initialised at the beginning
 # of each simulation. [initialise.jl](initialise.html) contains all
