@@ -192,7 +192,7 @@ end
 #             vessels.
 # ----------------------------------------------------------------------------
 # <a name="calculateWstarBif"></a>
-function calculateWstarBif(U :: Array, k :: Array)
+function calculateWstarBif(U :: Array{Float64, 1}, k :: Array{Float64, 1})
 
   W1 = U[1] + 4*k[1]*U[4]
   W2 = U[2] - 4*k[2]*U[5]
@@ -257,7 +257,7 @@ end
 # ----------------------------------------------------------------------------
 # <a name="calculateFofUBif"></a>
 function calculateFofUBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
-                           U :: Array,   k :: Array,   W :: Array)
+                           U :: Array{Float64, 1},   k :: Array{Float64, 1},   W :: Array{Float64, 1})
 
   f1 = U[1] + 4*k[1]*U[4] - W[1]
 
@@ -337,7 +337,7 @@ end
 # ----------------------------------------------------------------------------
 # <a name="calculateJacobianBif"></a>
 function calculateJacobianBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
-                               U :: Array,   k :: Array)
+                               U :: Array{Float64, 1},   k :: Array{Float64, 1})
 
   J = eye(6)
 
@@ -345,12 +345,16 @@ function calculateJacobianBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
   J[2,5] = -4*k[2]
   J[3,6] = -4*k[3]
 
-  J[4,1] =  (U[4]*U[4]*U[4]*U[4])
-  J[4,2] = -(U[5]*U[5]*U[5]*U[5])
-  J[4,3] = -(U[6]*U[6]*U[6]*U[6])
-  J[4,4] =  4*U[1]*(U[4]*U[4]*U[4])
-  J[4,5] = -4*U[2]*(U[5]*U[5]*U[5])
-  J[4,6] = -4*U[3]*(U[6]*U[6]*U[6])
+  three_times_U4 = U[4]*U[4]*U[4]
+  three_times_U5 = U[4]*U[4]*U[4]
+  three_times_U6 = U[4]*U[4]*U[4]
+
+  J[4,1] =   three_times_U4*U[4]
+  J[4,2] = -(three_times_U5*U[5])
+  J[4,3] = -(three_times_U6*U[6])
+  J[4,4] =  4*U[1]*(three_times_U4)
+  J[4,5] = -4*U[2]*(three_times_U5)
+  J[4,6] = -4*U[3]*(three_times_U6)
 
   J[5,1] =  0.
   # J[5,1] = 1060*U[1]
@@ -358,8 +362,8 @@ function calculateJacobianBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
   J[5,2] =  0.
   # J[5,2] = -1060*U[2]
 
-  J[5,4] =  2*v1.beta[end]*U[4]/sqrt(v1.A0[end])
-  J[5,5] = -2*v2.beta[ 1 ]*U[5]/sqrt(v2.A0[1])
+  J[5,4] =  2*v1.beta[end]*U[4]*v1.s_inv_A0[end]
+  J[5,5] = -2*v2.beta[ 1 ]*U[5]*v2.s_inv_A0[1]
 
   J[6,1] =  0.
   # J[6,1] = 1060*U[1]
@@ -367,9 +371,8 @@ function calculateJacobianBif(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
   J[6,3] =  0.
   # J[6,3] = -1060U[3]
 
-
-  J[6,4] =  2*v1.beta[end]*U[4]/sqrt(v1.A0[end])
-  J[6,6] = -2*v3.beta[ 1 ]*U[6]/sqrt(v3.A0[1])
+  J[6,4] =  J[5,4]
+  J[6,6] = -2*v3.beta[ 1 ]*U[6]*v3.s_inv_A0[1]
 
   return J
 end

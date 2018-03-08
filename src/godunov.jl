@@ -515,7 +515,7 @@ end
 #
 # ----------------------------------------------------------------------------
 # <a name="solveModel"></a>
-function solveModel(vessels, heart :: Heart, edge_list,
+function solveModel(vessels :: Array{Vessel, 1}, heart :: Heart, edge_list :: Array{Int8, 2},
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
   for j in 1:size(edge_list)[1]
@@ -561,7 +561,7 @@ function solveModel(vessels, heart :: Heart, edge_list,
   end
 end
 
-function solveModel(vessels, inlets, edge_list,
+function solveModel(vessels :: Array{Vessel, 1}, inlets, edge_list :: Array{Int8, 2},
                     blood :: Blood, dt :: Float64, current_time :: Float64)
 
   for j in 1:size(edge_list)[1]
