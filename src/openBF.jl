@@ -139,26 +139,25 @@ type Vessel
   dx      :: Float64
   invDx   :: Float64
   halfDx  :: Float64
-  Ccfl    :: Float64
 
   #Physical constants
-  beta  :: Array{Float64, 1}
-  gamma :: Array{Float64, 1}
-  gamma_ghost :: Array{Float64, 1}
-  half_beta_dA0dx :: Array{Float64, 1}
-  A0    :: Array{Float64, 1}
-  inv_A0    :: Array{Float64, 1}
-  s_inv_A0    :: Array{Float64, 1}
-  dA0dx :: Array{Float64, 1}
-  dTaudx :: Array{Float64, 1}
+  beta  :: Array{Float64,1}
+  gamma :: Array{Float64,1}
+  gamma_ghost :: Array{Float64,1}
+  half_beta_dA0dx :: Array{Float64,1}
+  A0    :: Array{Float64,1}
+  inv_A0    :: Array{Float64,1}
+  s_inv_A0    :: Array{Float64,1}
+  dA0dx :: Array{Float64,1}
+  dTaudx :: Array{Float64,1}
   Pext  :: Float64
 
   #Iterative solution
-  A :: Array{Float64, 1}
-  Q :: Array{Float64, 1}
-  u :: Array{Float64, 1}
-  c :: Array{Float64, 1}
-  P :: Array{Float64, 1}
+  A :: Array{Float64,1}
+  Q :: Array{Float64,1}
+  u :: Array{Float64,1}
+  c :: Array{Float64,1}
+  P :: Array{Float64,1}
 
   #Riemann invariants
   W1M0 :: Float64
@@ -222,28 +221,28 @@ type Vessel
   Pc :: Float64
 
   #Slope
-  slope :: Array{Float64, 1}
+  slope :: Array{Float64,1}
 
   #MUSCLArrays
-  flux :: Array{Float64, 2}
-  uStar :: Array{Float64, 2}
+  flux :: Array{Float64,2}
+  uStar :: Array{Float64,2}
 
-  vA :: Array{Float64, 1}
-  vQ :: Array{Float64, 1}
+  vA :: Array{Float64,1}
+  vQ :: Array{Float64,1}
 
-  dU :: Array{Float64, 2}
+  dU :: Array{Float64,2}
 
-  slopesA :: Array{Float64, 1}
-  slopesQ :: Array{Float64, 1}
+  slopesA :: Array{Float64,1}
+  slopesQ :: Array{Float64,1}
 
-  Al :: Array{Float64, 1}
-  Ar :: Array{Float64, 1}
+  Al :: Array{Float64,1}
+  Ar :: Array{Float64,1}
 
-  Ql :: Array{Float64, 1}
-  Qr :: Array{Float64, 1}
+  Ql :: Array{Float64,1}
+  Qr :: Array{Float64,1}
 
-  Fl :: Array{Float64, 2}
-  Fr :: Array{Float64, 2}
+  Fl :: Array{Float64,2}
+  Fr :: Array{Float64,2}
 
 end
 
@@ -274,7 +273,7 @@ end
 type Heart
   inlet_type :: String
   cardiac_T :: Float64
-  input_data :: Array{Float64, 2}
+  input_data :: Array{Float64,2}
   initial_flow :: Float64
   inlet_number :: Int64
 end

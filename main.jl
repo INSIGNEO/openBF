@@ -87,82 +87,7 @@ if length(inlets) == 1
     inlets = inlets[1]
 end
 
-# The arterial tree is represented as a graph by means of `Graphs` library (
-# see [grafo.jl](grafo.html) for a detailed example).
-# `simple_graph` creates an empty `GenericGraph` with a user defined number of
-# nodes.
-#
-# ----------------------------------------------------------------------------
-# Parameters
-# ----------- ----------------------------------------------------------------
-# `nodes`     `::Int64` number of total nodes in the graph. Here an estimate
-#             of this number is taken by counting `model` matrix rows (one
-#             for each vessel) and adding one extra node.
-# ----------------------------------------------------------------------------
-# Returns
-# ----------- ----------------------------------------------------------------
-# `graph`     `::GenericGraph` empty graph data structure.
-# ----------------------------------------------------------------------------
-#
-# <a name="grafo"></a>
-# grafo = LightGraphs.DiGraph(length(model[:,1])+1)
-
-# Two data structures are used to describe the arterial system. One is a
-# collection of [`BTypes`](BTypes.html)`.Vessel` instances, and the second
-# is the `grafo` structure. `vessels` collection is filled by using
-# [`initialiseVessel`](initialise.html#initialiseVessel). The first
-# vessel is inserted by hand.
-if verbose
-    println("Build arterial network")
-end
-vessels = [openBF.initialiseVessel(model[1,:], 1, heart, blood_prop,
-  initial_pressure, Ccfl)]
-edge_list = zeros(Int8, length(model[:,1]), 4)
-edge_list[1,1] = vessels[1].ID
-edge_list[1,2] = vessels[1].sn
-edge_list[1,3] = vessels[1].tn
-edge_list[1,4] = vessels[1].inlet_idx
-
-# The graph is built with `Graphs.add_edge!` function.
-#
-# ----------------------------------------------------------------------------
-# Parameters
-# ----------- ----------------------------------------------------------------
-# `grafo`     `::GenericGraph` arterial system graph structure.
-#
-# `sn`        `::Int64` edge source node stored in `Vessel` structure.
-#
-# `tn`        `::Int64` edge terminal node.
-# ----------------------------------------------------------------------------
-# LightGraphs.add_edge!(grafo, vessels[1].sn, vessels[1].tn)
-
-# The model matrix is read iteratively starting from the second row, the first
-# row contains column headers.
-for i in 2:length(model[:,1])
-
-  # Each new `vessel` is instantiated and `push!`ed at the bottom of
-  # `vessels` collection.
-  push!(vessels, openBF.initialiseVessel(model[i,:], i, heart, blood_prop,
-    initial_pressure, Ccfl))
-  edge_list[i,1] = vessels[i].ID
-  edge_list[i,2] = vessels[i].sn
-  edge_list[i,3] = vessels[i].tn
-  edge_list[i,4] = vessels[i].inlet_idx
-  # LightGraphs.add_edge!(grafo, vessels[end].sn, vessels[end].tn)
-end
-
-# # `edge_list` is a list of all the edges in `grafo`
-# edge_list = collect(LightGraphs.edges(grafo))
-# edge_map = Dict{LightGraphs.SimpleGraphs.SimpleEdge, Int}(e=>i
-#   for (i, e) in enumerate(edge_list))
-# node_map = Dict{Tuple{Int, Int}, Int}()
-# n_i = 1
-# for e in edge_list
-#   s = LightGraphs.src(e)
-#   t = LightGraphs.dst(e)
-#   node_map[(s,t)] = n_i
-#   n_i += 1
-# end
+vessels, edge_list = openBF.buildArterialNetwork(model, heart, blood_prop)
 
 # Before starting the main loop the counter`current_time` is set to zero. It
 # will be updated to keep track of time within the simulation.
@@ -178,40 +103,7 @@ current_time = 0
 # simulation. See [ProgressMeter](https://github.com/timholy/ProgressMeter.jl)
 # documentation for `Progress` options.
 dts  = zeros(Float64, length(edge_list[:,1]))
-dt = openBF.calculateDeltaT(vessels, dts)
-
-# # ### Venous system
-# # Same as the arterial system
-# v_model = join([project_name, "_veins.csv"])
-# if (isfile(v_model)) == true
-#   model_v = openBF.readModelData(join([project_name, "_veins.csv"]))
-#
-#   grafo_v = Graphs.simple_graph(length(model_v[:,1])+1)
-#
-#   vessels_v = [openBF.initialiseVessel(model_v[1,:], 1, heart, blood_prop,
-#     initial_pressure, Ccfl)]
-#
-#   Graphs.add_edge!(grafo_v, vessels_v[1].sn, vessels_v[1].tn)
-#
-#   for i in 2:length(model_v[:,1])
-#
-#     push!(vessels_v, openBF.initialiseVessel(model_v[i,:], i, heart, blood_prop,
-#       initial_pressure, Ccfl))
-#
-#     Graphs.add_edge!(grafo_v, vessels_v[end].sn, vessels_v[end].tn)
-#   end
-#
-#   edge_list_v = Graphs.edges(grafo_v)
-#
-#   dts_v  = zeros(Float64, length(edge_list_v))
-#   dt_v = openBF.calculateDeltaT(vessels_v, dts_v)
-#
-#   dt = minimum([dt, dt_v])
-#
-#   venous_model = true
-# else
-#   venous_model = false
-# end
+dt = openBF.calculateDeltaT(vessels, dts, Ccfl)
 
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.
@@ -230,7 +122,7 @@ while true
   # during the simulation the local properties of each vessel will change and,
   # as a consequence, also the $\Delta t$ will change. The `current_time` is
   # then calculated by incrementing it with the new `dt`.
-  dt = openBF.calculateDeltaT(vessels, dts)
+  dt = openBF.calculateDeltaT(vessels, dts, Ccfl)
 
   # if venous_model
   #   dt_v = openBF.calculateDeltaT(vessels_v, dts_v)

@@ -452,7 +452,7 @@ end
 # geometries and properties.
 # ----------------------------------------------------------------------------
 # <a name="calculateDeltaT"></a>
-function calculateDeltaT(vessels, dt :: Array{Float64, 1})
+function calculateDeltaT(vessels, dt :: Array{Float64, 1}, Ccfl :: Float64)
 
   # For each vessel the $\Delta t$ is computed as
   # $$
@@ -471,7 +471,7 @@ function calculateDeltaT(vessels, dt :: Array{Float64, 1})
 
     Smax = maximum(abs.(lambdap))
 
-    dt[i] = v.dx*v.Ccfl/Smax
+    dt[i] = v.dx*Ccfl/Smax
 
     i+=1
   end
