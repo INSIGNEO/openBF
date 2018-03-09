@@ -171,14 +171,6 @@ function loadSimulationFiles(project_name :: String)
     return [project_constants, model, hearts, blood, total_time]
 end
 
-function checkModelParameterTypes(vessel_name, values, value_names, values_type)
-    for i = 1:length(values)
-        if typeof(values[i]) != values_type
-            v_name = value_names[i]
-            error("vessel $vessel_name: AssertionError - $v_name must be of type $values_type")
-        end
-    end
-end
 
 function parseModelRow(model_row :: Array{Any,1})
     vessel_name = model_row[1]
@@ -216,16 +208,6 @@ function parseModelRow(model_row :: Array{Any,1})
         Cc = convert(Float64, model_row[13])
     end
 
-    values = [sn, tn, rn, M]
-    value_names = ["sn", "tn", "rn", "M"]
-    checkModelParameterTypes(vessel_name, values, value_names, Int64)
-
-    values = [L, Rp, Rd, E, Pext, Rt, R2, R2, Cc]
-    value_names = ["L", "inlet radius", "outlet radius", "E", "Pext",
-                   "reflection coefficient", "peripheral resistance R1",
-                   "peripheral resistance R2", "peripheral compliance Cc"]
-    checkModelParameterTypes(vessel_name, values, value_names, Float64)
-
     return vessel_name, sn, tn, rn, L, M, Rp, Rd, E, Pext, [Rt, R1, R2, Cc]
 end
 
@@ -243,7 +225,7 @@ function checkCapillaries(BCout :: Array{Float64,1}, blood :: Blood,
     if BCout[1] != 0.0
         return BCout
     elseif BCout[1] == 0.0 && BCout[2] == 0.0
-        BCout[2] = blood.rho*waveSpeed(A0[end], gamma[end]/A0[end])
+        BCout[2] = blood.rho*waveSpeed(A0[end], gamma[end])/A0[end]
         BCout[3] -= BCout[2]
         return BCout
     else

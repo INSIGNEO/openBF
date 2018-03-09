@@ -42,10 +42,6 @@ using openBF
         @inferred openBF.buildHearts(constants, inlets)
 
         m_row = model[1,:]
-        values = m_row[2:4]
-        value_names = ["sn", "tn", "rn"]
-        @inferred openBF.checkModelParameterTypes(m_row[1], values, value_names, Int64)
-
         @test_nowarn openBF.parseModelRow(m_row)
         vessel_name, sn, tn, rn, L, M, Rp, Rd, E, Pext, BCout =  openBF.parseModelRow(m_row)
 

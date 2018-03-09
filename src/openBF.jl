@@ -21,6 +21,8 @@ limitations under the License.
 # solution is achieved via a first-order finite volume solver
 # based on the Godunov' method. For an usage example refer to
 # [main.jl](main.html) file and its documentation.
+__precompile__()
+
 module openBF
 
 # Instances of `BTypes` data structures can be created as
