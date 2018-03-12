@@ -2,10 +2,7 @@ using Base.Test
 using openBF
 
 @testset "initialise.jl" begin
-
     @testset "unit" begin
-
-        # projectPreamble
         project_name = "test"
         first_inlet = "$project_name\_inlet.dat"
         inlets = [first_inlet]
@@ -22,8 +19,9 @@ using openBF
         @test isfile("$project_name\_inlet.dat")
         @test isfile("$project_name\_2_inlet.dat")
 
-        model = openBF.readModelData("$project_name.csv")
+        model, model_header = openBF.readModelData("$project_name.csv")
         @test typeof(model) == Array{Any,2}
+        @test model_header == ["name" "sn" "tn" "in" "L" "M" "Rp" "Rd" "E" "Pext" "R1" "R2" "C"]
 
         constants = openBF.loadConstants("$project_name\_constants.yml")
         @test typeof(constants) == Dict{Any,Any} #constants
@@ -41,10 +39,6 @@ using openBF
 
         @inferred openBF.buildHearts(constants, inlets)
 
-        m_row = model[1,:]
-        @test_nowarn openBF.parseModelRow(m_row)
-        vessel_name, sn, tn, rn, L, M, Rp, Rd, E, Pext, BCout =  openBF.parseModelRow(m_row)
-
         dx, invDx, halfDx = openBF.meshVessel(1.0, 10)
         @test dx == 0.001
         @test invDx == 1000.0
@@ -52,7 +46,41 @@ using openBF
 
         A0 = ones(Float64, 2)
         gamma = copy(A0)
-        @inferred openBF.checkCapillaries(BCout, blood, A0, gamma)
+        BCout = ["", "", "", ""]
+        BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+        @test outlet == "none"
+        @test BCout[1] == 0.0
+        @test BCout[2] == 0.0
+        @test BCout[3] == 0.0
+        @test BCout[4] == 0.0
+
+        BCout = [1.0, "", "", ""]
+        BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+        @test outlet == "reflection"
+        @test BCout[1] == 1.0
+        @test BCout[2] == 0.0
+        @test BCout[3] == 0.0
+        @test BCout[4] == 0.0
+
+        BCout = ["", "", 1.0, 1.0]
+        BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+        @test outlet == "wk3"
+        @test BCout[1] == 0.0
+        @test isapprox(BCout[2],  1298, atol=1.0)
+        @test isapprox(BCout[3], -1297, atol=1.0)
+        @test BCout[4] == 1.0
+
+        BCout = ["", 1.0, 1.0, 1.0]
+        BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+        @test outlet == "wk3"
+        @test BCout[1] == 0.0
+        @test BCout[2] == 1.0
+        @test BCout[3] == 1.0
+        @test BCout[3] == 1.0
+
+        m_row = model[1,:]
+        @test_nowarn openBF.parseModelRow(m_row)
+        vessel_name, sn, tn, rn, L, M, Rp, Rd, E, Pext, BCout =  openBF.parseModelRow(m_row)
 
         vessel = openBF.buildVessel(1, m_row, heart, blood)
         @test typeof(vessel) == Vessel
@@ -64,8 +92,6 @@ using openBF
         cd("..")
         rm("$project_name\_results", recursive=true)
 
-
-
         inputs = openBF.loadSimulationFiles(project_name)
         @test typeof(inputs[1]) == Dict{Any,Any} #constants
         @test typeof(inputs[2]) == Array{Any,2} #model
@@ -76,5 +102,4 @@ using openBF
         cd("..")
         rm("$project_name\_results", recursive=true)
     end
-
 end

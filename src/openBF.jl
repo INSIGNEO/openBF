@@ -246,6 +246,7 @@ type Vessel
   Fl :: Array{Float64,2}
   Fr :: Array{Float64,2}
 
+  outlet :: String
 end
 
 # The inlet boundary condition is applied to the first vessel in the
@@ -310,6 +311,7 @@ end
 # are specified.
 # using BTypes
 using YAML
+using ArgParse
 
 # Data structures and output files are initialised at the beginning
 # of each simulation. [initialise.jl](initialise.html) contains all

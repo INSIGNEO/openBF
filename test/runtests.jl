@@ -19,21 +19,22 @@ end
 # Run tests
 
 tic()
-println("\nTest 1 - Single artery")
-@time @test runTest("single-artery")
-
-println("\nTest 2 - Bifurcation")
-@time @test runTest("bifurcation")
-
-println("\nTest 3 - External pressure")
-@time @test runTest("external-pressure")
-
-println("\nTest 4 - Anastomosis")
-@time @test runTest("anastomosis")
-
-println("\nTest 5 - Conjunction")
-@time @test runTest("conjunction")
-
-println("\nTest 5 - Aspirator")
-@time @test runTest("aspirator")
+# println("\nTest 1 - Single artery")
+# @time @test runTest("single-artery")
+#
+# println("\nTest 2 - Bifurcation")
+# @time @test runTest("bifurcation")
+#
+# println("\nTest 3 - External pressure")
+# @time @test runTest("external-pressure")
+#
+# println("\nTest 4 - Anastomosis")
+# @time @test runTest("anastomosis")
+#
+# println("\nTest 5 - Conjunction")
+# @time @test runTest("conjunction")
+#
+# println("\nTest 5 - Aspirator")
+# @time @test runTest("aspirator")
+@time include("test_initialise.jl")
 toc()

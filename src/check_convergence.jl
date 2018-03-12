@@ -239,7 +239,7 @@ end
 function checkConvergence(v :: Vessel,
   convergence_tollerance :: Float64)
 
-  qs = ["_P", "_Q"]
+  qs = ["_Q"]
 
   for q in qs
     filename_last = join([v.label, q, ".last"])

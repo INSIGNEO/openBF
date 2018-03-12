@@ -416,6 +416,9 @@ function setOutletBC(dt :: Float64, v :: Vessel)
 
 	end
 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # IF V.OUTLET == "none", "reflection", "wk3"
+
 end
 
 # Outlet compatibility relations compute all the quantities not directly

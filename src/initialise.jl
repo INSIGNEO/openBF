@@ -14,6 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+# http://carlobaldassi.github.io/ArgParse.jl/stable/index.html
+function parseCommandline()
+    s = ArgParseSettings()
+
+    @add_arg_table s begin
+        "project_name"
+            help = "Project name"
+            required = true
+        "--verbose", "-v"
+            help = "Print STDOUT - default false"
+            action = :store_true
+        "--clean", "-c"
+            help = "Clean input, .out, and .temp files at the end of the simulation - default false"
+            action = :store_true
+    end
+
+    return parse_args(s)
+end
+
+
 # check basic files
 function checkInputFiles(project_name :: String)
     f_const = join([project_name, "_constants.yml"])
@@ -45,6 +65,7 @@ function checkInletFiles(project_name :: String, number_of_inlets :: Int64,
     return inlets
 end
 
+
 # create new folder for results and copy input files
 function copyInputFilesToResultsFolder(project_name :: String, inlets :: Array{String, 1})
     # make results folder
@@ -67,6 +88,7 @@ function copyInputFilesToResultsFolder(project_name :: String, inlets :: Array{S
     cd(r_folder)
 end
 
+
 function loadInletData(inlet_file :: String)
     return readdlm(inlet_file)
 end
@@ -81,6 +103,7 @@ function buildHeart(project_constants :: Dict{Any,Any}, inlet_data :: Array{Floa
     return Heart(project_constants["inlet_type"], cardiac_period, inlet_data,
                  initial_flow, inlet_number)
 end
+
 
 function buildHearts(project_constants :: Dict{Any,Any}, inlet_names :: Array{String, 1})
 
@@ -108,6 +131,7 @@ function buildBlood(project_constants :: Dict{Any,Any})
     return Blood(mu, rho, rho_inv, Cf, gamma_profile, viscT)
 end
 
+
 function checkConstants(project_constants :: Dict{Any,Any})
 
     fundamental_parameters = ["inlet_type", "mu", "rho", "number_of_inlets"]
@@ -131,9 +155,11 @@ function checkConstants(project_constants :: Dict{Any,Any})
     return project_constants
 end
 
+
 function loadConstants(project_constants_file :: String)
     return YAML.load(open(project_constants_file))
 end
+
 
 function loadSimulationFiles(project_name :: String)
 
@@ -166,7 +192,7 @@ function loadSimulationFiles(project_name :: String)
     copyInputFilesToResultsFolder(project_name, inlets)
 
     f_model = join([project_name, ".csv"])
-    model = readModelData(f_model)
+    model, model_header = readModelData(f_model)
 
     return [project_constants, model, hearts, blood, total_time]
 end
@@ -191,18 +217,23 @@ function parseModelRow(model_row :: Array{Any,1})
     E = convert(Float64, model_row[9])
     Pext = convert(Float64, model_row[10])
 
-    if length(model_row) == 11
+    if model_row[11] == ""
+        Rt = ""
+        R1 = ""
+        R2 = ""
+        Cc = ""
+    elseif model_row[11] != "" && model_row[12] == ""
         Rt = convert(Float64, model_row[11])
-        R1 = 0.0
-        R2 = 0.0
-        Cc = 0.0
-    elseif length(model_row) == 12
-        Rt = 0.0
-        R1 = 0.0
+        R1 = ""
+        R2 = ""
+        Cc = ""
+    elseif model_row[11] != "" && model_row[12] != "" && model_row[13] == ""
+        Rt = ""
+        R1 = ""
         R2 = convert(Float64, model_row[11])
         Cc = convert(Float64, model_row[12])
-    elseif length(model_row) == 13
-        Rt = 0.0
+    elseif model_row[11] != "" && model_row[12] != "" && model_row[13] != ""
+        Rt = ""
         R1 = convert(Float64, model_row[11])
         R2 = convert(Float64, model_row[12])
         Cc = convert(Float64, model_row[13])
@@ -220,18 +251,32 @@ function meshVessel(L :: Float64, M :: Int64)
     return dx, invDx, halfDx
 end
 
-function checkCapillaries(BCout :: Array{Float64,1}, blood :: Blood,
+# no outlet BC
+function checkCapillaries(BCout :: Array{String,1}, blood :: Blood,
                           A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
-    if BCout[1] != 0.0
-        return BCout
-    elseif BCout[1] == 0.0 && BCout[2] == 0.0
+    BCout = [0.0, 0.0, 0.0, 0.0]
+    return BCout, "none"
+end
+
+# parse outlet BCs
+function checkCapillaries(BCout :: Array{Any,1}, blood :: Blood,
+                          A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
+    if BCout[1] != "" && BCout[2] == ""
+        BCout[2:4] = [0.0, 0.0, 0.0]
+        return BCout, "reflection"
+
+    elseif BCout[1] == "" && BCout[2] == "" && BCout[3] != ""
+        BCout[1] = 0.0
         BCout[2] = blood.rho*waveSpeed(A0[end], gamma[end])/A0[end]
         BCout[3] -= BCout[2]
-        return BCout
-    else
-        return BCout
+        return BCout, "wk3"
+
+    elseif BCout[1] == "" && BCout[2] != ""
+        BCout[1] = 0.0
+        return BCout, "wk3"
     end
 end
+
 
 function buildArterialNetwork(model :: Array{Any, 2}, heart :: Heart, blood :: Blood)
     vessels = [buildVessel(1, model[1,:], heart, blood)]
@@ -251,6 +296,7 @@ function buildArterialNetwork(model :: Array{Any, 2}, heart :: Heart, blood :: B
 
     return vessels, edge_list
 end
+
 
 function buildVessel(ID :: Int64, model_row :: Array{Any,1},
                      heart :: Heart, blood :: Blood)
@@ -321,9 +367,7 @@ function buildVessel(ID :: Int64, model_row :: Array{Any,1},
     gamma_ghost[1] = gamma[1]
     gamma_ghost[end] = gamma[end]
 
-
-
-    BCout = checkCapillaries(BCout, blood, A0, gamma)
+    BCout, outlet = checkCapillaries(BCout, blood, A0, gamma)
     Rt = BCout[1]
     R1 = BCout[2]
     R2 = BCout[3]
@@ -416,7 +460,8 @@ function buildVessel(ID :: Int64, model_row :: Array{Any,1},
                   Pcn,
                   slope, flux, uStar, vA, vQ,
                   dU, slopesA, slopesQ,
-                  Al, Ar, Ql, Qr, Fl, Fr)
+                  Al, Ar, Ql, Qr, Fl, Fr,
+                  outlet)
 end
 
 # All the pre-processing and initialisation functions are herein contained.
@@ -447,10 +492,14 @@ end
 # `m`              `::Array{Any, 2}` model matrix.
 # ----------------------------------------------------------------------------
 # <a name="readModelData"></a>
+
 function readModelData(model_csv :: String)
 
-  m = readdlm(model_csv, ',', Any)
-  m = m[2:end, 1:end-1]
+  m, h = readdlm(model_csv, ',', header=true)
 
-  return m
+  for i = 1:length(h)
+      h[i] = strip(h[i])
+  end
+
+  return m, h
 end
