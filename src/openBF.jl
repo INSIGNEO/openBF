@@ -335,6 +335,7 @@ include("bifurcations.jl")
 
 # [godunov.jl](godunov.html) contains Godunov' method functions.
 include("godunov.jl")
+include("solver.jl")
 
 # [MUSCL.jl](MUSCL.html) is where the MUSCL method is implemented.
 include("MUSCL.jl")

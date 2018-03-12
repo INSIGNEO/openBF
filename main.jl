@@ -49,7 +49,7 @@ verbose = parsed_args["verbose"]
 # where the simulation is started (see [tutorial](../index.html#tutorial)
 # page). Here `project_constants.jl` content is loaded in memory for further
 # use.
-verbose? println("Loading $project_name files"): pass
+verbose && println("Loading $project_name files")
 
 # include(join([project_name, "_constants.jl"]))
 
@@ -83,19 +83,19 @@ Ccfl = constants["Ccfl"]
 initial_pressure = constants["initial_pressure"]
 
 heart = inlets[1]
-if length(inlets) == 1
-    inlets = inlets[1]
-end
+# if length(inlets) == 1
+#     inlets = inlets[1]
+# end
 
-verbose? println("Build arterial network \n"): pass
+verbose && println("Build arterial network \n")
 
 vessels, edges = openBF.buildArterialNetwork(model, heart, blood)
 
 # Before starting the main loop the counter`current_time` is set to zero. It
 # will be updated to keep track of time within the simulation.
-verbose? println("Start simulation \n"): pass
+verbose && println("Start simulation \n")
 
-current_time = 0
+current_time = 0.0
 
 # In order to show the progress bar an initial estimate of the total running
 # time is needed. Thus, $\Delta t$ is calculated with system initial
@@ -103,16 +103,14 @@ current_time = 0
 # and used to compute the number or total iterations before the end of the
 # simulation. See [ProgressMeter](https://github.com/timholy/ProgressMeter.jl)
 # documentation for `Progress` options.
-dts  = zeros(Float64, length(edges[:,1]))
-dt = openBF.calculateDeltaT(vessels, dts, Ccfl)
 
 # The simulation is ran in a `while` loop to be ended whether the simulation
 # reached convergence or a user defined finish time.
 passed_cycles = 0
-verbose? (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); tic()): pass
+verbose && (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); tic())
 
 counter = 1
-counter_v = 0
+
 jump = 100
 timepoints = linspace(0, heart.cardiac_T, jump)
 while true
@@ -121,14 +119,9 @@ while true
   # during the simulation the local properties of each vessel will change and,
   # as a consequence, also the $\Delta t$ will change. The `current_time` is
   # then calculated by incrementing it with the new `dt`.
-  dt = openBF.calculateDeltaT(vessels, dts, Ccfl)
+  dt = openBF.calculateDeltaT(vessels, Ccfl)
 
-  # if venous_model
-  #   dt_v = openBF.calculateDeltaT(vessels_v, dts_v)
-  #   dt = minimum([dt, dt_v])
-  # end
 
-  current_time += dt
 
   # [`solveModel`](godunov.html#solveModel) reads the `grafo` object
   # and runs the solver for each part of it. This function can distinguish
@@ -154,7 +147,7 @@ while true
       openBF.closeTempFiles(vessels)
 
       err = openBF.checkConvergence(edges, vessels, passed_cycles)
-      verbose? @printf(" - Error = %4.2f%%\n", err): pass
+      verbose && @printf(" - Error = %4.2f%%\n", err)
 
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
@@ -166,7 +159,7 @@ while true
       end
 
     passed_cycles += 1
-    verbose? @printf("Solving cardiac cycle no: %d", passed_cycles + 1): pass
+    verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
     timepoints += heart.cardiac_T
     counter = 1
@@ -176,12 +169,13 @@ while true
   # exit from `while` loop. This would also mean that an error smaller than 5%
   # has not been achieved. The main is exited by raising an error containing
   # the error value.
+  current_time += dt
   if current_time >= total_time
-    verbose? println("Not converged after $passed_cycles cycles, End!"): pass
+    verbose && println("Not converged after $passed_cycles cycles, End!")
     break
   end
 end
-verbose? (@printf "\n"; toc()): pass
+verbose && (@printf "\n"; toc())
 
 # Make sure that data from `.temp` files are transferred.
 openBF.closeTempFiles(vessels)

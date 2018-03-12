@@ -452,40 +452,40 @@ end
 # geometries and properties.
 # ----------------------------------------------------------------------------
 # <a name="calculateDeltaT"></a>
-function calculateDeltaT(vessels, dt :: Array{Float64, 1}, Ccfl :: Float64)
-
-  # For each vessel the $\Delta t$ is computed as
-  # $$
-  #   \Delta t = \frac{\Delta x}{S_{max}} C_{cfl}
-  # $$
-  # where $S_{max}$ is the maximum between the forward and the backward
-  # characteristics, and $C_{cfl}$ is the Courant-Friedrichs-Lewy condition
-  # defined by the user.
-  i = 1
-  for v in vessels
-
-    lambdap = zeros(Float64, v.M)
-    for j in 1:v.M
-      lambdap[j] = v.u[j] + v.c[j]
-    end
-
-    Smax = maximum(abs.(lambdap))
-
-    dt[i] = v.dx*Ccfl/Smax
-
-    i+=1
-  end
-  #
-  # --------------------------------------------------------------------------
-  # Returns:
-  # ----------- --------------------------------------------------------------
-  # `DT`        `::Float` $\Delta t$ computed as the smallest between
-  #             the smallest $\Delta t$ associated with each vessel and
-  #             the $\Delta t$ limiter $0.001$.
-  # --------------------------------------------------------------------------
-  return minimum(dt)
-
-end
+# function calculateDeltaT(vessels, dt :: Array{Float64, 1}, Ccfl :: Float64)
+#
+#   # For each vessel the $\Delta t$ is computed as
+#   # $$
+#   #   \Delta t = \frac{\Delta x}{S_{max}} C_{cfl}
+#   # $$
+#   # where $S_{max}$ is the maximum between the forward and the backward
+#   # characteristics, and $C_{cfl}$ is the Courant-Friedrichs-Lewy condition
+#   # defined by the user.
+#   i = 1
+#   for v in vessels
+#
+#     lambdap = zeros(Float64, v.M)
+#     for j in 1:v.M
+#       lambdap[j] = v.u[j] + v.c[j]
+#     end
+#
+#     Smax = maximum(abs.(lambdap))
+#
+#     dt[i] = v.dx*Ccfl/Smax
+#
+#     i+=1
+#   end
+#   #
+#   # --------------------------------------------------------------------------
+#   # Returns:
+#   # ----------- --------------------------------------------------------------
+#   # `DT`        `::Float` $\Delta t$ computed as the smallest between
+#   #             the smallest $\Delta t$ associated with each vessel and
+#   #             the $\Delta t$ limiter $0.001$.
+#   # --------------------------------------------------------------------------
+#   return minimum(dt)
+#
+# end
 
 # *function* __`solveModel`__
 #
@@ -515,98 +515,55 @@ end
 #
 # ----------------------------------------------------------------------------
 # <a name="solveModel"></a>
-function solveModel(vessels, heart :: Heart, edge_list,
-                    blood :: Blood, dt :: Float64, current_time :: Float64)
-
-  for j in 1:size(edge_list)[1]
-    i = edge_list[j,1]
-    s = edge_list[j,2]
-    t = edge_list[j,3]
-    v = vessels[i]
-    lbl = v.label
-
-    if size(find(edge_list[:,3] .== s))[1] == 0
-      openBF.setInletBC(current_time, dt, v, heart)
-    end
-
-    openBF.MUSCL(v, dt, blood)
-
-    if size(find(edge_list[:,2] .== t))[1] == 0
-      openBF.setOutletBC(dt, v)
-      # println("\t Outlet vessel - Compute outlet BC")
-
-    elseif size(find(edge_list[:,2] .== t))[1] == 2
-      d1_i = find(edge_list[:,2] .== t)[1]
-      d2_i = find(edge_list[:,2] .== t)[2]
-
-      openBF.joinVessels(blood, v, vessels[d1_i], vessels[d2_i])
-      # println("\t\t Bifurcation at node $t between vessels $i, $d1_i, and $d2_i")
-
-    elseif size(find(edge_list[:,3] .== t))[1] == 1
-      d_i = find(edge_list[:,2] .== t)[1]
-
-      openBF.joinVessels(blood, v, vessels[d_i])
-      # println("\t\t Junction at node $t between vessels $i and $d_i")
-
-    elseif size(find(edge_list[:,3] .== t))[1] == 2
-      p1_i = find(edge_list[:,3] .== t)[1]
-      p2_i = find(edge_list[:,3] .== t)[2]
-      if maximum([p1_i, p2_i]) == i
-        p2_i = minimum([p1_i, p2_i])
-        d = find(edge_list[:,2] .== t)[1]
-        openBF.solveAnastomosis(v, vessels[p2_i], vessels[d])
-        # println("\t\t Anastomosis at node $s between vessels $i, $p2_i, and $d")
-      end
-    end
-  end
-end
-
-function solveModel(vessels, inlets, edge_list,
-                    blood :: Blood, dt :: Float64, current_time :: Float64)
-
-  for j in 1:size(edge_list)[1]
-    i = edge_list[j,1]
-    s = edge_list[j,2]
-    t = edge_list[j,3]
-    inlet_index = edge_list[j,4]
-    v = vessels[i]
-    lbl = v.label
-
-    if size(find(edge_list[:,3] .== s))[1] == 0
-      openBF.setInletBC(current_time, dt, v, inlets[inlet_index])
-    end
-
-    openBF.MUSCL(v, dt, blood)
-
-    if size(find(edge_list[:,2] .== t))[1] == 0
-      openBF.setOutletBC(dt, v)
-      # println("\t Outlet vessel - Compute outlet BC")
-
-    elseif size(find(edge_list[:,2] .== t))[1] == 2
-      d1_i = find(edge_list[:,2] .== t)[1]
-      d2_i = find(edge_list[:,2] .== t)[2]
-
-      openBF.joinVessels(blood, v, vessels[d1_i], vessels[d2_i])
-      # println("\t\t Bifurcation at node $t between vessels $i, $d1_i, and $d2_i")
-
-    elseif size(find(edge_list[:,3] .== t))[1] == 1
-      d_i = find(edge_list[:,2] .== t)[1]
-
-      openBF.joinVessels(blood, v, vessels[d_i])
-      # println("\t\t Junction at node $t between vessels $i and $d_i")
-
-    elseif size(find(edge_list[:,3] .== t))[1] == 2
-      p1_i = find(edge_list[:,3] .== t)[1]
-      p2_i = find(edge_list[:,3] .== t)[2]
-      if maximum([p1_i, p2_i]) == i
-        p2_i = minimum([p1_i, p2_i])
-        d = find(edge_list[:,2] .== t)[1]
-        openBF.solveAnastomosis(v, vessels[p2_i], vessels[d])
-        # println("\t\t Anastomosis at node $s between vessels $i, $p2_i, and $d")
-      end
-    end
-  end
-end
+# function solveModel(vessels :: Array{Vessel,1}, inlets :: Array{Any,1},
+#                     edges :: Array{Int64,2}, blood :: Blood, dt :: Float64,
+#                     current_time :: Float64)
+#
+#   for j in 1:size(edges)[1]
+#     i = edges[j,1]
+#     s = edges[j,2]
+#     t = edges[j,3]
+#     inlet_index = edges[j,4]
+#     v = vessels[i]
+#
+#     # handle multiple inlets
+#     if inlet_index != 0
+#         setInletBC(current_time, dt, v, inlets[inlet_index])
+#     elseif s == 1
+#         setInletBC(current_time, dt, v, inlets[1])
+#     end
+#
+#     MUSCL(v, dt, blood)
+#
+#     if size(find(edges[:,2] .== t))[1] == 0
+#       setOutletBC(dt, v)
+#       # println("\t Outlet vessel - Compute outlet BC")
+#
+#   elseif size(find(edges[:,2] .== t))[1] == 2
+#       d1_i = find(edges[:,2] .== t)[1]
+#       d2_i = find(edges[:,2] .== t)[2]
+#
+#       joinVessels(blood, v, vessels[d1_i], vessels[d2_i])
+#       # println("\t\t Bifurcation at node $t between vessels $i, $d1_i, and $d2_i")
+#
+#   elseif size(find(edges[:,3] .== t))[1] == 1
+#       d_i = find(edges[:,2] .== t)[1]
+#
+#       joinVessels(blood, v, vessels[d_i])
+#       # println("\t\t Junction at node $t between vessels $i and $d_i")
+#
+#   elseif size(find(edges[:,3] .== t))[1] == 2
+#       p1_i = find(edges[:,3] .== t)[1]
+#       p2_i = find(edges[:,3] .== t)[2]
+#       if maximum([p1_i, p2_i]) == i
+#         p2_i = minimum([p1_i, p2_i])
+#         d = find(edges[:,2] .== t)[1]
+#         solveAnastomosis(v, vessels[p2_i], vessels[d])
+#         # println("\t\t Anastomosis at node $s between vessels $i, $p2_i, and $d")
+#       end
+#     end
+#   end
+# end
 
 # ### References
 #

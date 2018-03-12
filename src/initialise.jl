@@ -280,21 +280,21 @@ end
 
 function buildArterialNetwork(model :: Array{Any, 2}, heart :: Heart, blood :: Blood)
     vessels = [buildVessel(1, model[1,:], heart, blood)]
-    edge_list = zeros(Int64, size(model)[1], 4)
-    edge_list[1,1] = vessels[1].ID
-    edge_list[1,2] = vessels[1].sn
-    edge_list[1,3] = vessels[1].tn
-    edge_list[1,4] = vessels[1].inlet_idx
+    edges = zeros(Int64, size(model)[1], 4)
+    edges[1,1] = vessels[1].ID
+    edges[1,2] = vessels[1].sn
+    edges[1,3] = vessels[1].tn
+    edges[1,4] = vessels[1].inlet_idx
 
     for i = 2:size(model)[1]
         push!(vessels, buildVessel(i, model[i,:], heart, blood))
-        edge_list[i,1] = vessels[i].ID
-        edge_list[i,2] = vessels[i].sn
-        edge_list[i,3] = vessels[i].tn
-        edge_list[i,4] = vessels[i].inlet_idx
+        edges[i,1] = vessels[i].ID
+        edges[i,2] = vessels[i].sn
+        edges[i,3] = vessels[i].tn
+        edges[i,4] = vessels[i].inlet_idx
     end
 
-    return vessels, edge_list
+    return vessels, edges
 end
 
 
