@@ -18,7 +18,6 @@ end
 
 # Run tests
 
-tic()
 # println("\nTest 1 - Single artery")
 # @time @test runTest("single-artery")
 #
@@ -36,7 +35,6 @@ tic()
 #
 # println("\nTest 5 - Aspirator")
 # @time @test runTest("aspirator")
-@time include("test_initialise.jl")
-@time include("test_boundary_conditions.jl")
-@time include("test_solver.jl")
-toc()
+include("test_initialise.jl")
+include("test_boundary_conditions.jl")
+include("test_solver.jl")

@@ -571,3 +571,142 @@ function parseCommandline()
 
     return parse_args(s)
 end
+
+
+"""
+    loadYAMLFile(filename :: String)
+
+Open a YAML file and return the content as `Dict{Any,Any}`.
+"""
+function loadYAMLFile(filename :: String)
+    if ~isfile(filename)
+        error("missing $filename")
+    end
+    
+    return YAML.load(open(filename))
+end
+
+
+"""
+    parseInputFile(input_filename :: String)
+
+Load YAML input file and run integrity checks.
+"""
+function parseInputFile(input_filename :: String)
+    data = loadYAMLFile(input_filename)
+
+    checkSections(data)
+    checkNetwork(data["network"])
+end
+
+
+"""
+    checkSections(data :: Dict{Any,Any})
+
+Look for the four sections in the input data. Run integrity checks for `blood` and
+`solver` sections.
+"""
+function checkSections(data :: Dict{Any,Any})
+    keys = ["project name", "network", "blood", "solver"]
+    for key in keys
+        if ~haskey(data, key)
+            error("missing section $key in YAML input file")
+        end
+    end
+
+    checkSection(data, "blood", ["mu", "rho"])
+    checkSection(data, "solver", ["Ccfl", "cycles", "jump", "convergence tollerance"])
+end
+
+
+"""
+    checkSection(data :: Dict{Any,Any}, section :: String, keys :: Array{String,1})
+
+Look for a list of keys in the generic data section.
+"""
+function checkSection(data :: Dict{Any,Any}, section :: String, keys :: Array{String,1})
+    for key in keys
+        if ~haskey(data[section], key)
+            error("missing $key in $section section")
+        end
+    end
+end
+
+
+"""
+    checkNetwork(network :: Array{Dict{Any,Any},1})
+
+Loop trough the network and run check on each single vessel. Check also if at least one
+inlet and one oulet has been defined.
+"""
+function checkNetwork(network :: Array{Dict{Any,Any},1})
+    has_inlet = false
+    has_outlet = false
+    for i = 1:length(network)
+        checkVessel(i, network[i])
+
+        if haskey(network[i], "inlet")
+            has_inlet = true
+        end
+        if haskey(network[i], "outlet")
+            has_outlet = true
+        end
+    end
+
+    if ~has_inlet
+        error("missing inlet(s) definition")
+    end
+
+    if ~has_outlet
+        error("missing outlet(s) definition")
+    end
+end
+
+
+"""
+    checkVessel(i :: Int64, vessel :: Dict{Any,Any})
+
+Check if all the important parameters are defined for the current vessel. If the vessel
+has been indicated to be an inlet/outlet segment, check also for the definition of
+boundary condition parameters.
+"""
+function checkVessel(i :: Int64, vessel :: Dict{Any,Any})
+    keys = ["label", "sn", "tn", "L", "E"]
+    for key in keys
+        if ~haskey(vessel, key)
+            error("vessel $i is missing $key value")
+        end
+    end
+
+    if ~haskey(vessel, "R0")
+        if ~haskey(vessel, "R0p") || ~haskey(vessel, "R0d")
+            error("vessel $i is missing lumen radius value(s)")
+        end
+    end
+
+    if haskey(vessel, "inlet")
+        if ~haskey(vessel, "inlet file")
+            error("inlet vessel $i is missing the inlet file path")
+        elseif ~isfile(vessel["inlet file"])
+            file_path = vessel["inlet file"]
+            error("vessel $i inlet file $file_path not found")
+        end
+    end
+
+    if haskey(vessel, "outlet")
+        outlet = vessel["outlet"]
+        if outlet == "wk3"
+            if ~haskey(vessel, "R1") || ~haskey(vessel, "Cc")
+                error("outlet vessel $i is missing three-element windkessel values")
+            end
+        elseif outlet == "wk2"
+            if ~haskey(vessel, "R1") || ~haskey(vessel, "Cc")
+                error("outlet vessel $i is missing two-element windkessel values")
+            end
+        elseif outlet == "reflection"
+            if ~haskey(vessel, "Rt")
+                error("outlet vessel $i is missing reflection coefficient value")
+            end
+        end
+    end
+end
