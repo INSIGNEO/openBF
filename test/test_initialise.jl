@@ -39,7 +39,7 @@ using openBF
 
     @inferred openBF.buildHearts(constants, inlets)
 
-    dx, invDx, halfDx, invHalfDx = openBF.meshVessel(1.0, 10)
+    dx, invDx, halfDx = openBF.meshVessel(1.0, 10)
     @test dx == 0.001
     @test invDx == 1000.0
     @test halfDx == 0.0005
@@ -47,7 +47,7 @@ using openBF
     A0 = ones(Float64, 2)
     gamma = copy(A0)
     BCout = ["", "", "", ""]
-    BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+    BCout, outlet = openBF.detectCapillaries(BCout, blood, A0, gamma)
     @test outlet == "none"
     @test BCout[1] == 0.0
     @test BCout[2] == 0.0
@@ -55,7 +55,7 @@ using openBF
     @test BCout[4] == 0.0
 
     BCout = [1.0, "", "", ""]
-    BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+    BCout, outlet = openBF.detectCapillaries(BCout, blood, A0, gamma)
     @test outlet == "reflection"
     @test BCout[1] == 1.0
     @test BCout[2] == 0.0
@@ -63,7 +63,7 @@ using openBF
     @test BCout[4] == 0.0
 
     BCout = ["", "", 1.0, 1.0]
-    BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+    BCout, outlet = openBF.detectCapillaries(BCout, blood, A0, gamma)
     @test outlet == "wk3"
     @test BCout[1] == 0.0
     @test isapprox(BCout[2],  1298, atol=1.0)
@@ -71,7 +71,7 @@ using openBF
     @test BCout[4] == 1.0
 
     BCout = ["", 1.0, 1.0, 1.0]
-    BCout, outlet = openBF.checkCapillaries(BCout, blood, A0, gamma)
+    BCout, outlet = openBF.detectCapillaries(BCout, blood, A0, gamma)
     @test outlet == "wk3"
     @test BCout[1] == 0.0
     @test BCout[2] == 1.0

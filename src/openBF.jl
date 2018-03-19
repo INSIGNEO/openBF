@@ -34,7 +34,12 @@ module openBF
 # where the `args...` are specified for each data structure in the
 # following. Functions in [initialise.jl](initialise.html) generate
 # instances of `BTypes` data structures.
-export Vessel, Heart, Blood
+export Vessel, Heart, Blood,
+    checkInputFiles, checkInputFiles, copyInputFilesToResultsFolder, loadInletData,
+    buildHeart, buildHearts, buildBlood, checkConstants, loadConstants, parseModelRow,
+    loadSimulationFiles, meshVessel, detectCapillaries, buildArterialNetwork, buildVessel,
+    readModelData, setInletBC, inputFromData, inletCompatibility, setOutletBC,
+    outletCompatibility, wk3, newtonSolver, updateGhostCells
 
 # Each vessel in the arterial system is represented by a single
 # instance of type `Vessel`.
@@ -127,6 +132,9 @@ export Vessel, Heart, Blood
 # `Pc`             Pressure through peripheral compliance.
 # --------------------------------------------------------------------
 # <a name="Vessel"></a>
+"""
+Vessel type
+"""
 type Vessel
   label :: String
 

@@ -121,8 +121,6 @@ while true
   # then calculated by incrementing it with the new `dt`.
   dt = openBF.calculateDeltaT(vessels, Ccfl)
 
-
-
   # [`solveModel`](godunov.html#solveModel) reads the `grafo` object
   # and runs the solver for each part of it. This function can distinguish
   # between inlet, bifurcation, conjunction, anastomosis, and outlet.

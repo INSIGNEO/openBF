@@ -14,27 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-# http://carlobaldassi.github.io/ArgParse.jl/stable/index.html
-function parseCommandline()
-    s = ArgParseSettings()
 
-    @add_arg_table s begin
-        "project_name"
-            help = "Project name"
-            required = true
-        "--verbose", "-v"
-            help = "Print STDOUT - default false"
-            action = :store_true
-        "--clean", "-c"
-            help = "Clean input, .out, and .temp files at the end of the simulation - default false"
-            action = :store_true
-    end
+"""
+    checkInputFiles(project_name :: String)
 
-    return parse_args(s)
-end
-
-
-# check basic files
+Look for project input files in the current directory. If one of them is missing, spawn an
+error.
+"""
 function checkInputFiles(project_name :: String)
     f_const = join([project_name, "_constants.yml"])
     f_inlet = join([project_name, "_inlet.dat"])
@@ -48,7 +34,14 @@ function checkInputFiles(project_name :: String)
     end
 end
 
-# check additional inlets
+
+"""
+    checkInletFiles(project_name :: String, number_of_inlets :: Int64,
+                    inlets :: Array{String, 1})
+
+Look for as many inlet files as specified in the project description. If one of them is
+missing, spawn an error. Returns a list of the inlet file names.
+"""
 function checkInletFiles(project_name :: String, number_of_inlets :: Int64,
                          inlets :: Array{String, 1})
 
@@ -66,7 +59,12 @@ function checkInletFiles(project_name :: String, number_of_inlets :: Int64,
 end
 
 
-# create new folder for results and copy input files
+"""
+    copyInputFilesToResultsFolder(project_name :: String, inlets :: Array{String, 1})
+
+Copy input files (including all the inlet files) to the results folder and change current
+directory.
+"""
 function copyInputFilesToResultsFolder(project_name :: String, inlets :: Array{String, 1})
     # make results folder
     r_folder = join([project_name, "_results"])
@@ -89,11 +87,23 @@ function copyInputFilesToResultsFolder(project_name :: String, inlets :: Array{S
 end
 
 
+"""
+    loadInletData(inlet_file :: String)
+
+Read discretised inlet data from inlet file. Return an `Array{Float64, 2}` whose first
+columun contains time variable and second column contains the inlet time function.
+"""
 function loadInletData(inlet_file :: String)
     return readdlm(inlet_file)
 end
 
 
+"""
+    buildHeart(project_constants :: Dict{Any,Any}, inlet_data :: Array{Float64,2},
+               inlet_number :: Int64)
+
+Return an instance of type `::Heart` for a single inlet.
+"""
 function buildHeart(project_constants :: Dict{Any,Any}, inlet_data :: Array{Float64,2},
                     inlet_number :: Int64)
 
@@ -105,7 +115,12 @@ function buildHeart(project_constants :: Dict{Any,Any}, inlet_data :: Array{Floa
 end
 
 
-function buildHearts(project_constants :: Dict{Any,Any}, inlet_names :: Array{String, 1})
+"""
+    buildHearts(project_constants :: Dict{Any,Any}, inlet_names :: Array{String,1})
+
+Return a list of instances of type `::Heart` given the list of inlets.
+"""
+function buildHearts(project_constants :: Dict{Any,Any}, inlet_names :: Array{String,1})
 
     hearts = []
     for i = 1:length(inlet_names)
@@ -118,6 +133,11 @@ function buildHearts(project_constants :: Dict{Any,Any}, inlet_names :: Array{St
 end
 
 
+"""
+    buildBlood(project_constants :: Dict{Any,Any})
+
+Return an instance of type `::Blood`.
+"""
 function buildBlood(project_constants :: Dict{Any,Any})
     mu = project_constants["mu"]
     rho = project_constants["rho"]
@@ -132,6 +152,11 @@ function buildBlood(project_constants :: Dict{Any,Any})
 end
 
 
+"""
+    checkConstants(project_constants :: Dict{Any,Any})
+
+Parse and return the constants file while checking if all the parameters are correctly specified.
+"""
 function checkConstants(project_constants :: Dict{Any,Any})
 
     fundamental_parameters = ["inlet_type", "mu", "rho", "number_of_inlets"]
@@ -156,11 +181,23 @@ function checkConstants(project_constants :: Dict{Any,Any})
 end
 
 
+"""
+    loadConstants(project_constants_file :: String)
+
+Load the YAML constants file.
+"""
 function loadConstants(project_constants_file :: String)
     return YAML.load(open(project_constants_file))
 end
 
 
+"""
+    loadSimulationFiles(project_name :: String)
+
+Wrapper function for simulation initialisation. Load all the simulation files and run
+sanity checks. Return list of constants, model definition, inlets, blood properties and
+expected total computing time.
+"""
 function loadSimulationFiles(project_name :: String)
 
     checkInputFiles(project_name)
@@ -198,6 +235,12 @@ function loadSimulationFiles(project_name :: String)
 end
 
 
+"""
+    parseModelRow(model_row :: Array{Any,1})
+
+Parse a row from the `.csv` regarding a single vessel, run sanity checks, and return
+vessel properties in a list.
+"""
 function parseModelRow(model_row :: Array{Any,1})
     vessel_name = model_row[1]
 
@@ -242,6 +285,15 @@ function parseModelRow(model_row :: Array{Any,1})
     return vessel_name, sn, tn, rn, L, M, Rp, Rd, E, Pext, [Rt, R1, R2, Cc]
 end
 
+
+"""
+    meshVessel(L :: Float64, M :: Int64)
+
+Pre-compute `dx`, `1/dx`, and `0.5*dx` for the
+current vessel. The `dx` is computed as `L/M` where `M` is the maximum value
+between `5` (the minimum needed by the solver), the value defined in the `.csv`, and
+`ceil(L*1e3)` (which would make `dx=1`mm).
+"""
 function meshVessel(L :: Float64, M :: Int64)
     M = maximum([5, M, convert(Int, ceil(L*1e3))])
     dx = L/M
@@ -251,16 +303,23 @@ function meshVessel(L :: Float64, M :: Int64)
     return dx, invDx, halfDx
 end
 
-# no outlet BC
-function checkCapillaries(BCout :: Array{String,1}, blood :: Blood,
+
+"""
+    detectCapillaries(BCout, blood :: Blood, A0 :: Array{Float64,1},
+                     gamma :: Array{Float64,1})
+
+Identify the type of outlet boundary condition used for the current vessel (none,
+reflection site, or three element windkessel).
+"""
+function detectCapillaries(BCout :: Array{String,1}, blood :: Blood,
                           A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
     BCout = [0.0, 0.0, 0.0, 0.0]
     return BCout, "none"
 end
 
-# parse outlet BCs
-function checkCapillaries(BCout :: Array{Any,1}, blood :: Blood,
-                          A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
+function detectCapillaries(BCout :: Array{Any,1}, blood :: Blood, A0 :: Array{Float64,1},
+                          gamma :: Array{Float64,1})
+
     if BCout[1] != "" && BCout[2] == ""
         BCout[2:4] = [0.0, 0.0, 0.0]
         return BCout, "reflection"
@@ -278,7 +337,14 @@ function checkCapillaries(BCout :: Array{Any,1}, blood :: Blood,
 end
 
 
-function buildArterialNetwork(model :: Array{Any, 2}, heart :: Heart, blood :: Blood)
+"""
+    buildArterialNetwork(model :: Array{Any,2}, heart :: Heart, blood :: Blood)
+
+Build a `::Vessel` for each row in the project `.csv`. Return a list of `::Vessel`s and
+a list of the edges in the network graph.
+"""
+function buildArterialNetwork(model :: Array{Any,2}, heart :: Heart, blood :: Blood)
+
     vessels = [buildVessel(1, model[1,:], heart, blood)]
     edges = zeros(Int64, size(model)[1], 4)
     edges[1,1] = vessels[1].ID
@@ -298,8 +364,13 @@ function buildArterialNetwork(model :: Array{Any, 2}, heart :: Heart, blood :: B
 end
 
 
-function buildVessel(ID :: Int64, model_row :: Array{Any,1},
-                     heart :: Heart, blood :: Blood)
+"""
+    buildVessel(ID :: Int64, model_row :: Array{Any,1}, heart :: Heart, blood :: Blood)
+
+Build a `::Vessel` given a row from the project `.csv`.
+"""
+function buildVessel(ID :: Int64, model_row :: Array{Any,1}, heart :: Heart,
+                     blood :: Blood)
 
     vessel_name, sn, tn, rn, L, M, Rp, Rd, E, Pext, BCout = parseModelRow(model_row)
 
@@ -367,7 +438,7 @@ function buildVessel(ID :: Int64, model_row :: Array{Any,1},
     gamma_ghost[1] = gamma[1]
     gamma_ghost[end] = gamma[end]
 
-    BCout, outlet = checkCapillaries(BCout, blood, A0, gamma)
+    BCout, outlet = detectCapillaries(BCout, blood, A0, gamma)
     Rt = BCout[1]
     R1 = BCout[2]
     R2 = BCout[3]
@@ -464,35 +535,12 @@ function buildVessel(ID :: Int64, model_row :: Array{Any,1},
                   outlet)
 end
 
-# All the pre-processing and initialisation functions are herein contained.
 
+"""
+    readModelData(model_csv :: String)
 
-
-# *function* __`readModelData`__ $\rightarrow$ `model_matrix::Array{Any, 2}`
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ---------------- -----------------------------------------------------------
-# `model_data`     `.csv` file containing model data (see
-#                  [tutorial.jl](../index.html#project)).
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `model_data.csv` is parsed by `readdlm` by using `,` as a separator. The
-# first header row is discarded (`[2:end]`) as well as the last column
-# (`[1:end-1]`) because it contains
-# only blank spaces. The remaining is stored in matrix `m` and returned.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Returns:
-# ---------------- -----------------------------------------------------------
-# `m`              `::Array{Any, 2}` model matrix.
-# ----------------------------------------------------------------------------
-# <a name="readModelData"></a>
-
+Return the content of the project `.csv` as `::Array{Any,2}`.
+"""
 function readModelData(model_csv :: String)
 
   m, h = readdlm(model_csv, ',', header=true)
@@ -502,4 +550,24 @@ function readModelData(model_csv :: String)
   end
 
   return m, h
+end
+
+
+# http://carlobaldassi.github.io/ArgParse.jl/stable/index.html
+function parseCommandline()
+    s = ArgParseSettings()
+
+    @add_arg_table s begin
+        "project_name"
+            help = "Project name"
+            required = true
+        "--verbose", "-v"
+            help = "Print STDOUT - default false"
+            action = :store_true
+        "--clean", "-c"
+            help = "Clean input, .out, and .temp files at the end - default false"
+            action = :store_true
+    end
+
+    return parse_args(s)
 end
