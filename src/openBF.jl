@@ -41,6 +41,59 @@ export Vessel, Heart, Blood,
     readModelData, setInletBC, inputFromData, inletCompatibility, setOutletBC,
     outletCompatibility, wk3, newtonSolver, updateGhostCells
 
+
+
+# The inlet boundary condition is applied to the first vessel in the
+# model. A `Heart` instance contains all inlet information.
+#
+# --------------------------------------------------------------------
+# Arguments:
+# ----------------- --------------------------------------------------
+# `BC_switch`       Integer flag to select inlet boundary condition.
+#                   It takes values from 1 to 4 and it is chosen by
+#                   the user in the `project_constants.jl` file.
+#
+# `cardiac_T`       Cardiac period.
+#
+# `sys_T`           Length of systole.
+#
+# `initial_flow`    `Q` (ml/s) initial value to be set within all the vessels.
+#
+# `flow_amplitude`  `Q` maximum amplitude (ml/s) for the user-defined
+#                   inlet boundary condition.
+#
+# `input_data`      Matrix defined as
+#                   `[time::Array, flow::Array]`
+#                   to be used as inlet boundary condition.
+# --------------------------------------------------------------------
+# <a name="Heart"></a>
+type Heart
+  inlet_type :: String
+  cardiac_T :: Float64
+  input_data :: Array{Float64,2}
+  inlet_number :: Int64
+end
+
+# Blood mechanical properties.
+#
+# --------------------------------------------------------------------
+# Arguments:
+# -------  -----------------------------------------------------------
+# `mu`     Dynamic viscosity (poise)
+#
+# `rho`    Density (kg/m$^3$)
+#
+# `Cf`     Viscous loss coefficient (see
+#          [`loadGlobalConstants`](initialise.html#loadGlobalConstants)
+#          and [`source`](godunov.html#source)).
+# --------------------------------------------------------------------
+# <a name="Blood"></a>
+type Blood
+  mu  :: Float64
+  rho :: Float64
+  rho_inv :: Float64
+end
+
 # Each vessel in the arterial system is represented by a single
 # instance of type `Vessel`.
 #
@@ -142,7 +195,8 @@ type Vessel
   ID :: Int64
   sn :: Int64
   tn :: Int64
-  inlet_idx :: Int64
+  inlet :: Bool
+  heart :: Heart
 
   #Numerical constants
   M       :: Int64
@@ -161,6 +215,7 @@ type Vessel
   dA0dx :: Array{Float64,1}
   dTaudx :: Array{Float64,1}
   Pext  :: Float64
+  viscT :: Float64
 
   #Iterative solution
   A :: Array{Float64,1}
@@ -255,61 +310,6 @@ type Vessel
   Fr :: Array{Float64,2}
 
   outlet :: String
-end
-
-# The inlet boundary condition is applied to the first vessel in the
-# model. A `Heart` instance contains all inlet information.
-#
-# --------------------------------------------------------------------
-# Arguments:
-# ----------------- --------------------------------------------------
-# `BC_switch`       Integer flag to select inlet boundary condition.
-#                   It takes values from 1 to 4 and it is chosen by
-#                   the user in the `project_constants.jl` file.
-#
-# `cardiac_T`       Cardiac period.
-#
-# `sys_T`           Length of systole.
-#
-# `initial_flow`    `Q` (ml/s) initial value to be set within all the vessels.
-#
-# `flow_amplitude`  `Q` maximum amplitude (ml/s) for the user-defined
-#                   inlet boundary condition.
-#
-# `input_data`      Matrix defined as
-#                   `[time::Array, flow::Array]`
-#                   to be used as inlet boundary condition.
-# --------------------------------------------------------------------
-# <a name="Heart"></a>
-type Heart
-  inlet_type :: String
-  cardiac_T :: Float64
-  input_data :: Array{Float64,2}
-  initial_flow :: Float64
-  inlet_number :: Int64
-end
-
-# Blood mechanical properties.
-#
-# --------------------------------------------------------------------
-# Arguments:
-# -------  -----------------------------------------------------------
-# `mu`     Dynamic viscosity (poise)
-#
-# `rho`    Density (kg/m$^3$)
-#
-# `Cf`     Viscous loss coefficient (see
-#          [`loadGlobalConstants`](initialise.html#loadGlobalConstants)
-#          and [`source`](godunov.html#source)).
-# --------------------------------------------------------------------
-# <a name="Blood"></a>
-type Blood
-  mu  :: Float64
-  rho :: Float64
-  rho_inv :: Float64
-  Cf  :: Float64
-  gamma_profile :: Float64
-  viscT :: Float64
 end
 
 # ### Import openBF' files

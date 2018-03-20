@@ -19,7 +19,8 @@ limitations under the License.
 
 Flow or pressure value is set from the inlet file stored in the `Heart` structure.
 """
-function setInletBC(t :: Float64, dt :: Float64, v :: Vessel,  h  :: Heart)
+function setInletBC(t :: Float64, dt :: Float64, v :: Vessel)
+    h = v.heart
 
   	if h.inlet_type == "Q"
 		v.Q[1] = inputFromData(t, h)

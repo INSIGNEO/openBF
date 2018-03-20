@@ -19,23 +19,27 @@ network:
     L: 8.6e-2 # length (m)
     M: 86     # number of divisions
 
-    R0p: 0.76e-2   # proximal lumen radius (m)
-    R0d: 0.7581e-2 # distal lumen radius
+    Rp: 0.76e-2   # proximal lumen radius (m)
+    Rd: 0.7581e-2 # distal lumen radius
 
     E: 500.0e3 # Young's modulus (Pa)
 
-    Pext: 0.0 # external pressure (Pa)
-
-    gamma profile: 9
+    Pext: 10000.0 # external pressure (Pa)
 
     inlet: Q
     inlet file: /home/ale/postdoc/openBF/test/test_inlet.dat
+    inlet number: 1
+
+    outlet: wk2
+    R1: 6.8123e7
+    Cc: 3.6664e-10
 
   - label: v2
     sn: 2
     tn: 3
 
     L: 8.6e-2
+    M: 2
 
     R0: 0.5492e-2 # constant lumen radius
 
@@ -51,6 +55,7 @@ network:
     tn: 4
 
     L: 8.6e-2
+    M: 1000
 
     R0: 0.5492e-2 # lumen radius
 
