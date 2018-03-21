@@ -72,7 +72,7 @@ function computeLimiter(v :: Vessel, U :: Array{Float64,1}, invDx :: Float64,
 
 end
 
-function computeLimiter(v :: Vessel, U :: Array{Float64,2}, idx :: Int64,
+function computeLimiter(v :: Vessel, U :: Array{Float64,2}, idx :: Int,
                         invDx :: Float64, dU :: Array{Float64,2},
                         slopes :: Array{Float64,1})
   U = U[idx,:]

@@ -108,6 +108,8 @@ using openBF
     @test_throws ErrorException openBF.loadYAMLFile("notest.yml")
     @test typeof(data) == Dict{Any,Any}
 
+    @test_nowarn openBF.checkInputFile(data)
+
     @test_nowarn openBF.checkSections(data)
     @test_nowarn openBF.checkSection(data, "blood", ["mu", "rho"])
     @test_nowarn openBF.checkSection(data, "solver", ["Ccfl", "cycles", "jump", "convergence tollerance"])
@@ -181,11 +183,17 @@ using openBF
     @test heart.input_data[1,2] != 0.0
     @test heart.inlet_number == 1
     @test heart.inlet_type == "Q"
+
     inlet, heart = openBF.buildHeart(data["network"][2])
     @test ~inlet
     @test heart.input_data[1,2] == 0.0
     @test heart.inlet_number == 0
     @test heart.inlet_type == "none"
+
+    openBF.makeResultsFolder(data)
+    cd("..")
+    @test isdir("test_results")
+    cd("test_results")
 
     vessel = openBF.buildVessel(1, data["network"][1], blood)
     @test typeof(vessel) == Vessel
@@ -194,7 +202,10 @@ using openBF
     @test length(vessels) == 3
     @test length(edges) == 12
 
-    openBF.makeResultsFolder(data)
+    v = vessels[1]
+    R1, R2 = openBF.computeWindkesselInletImpedance(v.R2, blood, v.A0, v.gamma)
+    @test R1 + R2 == v.R2
+
     cd("..")
-    @test isdir("test_results")
+    rm("test_results", recursive=true)
 end

@@ -48,11 +48,11 @@ limitations under the License.
 # `c`           `::Float` wave speed given cross sectional area A.
 # ----------------------------------------------------------------------------
 # <a name="waveSpeed"></a>
-function waveSpeed(A :: Float64, gamma :: Float64)
-
-  return sqrt(3*gamma*sqrt(A)*0.5)
-
-end
+# function waveSpeed(A :: Float64, gamma :: Float64)
+#
+#   return sqrt(3*gamma*sqrt(A)*0.5)
+#
+# end
 
 # *function* __`waveSpeed`__ $\rightarrow$ `c::Array{Float, 1}`
 #
@@ -78,14 +78,14 @@ end
 # `c`           `::Arrary{Float, 1}` wave speed given cross sectional area A.
 # ----------------------------------------------------------------------------
 # <a name="waveSpeed2"></a>
-function waveSpeed(A :: Array{Float64, 1}, gamma :: Array{Float64, 1}, c :: Array{Float64, 1})
-
-  for i in 1:length(A)
-    c[i] = waveSpeed(A[i], gamma[i])
-  end
-
-  return c
-end
+# function waveSpeed(A :: Array{Float64, 1}, gamma :: Array{Float64, 1}, c :: Array{Float64, 1})
+#
+#   for i in 1:length(A)
+#     c[i] = waveSpeed(A[i], gamma[i])
+#   end
+#
+#   return c
+# end
 
 # Trans-mural pressure
 # $$
@@ -114,18 +114,18 @@ end
 #               `A`.
 # ----------------------------------------------------------------------------
 # <a name="pressure"></a>
-function pressure(A    :: Float64, A0   :: Float64,
-                  beta :: Float64, Pext :: Float64)
-
-  return Pext + beta*(sqrt(A/A0) - 1.)
-
-end
-
-function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
-
-  return Pext + beta*(s_A_over_A0 - 1.)
-
-end
+# function pressure(A    :: Float64, A0   :: Float64,
+#                   beta :: Float64, Pext :: Float64)
+#
+#   return Pext + beta*(sqrt(A/A0) - 1.)
+#
+# end
+#
+# function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
+#
+#   return Pext + beta*(s_A_over_A0 - 1.)
+#
+# end
 
 # *function* __`pressure`__ $\rightarrow$ `P::Array{Float, 1}`
 #
@@ -167,17 +167,17 @@ end
 
 #   return p
 # end
-
-function pressure(A    :: Array{Float64, 1}, A0   :: Array{Float64, 1},
-                  beta :: Array{Float64,1},  Pext :: Float64,
-                  p :: Array{Float64, 1})
-
-  for i in 1:length(A)
-    p[i] = Pext + beta[i]*(sqrt(A[i]/A0[i]) - 1.)
-  end
-
-  return p
-end
+#
+# function pressure(A    :: Array{Float64, 1}, A0   :: Array{Float64, 1},
+#                   beta :: Array{Float64,1},  Pext :: Float64,
+#                   p :: Array{Float64, 1})
+#
+#   for i in 1:length(A)
+#     p[i] = Pext + beta[i]*(sqrt(A[i]/A0[i]) - 1.)
+#   end
+#
+#   return p
+# end
 
 # Trans-mural pressure can be inverted to find cross sectional area as
 # $$
@@ -277,7 +277,7 @@ end
 # `W2`          `::Float` forward Riemann invariant.
 # ----------------------------------------------------------------------------
 # <a name="riemannInvariants"></a>
-function riemannInvariants(i :: Int64, v :: Vessel)
+function riemannInvariants(i :: Int, v :: Vessel)
 
   W1 = v.u[i] - 4*v.c[i]
   W2 = v.u[i] + 4*v.c[i]

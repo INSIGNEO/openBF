@@ -1,5 +1,5 @@
 #=
-Copyright 2017 INSIGNEO Institute for in silico Medicine
+Copyright 2018 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,24 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-
 using openBF
 
 parsed_args = openBF.parseCommandline()
 input_filename = parsed_args["input_filename"]
 verbose = parsed_args["verbose"]
 
-chage to results forlderqda!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-verbose && println("Loading $project_name files")
+verbose && println("Loading $input_filename")
+
 data = openBF.loadSimulationFiles(input_filename)
+openBF.makeResultsFolder(data)
+
 blood = openBF.buildBlood(data["blood"])
 
 verbose && println("Build arterial network \n")
-vessels, edges = openBF.buildArterialNetwork(data["network"], blood)
 
-# constants = inputs[1]
-# inlets = inputs[3]
-# blood = inputs[4]
+vessels, edges = openBF.buildArterialNetwork(data["network"], blood)
 
 Ccfl = data["solver"]["Ccfl"]
 heart = vessels[1].heart
@@ -99,9 +97,9 @@ clean = parsed_args["clean"]
 if clean == true
     cleanOuts(vessels)
     cleanTemps(vessels)
-    rm("$project_name.csv")
-    rm("$project_name\_inlet.dat")
-    rm("$project_name\_constants.yml")
+    # rm("$project_name.csv")
+    # rm("$project_name\_inlet.dat")
+    # rm("$project_name\_constants.yml")
 end
 
 cd("..")

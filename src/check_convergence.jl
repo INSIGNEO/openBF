@@ -40,8 +40,8 @@ limitations under the License.
 # ----------------------------------------------------------------------------
 # <a name="checkAllQuantities"></a>
 function checkAllQuantities(v             :: Vessel,
-                            passed_cycles :: Int64,
-                            n_pts         :: Int64)
+                            passed_cycles :: Int,
+                            n_pts         :: Int)
   # --------------------------------------------------------------------------
   # Functioning
   # --------------------------------------------------------------------------
@@ -107,8 +107,8 @@ end
 # ----------------------------------------------------------------------------
 # <a name="checkAllQuantities2"></a>
 function checkAllQuantities(vs            :: Array{Vessel, 1},
-                            passed_cycles :: Int64,
-                            n_pts         :: Int64)
+                            passed_cycles :: Int,
+                            n_pts         :: Int)
 
   ers = zeros(Float64, length(vs))
 
@@ -133,7 +133,7 @@ end
 # `cycles`      `::Int` $\Delta t$, current time step.
 # ----------------------------------------------------------------------------
 # <a name="extractWaveform"></a>
-function extractWaveform(filename :: String, cycles :: Int64)
+function extractWaveform(filename :: String, cycles :: Int)
   # --------------------------------------------------------------------------
   # Functioning
   # --------------------------------------------------------------------------
@@ -193,8 +193,8 @@ end
 # ----------------------------------------------------------------------------
 # <a name="resampleAndCalculateError"></a>
 function resampleAndCalculateError(v, W :: Array{Array{Float64, 2}, 1},
-                                   passed_cycles :: Int64,
-                                   n_pts         :: Int64)
+                                   passed_cycles :: Int,
+                                   n_pts         :: Int)
   # --------------------------------------------------------------------------
   # Functioning
   # --------------------------------------------------------------------------
@@ -275,7 +275,7 @@ function checkQuantity(last, temp, convergence_tollerance)
   return 9.99
 end
 
-function checkConvergence(edge_list, vessels :: Array{Vessel, 1}, passed_cycles :: Int64)
+function checkConvergence(edge_list, vessels :: Array{Vessel, 1}, passed_cycles :: Int)
     qs = "_A"
     err = zeros(size(edge_list)[1]).+100
     if passed_cycles >= 2
