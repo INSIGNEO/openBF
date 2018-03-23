@@ -1,5 +1,5 @@
 #=
-Copyright 2017 INSIGNEO Institute for in silico Medicine
+Copyright 2018 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
 	W11 += (W12-W11)*(v.c[1] - v.u[1])*dt/v.dx
 	W21 = 2*v.Q[1]/v.A[1] - W11
 
-	v.u[1], v.c[1] = rI2uc(W11, W21)
+	v.u[1], v.c[1] = inverseRiemannInvariants(W11, W21)
 
 	if h.inlet_type == "Q"
 		v.A[1] = v.Q[1]/v.u[1]
@@ -84,6 +84,45 @@ function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
 		v.Q[1] = v.u[1]*v.A[1]
 	end
 
+end
+
+
+"""
+    riemannInvariants(i :: Int, v :: Vessel)
+
+Calculate Riemann invariants at the node `i` from `u` and `c`.
+"""
+function riemannInvariants(i :: Int, v :: Vessel)
+
+  W1 = v.u[i] - 4*v.c[i]
+  W2 = v.u[i] + 4*v.c[i]
+
+  return W1, W2
+end
+
+
+"""
+    inverseRiemannInvariants(W1 :: Float64, W2 :: Float64)
+
+Calculate `u` and `c` given `W1` and `W2`
+"""
+function inverseRiemannInvariants(W1 :: Float64, W2 :: Float64)
+  u = 0.5*(W1 + W2)
+  c = (W2 - W1)*0.125
+
+  return u, c
+end
+
+
+"""
+    areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
+
+Inverse constitutive equation. This is used only when a pressure inlet-time-function is
+imposed (not recommended).
+"""
+function areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
+
+   return A0 * ((P-Pext)/beta + 1)*((P-Pext)/beta + 1)
 end
 
 
@@ -99,7 +138,7 @@ function setOutletBC(dt :: Float64, v :: Vessel)
         v.P[end] = 2*v.P[end-1] - v.P[end-2]
 		outletCompatibility(dt, v)
     elseif v.outlet == "wk3"
-        wk3(dt, v)
+        threeElementWindkessel(dt, v)
 	end
 end
 
@@ -118,19 +157,19 @@ function outletCompatibility(dt :: Float64, v :: Vessel)
 	W2M += (W2M1 - W2M)*(v.u[end] + v.c[end])*dt/v.dx
 	W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
 
-	v.u[end], v.c[end] = rI2uc(W1M, W2M)
+	v.u[end], v.c[end] = inverseRiemannInvariants(W1M, W2M)
 	v.Q[end] = v.A[end]*v.u[end]
 end
 
 
 """
-    function wk3(dt :: Float64, v :: Vessel)
+    function threeElementWindkessel(dt :: Float64, v :: Vessel)
 
 The three element windkessel simulates the perfusion of downstream vessels.
 This 0D model is coupled by `wk3` function to 1D model terminal branches via the
 solution of a Riemann problem at the 0D/1D interface.
 """
-function wk3(dt :: Float64, v :: Vessel)
+function threeElementWindkessel(dt :: Float64, v :: Vessel)
 	Pout = 0.0
 
 	Al = v.A[end]
@@ -193,7 +232,7 @@ function updateGhostCells(v :: Vessel)
 end
 
 
-function updateGhostCells(vessels :: Array{Vessel, 1})
+function updateGhostCells(vessels :: Array{Vessel,1})
 	for vessel in vessels
 		updateGhostCells(vessel)
 	end

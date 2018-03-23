@@ -1,9 +1,0 @@
-inlet_BC_switch: 3
-inlet_type: Q
-number_of_inlets: 2
-Ccfl: 0.9         # Courant number
-cycles: 100
-rho: 1060.0    # density [kg/m3]
-mu: 4.e-3   # dynamic viscosity [Pa⋅s]
-gamma_profile: 9
-initial_pressure: 0.0

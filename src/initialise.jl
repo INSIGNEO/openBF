@@ -153,7 +153,7 @@ function checkVessel(i :: Int, vessel :: Dict{Any,Any})
     end
 
     if ~haskey(vessel, "R0")
-        if ~haskey(vessel, "Rp") || ~haskey(vessel, "Rd")
+        if ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd")
             error("vessel $i is missing lumen radius value(s)")
         end
     end
@@ -230,18 +230,16 @@ system, respectively.
 function buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood)
 
     vessels = [buildVessel(1, network[1], blood)]
-    edges = zeros(Int, length(network), 4)
+    edges = zeros(Int, length(network), 3)
     edges[1,1] = vessels[1].ID
     edges[1,2] = vessels[1].sn
     edges[1,3] = vessels[1].tn
-    edges[1,4] = vessels[1].heart.inlet_number
 
     for i = 2:length(network)
         push!(vessels, buildVessel(i, network[i], blood))
         edges[i,1] = vessels[i].ID
         edges[i,2] = vessels[i].sn
         edges[i,3] = vessels[i].tn
-        edges[i,4] = vessels[i].heart.inlet_number
     end
 
     return vessels, edges

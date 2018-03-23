@@ -15,12 +15,16 @@ limitations under the License.
 =#
 
 
-__precompile__()
+# __precompile__()
 
 module openBF
 
 export Vessel, Heart, Blood
-
+using YAML
+using ArgParse
+using StaticArrays
+using NLsolve
+using LineSearches
 
 """
 Heart type
@@ -172,23 +176,16 @@ type Vessel
   outlet :: String
 end
 
-using YAML
-using ArgParse
-
 include("initialise.jl")
 
 include("boundary_conditions.jl")
+include("solver.jl")
 
 include("junctions.jl")
 include("conjunctions.jl")
 include("bifurcations.jl")
 include("anastomosis.jl")
 
-include("godunov.jl")
-include("solver.jl")
-include("MUSCL.jl")
-
-include("converter.jl")
 include("IOutils.jl")
 include("check_convergence.jl")
 

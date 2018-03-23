@@ -35,6 +35,8 @@ end
 #
 # println("\nTest 5 - Aspirator")
 # @time @test runTest("aspirator")
-include("test_initialise.jl")
-include("test_boundary_conditions.jl")
-include("test_solver.jl")
+@testset "openBF.jl" begin
+    include("test_initialise.jl")
+    include("test_boundary_conditions.jl")
+    include("test_solver.jl")
+end

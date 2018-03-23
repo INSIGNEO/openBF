@@ -47,9 +47,7 @@ verbose && (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); tic())
 counter = 1
 while true
   dt = openBF.calculateDeltaT(vessels, Ccfl)
-
   openBF.solveModel(vessels, edges, blood, dt, current_time)
-
   openBF.updateGhostCells(vessels)
 
   if current_time >= timepoints[counter]
@@ -62,8 +60,13 @@ while true
 
       openBF.closeTempFiles(vessels)
 
-      err = openBF.checkConvergence(edges, vessels, passed_cycles)
-      verbose && @printf(" - Error = %4.2f%%\n", err)
+      if passed_cycles + 1 > 1
+          err = openBF.checkConvergence(edges, vessels, passed_cycles)
+          verbose && @printf(" - Error = %4.2f%%\n", err)
+    else
+        err = 100.0
+        verbose && @printf("\n")
+    end
 
       openBF.transferLastToOut(vessels)
       openBF.openCloseLastFiles(vessels)
@@ -97,9 +100,6 @@ clean = parsed_args["clean"]
 if clean == true
     cleanOuts(vessels)
     cleanTemps(vessels)
-    # rm("$project_name.csv")
-    # rm("$project_name\_inlet.dat")
-    # rm("$project_name\_constants.yml")
 end
 
 cd("..")
