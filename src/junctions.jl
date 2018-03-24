@@ -23,8 +23,8 @@ function joinVessels(b :: Blood, vessels...)
   end
 end
 
-function newtonRaphson(J :: Array{Float64,2}, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
-                       U :: Array, k :: Array, funW, funF)
+function newtonRaphson(J, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
+                       U, k, funW, funF)
     W = funW(U, k)
     F = funF(v1, v2, v3, U, k, W)
 
@@ -38,7 +38,7 @@ function newtonRaphson(J :: Array{Float64,2}, v1 :: Vessel, v2 :: Vessel, v3 :: 
       if any(isnan(dot(F,F)))
         # println(F)
         # @printf "error at bifurcation with vessels %s, %s, and %s \n" v1.label v2.label v3.label
-        error("Newton-Raphson doens't converge!")
+        error("Newton-Raphson doesn't converge!")
       end
 
       u_ok = 0
@@ -54,8 +54,8 @@ function newtonRaphson(J :: Array{Float64,2}, v1 :: Vessel, v2 :: Vessel, v3 :: 
         return U_new
       else
         U = U_new
-        W = calculateWstarBifurcation(U, k)
-        F = calculateFofUBifurcation(v1, v2, v3, U, k, W)
+        W = funW(U, k)
+        F = funF(v1, v2, v3, U, k, W)
       end
     end
 end

@@ -173,7 +173,7 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
   v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
 
   dxDt = v.dx/dt
-  invDxDt = 1./dxDt
+  invDxDt = 1.0/dxDt
 
   for i = 1:v.M+1
     v.flux[1,i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
@@ -205,13 +205,13 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
   v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
 
   for i = 1:v.M+1
-    v.flux[1, i] = 0.5 * ( v.Fr[1, i+1] + v.Fl[1, i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-    v.flux[2, i] = 0.5 * ( v.Fr[2, i+1] + v.Fl[2, i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+    v.flux[1, i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
+    v.flux[2, i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
   end
 
   for i = 2:v.M+1
-    v.A[i-1] = 0.5*(v.A[i-1] + v.uStar[1, i] + invDxDt * (v.flux[1, i-1] - v.flux[1, i]))
-    v.Q[i-1] = 0.5*(v.Q[i-1] + v.uStar[2, i] + invDxDt * (v.flux[2, i-1] - v.flux[2, i]))
+    v.A[i-1] = 0.5*(v.A[i-1] + v.uStar[1,i] + invDxDt*(v.flux[1,i-1] - v.flux[1,i]))
+    v.Q[i-1] = 0.5*(v.Q[i-1] + v.uStar[2,i] + invDxDt*(v.flux[2,i-1] - v.flux[2,i]))
   end
 
   #source term

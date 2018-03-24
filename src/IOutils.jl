@@ -1,5 +1,5 @@
 #=
-Copyright 2017 INSIGNEO Institute for in silico Medicine
+Copyright 2018 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -135,46 +135,6 @@ function openCloseLastFiles(vessels :: Array{Vessel, 1})
 
 end
 
-# *function* __`saveTempData`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `t`            `::Float` current simulation time.
-#
-# `v`            `::Vessel` vessel data structure.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files are written with informations contained in the vessel data
-# structure. For each quantity, 5 nodes are saved: the first, the middle, the
-# last, and two intermediate nodes in between those three.
-# ----------------------------------------------------------------------------
-# <a name="saveTempData"></a>
-# function saveTempData(t :: Float64, v :: Vessel)
-
-# 	write(v.temp_P, t, " ", v.P[1], " ", v.P[v.node2], " ", v.P[v.node3], " ", v.P[v.node4], " ", v.P[end], "\n")
-# 	write(v.temp_Q, t, " ", v.Q[1], " ", v.Q[v.node2], " ", v.Q[v.node3], " ", v.Q[v.node4], " ", v.Q[end], "\n")
-# 	write(v.temp_A, t, " ", v.A[1], " ", v.A[v.node2], " ", v.A[v.node3], " ", v.A[v.node4], " ", v.A[end], "\n")
-# 	write(v.temp_c, t, " ", v.c[1], " ", v.c[v.node2], " ", v.c[v.node3], " ", v.c[v.node4], " ", v.c[end], "\n")
-# 	write(v.temp_u, t, " ", v.u[1], " ", v.u[v.node2], " ", v.u[v.node3], " ", v.u[v.node4], " ", v.u[end], "\n")
-
-# 	# write(v.temp_Q, join((t, v.Q[1], v.Q[v.node2], v.Q[v.node3],
-# 	# 												 v.Q[v.node4], v.Q[end]), " "), "\n")
-
-# 	# write(v.temp_A, join((t, v.A[1], v.A[v.node2], v.A[v.node3],
-# 	# 												 v.A[v.node4], v.A[end]), " "), "\n")
-
-# 	# write(v.temp_c, join((t, v.c[1], v.c[v.node2], v.c[v.node3],
-# 	# 												 v.c[v.node4], v.c[end]), " "), "\n")
-
-# 	# write(v.temp_u, join((t, v.u[1], v.u[v.node2], v.u[v.node3],
-# 	# 												 v.u[v.node4], v.u[end]), " "), "\n")
-
-# end
-
 function saveTempData(t :: Float64, v :: Vessel)
 
 	println(v.temp_P, t, " ", v.P[1], " ", v.P[v.node2], " ", v.P[v.node3], " ", v.P[v.node4], " ", v.P[end])
@@ -247,12 +207,6 @@ function transferTempToOut(v :: Vessel)
 		close(out_file)
 		close(temp_file)
 	end
-	#
-	# run(`sh appender.sh $tempP $outP`)
-	# run(`sh appender.sh $tempQ $outQ`)
-	# run(`sh appender.sh $tempA $outA`)
-	# run(`sh appender.sh $tempc $outc`)
-	# run(`sh appender.sh $tempu $outu`)
 
 end
 
@@ -279,12 +233,6 @@ function transferLastToOut(v :: Vessel)
 		close(out_file)
 		close(last_file)
 	end
-
-	# run(`sh appender.sh $lastP $outP`)
-	# run(`sh appender.sh $lastQ $outQ`)
-	# run(`sh appender.sh $lastA $outA`)
-	# run(`sh appender.sh $lastc $outc`)
-	# run(`sh appender.sh $lastu $outu`)
 
 end
 
@@ -335,12 +283,6 @@ function transferTempToLast(v :: Vessel)
 	lastu  = v.last_u_name
 	lasts = [lastP, lastQ, lastA, lastc, lastu]
 
-	# run(`sh appender.sh $tempP $lastP`)
-	# run(`sh appender.sh $tempQ $lastQ`)
-	# run(`sh appender.sh $tempA $lastA`)
-	# run(`sh appender.sh $tempc $lastc`)
-	# run(`sh appender.sh $tempu $lastu`)
-
 	for (a, b) in zip(temps, lasts)
 		temp_file = open(a, "r")
 		last_file = open(b, "w")
@@ -383,11 +325,9 @@ function cleanTemps(v :: Vessel)
 end
 
 function cleanOuts(vessels :: Array{Vessel, 1})
-
 	for v in vessels
 		cleanOuts(v)
 	end
-
 end
 
 function cleanOuts(v :: Vessel)

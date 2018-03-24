@@ -522,8 +522,8 @@ end
 """
     computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
-Return `2*(gamma_profile + 2)*pi*blood.mu` where `gamma_profile` is either specified in
-the vessel definition or assumed equal to `9` (plug-flow).
+Return `2*(gamma_profile + 2)*pi*blood.mu` where `gamma_profile` is either
+specified in the vessel definition or assumed equal to `9` (plug-flow).
 """
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
     if haskey(vessel_data, "gamma_profile")

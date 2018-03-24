@@ -23,8 +23,8 @@ export Vessel, Heart, Blood
 using YAML
 using ArgParse
 using StaticArrays
-using NLsolve
-using LineSearches
+# using NLsolve
+# using LineSearches
 
 """
 Heart type

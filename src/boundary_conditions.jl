@@ -72,7 +72,7 @@ function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
 	W12, W22 = riemannInvariants(2, v)
 
 	W11 += (W12-W11)*(v.c[1] - v.u[1])*dt/v.dx
-	W21 = 2*v.Q[1]/v.A[1] - W11
+	W21 = 2.0*v.Q[1]/v.A[1] - W11
 
 	v.u[1], v.c[1] = inverseRiemannInvariants(W11, W21)
 
@@ -94,8 +94,8 @@ Calculate Riemann invariants at the node `i` from `u` and `c`.
 """
 function riemannInvariants(i :: Int, v :: Vessel)
 
-  W1 = v.u[i] - 4*v.c[i]
-  W2 = v.u[i] + 4*v.c[i]
+  W1 = v.u[i] - 4.0*v.c[i]
+  W2 = v.u[i] + 4.0*v.c[i]
 
   return W1, W2
 end
@@ -122,7 +122,7 @@ imposed (not recommended).
 """
 function areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
 
-   return A0 * ((P-Pext)/beta + 1)*((P-Pext)/beta + 1)
+   return A0 * ((P-Pext)/beta + 1.0)*((P-Pext)/beta + 1.0)
 end
 
 
@@ -135,7 +135,7 @@ three-element windkessel is coupled.
 """
 function setOutletBC(dt :: Float64, v :: Vessel)
     if v.outlet == "reflection"
-        v.P[end] = 2*v.P[end-1] - v.P[end-2]
+        v.P[end] = 2.0*v.P[end-1] - v.P[end-2]
 		outletCompatibility(dt, v)
     elseif v.outlet == "wk3"
         threeElementWindkessel(dt, v)
