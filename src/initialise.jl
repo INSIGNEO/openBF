@@ -262,6 +262,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
     Rp, Rd = computeRadii(vessel_data)
     Pext = computePext(vessel_data)
     M, dx, invDx, halfDx = meshVessel(vessel_data, L)
+    h0 = computeThickness(vessel_data, M)
     outlet, Rt, R1, R2, Cc = addOutlet(vessel_data)
     viscT = computeViscousTerm(vessel_data, blood)
     inlet, heart = buildHeart(vessel_data)
@@ -273,7 +274,6 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
     c = zeros(Float64, M)
     A0 = zeros(Float64, M)
     R0 = zeros(Float64, M)
-    h0 = zeros(Float64, M)
     beta = zeros(Float64, M)
     vA = zeros(Float64, M+2)
     vQ = zeros(Float64, M+2)
@@ -297,7 +297,6 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
     gamma_ghost = zeros(Float64, M+2)
     half_beta_dA0dx = zeros(Float64, M)
 
-    # useful constants
     s_pi = sqrt(pi)
     s_pi_E_over_sigma_squared = s_pi*E/0.75
     one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
@@ -309,7 +308,9 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
 
     for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
-      h0[i] = R0[i]*(ah*exp(bh*R0[i]) + ch*exp(dh*R0[i]))
+      if h0[i] == 0.0;
+          h0[i] = R0[i]*(ah*exp(bh*R0[i]) + ch*exp(dh*R0[i]))
+      end
       A0[i] = pi*R0[i]*R0[i]
       A[i] = A0[i]
       inv_A0[i] = 1.0/A0[i]
@@ -479,6 +480,21 @@ function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
     halfDx = 0.5*dx
 
     return M, dx, invDx, halfDx
+end
+
+
+"""
+    computeThickness(vessel :: Dict{Any,Any}, M :: Int)
+
+If vessel thickness is not specified in the `.yml` file, return a `zeroes` array to be
+filed with radius dependent values. Otherwise, return an array with the specified `h0`.
+"""
+function computeThickness(vessel :: Dict{Any,Any}, M :: Int)
+    if ~haskey(vessel, "h0")
+        return zeros(Float64, M)
+    else
+        return zeros(Float64, M) + vessel["h0"]
+    end
 end
 
 

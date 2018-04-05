@@ -48,8 +48,14 @@ using openBF
     @test dx == 0.001
     @test isapprox(invDx, 1.0/0.001, atol=1e-3)
     @test halfDx == 0.0005
+    h0 = openBF.computeThickness(data["network"][1], M)
+    @test isequal(h0, zeros(Float64, M))
+
     M, dx, invDx, halfDx = openBF.meshVessel(data["network"][2], data["network"][2]["L"])
     @test M == 86
+    h0 = openBF.computeThickness(data["network"][2], M)
+    @test ~isequal(h0, zeros(Float64, M))
+
     M, dx, invDx, halfDx = openBF.meshVessel(data["network"][3], data["network"][3]["L"])
     @test M == 1000
 

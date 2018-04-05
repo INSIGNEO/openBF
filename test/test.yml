@@ -37,6 +37,7 @@ network:
     gamma profile: 2
     outlet: reflection
     Rt: 0.5
+    h0: 1e-3
 
   - label: v3
     sn: 2
