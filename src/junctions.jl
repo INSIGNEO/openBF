@@ -15,47 +15,51 @@ limitations under the License.
 =#
 
 function joinVessels(b :: Blood, vessels...)
-  if length(vessels) == 2
-    solveConjunction(b, vessels[1], vessels[2])
+    if length(vessels) == 2
+        solveConjunction(b, vessels[1], vessels[2])
 
-  elseif length(vessels) == 3
-    solveBifurcation(vessels[1], vessels[2], vessels[3])
-  end
+    elseif length(vessels) == 3
+        solveBifurcation(vessels[1], vessels[2], vessels[3])
+    end
 end
 
-function newtonRaphson(J, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel,
-                       U, k, funW, funF)
+
+function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
     W = funW(U, k)
-    F = funF(v1, v2, v3, U, k, W)
+    F = funF(vessels, U, k, W)
 
     nr_toll_U = 1e-5
     nr_toll_F = 1e-5
 
     while true
-      dU = J\(-F)
-      U_new = U + dU
+        dU = J\(-F)
+        U_new = U + dU
 
-      if any(isnan(dot(F,F)))
-        # println(F)
-        # @printf "error at bifurcation with vessels %s, %s, and %s \n" v1.label v2.label v3.label
-        error("Newton-Raphson doesn't converge!")
-      end
-
-      u_ok = 0
-      f_ok = 0
-      for i in 1:length(dU)
-        if abs(dU[i]) <= nr_toll_U || abs(F[i]) <= nr_toll_F
-          u_ok += 1
-          f_ok += 1
+        if any(isnan(dot(F,F)))
+            e = "("
+            for i = 1:length(vessels)
+                e *= vessels[i].label
+                e *= ", "
+            end
+            e = e[1:end-2]*")"
+            error("Newton-Raphson doesn't converge at $e junction!")
         end
-      end
 
-      if u_ok == length(dU) || f_ok == length(dU)
-        return U_new
-      else
-        U = U_new
-        W = funW(U, k)
-        F = funF(v1, v2, v3, U, k, W)
-      end
+        u_ok = 0
+        f_ok = 0
+        for i in 1:length(dU)
+            if abs(dU[i]) <= nr_toll_U || abs(F[i]) <= nr_toll_F
+                u_ok += 1
+                f_ok += 1
+            end
+        end
+
+        if u_ok == length(dU) || f_ok == length(dU)
+            return U_new
+        else
+            U = U_new
+            W = funW(U, k)
+            F = funF(vessels, U, k, W)
+        end
     end
 end

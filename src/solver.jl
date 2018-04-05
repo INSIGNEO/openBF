@@ -22,16 +22,12 @@ Compute pressure at a specific node by means of the linear-elastic constitutive
 equation.
 """
 function pressure(A :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
-
   return Pext + beta*(sqrt(A/A0) - 1.0)
-
 end
 
 # version with pre-computed `sqrt(A/A0)`
 function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
-
   return Pext + beta*(s_A_over_A0 - 1.0)
-
 end
 
 
@@ -41,9 +37,7 @@ end
 Compute pulse wave velocity at the given node.
 """
 function waveSpeed(A :: Float64, gamma :: Float64)
-
   return sqrt(3*gamma*sqrt(A)*0.5)
-
 end
 
 
@@ -77,7 +71,6 @@ Run the solver on each vessel one-by-one as listed in the .yml file.
 """
 function solveModel(vessels :: Array{Vessel,1}, edges :: Array{Int,2}, blood :: Blood,
                     dt :: Float64, current_time :: Float64)
-
     for j in 1:size(edges)[1]
         i = edges[j,1]
         v = vessels[i]
@@ -248,10 +241,8 @@ end
 function maxMod(a :: Float64, b :: Float64)
   if a > b
     return a
-
   else
     return b
-
   end
 end
 
@@ -277,7 +268,6 @@ end
     superBee(v :: Vessel, dU :: Array{Float64,2}, slopes :: Array{Float64,1})
 """
 function superBee(v :: Vessel, dU :: Array{Float64,2}, slopes :: Array{Float64,1})
-
   for i in 1:v.M+2
     s1 = minMod(dU[1,i], 2*dU[2,i])
     s2 = minMod(2*dU[1,i], dU[2,i])

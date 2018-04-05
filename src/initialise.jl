@@ -228,7 +228,6 @@ Populate `vessels` and `edges` lists containing mechanical properties and topolo
 system, respectively.
 """
 function buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood)
-
     vessels = [buildVessel(1, network[1], blood)]
     edges = zeros(Int, length(network), 3)
     edges[1,1] = vessels[1].ID
@@ -294,6 +293,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
     slopesQ = zeros(Float64, M+2)
     flux  = zeros(Float64, 2, M+2)
     uStar = zeros(Float64, 2, M+2)
+    s_15_gamma = zeros(Float64, M)
     gamma_ghost = zeros(Float64, M+2)
     half_beta_dA0dx = zeros(Float64, M)
 
@@ -319,6 +319,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
       dTaudx[i] = s_pi*E*radius_slope*1.3*(h0[i]/R0[i] + R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
       beta[i] = s_inv_A0[i]*h0[i]*s_pi_E_over_sigma_squared
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
+      s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
       half_beta_dA0dx[i] = beta[i]*0.5*dA0dx[i]
       P[i] = pressure(A[i], A0[i], beta[i], Pext)
@@ -402,7 +403,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood)
 
     return Vessel(vessel_name, ID, sn, tn, inlet, heart,
                   M, dx, invDx, halfDx,
-                  beta, gamma, gamma_ghost, half_beta_dA0dx,
+                  beta, gamma, s_15_gamma, gamma_ghost, half_beta_dA0dx,
                   A0, inv_A0, s_inv_A0, dA0dx, dTaudx, Pext,
                   viscT,
                   A, Q, u, c, P,
@@ -433,7 +434,6 @@ If only a constant lumen radius is defined, return the same value for proximal a
 distal variables, `Rp` and `Rd`, respectively.
 """
 function computeRadii(vessel :: Dict{Any,Any})
-
     if ~haskey(vessel, "R0")
         Rp = vessel["Rp"]
         Rd = vessel["Rd"]
@@ -467,7 +467,6 @@ Pre-compute `dx`, `1/dx`, and `0.5*dx` for the current vessel. The `dx` is compu
 `L/M` where `M` is the maximum value between `5` (the minimum needed by the solver), the value defined in the `.yml`, and `ceil(L*1e3)` (which would make `dx=1`mm).
 """
 function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
-
     if ~haskey(vessel, "M")
         M = maximum([5, convert(Int, ceil(L*1e3))])
     else

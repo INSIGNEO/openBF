@@ -71,6 +71,7 @@ type Vessel
   #Physical constants
   beta            :: Array{Float64,1}
   gamma           :: Array{Float64,1}
+  s_15_gamma      :: Array{Float64,1}
   gamma_ghost     :: Array{Float64,1}
   half_beta_dA0dx :: Array{Float64,1}
   A0              :: Array{Float64,1}

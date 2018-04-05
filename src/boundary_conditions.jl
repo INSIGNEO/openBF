@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+
 """
     setInletBC(t :: Float64, dt :: Float64, v :: Vessel,  h  :: Heart)
 
@@ -38,7 +39,6 @@ end
 Inlet flow waveform is stored in `h` data structure inside `input_data` matrix. `input_data` has two columns and as many rows as time steps.
 """
 function inputFromData(t :: Float64, h :: Heart)
-
 	idt = h.input_data[:,1]
 	idq = h.input_data[:,2]
 
@@ -67,7 +67,6 @@ end
 Compute compatibility relations at inlet node.
 """
 function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
-
 	W11, W21 = riemannInvariants(1, v)
 	W12, W22 = riemannInvariants(2, v)
 
@@ -93,7 +92,6 @@ end
 Calculate Riemann invariants at the node `i` from `u` and `c`.
 """
 function riemannInvariants(i :: Int, v :: Vessel)
-
   W1 = v.u[i] - 4.0*v.c[i]
   W2 = v.u[i] + 4.0*v.c[i]
 
@@ -121,7 +119,6 @@ Inverse constitutive equation. This is used only when a pressure inlet-time-func
 imposed (not recommended).
 """
 function areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
-
    return A0 * ((P-Pext)/beta + 1.0)*((P-Pext)/beta + 1.0)
 end
 
@@ -150,7 +147,6 @@ Outlet compatibility relations compute all the quantities not directly assigned 
 the outlet boundary condition.
 """
 function outletCompatibility(dt :: Float64, v :: Vessel)
-
 	W1M1, W2M1 = riemannInvariants(v.M-1, v)
 	W1M, W2M   = riemannInvariants(v.M, v)
 
@@ -204,7 +200,6 @@ end
 Solve windkessel equation by means of Newton method.
 """
 function newtonSolver(f, df, x0 :: Float64)
-
 	xn = x0 - f(x0)/df(x0)
 	if abs(xn-x0)<= 1e-5
 		return xn
