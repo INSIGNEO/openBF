@@ -24,7 +24,7 @@ network:
     E: 500.0e3 # Young's modulus (Pa)
 
     inlet: Q
-    inlet file: /home/ale/postdoc/openBF/test/single-artery/inlet.dat
+    inlet file: /home/ale/postdoc/openBF/test/single-artery/single-artery_inlet.dat
     inlet number: 1
 
     outlet: wk2

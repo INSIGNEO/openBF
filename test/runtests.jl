@@ -6,6 +6,7 @@ function runTest(test_folder)
     cd(test_folder)
     try
         openBF.runSimulation("$test_folder.yml", verbose=true, out_files=false)
+        rm("$test_folder\_results", recursive=true)
         cd("..")
     return true
 
@@ -16,6 +17,7 @@ function runTest(test_folder)
 end
 
 @testset "openBF.jl" begin
+    #unit tests
     println("Test initialise.jl functions")
     include("test_initialise.jl")
 
@@ -25,14 +27,9 @@ end
     println("Test solver.jl functions")
     include("test_solver.jl")
 
-    @time @test runTest("single-artery")
-    @time @test runTest("conjunction")
-    @time @test runTest("bifurcation")
-    @time @test runTest("aspirator")
-
-    # println("\nTest External pressure")
-    # @time @test runTest("external-pressure")
-    #
-    # println("\nTest Anastomosis")
-    # @time @test runTest("anastomosis")
+    #integration tests
+    @test runTest("single-artery")
+    @test runTest("conjunction")
+    @test runTest("bifurcation")
+    @test runTest("aspirator")
 end
