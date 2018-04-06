@@ -20,6 +20,6 @@ parsed_args = openBF.parseCommandline()
 
 input_filename = parsed_args["input_filename"]
 verbose = parsed_args["verbose"]
-clean = parsed_args["clean"]
+out_files = parsed_args["out_files"]
 
-openBF.runSimulation(input_filename, verbose=verbose, clean=clean)
+openBF.runSimulation(input_filename, verbose=verbose, out_files=out_files)

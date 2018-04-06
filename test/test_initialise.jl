@@ -12,7 +12,7 @@ using openBF
 
     @test_nowarn openBF.checkSections(data)
     @test_nowarn openBF.checkSection(data, "blood", ["mu", "rho"])
-    @test_nowarn openBF.checkSection(data, "solver", ["Ccfl", "cycles", "jump", "convergence tollerance"])
+    @test_nowarn openBF.checkSection(data, "solver", ["Ccfl", "cycles", "convergence tollerance"])
 
     delete!(data, "project name")
     @test_throws ErrorException openBF.checkSections(data)
@@ -101,10 +101,10 @@ using openBF
     @test isdir("test_results")
     cd("test_results")
 
-    vessel = openBF.buildVessel(1, data["network"][1], blood)
+    vessel = openBF.buildVessel(1, data["network"][1], blood, 100)
     @test typeof(vessel) == Vessel
 
-    vessels, edges = openBF.buildArterialNetwork(data["network"], blood)
+    vessels, edges = openBF.buildArterialNetwork(data["network"], blood, 100)
     @test length(vessels) == 3
     @test length(edges) == 9
 

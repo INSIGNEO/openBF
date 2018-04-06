@@ -90,6 +90,18 @@ type Vessel
     c :: Array{Float64,1}
     P :: Array{Float64,1}
 
+    A_t :: Array{Float64,2}
+    Q_t :: Array{Float64,2}
+    u_t :: Array{Float64,2}
+    c_t :: Array{Float64,2}
+    P_t :: Array{Float64,2}
+
+    A_l :: Array{Float64,2}
+    Q_l :: Array{Float64,2}
+    u_l :: Array{Float64,2}
+    c_l :: Array{Float64,2}
+    P_l :: Array{Float64,2}
+
     #Riemann invariants
     W1M0 :: Float64
     W2M0 :: Float64
@@ -106,19 +118,19 @@ type Vessel
     UM2Q :: Float64
 
     #Temporary files name
-    temp_P_name :: String
-    temp_Q_name :: String
-    temp_A_name :: String
-    temp_c_name :: String
-    temp_u_name :: String
+    # temp_P_name :: String
+    # temp_Q_name :: String
+    # temp_A_name :: String
+    # temp_c_name :: String
+    # temp_u_name :: String
 
+    #Result file names
     last_P_name :: String
     last_Q_name :: String
     last_A_name :: String
     last_c_name :: String
     last_u_name :: String
 
-    #Output files name
     out_P_name :: String
     out_Q_name :: String
     out_A_name :: String
@@ -126,17 +138,17 @@ type Vessel
     out_u_name :: String
 
     #Temporary files IOstreams
-    temp_P :: IOStream
-    temp_Q :: IOStream
-    temp_A :: IOStream
-    temp_c :: IOStream
-    temp_u :: IOStream
-
-    last_P :: IOStream
-    last_Q :: IOStream
-    last_A :: IOStream
-    last_c :: IOStream
-    last_u :: IOStream
+    # temp_P :: IOStream
+    # temp_Q :: IOStream
+    # temp_A :: IOStream
+    # temp_c :: IOStream
+    # temp_u :: IOStream
+    #
+    # last_P :: IOStream
+    # last_Q :: IOStream
+    # last_A :: IOStream
+    # last_c :: IOStream
+    # last_u :: IOStream
 
     #Saving locations
     node2 :: Int

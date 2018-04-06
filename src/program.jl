@@ -21,7 +21,7 @@ limitations under the License.
 Main loop wrapper to start a simulation.
 """
 function runSimulation(input_filename :: String;
-                       verbose :: Bool = true, clean :: Bool = false)
+                       verbose :: Bool = true, out_files :: Bool = true)
 
     data = loadSimulationFiles(input_filename)
     makeResultsFolder(data)
@@ -29,11 +29,11 @@ function runSimulation(input_filename :: String;
 
     verbose && println("Build arterial network \n")
 
-    vessels, edges = buildArterialNetwork(data["network"], blood)
+    jump = data["solver"]["jump"]
+    vessels, edges = buildArterialNetwork(data["network"], blood, jump)
     Ccfl = data["solver"]["Ccfl"]
     heart = vessels[1].heart
     total_time = data["solver"]["cycles"]*heart.cardiac_T
-    jump = data["solver"]["jump"]
     timepoints = linspace(0, heart.cardiac_T, jump)
 
     verbose && println("Start simulation \n")
@@ -50,14 +50,14 @@ function runSimulation(input_filename :: String;
         updateGhostCells(vessels)
 
         if current_time >= timepoints[counter]
-            saveTempData(current_time, vessels)
+            saveTempData(current_time, vessels, counter)
             counter += 1
         end
 
         if (current_time - heart.cardiac_T*passed_cycles) >= heart.cardiac_T &&
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
-            closeTempFiles(vessels)
+            # closeTempFiles(vessels)
 
             if passed_cycles + 1 > 1
                 err = checkConvergence(edges, vessels)
@@ -67,10 +67,11 @@ function runSimulation(input_filename :: String;
                 verbose && @printf("\n")
             end
 
-            transferLastToOut(vessels)
-            openCloseLastFiles(vessels)
+
+            # openCloseLastFiles(vessels)
             transferTempToLast(vessels)
-            openTempFiles(vessels)
+
+            out_files && transferLastToOut(vessels)
 
             if err <= data["solver"]["convergence tollerance"]
                 break
@@ -91,13 +92,14 @@ function runSimulation(input_filename :: String;
     end
     verbose && (@printf "\n"; toc())
 
-    closeTempFiles(vessels)
-    transferTempToOut(vessels)
+    # closeTempFiles(vessels)
+    # transferTempToOut(vessels)
+    writeResults(vessels)
 
-    if clean == true
-        cleanOuts(vessels)
-        cleanTemps(vessels)
-    end
+    # if clean == true
+    #     cleanOuts(vessels)
+    #     # cleanTemps(vessels)
+    # end
 
     cd("..")
 end
