@@ -14,6 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+
+"""
+    joinVessels(b :: Blood, vessels...)
+
+Call either `solveConjunction` or `solveBifurcation` depending on the number of given
+vessels.
+"""
 function joinVessels(b :: Blood, vessels...)
     if length(vessels) == 2
         solveConjunction(b, vessels[1], vessels[2])
@@ -24,6 +31,11 @@ function joinVessels(b :: Blood, vessels...)
 end
 
 
+"""
+    newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
+
+Solve the non-linear junction system by means of Newton-Raphson method.
+"""
 function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
     W = funW(U, k)
     F = funF(vessels, U, k, W)

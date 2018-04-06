@@ -26,14 +26,15 @@ using StaticArrays
 # using NLsolve
 # using LineSearches
 
+
 """
 Heart type
 """
 type Heart
-  inlet_type :: String
-  cardiac_T :: Float64
-  input_data :: Array{Float64,2}
-  inlet_number :: Int
+    inlet_type :: String
+    cardiac_T :: Float64
+    input_data :: Array{Float64,2}
+    inlet_number :: Int
 end
 
 
@@ -41,9 +42,9 @@ end
 Blood type
 """
 type Blood
-  mu  :: Float64
-  rho :: Float64
-  rho_inv :: Float64
+    mu  :: Float64
+    rho :: Float64
+    rho_inv :: Float64
 end
 
 
@@ -51,130 +52,130 @@ end
 Vessel type
 """
 type Vessel
-  label :: String
+    label :: String
 
-  #Topology
-  ID :: Int
-  sn :: Int
-  tn :: Int
+    #Topology
+    ID :: Int
+    sn :: Int
+    tn :: Int
 
-  #Inlet
-  inlet :: Bool
-  heart :: Heart
+    #Inlet
+    inlet :: Bool
+    heart :: Heart
 
-  #Numerical constants
-  M       :: Int
-  dx      :: Float64
-  invDx   :: Float64
-  halfDx  :: Float64
+    #Numerical constants
+    M       :: Int
+    dx      :: Float64
+    invDx   :: Float64
+    halfDx  :: Float64
 
-  #Physical constants
-  beta            :: Array{Float64,1}
-  gamma           :: Array{Float64,1}
-  s_15_gamma      :: Array{Float64,1}
-  gamma_ghost     :: Array{Float64,1}
-  half_beta_dA0dx :: Array{Float64,1}
-  A0              :: Array{Float64,1}
-  inv_A0          :: Array{Float64,1}
-  s_inv_A0        :: Array{Float64,1}
-  dA0dx           :: Array{Float64,1}
-  dTaudx          :: Array{Float64,1}
-  Pext            :: Float64
-  viscT           :: Float64
+    #Physical constants
+    beta            :: Array{Float64,1}
+    gamma           :: Array{Float64,1}
+    s_15_gamma      :: Array{Float64,1}
+    gamma_ghost     :: Array{Float64,1}
+    half_beta_dA0dx :: Array{Float64,1}
+    A0              :: Array{Float64,1}
+    inv_A0          :: Array{Float64,1}
+    s_inv_A0        :: Array{Float64,1}
+    dA0dx           :: Array{Float64,1}
+    dTaudx          :: Array{Float64,1}
+    Pext            :: Float64
+    viscT           :: Float64
 
-  #Iterative solution
-  A :: Array{Float64,1}
-  Q :: Array{Float64,1}
-  u :: Array{Float64,1}
-  c :: Array{Float64,1}
-  P :: Array{Float64,1}
+    #Iterative solution
+    A :: Array{Float64,1}
+    Q :: Array{Float64,1}
+    u :: Array{Float64,1}
+    c :: Array{Float64,1}
+    P :: Array{Float64,1}
 
-  #Riemann invariants
-  W1M0 :: Float64
-  W2M0 :: Float64
+    #Riemann invariants
+    W1M0 :: Float64
+    W2M0 :: Float64
 
-  #Ghost cells
-  U00A :: Float64
-  U00Q :: Float64
-  U01A :: Float64
-  U01Q :: Float64
+    #Ghost cells
+    U00A :: Float64
+    U00Q :: Float64
+    U01A :: Float64
+    U01Q :: Float64
 
-  UM1A :: Float64
-  UM1Q :: Float64
-  UM2A :: Float64
-  UM2Q :: Float64
+    UM1A :: Float64
+    UM1Q :: Float64
+    UM2A :: Float64
+    UM2Q :: Float64
 
-  #Temporary files name
-  temp_P_name :: String
-  temp_Q_name :: String
-  temp_A_name :: String
-  temp_c_name :: String
-  temp_u_name :: String
+    #Temporary files name
+    temp_P_name :: String
+    temp_Q_name :: String
+    temp_A_name :: String
+    temp_c_name :: String
+    temp_u_name :: String
 
-  last_P_name :: String
-  last_Q_name :: String
-  last_A_name :: String
-  last_c_name :: String
-  last_u_name :: String
+    last_P_name :: String
+    last_Q_name :: String
+    last_A_name :: String
+    last_c_name :: String
+    last_u_name :: String
 
-  #Output files name
-  out_P_name :: String
-  out_Q_name :: String
-  out_A_name :: String
-  out_c_name :: String
-  out_u_name :: String
+    #Output files name
+    out_P_name :: String
+    out_Q_name :: String
+    out_A_name :: String
+    out_c_name :: String
+    out_u_name :: String
 
-  #Temporary files IOstreams
-  temp_P :: IOStream
-  temp_Q :: IOStream
-  temp_A :: IOStream
-  temp_c :: IOStream
-  temp_u :: IOStream
+    #Temporary files IOstreams
+    temp_P :: IOStream
+    temp_Q :: IOStream
+    temp_A :: IOStream
+    temp_c :: IOStream
+    temp_u :: IOStream
 
-  last_P :: IOStream
-  last_Q :: IOStream
-  last_A :: IOStream
-  last_c :: IOStream
-  last_u :: IOStream
+    last_P :: IOStream
+    last_Q :: IOStream
+    last_A :: IOStream
+    last_c :: IOStream
+    last_u :: IOStream
 
-  #Saving locations
-  node2 :: Int
-  node3 :: Int
-  node4 :: Int
+    #Saving locations
+    node2 :: Int
+    node3 :: Int
+    node4 :: Int
 
-  #Peripheral boundary condition
-  Rt :: Float64
-  R1 :: Float64
-  R2 :: Float64
-  Cc :: Float64
-  Pc :: Float64
+    #Peripheral boundary condition
+    Rt :: Float64
+    R1 :: Float64
+    R2 :: Float64
+    Cc :: Float64
+    Pc :: Float64
 
-  #Slope
-  slope :: Array{Float64,1}
+    #Slope
+    slope :: Array{Float64,1}
 
-  #MUSCLArrays
-  flux :: Array{Float64,2}
-  uStar :: Array{Float64,2}
+    #MUSCLArrays
+    flux :: Array{Float64,2}
+    uStar :: Array{Float64,2}
 
-  vA :: Array{Float64,1}
-  vQ :: Array{Float64,1}
+    vA :: Array{Float64,1}
+    vQ :: Array{Float64,1}
 
-  dU :: Array{Float64,2}
+    dU :: Array{Float64,2}
 
-  slopesA :: Array{Float64,1}
-  slopesQ :: Array{Float64,1}
+    slopesA :: Array{Float64,1}
+    slopesQ :: Array{Float64,1}
 
-  Al :: Array{Float64,1}
-  Ar :: Array{Float64,1}
+    Al :: Array{Float64,1}
+    Ar :: Array{Float64,1}
 
-  Ql :: Array{Float64,1}
-  Qr :: Array{Float64,1}
+    Ql :: Array{Float64,1}
+    Qr :: Array{Float64,1}
 
-  Fl :: Array{Float64,2}
-  Fr :: Array{Float64,2}
+    Fl :: Array{Float64,2}
+    Fr :: Array{Float64,2}
 
-  #Outlet type
-  outlet :: String
+    #Outlet type
+    outlet :: String
 end
 
 include("initialise.jl")
@@ -189,5 +190,7 @@ include("anastomosis.jl")
 
 include("IOutils.jl")
 include("check_convergence.jl")
+
+include("program.jl")
 
 end

@@ -15,6 +15,11 @@
 # =#
 
 
+"""
+    solveBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
+
+Solve the non-linear system at the bifurcation node between three vessels.
+"""
 function solveBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
     U0 = @SArray [v1.u[end],
        v2.u[1],
@@ -35,6 +40,11 @@ function solveBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
 end
 
 
+"""
+    calculateJacobianBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, U, k)
+
+Return the Jacobian for bifurcation equations.
+"""
 function calculateJacobianBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, U, k)
     U43 = U[4]*U[4]*U[4]
     U53 = U[5]*U[5]*U[5]
@@ -66,6 +76,11 @@ function calculateJacobianBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, 
 end
 
 
+"""
+    calculateWstarBifurcation(U, k)
+
+Return the Riemann invariants at the bifurcation node.
+"""
 function calculateWstarBifurcation(U, k)
     W1 = U[1] + 4.0*k[1]*U[4]
     W2 = U[2] - 4.0*k[2]*U[5]
@@ -75,6 +90,9 @@ function calculateWstarBifurcation(U, k)
 end
 
 
+"""
+    calculateFBifurcation(vessels :: Array{Vessel,1}, U, k, W)
+"""
 function calculateFBifurcation(vessels :: Array{Vessel,1}, U, k, W)
     v1 = vessels[1]
     v2 = vessels[2]
@@ -102,6 +120,11 @@ function calculateFBifurcation(vessels :: Array{Vessel,1}, U, k, W)
 end
 
 
+"""
+    updateBifurcation(U, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
+
+Update the values at the bifurcation node for the three vessels.
+"""
 function updateBifurcation(U, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
     v1.u[end] = U[1]
     v2.u[1] = U[2]

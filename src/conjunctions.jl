@@ -15,6 +15,11 @@ limitations under the License.
 =#
 
 
+"""
+    solveConjunction(b :: Blood, v1 :: Vessel, v2 :: Vessel)
+
+Solve the non-linear system at the conjunction node between two vessels.
+"""
 function solveConjunction(b :: Blood, v1 :: Vessel, v2 :: Vessel)
     U0 = @SArray [v1.u[end],
          v2.u[1],
@@ -33,6 +38,11 @@ function solveConjunction(b :: Blood, v1 :: Vessel, v2 :: Vessel)
 end
 
 
+"""
+    calculateJacobianConjunction(v1 :: Vessel, v2 :: Vessel, U, k)
+
+Return the Jacobian for conjunction equations.
+"""
 function calculateJacobianConjunction(v1 :: Vessel, v2 :: Vessel, U, k)
     U33 = U[3]*U[3]*U[3]
     U43 = U[4]*U[4]*U[4]
@@ -57,6 +67,11 @@ function calculateJacobianConjunction(v1 :: Vessel, v2 :: Vessel, U, k)
 end
 
 
+"""
+    calculateWstarConjunction(U, k)
+
+Return the Riemann invariants at the conjunction node.
+"""
 function calculateWstarConjunction(U, k)
     W1 = U[1] + 4.0*k[1]*U[3]
     W2 = U[2] - 4.0*k[2]*U[4]
@@ -65,6 +80,9 @@ function calculateWstarConjunction(U, k)
 end
 
 
+"""
+    calculateFConjunction(vessels :: Array{Vessel,1}, U, k, W)
+"""
 function calculateFConjunction(vessels :: Array{Vessel,1}, U, k, W)
     v1 = vessels[1]
     v2 = vessels[2]
@@ -85,6 +103,11 @@ function calculateFConjunction(vessels :: Array{Vessel,1}, U, k, W)
 end
 
 
+"""
+    updateConjunction(U, v1 :: Vessel, v2 :: Vessel)
+
+Update the values at the conjunction node for the two vessels.
+"""
 function updateConjunction(U, v1 :: Vessel, v2 :: Vessel)
     v1.u[end] = U[1]
     v2.u[1] = U[2]

@@ -14,105 +14,58 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-# These functions handle I/O for result files.
 
-# *function* __`openTempFiles`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `v`            `::Vessel` vessel data structure.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files for the current vessel are `open`ed in the current directory
-# with `w`riting permits.
-# ----------------------------------------------------------------------------
-# <a name="openTempFiles"></a>
+"""
+	openTempFiles(vessels :: Array{Vessel, 1})
+"""
+function openTempFiles(vessels :: Array{Vessel, 1})
+	for v in vessels
+		openTempFiles(v)
+	end
+end
+
+
 function openTempFiles(v :: Vessel)
-
 	v.temp_P = open(v.temp_P_name, "w")
 	v.temp_Q = open(v.temp_Q_name, "w")
 	v.temp_A = open(v.temp_A_name, "w")
 	v.temp_c = open(v.temp_c_name, "w")
 	v.temp_u = open(v.temp_u_name, "w")
-
 end
 
-# *function* __`openTempFiles`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `vessels`      `::Array{Vessel, 1}` collection of vessel data structure.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files are `open`ed in the current directory with `w`riting permits
-# for all the vessels in the array provided.
-# ----------------------------------------------------------------------------
-# <a name="openTempFiles2"></a>
-function openTempFiles(vessels :: Array{Vessel, 1})
 
+"""
+	closeTempFiles(vessels :: Array{Vessel, 1})
+"""
+function closeTempFiles(vessels :: Array{Vessel, 1})
 	for v in vessels
-		openTempFiles(v)
+		closeTempFiles(v)
 	end
-
 end
 
-# *function* __`closeTempFiles`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `v`            `::Vessel` vessel data structure.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files for the current vessel are `close`d in the current directory.
-# ----------------------------------------------------------------------------
-# <a name="closeTempFiles"></a>
-function closeTempFiles(v :: Vessel)
 
+function closeTempFiles(v :: Vessel)
 	close(v.temp_P)
 	close(v.temp_Q)
 	close(v.temp_A)
 	close(v.temp_c)
 	close(v.temp_u)
-
 end
 
-# *function* __`closeTempFiles`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `vessels`      `::Array{Vessel, 1}` collection of vessel data structure.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files are `close`d in the current directory
-# for all the vessels in the array provided.
-# ----------------------------------------------------------------------------
-# <a name="closeTempFiles2"></a>
-function closeTempFiles(vessels :: Array{Vessel, 1})
 
+"""
+	openCloseLastFiles(vessels :: Array{Vessel, 1})
+
+initialise empty `.last` files.
+"""
+function openCloseLastFiles(vessels :: Array{Vessel, 1})
 	for v in vessels
-		closeTempFiles(v)
+		openCloseLastFiles(v)
 	end
-
 end
+
 
 function openCloseLastFiles(v :: Vessel)
-
 	v.last_P = open(v.last_P_name, "w")
 	v.last_Q = open(v.last_Q_name, "w")
 	v.last_A = open(v.last_A_name, "w")
@@ -124,68 +77,43 @@ function openCloseLastFiles(v :: Vessel)
 	close(v.last_A)
 	close(v.last_c)
 	close(v.last_u)
-
 end
 
-function openCloseLastFiles(vessels :: Array{Vessel, 1})
 
+"""
+	saveTempData(t :: Float64, vessels :: Array{Vessel, 1})
+
+Write the current time solution in `.temp` files.
+"""
+function saveTempData(t :: Float64, vessels :: Array{Vessel, 1})
 	for v in vessels
-		openCloseLastFiles(v)
+		saveTempData(t, v)
 	end
-
 end
+
 
 function saveTempData(t :: Float64, v :: Vessel)
-
 	println(v.temp_P, t, " ", v.P[1], " ", v.P[v.node2], " ", v.P[v.node3], " ", v.P[v.node4], " ", v.P[end])
 	println(v.temp_A, t, " ", v.A[1], " ", v.A[v.node2], " ", v.A[v.node3], " ", v.A[v.node4], " ", v.A[end])
 	println(v.temp_Q, t, " ", v.Q[1], " ", v.Q[v.node2], " ", v.Q[v.node3], " ", v.Q[v.node4], " ", v.Q[end])
 	println(v.temp_c, t, " ", v.c[1], " ", v.c[v.node2], " ", v.c[v.node3], " ", v.c[v.node4], " ", v.c[end])
 	println(v.temp_u, t, " ", v.u[1], " ", v.u[v.node2], " ", v.u[v.node3], " ", v.u[v.node4], " ", v.u[end])
-
 end
 
-# *function* __`saveTempData`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `t`            `::Float` current simulation time.
-#
-# `vessels`      `::Array{Vessel, 1}` array containing vessel data structures.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files are written with informations contained in the vessel data
-# structure for all the vessels provided in the array `vessels`.
-# ----------------------------------------------------------------------------
-# <a name="saveTempData2"></a>
-function saveTempData(t :: Float64, vessels :: Array{Vessel, 1})
 
+"""
+	transferTempToOut(vessels :: Array{Vessel, 1})
+
+Append `.temp` content to `.out` file.
+"""
+function transferTempToOut(vessels :: Array{Vessel, 1})
 	for v in vessels
-		saveTempData(t, v)
+		transferTempToOut(v)
 	end
-
 end
 
-# *function* __`transferTempToOut`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `v`            `::Vessel` vessel data structure.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files are concatenated to `.out` files by `appender.sh` script.
-# ----------------------------------------------------------------------------
-# <a name="transferTempToOut"></a>
-function transferTempToOut(v :: Vessel)
 
+function transferTempToOut(v :: Vessel)
 	tempP = v.temp_P_name
 	tempQ = v.temp_Q_name
 	tempA = v.temp_A_name
@@ -207,11 +135,22 @@ function transferTempToOut(v :: Vessel)
 		close(out_file)
 		close(temp_file)
 	end
-
 end
 
-function transferLastToOut(v :: Vessel)
 
+"""
+	transferLastToOut(vessels :: Array{Vessel, 1})
+
+Move `.last` content to `.out` files.
+"""
+function transferLastToOut(vessels :: Array{Vessel, 1})
+	for v in vessels
+		transferLastToOut(v)
+	end
+end
+
+
+function transferLastToOut(v :: Vessel)
 	lastP = v.last_P_name
 	lastQ = v.last_Q_name
 	lastA = v.last_A_name
@@ -233,42 +172,22 @@ function transferLastToOut(v :: Vessel)
 		close(out_file)
 		close(last_file)
 	end
-
 end
 
-# *function* __`transferTempToOut`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# -------------- -------------------------------------------------------------
-# `vessels`      `::Array{Vessel, 1}` array containing vessel data structures.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `.temp` files are concatenated to `.out` files by `appender.sh` script for
-# each vessel in `vessels`.
-# ----------------------------------------------------------------------------
-# <a name="transferTempToOut2"></a>
-function transferTempToOut(vessels :: Array{Vessel, 1})
 
+"""
+	transferTempToLast(vessels :: Array{Vessel, 1})
+
+Move `.temp` content to `.last` files.
+"""
+function transferTempToLast(vessels :: Array{Vessel, 1})
 	for v in vessels
-		transferTempToOut(v)
+		transferTempToLast(v)
 	end
-
 end
 
-function transferLastToOut(vessels :: Array{Vessel, 1})
-
-	for v in vessels
-		transferLastToOut(v)
-	end
-
-end
 
 function transferTempToLast(v :: Vessel)
-
 	tempP = v.temp_P_name
 	tempQ = v.temp_Q_name
 	tempA = v.temp_A_name
@@ -290,27 +209,22 @@ function transferTempToLast(v :: Vessel)
 		close(temp_file)
 		close(last_file)
 	end
-
 end
 
-function transferTempToLast(vessels :: Array{Vessel, 1})
 
-	for v in vessels
-		transferTempToLast(v)
-	end
+"""
+	cleanTemps(vessels :: Array{Vessel, 1})
 
-end
-
+Delete `.temp` files from the results folder.
+"""
 function cleanTemps(vessels :: Array{Vessel, 1})
-
 	for v in vessels
 		cleanTemps(v)
 	end
-
 end
 
-function cleanTemps(v :: Vessel)
 
+function cleanTemps(v :: Vessel)
 	tempP = v.temp_P_name
 	tempQ = v.temp_Q_name
 	tempA = v.temp_A_name
@@ -321,17 +235,22 @@ function cleanTemps(v :: Vessel)
 	for temp in temps
 		rm(temp)
 	end
-
 end
 
+
+"""
+	cleanOuts(vessels :: Array{Vessel, 1})
+
+Delete `.out` files from the results folder.
+"""
 function cleanOuts(vessels :: Array{Vessel, 1})
 	for v in vessels
 		cleanOuts(v)
 	end
 end
 
-function cleanOuts(v :: Vessel)
 
+function cleanOuts(v :: Vessel)
 	outP = v.out_P_name
 	outQ = v.out_Q_name
 	outA = v.out_A_name
@@ -342,5 +261,4 @@ function cleanOuts(v :: Vessel)
 	for out in outs
 		rm(out)
 	end
-
 end

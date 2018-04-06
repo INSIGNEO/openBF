@@ -14,7 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+"""
+    solveAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
 
+Solve the non-linear system at the anastomosis node between three vessels.
+"""
 function solveAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
     U0 = [v1.u[end],
          v2.u[end],
@@ -35,6 +39,11 @@ function solveAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
 end
 
 
+"""
+    calculateJacobianAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, U, k)
+
+Return the Jacobian for anastomosis equations.
+"""
 function calculateJacobianAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, U, k)
     U43 = U[4]*U[4]*U[4]
     U53 = U[5]*U[5]*U[5]
@@ -68,6 +77,11 @@ function calculateJacobianAnastomosis(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, 
 end
 
 
+"""
+    calculateWstarAnastomosis(U, k)
+
+Return the Riemann invariants at the anastomosis node.
+"""
 function calculateWstarAnastomosis(U, k)
     W1 = U[1] + 4*k[1]*U[4]
     W2 = U[2] + 4*k[2]*U[5]
@@ -77,6 +91,9 @@ function calculateWstarAnastomosis(U, k)
 end
 
 
+"""
+    calculateFAnastomosis(vessels :: Array{Vessel,1}, U, k, W)
+"""
 function calculateFAnastomosis(vessels :: Array{Vessel,1}, U, k, W)
     v1 = vessels[1]
     v2 = vessels[2]
@@ -104,6 +121,11 @@ function calculateFAnastomosis(vessels :: Array{Vessel,1}, U, k, W)
 end
 
 
+"""
+    updateAnastomosis(U, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
+
+Update the values at the anastomosis node for the three vessels.
+"""
 function updateAnastomosis(U, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
     v1.u[end] = U[1]
     v2.u[end] = U[2]

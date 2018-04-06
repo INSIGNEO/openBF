@@ -55,7 +55,7 @@ Open a YAML file and return the content as `Dict{Any,Any}`.
 """
 function loadYAMLFile(filename :: String)
     if ~isfile(filename)
-        error("missing $filename")
+        error("missing file $filename")
     end
 
     return YAML.load(open(filename))
