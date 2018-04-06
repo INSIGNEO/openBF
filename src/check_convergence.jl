@@ -15,52 +15,22 @@ limitations under the License.
 =#
 
 
-# function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
-#     qss = ["_Q", "_P"]
-#
-#     m_err = []
-#     for qs in qss
-#         err = zeros(size(edge_list)[1]).+100
-#
-#         for i in 1:size(edge_list)[1]
-#             v = vessels[i]
-#             lbl = v.label
-#
-#             filename_last = join([lbl, qs, ".last"])
-#             filename_temp = join([lbl, qs, ".temp"])
-#             w_last = readdlm(filename_last)
-#             w_temp = readdlm(filename_temp)
-#
-#             # if length(w_last[:,1]) == length(w_temp[:,1])
-#             #     err[i] = maximum(abs.((w_last[2:end,:].-w_temp[2:end,:])./w_last[2:end,:])*100)
-#             # end
-#             err[i] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
-#
-#         end
-#         push!(m_err, maximum(err))
-#     end
-#     return maximum(m_err)
-# end
 function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
-    qss = ["_Q"]#, "_P"]
+    err = zeros(size(edge_list)[1],2) .+ 100
 
-    m_err = []
-    for qs in qss
-        err = zeros(size(edge_list)[1]).+100
+    for i in 1:size(edge_list)[1]
+        v = vessels[i]
+        lbl = v.label
 
-        for i in 1:size(edge_list)[1]
-            v = vessels[i]
-            lbl = v.label
+        w_last = v.Q_l
+        w_temp = v.Q_t
 
-            filename_last = join([lbl, qs, ".last"])
-            filename_temp = join([lbl, qs, ".temp"])
-            w_last = v.Q_l#readdlm(filename_last)
-            w_temp = v.Q_t#readdlm(filename_temp)
+        err[i,1] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
 
-            err[i] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
+        w_last = v.P_l
+        w_temp = v.P_t
 
-        end
-        push!(m_err, maximum(err))
+        err[i,2] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
     end
     return maximum(m_err)
 end
