@@ -15,6 +15,11 @@ limitations under the License.
 =#
 
 
+"""
+    checkConvergence(edge_list, vessels :: Array{Vessel, 1})
+
+Compute the maximum error between two cardiac cycles for all the vessels in the network.
+"""
 function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
     err = zeros(size(edge_list)[1],2) .+ 100
 
@@ -32,5 +37,5 @@ function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
 
         err[i,2] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
     end
-    return maximum(m_err)
+    return maximum(err)
 end

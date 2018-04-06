@@ -27,7 +27,7 @@ function runSimulation(input_filename :: String;
     makeResultsFolder(data)
     blood = buildBlood(data["blood"])
 
-    verbose && println("Build arterial network \n")
+    verbose && println("Build $input_filename arterial network \n")
 
     jump = data["solver"]["jump"]
     vessels, edges = buildArterialNetwork(data["network"], blood, jump)
@@ -57,8 +57,6 @@ function runSimulation(input_filename :: String;
         if (current_time - heart.cardiac_T*passed_cycles) >= heart.cardiac_T &&
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
-            # closeTempFiles(vessels)
-
             if passed_cycles + 1 > 1
                 err = checkConvergence(edges, vessels)
                 verbose && @printf(" - Error = %4.2f%%\n", err)
@@ -67,8 +65,6 @@ function runSimulation(input_filename :: String;
                 verbose && @printf("\n")
             end
 
-
-            # openCloseLastFiles(vessels)
             transferTempToLast(vessels)
 
             out_files && transferLastToOut(vessels)
@@ -92,14 +88,7 @@ function runSimulation(input_filename :: String;
     end
     verbose && (@printf "\n"; toc())
 
-    # closeTempFiles(vessels)
-    # transferTempToOut(vessels)
     writeResults(vessels)
-
-    # if clean == true
-    #     cleanOuts(vessels)
-    #     # cleanTemps(vessels)
-    # end
 
     cd("..")
 end
