@@ -14,25 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-# http://carlobaldassi.github.io/ArgParse.jl/stable/index.html
-function parseCommandline()
-    s = ArgParseSettings()
-
-    @add_arg_table s begin
-        "input_filename"
-            help = ".yml input file name"
-            required = true
-        "--verbose", "-v"
-            help = "Print STDOUT - default false"
-            action = :store_true
-        "--out_files", "-f"
-            help = "Save complete results sotry rather than only the last cardiac cycle"
-            action = :store_true
-    end
-
-    return parse_args(s)
-end
-
 
 """
     laodSimulationFiles(input_filename :: String)
@@ -611,4 +592,24 @@ function computeWindkesselInletImpedance(R2 :: Float64, blood :: Blood,
     R2 -= R1
 
     return R1, R2
+end
+
+
+# http://carlobaldassi.github.io/ArgParse.jl/stable/index.html
+function parseCommandline()
+    s = ArgParseSettings()
+
+    @add_arg_table s begin
+        "input_filename"
+            help = ".yml input file name"
+            required = true
+        "--verbose", "-v"
+            help = "Print STDOUT - default false"
+            action = :store_true
+        "--out_files", "-f"
+            help = "Save complete results sotry rather than only the last cardiac cycle"
+            action = :store_true
+    end
+
+    return parse_args(s)
 end

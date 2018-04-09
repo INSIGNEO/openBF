@@ -15,8 +15,7 @@ limitations under the License.
 =#
 
 
-# __precompile__()
-
+__precompile__()
 module openBF
 
     export Vessel, Heart, Blood
