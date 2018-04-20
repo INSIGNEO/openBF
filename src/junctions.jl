@@ -1,5 +1,5 @@
 #=
-Copyright 2017 INSIGNEO Institute for in silico Medicine
+Copyright 2018 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,44 +14,64 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-# In `openBF` two types of junctions are provided: conjunctions
-# <div style="text-align:center">
-# <img src="images/conj.pdf.png" width="225"></div>
-# and bifurcations.
-# <div style="text-align:center">
-# <img src="images/bif.pdf.png" width="225"></div>
-#
-# `joinVessels` function calls the right solver depending on the number of
-# vessels involved in the junction.
 
-# *function* __`joinVessels`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ------------------- --------------------------------------------------------
-# `b`                 `::Blood` model matrix row.
-#
-# `vessels...`        Collection of`::Vessel` data structures involved in the
-#                     junction system.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning
-# ----------------------------------------------------------------------------
-# A collection containing two vessels refers to a conjunction and is solved
-# by [`solveConjunction`](conjunctions.html#solveConjunction) function.
-# When there are three vessels the junction is a bifurcation and it is solved
-# by [`solveBifurcation`](bifurcations.html#solveBifurcation).
-# ----------------------------------------------------------------------------
-# <a name="joinVessels"></a>
+"""
+    joinVessels(b :: Blood, vessels...)
+
+Call either `solveConjunction` or `solveBifurcation` depending on the number of given
+vessels.
+"""
 function joinVessels(b :: Blood, vessels...)
+    if length(vessels) == 2
+        solveConjunction(b, vessels[1], vessels[2])
 
-  if length(vessels) == 2
-    solveConjunction(b, vessels[1], vessels[2])
+    elseif length(vessels) == 3
+        solveBifurcation(vessels[1], vessels[2], vessels[3])
+    end
+end
 
-  elseif length(vessels) == 3
-    solveBifurcation(vessels[1], vessels[2], vessels[3])
 
-  end
+"""
+    newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
 
+Solve the non-linear junction system by means of Newton-Raphson method.
+"""
+function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
+    W = funW(U, k)
+    F = funF(vessels, U, k, W)
+
+    nr_toll_U = 1e-5
+    nr_toll_F = 1e-5
+
+    while true
+        dU = J\(-F)
+        U_new = U + dU
+
+        if any(isnan(dot(F,F)))
+            e = "("
+            for i = 1:length(vessels)
+                e *= vessels[i].label
+                e *= ", "
+            end
+            e = e[1:end-2]*")"
+            error("Newton-Raphson doesn't converge at $e junction!")
+        end
+
+        u_ok = 0
+        f_ok = 0
+        for i in 1:length(dU)
+            if abs(dU[i]) <= nr_toll_U || abs(F[i]) <= nr_toll_F
+                u_ok += 1
+                f_ok += 1
+            end
+        end
+
+        if u_ok == length(dU) || f_ok == length(dU)
+            return U_new
+        else
+            U = U_new
+            W = funW(U, k)
+            F = funF(vessels, U, k, W)
+        end
+    end
 end

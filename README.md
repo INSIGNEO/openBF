@@ -1,4 +1,4 @@
-![openBF](https://alemelis.github.io/openbf.jl/images/openBF.svg)  
+![openBF.jl](https://alemelis.github.io/openbf.jl/images/openBF.svg)  
 
 [![TUoS](https://img.shields.io/badge/-The%20University%20of%20Sheffield-blue.svg?colorA=ffffff&colorB=009fe3&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAABsFBMVEUAAABmZplVVYBLPHheUYZJPXlSR3pCOnNgWIdoYI9FPnVMQXc0JGM0KmhEOXI0MW8xMW2Ph6yYkrOWj6%2BOiayinLqWkbIcWJkdWJezrsW2sciclrWmoL0cWpkbXJuCfqQVba4Vba2tqsKBgKWXkbGgm7ioo7%2Bln7umobyppcClob0RdrgSd7ikoLuXkbEeeKwieqmYkrKkn7sAneAAn%2BMBnN8Dn%2BIEj9IEkNQEoOMFi88GicwHnuAInuAVaqkVgrEWa6sWiskYj84ek88mk8wmqOInqOIqhrA4qd45qd87kaA8q988q%2BA9qN0%2Fk51Aqd1CqdxCqd1JnqtNnc9OnKVPnItSmsZUmqZVlsFVnYZVns1bst9ds99ftN9isNtitN9joa1msdtnveZqoaRqrNZqvuZsrdZvk2lylWR0nKZ2oJx%2BfKOBf6WEn5eGr3iIr3eduNWfmbifmrifudWim6mjnKmloLymrz2psTuuqb6uqsOwq8C0taG2tqS4tqy4tra6uTC6ui6%2FsCK%2FsCPBvdHDv9LFwtfGwtjOy9rPzdvUlaHmkpb%2B%2FPz%2B%2Fv7%2F%2FPz%2F%2F%2F9OZpcfAAAAM3RSTlMABQYRExUZHyAgJS8xMTFTVFleZmiJkpOTmp2oqba9wsTFxcfO0dPX3OLj5%2Bf19v39%2Fv4kncL4AAAAvElEQVR4AWNgYBIQV9Q20NdRkOBnZGBg4DExTQ9taIzMMDbhA3PdzMqbmyosXaHc4kCvvHy%2FgAIINzElvL%2B%2FvzcoLQ7E5bX1TOhq624P8bDhBnLZTEwye%2Fr7%2BpNNTFgYgMApJreuprY%2BK94RyOGSlEv19XZx9vFPkpViZ1BRZ7WKdq%2Bsto%2B1ZtZQYhAp1FS2iCopDTaX1yoSZmDgkNHrsAuLcOjUleZkAAGxqtbsnJYyUQYoEFIzMlQVBLEA%2FZgsl9iPrB4AAAAASUVORK5CYII%3D)](https://www.sheffield.ac.uk)
 [![INSIGNEO](https://img.shields.io/badge/-INSIGNEO-red.svg?colorA=ffffff&colorB=cf2020&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAABC1BMVEUAAAD%2FAAC%2FAADMGhrRFxfSHh7VHBzJGxvTISHKICDMHx%2FOHR3RJCTTIyPOISHPICDMHR3NIyPNICDRISHQHx%2FQHx%2FOHx%2FQISHOICDQICDQHx%2FOHx%2FPISHQISHQICDOICDQISHOICDQICDPISHPICDQISHPICDPICDOHx%2FPISHPISHQISHPICDPISHPISHQICDOICDOICDPHx%2FPICDPICDOICDPICDPICDPICDPHx%2FPICDPICDQICDPICDPHx%2FQISHOICDPICDPICDPICDPICDPHx%2FMISHOICDPICDQICDPICDPISHPHx%2FPICDPICDPICDPICDPICDPICDOICDPHx%2FPICDPICDPICDPICDi8V76AAAAWHRSTlMAAgQKCxESExcYGRocHR8gIyRITVFSU1ZYYWJjZGZnaWxucXV5fH%2BAg4SFjI%2BUlZeYqKuusbK2ubrDxcbHycvMzdHU2Nrb4uLl5%2Bnq6%2Bzt7u%2F09vf7%2FP3%2B%2FHERCQAAAKVJREFUeAEdx%2BVCg2AAhtHHAANDMQRD7ECwO7DDjViM7b3%2FK9n4zr9Dxdk6jjc4s02si46kK7tMLGDuW%2Fq%2FvdxZlt5shh7VWhsGTqWvTVYll0q4PjMyy7VuYHQ7nIL98oVMAey183sI9EtNPpzXfz7BV8aHIpi%2Fe3ch1iuHysYxnFxHTDf1bD7xpMKBxa6Kk6WVKFXPY8BLZTQWMMYOHvK%2FZHcS6AOapR0V%2FpSSVQAAAABJRU5ErkJggg%3D%3D)](https://insigneo.org/)
@@ -17,13 +17,100 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
 
+### Installation
+
+Provided you already have a Julia installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add and test openBF as
+
+```julia
+julia> Pkg.clone("https://github.com/INSIGNEO/openBF.git")
+julia> Pkg.test("openBF")
+```
+
+If no errors are shown you are all set. Use openBF as
+
+```julia
+julia> using openBF
+julia> openBF.runSimulation("<input file name>.yml")
+```
+
+You can also create (MacOSX/Linux only) an openBF alias as
+
+```bash
+$ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
+$ source ~/.bashrc
+$ openBF -h
+usage: main.jl [-v] [-f] [-h] input_filename
+
+positional arguments:
+  input_filename   .yml input file name
+
+optional arguments:
+  -v, --verbose    Print STDOUT - default false
+  -f, --out_files  Save complete results story rather than only the
+                   last cardiac cycle
+  -h, --help       show this help message and exit
+```
+
+### input.yml template
+
+```yml
+project name: <project name>
+
+# these can all be set by default
+solver:
+  Ccfl: <Courant's number; default 0.9> # 0 < Ccfl ≤ 1
+  cycles: <Max number of cardiac cycles; default 100> # Int
+  jump: <Number of timepoints in result files; default 100>
+  convergence tolerance: <Max %error between two cycles; default 5.0>
+
+blood:
+  mu:  <dynamic viscosity> # [Pa⋅s]
+  rho: <density> # [kg/m^3]
+
+network:
+  - label: <vessel name>
+    sn: <source node> # Int
+    tn: <target node>
+
+    L: <length> # [m]
+    E: <wall Young's modulus> # [Pa]
+    h0: <constant wall thickness; if not specified, computed as h0(R0)>
+
+    M: <number of divisions along the vessel; default M: Δx = L/M = 1.0mm>
+
+    R0: <constant lumen radius> # [m]
+    #------ OR ------ to assign a linear change of radius along the vessel
+    Rp: <proximal lumen radius, i.e. lumen radius at sn>
+    Rd: <distal lumen radius, i.e. lumen radius at tn>
+
+    Pext: <external pressure; default 0.0 Pa> # [Pa]
+
+    inlet: <type of inlet> # Q or P
+    inlet number: <inlet ID> # Int; ≥ 1
+    inlet file: <path to inlet time function file>
+
+    gamma profile: <radial velocity profile parameter; default 9> # ≥ 2.0
+    # gamma profile: 2 for parabolic profile (small vessels)
+    # gamma profile: 9 for plug-flow (large vessels);
+
+    outlet: <type of outlet>
+    # outlet: wk2
+    R1: <windkessel peripheral resistance>
+    Cc: <compliance>
+    #------ OR ------ outlet: wk3
+    R1: <windkessel inlet impedance>
+    R2: <peripheral resistance>
+    Cc: <compliance>
+    #------ OR ------ outlet: reflection
+    Rt: <reflection coefficient> # 1.0 ≤ Rt ≥ -1.0
+```
+
 
 ### Ecosystem
 
 - A collection of 1D networks (from literature) solved by means of openBF can be found in the [openBF-hub](https://github.com/alemelis/openBF-hub) repository.
 - The scripts to generate a virtual population of ADAN56s can be found in [openBF-db](https://github.com/alemelis/openBF-db) repository.
 - openBF badge [![openBF](https://img.shields.io/badge/-openBF-red.svg?colorA=ffffff&colorB=008080&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAQAAACFzfR7AAAA10lEQVQoz4XQIUvDARCG8R%2BCaUEEqwwMwyKCYbImLCp%2BAoPJpMWyYFnfN1BBP4IGk0FkYBkyDYJgkBXTUOcYbFM8g0M3t%2F98rhz3Pnfh6GfKg7bQ8exG1hh2xE%2B9SCeLuT4xlC39RkeKUr1%2B1uWAGMKF%2Be9wW7gzgzX1IS2EhhVIaQnnSj6HlEerCsKrObgeeSeEPfvy7oUzqCaKVzLy3oUnpnWFsi3txIUP6%2BwKdQvIuh2pvdmAUwcyvfdM2PwjNx0mvz3tRAgVOZPGciw0LfqXmprlwdEX%2F8%2BRhjBYrRoAAAAASUVORK5CYII%3D)](https://github.com/INSIGNEO/openBF)
-
 
 ### Publications
 
@@ -46,60 +133,3 @@ Have you used openBF for your research? Let us know!
   publisher={Wiley Online Library},
 }
 ```
-
-### Julia and openBF installation (Linux)
-
-- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/) and create a command alias; for example, Julia 0.6.0
-```bash
-$ cd ~/Dowloads
-$ wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
-$ tar -xzvf julia-0.6.0-linux-x86_64.tar.gz
-$ mv julia-0.6.0-linux-x86_64 ~/julia0.6
-$ rm julia-0.6.0-linux-x86_64.tar.gz
-$ echo "alias julia='~/julia0.6/bin/julia'" > ~/.bashrc
-$ source ~/.bashrc
-$ julia
-```
-
-- Add openBF
-```bash
-$ julia -e 'Pkg.clone("https://github.com/INSIGNEO/openBF.git")'
-$ cd ~/.julia/v0.6/openBF/
-$ wget https://github.com/INSIGNEO/openBF/blob/master/main.jl
-$ echo 'run(`rm main.jl`)' >> ~/.julia/v0.6/openBF/main.jl
-$ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
-$ source ~/.bashrc
-```
-
-<!-- $ echo "alias openBF-fast='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia --check-bounds=no --math-mode=fast main.jl $1'" >> ~/.bashrc -->
-
-### Julia and openBF installation (Windows)
-
-- Download and install Julia 64-bit version from [here](https://julialang.org/downloads/)
-- [Add Julia to your system path](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/). Now you are able to run Julia by typing `julia` in a command prompt
-- Download openBF from this repository
-- Copy openBF folder in `C:\Users\<username>\.julia\`
-- Start a julia session and type
-```julia
-julia> using openBF
-```
-- If no errors are shown you are all set. You can use openBF from the command prompt by typing `julia main.jl <project_name>` where `main.jl` is in openBF folder.
-
-### Tests
-
-To use openBF, clone or download this repository. Go to the chosen test `openBF/test/<testname>` folder and launch the simulation as
-
-```
-$ julia main.jl <testname>
-```
-
-This requires the following files to be in the same directory of `main.jl`:
-
-- `<testname>.csv` contains the description of the arterial system;
-- `<testname>_veins.csv` contains the description of the venous system;
-- `<testname>_constants.jl` contains the simulation global variables;
-- `<testname>_inlet.dat` contains the inlet BC.
-
-The file `test/plot.py` (where available) is a simple matplotlib script to print the results.
-
-The `main.jl` file can be copied and used as it is for different simulations. The variable `project_name` must be changed accordingly to the `.csv` files name.

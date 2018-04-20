@@ -1,5 +1,5 @@
 #=
-Copyright 2017 INSIGNEO Institute for in silico Medicine
+Copyright 2018 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,691 +14,562 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-# All the pre-processing and initialisation functions are herein contained.
 
-# *function* __`projectPreamble`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ---------------- -----------------------------------------------------------
-# `project_name`   `::String` project name.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# This function checks whether all the project files are present in the
-# working directory. Then, the directory structure to save the output files
-# is created. Eventually, `openBF` logo and version information are printed to
-# screen.
-# ----------------------------------------------------------------------------
-# <a name="projectPreamble"></a>
-function projectPreamble(project_name :: String, no_out :: Bool, no_inputs :: Bool, number_of_inlets :: Int64)
+"""
+    laodSimulationFiles(input_filename :: String)
 
-  # `project_constants.jl`, `project_inlet.dat`, and `project.csv` file names
-  # strings are created with `project_name` variable.
-  p_const = join([project_name, "_constants.jl"])
-  p_inlet = join([project_name, "_inlet.dat"])
+Load and return YAML input file content.
+"""
+function loadSimulationFiles(input_filename :: String)
+    data = loadYAMLFile(input_filename)
 
-  if number_of_inlets > 1
-      p_inlets = []
-      for inlet_idx = 2:number_of_inlets
-          push!(p_inlets, join([project_name, "_", inlet_idx, "_inlet.dat"]))
+    checkInputFile(data)
+
+    return data
+end
+
+
+"""
+    loadYAMLFile(filename :: String)
+
+Open a YAML file and return the content as `Dict{Any,Any}`.
+"""
+function loadYAMLFile(filename :: String)
+    if ~isfile(filename)
+        error("missing file $filename")
+    end
+
+    return YAML.load(open(filename))
+end
+
+
+"""
+    checkInputFile(input_filename :: String)
+
+Check YAML input file. Raise errors if any of the important variables is ill
+defined.
+"""
+function checkInputFile(data :: Dict{Any,Any})
+    checkSections(data)
+    checkNetwork(data["network"])
+end
+
+
+"""
+    checkSections(data :: Dict{Any,Any})
+
+Look for the four sections in the input data. Run integrity checks for `blood` and
+`solver` sections.
+"""
+function checkSections(data :: Dict{Any,Any})
+    keys = ["project name", "network", "blood", "solver"]
+    for key in keys
+        if ~haskey(data, key)
+            error("missing section $key in YAML input file")
+        end
+    end
+
+    checkSection(data, "blood", ["mu", "rho"])
+    checkSection(data, "solver", ["Ccfl", "cycles", "convergence tolerance"])
+
+    if ~haskey(data["solver"], "jump")
+        data["solver"]["jump"] = 100
+    end
+end
+
+
+"""
+    checkSection(data :: Dict{Any,Any}, section :: String, keys :: Array{String,1})
+
+Look for a list of keys in the given data section.
+"""
+function checkSection(data :: Dict{Any,Any}, section :: String, keys :: Array{String,1})
+    for key in keys
+        if ~haskey(data[section], key)
+            error("missing $key in $section section")
+        end
+    end
+end
+
+
+"""
+    checkNetwork(network :: Array{Dict{Any,Any},1})
+
+Loop trough the network and run check on each single vessel. Check also if at least one
+inlet and one oulet has been defined.
+"""
+function checkNetwork(network :: Array{Dict{Any,Any},1})
+    has_inlet = false
+    has_outlet = false
+    for i = 1:length(network)
+        checkVessel(i, network[i])
+
+        if haskey(network[i], "inlet")
+            has_inlet = true
+        end
+        if haskey(network[i], "outlet")
+            has_outlet = true
+        end
+    end
+
+    if ~has_inlet
+        error("missing inlet(s) definition")
+    end
+
+    if ~has_outlet
+        error("missing outlet(s) definition")
+    end
+end
+
+
+"""
+    checkVessel(i :: Int, vessel :: Dict{Any,Any})
+
+Check if all the important parameters are defined for the current vessel. If the vessel
+has been indicated to be an inlet/outlet segment, check also for the definition of
+boundary condition parameters.
+"""
+function checkVessel(i :: Int, vessel :: Dict{Any,Any})
+    keys = ["label", "sn", "tn", "L", "E"]
+    for key in keys
+        if ~haskey(vessel, key)
+            error("vessel $i is missing $key value")
+        end
+    end
+
+    if ~haskey(vessel, "R0")
+        if ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd")
+            error("vessel $i is missing lumen radius value(s)")
+        end
+    end
+
+    if haskey(vessel, "inlet")
+        if ~haskey(vessel, "inlet file")
+            error("inlet vessel $i is missing the inlet file path")
+        elseif ~isfile(vessel["inlet file"])
+            file_path = vessel["inlet file"]
+            error("vessel $i inlet file $file_path not found")
+        end
+
+        if ~haskey(vessel, "inlet number")
+            error("inlet vessel $i is missing the inlet number")
+        end
+    end
+
+    if haskey(vessel, "outlet")
+        outlet = vessel["outlet"]
+        if outlet == "wk3"
+            if ~haskey(vessel, "R1") || ~haskey(vessel, "Cc")
+                error("outlet vessel $i is missing three-element windkessel values")
+            end
+        elseif outlet == "wk2"
+            if ~haskey(vessel, "R1") || ~haskey(vessel, "Cc")
+                error("outlet vessel $i is missing two-element windkessel values")
+            end
+        elseif outlet == "reflection"
+            if ~haskey(vessel, "Rt")
+                error("outlet vessel $i is missing reflection coefficient value")
+            end
+        end
+    end
+end
+
+
+"""
+    makeResultsFolder(data :: Dict{Any,Any})
+
+Create results folder and cd in.
+"""
+function makeResultsFolder(data :: Dict{Any,Any})
+    project_name = data["project name"]
+    r_folder = join([project_name, "_results"])
+
+    if isdir(r_folder) == false
+      mkdir(r_folder)
+    end
+
+    cd(r_folder)
+end
+
+
+"""
+    buildBlood(project_constants :: Dict{Any,Any})
+
+Return an instance of type `::Blood`.
+"""
+function buildBlood(blood_data :: Dict{Any,Any})
+    mu = blood_data["mu"]
+    rho = blood_data["rho"]
+    rho_inv = 1.0/rho
+
+    return Blood(mu, rho, rho_inv)
+end
+
+
+"""
+    buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood, jump :: Int)
+
+Populate `vessels` and `edges` lists containing mechanical properties and topology og the
+system, respectively.
+"""
+function buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood,
+                              jump :: Int)
+    vessels = [buildVessel(1, network[1], blood, jump)]
+    edges = zeros(Int, length(network), 3)
+    edges[1,1] = vessels[1].ID
+    edges[1,2] = vessels[1].sn
+    edges[1,3] = vessels[1].tn
+
+    for i = 2:length(network)
+        push!(vessels, buildVessel(i, network[i], blood, jump))
+        edges[i,1] = vessels[i].ID
+        edges[i,2] = vessels[i].sn
+        edges[i,3] = vessels[i].tn
+    end
+
+    return vessels, edges
+end
+
+
+"""
+    buildVessel(vessel_data :: Dict{Any,Any}, blood :: Blood, jump :: Int)
+
+Allocate arrays, set initial conditions, and create a new instance of `Vessel` with data
+from the `.yml`.
+"""
+function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, jump :: Int)
+    vessel_name = vessel_data["label"]
+    sn = vessel_data["sn"]
+    tn = vessel_data["tn"]
+    L = vessel_data["L"]
+    E = vessel_data["E"]
+
+    Rp, Rd = computeRadii(vessel_data)
+    Pext = computePext(vessel_data)
+    M, dx, invDx, halfDx = meshVessel(vessel_data, L)
+    h0 = computeThickness(vessel_data, M)
+    outlet, Rt, R1, R2, Cc = addOutlet(vessel_data)
+    viscT = computeViscousTerm(vessel_data, blood)
+    inlet, heart = buildHeart(vessel_data)
+
+    Q = zeros(Float64, M)
+    P = zeros(Float64, M)
+    A = zeros(Float64, M)
+    u = zeros(Float64, M)
+    c = zeros(Float64, M)
+    A0 = zeros(Float64, M)
+    R0 = zeros(Float64, M)
+    beta = zeros(Float64, M)
+    vA = zeros(Float64, M+2)
+    vQ = zeros(Float64, M+2)
+    Al = zeros(Float64, M+2)
+    Ar = zeros(Float64, M+2)
+    Ql = zeros(Float64, M+2)
+    Qr = zeros(Float64, M+2)
+    gamma = zeros(Float64, M)
+    dA0dx = zeros(Float64, M)
+    slope = zeros(Float64, M)
+    dTaudx = zeros(Float64, M)
+    inv_A0 = zeros(Float64, M)
+    dU = zeros(Float64, 2, M+2)
+    Fl = zeros(Float64, 2, M+2)
+    Fr = zeros(Float64, 2, M+2)
+    s_inv_A0 = zeros(Float64, M)
+    slopesA = zeros(Float64, M+2)
+    slopesQ = zeros(Float64, M+2)
+    Q_t = zeros(Float64, jump, 6)
+    P_t = zeros(Float64, jump, 6)
+    A_t = zeros(Float64, jump, 6)
+    u_t = zeros(Float64, jump, 6)
+    c_t = zeros(Float64, jump, 6)
+    Q_l = zeros(Float64, jump, 6)
+    P_l = zeros(Float64, jump, 6)
+    A_l = zeros(Float64, jump, 6)
+    u_l = zeros(Float64, jump, 6)
+    c_l = zeros(Float64, jump, 6)
+    flux  = zeros(Float64, 2, M+2)
+    uStar = zeros(Float64, 2, M+2)
+    s_15_gamma = zeros(Float64, M)
+    gamma_ghost = zeros(Float64, M+2)
+    half_beta_dA0dx = zeros(Float64, M)
+
+    s_pi = sqrt(pi)
+    s_pi_E_over_sigma_squared = s_pi*E/0.75
+    one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
+    radius_slope = (Rd - Rp)/(M - 1.0)
+    ah = 0.2802
+    bh = -5.053e2
+    ch = 0.1324
+    dh = -0.1114e2
+
+    for i = 1:M
+      R0[i] = radius_slope*(i - 1)*dx + Rp
+      if h0[i] == 0.0;
+          h0[i] = R0[i]*(ah*exp(bh*R0[i]) + ch*exp(dh*R0[i]))
       end
-  end
+      A0[i] = pi*R0[i]*R0[i]
+      A[i] = A0[i]
+      inv_A0[i] = 1.0/A0[i]
+      s_inv_A0[i] = sqrt(inv_A0[i])
+      dA0dx[i] = 2.0*pi*R0[i]*radius_slope
+      dTaudx[i] = s_pi*E*radius_slope*1.3*(h0[i]/R0[i] + R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      beta[i] = s_inv_A0[i]*h0[i]*s_pi_E_over_sigma_squared
+      gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
+      s_15_gamma[i] = sqrt(1.5*gamma[i])
+      gamma_ghost[i+1] = gamma[i]
+      half_beta_dA0dx[i] = beta[i]*0.5*dA0dx[i]
+      P[i] = pressure(A[i], A0[i], beta[i], Pext)
+      c[i] = waveSpeed(A[i], gamma[i])
+    end
 
-  p_model = join([project_name, ".csv"])
-  v_model = join([project_name, "_veins.csv"])
-  # The existence of these three files is checked in the working directory.
-  # If a file is missing an error is raised.
-  if (isfile(p_const)) == false
-    error("$p_const file missing")
-  end
+    gamma_ghost[1] = gamma[1]
+    gamma_ghost[end] = gamma[end]
 
-  if (isfile(p_inlet)) == false
-    println("$p_inlet file missing")
-  end
+    if outlet == "wk2"
+        R1, R2 = computeWindkesselInletImpedance(R2, blood, A0, gamma)
+        outlet = "wk3"
+    end
 
-  if (isfile(p_model)) == false
-    error("$p_model file missing")
-  end
-  # `r_folder` is the string used to create the directory containing the
-  # results.
-  r_folder = join([project_name, "_results"])
-  # If the results directory does not exist, it is created.
-  if (isdir(r_folder)) == false
-    mkdir(r_folder)
-  end
-  # Project files are moved to the results directory.
-  cp(p_const, join([r_folder, "/", p_const]), remove_destination=true)
-  cp(p_inlet, join([r_folder, "/", p_inlet]), remove_destination=true)
+    U00A = A0[1]
+    U01A = A0[2]
+    UM1A = A0[M]
+    UM2A = A0[M-1]
 
-  if number_of_inlets > 1
-     for i = 1:number_of_inlets-1
-         cp(p_inlets[i], join([r_folder, "/", p_inlets[i]]), remove_destination=true)
-     end
-  end
+    U00Q = 0.0
+    U01Q = 0.0
+    UM1Q = 0.0
+    UM2Q = 0.0
 
-  cp(p_model, join([r_folder, "/", p_model]), remove_destination=true)
-  if (isfile(v_model)) == true
-    cp(v_model, join([r_folder, "/", v_model]), remove_destination=true)
-  end
-  # All files in the working directory are deleted except those containing
-  # the `project_name` string by the
-  # [`cleanLibrary`](initialise.html#cleanLibrary) function.
-  # cleanLibrary(project_name)
-  # run(`rm clean_lib.sh`)
-  # The working directory is changed to the results directory.
-  cd(r_folder)
-  # Bash scripts to handle I/O are written and saved in the working directory
-  # by [`writeScripts`](initialise.html#writeScripts) function.
-  # writeScripts(no_out, no_inputs)
+    W1M0 = u[end] - 4.0*c[end]
+    W2M0 = u[end] + 4.0*c[end]
 
+    node2 = convert(Int, floor(M*0.25))
+    node3 = convert(Int, floor(M*0.5))
+    node4 = convert(Int, floor(M*0.75))
+
+    Pcn = 0.0
+
+    last_A_name = join((vessel_name,"_A.last"))
+    last_Q_name = join((vessel_name,"_Q.last"))
+    last_u_name = join((vessel_name,"_u.last"))
+    last_c_name = join((vessel_name,"_c.last"))
+    last_P_name = join((vessel_name,"_P.last"))
+
+    out_A_name = join((vessel_name,"_A.out"))
+    out_Q_name = join((vessel_name,"_Q.out"))
+    out_u_name = join((vessel_name,"_u.out"))
+    out_c_name = join((vessel_name,"_c.out"))
+    out_P_name = join((vessel_name,"_P.out"))
+
+    return Vessel(vessel_name, ID, sn, tn, inlet, heart,
+                  M, dx, invDx, halfDx,
+                  beta, gamma, s_15_gamma, gamma_ghost, half_beta_dA0dx,
+                  A0, inv_A0, s_inv_A0, dA0dx, dTaudx, Pext,
+                  viscT,
+                  A, Q, u, c, P,
+                  A_t, Q_t, u_t, c_t, P_t,
+                  A_l, Q_l, u_l, c_l, P_l,
+                  W1M0, W2M0,
+                  U00A, U00Q, U01A, U01Q, UM1A, UM1Q, UM2A, UM2Q,
+                  last_P_name, last_Q_name, last_A_name,
+                  last_c_name, last_u_name,
+                  out_P_name, out_Q_name, out_A_name,
+                  out_c_name, out_u_name,
+                  node2, node3, node4,
+                  Rt, R1, R2, Cc,
+                  Pcn,
+                  slope, flux, uStar, vA, vQ,
+                  dU, slopesA, slopesQ,
+                  Al, Ar, Ql, Qr, Fl, Fr,
+                  outlet)
 end
 
-# Two bash scripts are written in two `.sh` files.
-#
-# *   `appender.sh` is used to concatenate two files which names should be
-#     given as script arguments. It can be used as
-#
-#         sh appender.sh file1 file2
-#
-# *   `cleaner.sh` is used at the end of the simulation to remove all the
-#     temporary files from the working directory.
-#
-# These `.sh` are saved in the working directory and used through the `julia`
-# command `run`.
 
-# *function* __`writeScripts`__
-#
-# ----------------------------------------------------------------------------
-# Functioning
-# ----------------------------------------------------------------------------
-# Two bash scripts are written in two `.sh` files.
-# ----------------------------------------------------------------------------
-#
-# *   `appender.sh` is used to concatenate two files which names should be
-#     given as script arguments. It can be used as
-#
-#         sh appender.sh file1 file2
-#
-# *   `cleaner.sh` is used at the end of the simulation to remove all the
-#     temporary files from the working directory.
-#
-# These `.sh` are saved in the working directory and used through the `julia`
-# command `run`.
-# <a name="writeScripts"></a>
-function writeScripts(no_out :: Bool, no_inputs :: Bool)
+"""
+    computeRadii(vessel_data :: Dict{Any,Any})
 
-  appsh = open("appender.sh", "w")
-  write(appsh, "#!/bin/bash", "\n")
-  write(appsh, "cat \$1 >> \$2")
-  close(appsh)
-
-  # clesh = open("cleaner.sh", "w")
-  # write(clesh, "#!/bin/bash", "\n")
-  # write(clesh, "rm *.temp\n")
-  # write(clesh, "rm appender.sh")
-  # if no_out == true
-  #     write(clesh, "\nrm *.out")
-  # end
-  # if no_inputs == true
-  #     write(clesh, "\nrm *.csv")
-  #     write(clesh, "\nrm *.dat")
-  #     write(clesh, "\nrm *.jl")
-  # end
-  # close(clesh)
-
+If only a constant lumen radius is defined, return the same value for proximal and
+distal variables, `Rp` and `Rd`, respectively.
+"""
+function computeRadii(vessel :: Dict{Any,Any})
+    if ~haskey(vessel, "R0")
+        Rp = vessel["Rp"]
+        Rd = vessel["Rd"]
+        return Rp, Rd
+    else
+        R0 = vessel["R0"]
+        return R0, R0
+    end
 end
 
-# *function* __`cleanLibrary`__
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ---------------- -----------------------------------------------------------
-# `project_name`   `::String` project name.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# This function writes and executes a bash scripts which delete all the
-# files with the name not containing the string `project_name`.
-# ----------------------------------------------------------------------------
-# <a name="cleanLibrary"></a>
-function cleanLibrary(project_name)
 
-  clibsh = open("clean_lib.sh", "w")
-  write(clibsh, "#!/bin/bash", "\n")
-  write(clibsh, "find . -type f -not -name '*$project_name*' | xargs rm -rf", "\n")
-  write(clibsh, "rm -rf doc/")
-  close(clibsh)
+"""
+    computePext(vessel :: Dict{Any,Any})
 
-  #run(`sh clean_lib.sh`)
-
+Extract Pext value for current vessels; return default `Pext = 0.0` if no value is
+specified.
+"""
+function computePext(vessel :: Dict{Any,Any})
+    if ~haskey(vessel, "Pext")
+        return 0.0
+    else
+        return vessel["Pext"]
+    end
 end
 
-# *function* __`readModelData`__ $\rightarrow$ `model_matrix::Array{Any, 2}`
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ---------------- -----------------------------------------------------------
-# `model_data`     `.csv` file containing model data (see
-#                  [tutorial.jl](../index.html#project)).
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning:
-# ----------------------------------------------------------------------------
-# `model_data.csv` is parsed by `readdlm` by using `,` as a separator. The
-# first header row is discarded (`[2:end]`) as well as the last column
-# (`[1:end-1]`) because it contains
-# only blank spaces. The remaining is stored in matrix `m` and returned.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Returns:
-# ---------------- -----------------------------------------------------------
-# `m`              `::Array{Any, 2}` model matrix.
-# ----------------------------------------------------------------------------
-# <a name="readModelData"></a>
-function readModelData(model_data)
 
-  m = readdlm(model_data, ',')
-  m = m[2:end, 1:end-1]
+"""
+    meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
 
-  return m
+Pre-compute `dx`, `1/dx`, and `0.5*dx` for the current vessel. The `dx` is computed as
+`L/M` where `M` is the maximum value between `5` (the minimum needed by the solver), the value defined in the `.yml`, and `ceil(L*1e3)` (which would make `dx=1`mm).
+"""
+function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
+    if ~haskey(vessel, "M")
+        M = maximum([5, convert(Int, ceil(L*1e3))])
+    else
+        M = vessel["M"]
+        M = maximum([5, M, convert(Int, ceil(L*1e3))])
+    end
+
+    dx = L/M
+    invDx = M/L
+    halfDx = 0.5*dx
+
+    return M, dx, invDx, halfDx
 end
 
-# *function* __`initialiseVessel`__ $\rightarrow$
-# `vessel::`[`Vessel`]( html#Vessel)
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ------------------- --------------------------------------------------------
-# `m`                 `::Array{Any, 2}` model matrix row.
-#
-# `ID`                `::Int` topological ID of the vessel in the arterial
-#                     tree.
-#
-# `h`                 [`::Heart`]( html#Heart) data structure
-#                     containing inlet boundary conditions.
-#
-# `b`                 [`::Blood`]( html#Blood) data structure
-#                     containing blood mechanical properties.
-#
-# `Pext`              `::Float` external pressure.
-#
-# `initial_pressure`  `::Float` initial pressure to be set along the entire
-#                     vessel.
-#
-# `Ccfl`              `::Float` Courant-Friedrichs-Lewy number to [compute
-#                     local $\Delta t$](godunov.html#calculateDeltaT).
-# ----------------------------------------------------------------------------
-# <a name="initialiseVessel"></a>
-function initialiseVessel(m :: Array{Any, 1}, ID :: Int64, h :: Heart,
-                              b :: Blood,
-                              initial_pressure :: Float64,
-                              Ccfl :: Float64)
 
-  # --------------------------------------------------------------------------
-  # Functioning:
-  # --------------------------------------------------------------------------
-  # Model matrix row `m` is parsed  to retrieve vessel geometrical and
-  # mechanical properties; conversion to `::Int` type is operated where
-  # needed.
-  # --------------------------------------------------------------------------
-  vessel_name = m[1]
-  sn = convert(Int, m[2])
-  tn = convert(Int, m[3])
-  rn = convert(Int, m[4])
-  L = m[5]
+"""
+    computeThickness(vessel :: Dict{Any,Any}, M :: Int)
 
-  #M = convert(Int, m[6])
-  M = maximum([5, convert(Int, m[6]), convert(Int, ceil(L*1e3))])
-
-  Rp = m[7]
-  Rd = m[8]
-
-#   h0          =     m[7]
-
-  E = m[9]
-  Pext = convert(Float64, m[10])
-  # Poisson's ratio `sigma` is set by default to 0.5 because vessel wall is
-  # assumed to be incompressible.
-  sigma = 0.5
-  # $\Delta x$ for local numerical discretisation: lenght/number of nodes.
-  # <a name="dx"></a>
-  dx = L/M
-  invDx = M/L
-  halfDx = 0.5*dx
-
-  # Unstressed cross-sectional area `A0` is computed from `R0`.
-#   A0 = pi*R0*R0
-
-#   Rp = 4e-3
-#   Rd = 2e-3
-
-#   Rp = r0
-#   Rd = r0
-
-  A0 = zeros(Float64, M)
-  inv_A0 = zeros(Float64, M)
-  s_inv_A0 = zeros(Float64, M)
-  R0 = zeros(Float64, M)
-  h0 = zeros(Float64, M)
-
-  # Elastic constants for trans-mural [pressure](converter.html#pressure)
-  # (`beta`) and [wave speed](converter.html#waveSpeed) (`gamma`)
-  # calculation:
-  # $$
-  #   \beta = \sqrt{\frac{\pi}{A_0}} \frac{h_0 E}{1 - \sigma^2}, \quad
-  #   \gamma = \frac{\beta}{3 \rho R_0 \sqrt{\pi}} .
-  # $$
-  beta = zeros(Float64, M)
-  gamma = zeros(Float64, M)
-
-  dA0dx = zeros(Float64, M)
-  dTaudx = zeros(Float64, M)
-  radius_slope = (Rd-Rp)/(M-1)
-  ah = 0.2802
-  bh = -5.053e2
-  ch = 0.1324
-  dh = -0.1114e2
-
-  half_beta_dA0dx = zeros(Float64, M)
-
-  for i = 1:M
-    R0[i] = radius_slope*(i-1)*dx + Rp
-    h0[i] = R0[i] * (ah * exp(bh*R0[i]) + ch * exp(dh*R0[i])) #1e-3
-    A0[i] = pi*R0[i]*R0[i]
-    inv_A0[i] = 1/A0[i]
-    s_inv_A0[i] = sqrt(inv_A0[i])
-    dA0dx[i] = 2*pi*R0[i]*radius_slope
-    dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0[i]/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
-
-    beta[i] = sqrt(pi/A0[i])*h0[i]*E/(1 - sigma*sigma)
-    gamma[i] = beta[i]/(3*b.rho*R0[i]*sqrt(pi))
-
-    half_beta_dA0dx[i] = beta[i]*0.5*dA0dx[i]
-  end
-
-  gamma_ghost = zeros(Float64, M+2)
-  gamma_ghost[2:M+1] = gamma
-  gamma_ghost[1] = gamma[1]
-  gamma_ghost[end] = gamma[end]
-
-  # Initialise conservative (`A` and `Q`) and primitive (`u`, `c`, and `P`)
-  # variables arrays with initial values. `A` is taken as the unstressed
-  # cross-sectional area `A0` and `Q` is everywhere the `initial_flow`
-  # specified in [`project_constants.jl`](../index.html#project_constants).
-  # The longitudinal velocity `u` comes from the definition of `Q`
-  # $$
-  #     Q = u A .
-  # $$
-  # `c` and `P` are computed with `beta` and `gamma` by
-  # [`pressure`](converter.html#pressure) and
-  # [`waveSpeed`](converter.html#waveSpeed) functions.
-  A = zeros(Float64, M)  + A0
-  Q = zeros(Float64, M)  + h.initial_flow
-  u = zeros(Float64, M)  + Q./A
-  c = zeros(Float64, M)
-  c = waveSpeed(A, gamma, c)
-  P = zeros(Float64, M)
-  P = pressure( A, A0, beta, Pext, P)
-  # [Ghost cells](godunov.html) are initialised
-  # as the internal nodes.
-  U00A = A0[1]
-  U01A = A0[2]
-  UM1A = A0[M]
-  UM2A = A0[M-1]
-
-  U00Q = h.initial_flow
-  U01Q = h.initial_flow
-  UM1Q = h.initial_flow
-  UM2Q = h.initial_flow
-  # Forward and backward
-  # [Riemann invariants](converter.html#riemannInvariants)
-  # at the vessel outlet node.
-  W1M0 = u[end] - 4*c[end]
-  W2M0 = u[end] + 4*c[end]
-  # Temporary files names are built by `join`ing the vessel `label` and a
-  # string referring to the quantity stored, and a `.temp` extension. Same
-  # procedure is followed for results files with `.out` extension. Data input
-  # and output are handled by [`IOutils.jl`](IOutils.html) functions.
-  temp_A_name = join((vessel_name,"_A.temp"))
-  temp_Q_name = join((vessel_name,"_Q.temp"))
-  temp_u_name = join((vessel_name,"_u.temp"))
-  temp_c_name = join((vessel_name,"_c.temp"))
-  temp_P_name = join((vessel_name,"_P.temp"))
-
-  last_A_name = join((vessel_name,"_A.last"))
-  last_Q_name = join((vessel_name,"_Q.last"))
-  last_u_name = join((vessel_name,"_u.last"))
-  last_c_name = join((vessel_name,"_c.last"))
-  last_P_name = join((vessel_name,"_P.last"))
-
-  out_A_name = join((vessel_name,"_A.out"))
-  out_Q_name = join((vessel_name,"_Q.out"))
-  out_u_name = join((vessel_name,"_u.out"))
-  out_c_name = join((vessel_name,"_c.out"))
-  out_P_name = join((vessel_name,"_P.out"))
-  # Temporary data and output files are created with `open` command. Data from
-  # temporary files to output files are
-  # [transferred](IOutils.jl#transferTempToOut) by means of a bash script.
-  # Thus, the `IOStream` to `.out` files must be `close`d. Writing in `.temp`
-  # is handled within julia, hence `.temp` are left open, ready to be
-  # written.
-  temp_A = open(temp_A_name, "w")
-  temp_Q = open(temp_Q_name, "w")
-  temp_u = open(temp_u_name, "w")
-  temp_c = open(temp_c_name, "w")
-  temp_P = open(temp_P_name, "w")
-
-  last_A = open(last_A_name, "w")
-  last_Q = open(last_Q_name, "w")
-  last_u = open(last_u_name, "w")
-  last_c = open(last_c_name, "w")
-  last_P = open(last_P_name, "w")
-
-  out_A = open(out_A_name, "w")
-  out_Q = open(out_Q_name, "w")
-  out_u = open(out_u_name, "w")
-  out_c = open(out_c_name, "w")
-  out_P = open(out_P_name, "w")
-
-  node2 = convert(Int, floor(M*0.25))
-  node3 = convert(Int, floor(M*0.5))
-  node4 = convert(Int, floor(M*0.75))
-
-  close(last_A)
-  close(last_Q)
-  close(last_u)
-  close(last_c)
-  close(last_P)
-
-  close(out_A)
-  close(out_Q)
-  close(out_u)
-  close(out_c)
-  close(out_P)
-  # The outlet boundary condition is specified by the last columns in the
-  # `project.csv` file.
-  #
-  # 9 columns means that only the reflection coefficient `Rt` has been
-  # specified. Since the three elements windkessel parameters must be
-  # specified anyway, they are set to zero.
-  if length(m) == 11
-
-    Rt = m[11]
-
-    R1 = 0.
-    R2 = 0.
-    Cc = 0.
-  # 10 columns means that the three element windkessel is specified with
-  # Reymond (2009) notation. Peripheral resistance (`R2`) is supplied along
-  # with the outlet impedance (`R1`). To decouple these two parameters, `R1`
-  # is computed as the vessel characteristic impedance
-  # $$
-  #   R_1 = Z_c = \rho \frac{c}{A_0}.
-  # $$
-  elseif length(m) == 12
-
-    R1 = b.rho*waveSpeed(A0[end], gamma[end])/A0[end]
-    #R1 = 1e5 #b.rho * 13.3/(A0*(2*R0*1e3)^0.3)
-    R2 = m[11] - R1
-    Cc = m[12]
-
-    Rt = 0.
-  # 11 columns means that the three parameters are specified.
-  elseif length(m) >= 13
-
-    R1 = m[11]
-    R2 = m[12]
-    Cc = m[13]
-
-    Rt = 0.
-
-  end
-
-#     elseif length(m) == 10
-
-#     R1 = b.rho*waveSpeed(A0[end], gamma[end])/A0[end]
-#     #R1 = 1e5 #b.rho * 13.3/(A0*(2*R0*1e3)^0.3)
-#     R2 = m[ 9] - R1
-#     Cc = m[10]
-
-#     Rt = 0.
-#   # 11 columns means that the three parameters are specified.
-#   elseif length(m) >= 11
-
-#     R1 = b.rho*waveSpeed(A0[end], gamma[end])/A0[end] #m[ 9]
-#     R2 = m[ 9] +m[10]#- R1 #m[10]
-#     Cc = m[11]
-
-#     Rt = 0.
-
-#   end
-
-
-  # `Pcn` is the pressure through the peripheral compliance of the three
-  # elements windkessel. It is set to zero to simulate the pressure at the
-  # artery-vein interface.
-  Pcn = 0.
-
-  #Slope
-  slope = zeros(Float64, M)
-
-  # MUSCL arrays
-  flux  = zeros(Float64, 2, M+2)
-  uStar = zeros(Float64, 2, M+2)
-
-  vA = zeros(Float64, M+2)
-  vQ = zeros(Float64, M+2)
-
-  dU = zeros(Float64, 2, M+2)
-
-  slopesA = zeros(Float64, M+2)
-  slopesQ = zeros(Float64, M+2)
-
-  Al = zeros(Float64, M+2)
-  Ar = zeros(Float64, M+2)
-
-  Ql = zeros(Float64, M+2)
-  Qr = zeros(Float64, M+2)
-
-  Fl = zeros(Float64, 2, M+2)
-  Fr = zeros(Float64, 2, M+2)
-#
-# ----------------------------------------------------------------------------
-# Returns:
-# -------------- -------------------------------------------------------------
-# `vessel_data`  [`::Vessel`]( html#Vessel) data structure
-#                containing vessel mechanical and geometrical properties.
-# ----------------------------------------------------------------------------
-  vessel_data =  Vessel(vessel_name,
-                    ID, sn, tn, rn,
-                    M,
-                    dx, invDx, halfDx,
-                    Ccfl,
-                    beta, gamma, gamma_ghost, half_beta_dA0dx,
-#                     R0,
-                    A0, inv_A0, s_inv_A0, dA0dx, dTaudx, Pext,
-                    A, Q,
-                    u, c, P,
-                    W1M0, W2M0,
-                    U00A, U00Q, U01A, U01Q,
-                    UM1A, UM1Q, UM2A, UM2Q,
-                    temp_P_name, temp_Q_name, temp_A_name,
-                    temp_c_name, temp_u_name,
-                    last_P_name, last_Q_name, last_A_name,
-                    last_c_name, last_u_name,
-                    out_P_name, out_Q_name, out_A_name,
-                    out_c_name, out_u_name,
-                    temp_P, temp_Q, temp_A, temp_c, temp_u,
-                    last_P, last_Q, last_A, last_c, last_u,
-                    node2, node3, node4,
-                    Rt,
-                    R1, R2, Cc,
-                    Pcn,
-                    slope,
-                    flux, uStar, vA, vQ,
-                    dU, slopesA, slopesQ,
-                    Al, Ar, Ql, Qr, Fl, Fr)
-
-  return vessel_data
+If vessel thickness is not specified in the `.yml` file, return a `zeroes` array to be
+filed with radius dependent values. Otherwise, return an array with the specified `h0`.
+"""
+function computeThickness(vessel :: Dict{Any,Any}, M :: Int)
+    if ~haskey(vessel, "h0")
+        return zeros(Float64, M)
+    else
+        return zeros(Float64, M) + vessel["h0"]
+    end
 end
 
-# *function* __`loadInputData`__ $\rightarrow$ `::Array{Float, 2}`
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# ------------------- --------------------------------------------------------
-# `project_name`      `project` name string.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Functioning
-# ----------------------------------------------------------------------------
-# `project_inlet.dat` is parsed by `readdlm` function and its content is
-# saved in a `in_data` matrix. Its first column contains time and the second
-# column contains flow waveform data.
-# ----------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------
-# Returns:
-# --------- ------------------------------------------------------------------
-# `in_data` `::Array{Float, 2}` `[time, flow]` matrix for inlet boundary
-# condition.
-# ----------------------------------------------------------------------------
-# <a name="loadInputData"></a>
-function loadInputData(project_name)
-  in_data = readdlm(join([project_name, "_inlet.dat"]))
-  return in_data
+
+"""
+    addOutlet(vessel :: Dict{Any,Any})
+
+Parse outlet information for the current vessel and return windkessel and reflection
+coeffiecient values.
+"""
+function addOutlet(vessel :: Dict{Any,Any})
+    if haskey(vessel, "outlet")
+        outlet = vessel["outlet"]
+        if outlet == "wk3"
+            Rt = 0.0
+            R1 = vessel["R1"]
+            R2 = vessel["R2"]
+            Cc = vessel["Cc"]
+        elseif outlet == "wk2"
+            Rt = 0.0
+            R1 = 0.0
+            R2 = vessel["R1"]
+            Cc = vessel["Cc"]
+        elseif outlet == "reflection"
+            Rt = vessel["Rt"]
+            R1 = 0.0
+            R2 = 0.0
+            Cc = 0.0
+        end
+    else
+        outlet = "none"
+        Rt = 0.0
+        R1 = 0.0
+        R2 = 0.0
+        Cc = 0.0
+    end
+
+    return outlet, Rt, R1, R2, Cc
 end
 
-# *function* __`loadGlobalConstants`__ $\rightarrow$ `::Heart`,
-# `::Blood`, `::Float`
-#
-# ----------------------------------------------------------------------------
-# Parameters:
-# --------------------- ------------------------------------------------------
-# `project_name`        `project` name string.
-#
-# `inlet_BC_switch`     `::Int` inlet boundary condtion selector:
-#
-#                        1 $\rightarrow$ heaviside sine function
-#
-#                        2 $\rightarrow$ gaussian
-#
-#                        3 $\rightarrow$ from `project_inlet.dat`
-#
-# `cycles`              `::Int` number of cardiac cycles to be simulated.
-#
-# `rho`                 `::Float` blood density
-#
-# `mu`                  `::Float` blood dynamic viscosity
-# ----------------------------------------------------------------------------
-#
-# --------------------------------------------------------------------------
-# Functioning
-# --------------------------------------------------------------------------
-# This function load into [heart]( html#Heart) and
-# [blood]( html#Blood) datastructures the parameters constant
-# within all vessels.
-# --------------------------------------------------------------------------
-# <a name="loadGlobalConstants"></a>
-function loadGlobalConstants(project_name,
-                             inlet_BC_switch :: Int64,
-                             inlet_type :: String,
-                             cycles :: Int64,
-                             rho :: Float64, mu:: Float64, gamma_profile :: Int64,
-                             number_of_inlets :: Int64)
-  # `heart` data structure is filled depending on the inlet boundary condition
-  # chosen by the user. When the inlet flow function is given
-  # (`inlet_BC_swithc`=3), the flow waveform is imported by
-  # [`loadInputData`](initialise.html#loadInputData) function. The
-  # `cardiac_period` is taken as the last row in the time column of the input
-  # file. `sys_T`, `initial_flow`, and `flow_amplitude` quantities will not
-  # be used and they are set to zero.
-  if inlet_BC_switch == 3
-    input_data = loadInputData(project_name)
 
-#     if input_data[1,2] < 1e-6
-#       error("Inlet flow initial value < 1e-6")
-#     end
+"""
+    computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
-    cardiac_period = input_data[end, 1]
-    sys_T = 0.
-    initial_flow = 0.
-    flow_amplitude = 0.
-  # In any other case, all the parameters are take from `project_constants.jl`
-  # file. `input_data` array is initialised to zero and it will not be used.
-  else
-    include(join([project_name, "_constants.jl"]))
-    input_data = zeros(Float64, 1,1)
-  end
-  # The total simulation time `total_time` is calculated as number of cycles
-  # times the cardiac period in seconds.
-  const total_time = cycles*cardiac_period
-
-  #Initialise heart data structure
-  heart_data =  Heart(inlet_BC_switch,
-                            inlet_type,
-                            cardiac_period, sys_T,
-                            initial_flow, flow_amplitude,
-                            input_data)
-
-  inlets = [heart_data]
-  if number_of_inlets > 1
-      for inlet_number = 2:number_of_inlets
-          input_data = loadInputData(join([project_name, "_", inlet_number]))
-          push!(inlets, loadGlobalConstants(project_name, inlet_number, inlet_BC_switch :: Int64, inlet_type :: String))
-      end
-  end
-
-  # Kinematic viscosity `nu` and viscous resitance term `Cf` are calculated as
-  # $$
-  #   \nu = \frac{\mu}{\rho}, \quad C_f = 8\pi\nu.
-  # $$
-  # where `Cf` is computed by assuming a parabolic velocity profile
-  # along the radial direction.
-  const nu = mu/rho
-  const Cf = 8*pi*nu
-  rho_inv = 1/rho
-  viscT = 2*(gamma_profile + 2)*pi*mu
-
-  #Initialise blood data structure
-  blood_data =  Blood(mu, rho, rho_inv, Cf, gamma_profile, viscT)
-  # --------------------------------------------------------------------------
-  # Returns:
-  # -------------- -----------------------------------------------------------
-  # `heart_data`   `::Heart`
-  #
-  # `blood_data`   `::Blood`
-  #
-  # `total_time`   `::Float`
-  # --------------------------------------------------------------------------
-  return inlets, blood_data, total_time
+Return `2*(gamma_profile + 2)*pi*blood.mu` where `gamma_profile` is either
+specified in the vessel definition or assumed equal to `9` (plug-flow).
+"""
+function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
+    if haskey(vessel_data, "gamma_profile")
+        gamma_profile = vessel_data["gamma_profile"]
+    else
+        gamma_profile = 9
+    end
+    return 2*(gamma_profile + 2)*pi*blood.mu
 end
 
-function loadGlobalConstants(project_name, inlet_number,
-                             inlet_BC_switch :: Int64,
-                             inlet_type :: String)
 
-    input_data = loadInputData(join([project_name, "_", inlet_number]))
+"""
+    buildHeart(vessel_data)
 
-    cardiac_period = input_data[end, 1]
-    sys_T = 0.0
-    initial_flow = 0.0
-    flow_amplitude = 0.0
+If the current vessel is an inlet vessel, return `true` flag and an `Heart` struct.
+"""
+function buildHeart(vessel :: Dict{Any,Any})
+    if haskey(vessel, "inlet")
+        inlet_type = vessel["inlet"]
+        input_data = loadInletData(vessel["inlet file"])
+        cardiac_period = input_data[end, 1]
+        inlet_number = vessel["inlet number"]
 
-    #Initialise heart data structure
-    heart_data = Heart(inlet_BC_switch,
-                            inlet_type,
-                            cardiac_period, sys_T,
-                            initial_flow, flow_amplitude,
-                            input_data)
+        return true, Heart(inlet_type, cardiac_period, input_data, inlet_number)
+    else
+        return false, Heart("none", 0.0, zeros(1,2), 0)
+    end
+end
 
-      return heart_data
+
+"""
+    loadInletData(inlet_file :: String)
+
+Read discretised inlet data from inlet file. Return an `Array{Float64, 2}` whose first
+columun contains time variable and second column contains the inlet time function.
+"""
+function loadInletData(inlet_file :: String)
+    return readdlm(inlet_file)
+end
+
+
+"""
+    computeWindkesselInletImpedance(R1 :: Float64, R2 :: Float64, blood :: Blood,
+                                    A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
+
+In case only one peripheral resistance is defined (two-element windkessel), the second
+one is set as equal to the outlet vessel impedance.
+"""
+function computeWindkesselInletImpedance(R2 :: Float64, blood :: Blood,
+    A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
+
+    R1 = blood.rho*waveSpeed(A0[end], gamma[end])/A0[end]
+    R2 -= R1
+
+    return R1, R2
+end
+
+
+# http://carlobaldassi.github.io/ArgParse.jl/stable/index.html
+function parseCommandline()
+    s = ArgParseSettings()
+
+    @add_arg_table s begin
+        "input_filename"
+            help = ".yml input file name"
+            required = true
+        "--verbose", "-v"
+            help = "Print STDOUT - default false"
+            action = :store_true
+        "--out_files", "-f"
+            help = "Save complete results story rather than only the last cardiac cycle"
+            action = :store_true
+    end
+
+    return parse_args(s)
 end

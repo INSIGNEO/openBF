@@ -1,0 +1,34 @@
+project name: single-artery
+
+blood:
+  rho: 1060.0 # density [kg/m^3]
+  mu: 4.e-3   # dynamic viscosity [Pa⋅s]
+
+solver:
+  Ccfl: 0.9   # Courant number
+  cycles: 100 # maximum number of cycles
+  jump: 100   # timesteps per cycle to be saved
+  convergence tolerance: 5.0 # percentage value
+
+network:
+  - label: A1
+
+    sn: 1     # proximal (source) node
+    tn: 2     # distal (target) node
+
+    L: 24.14e-2 # length (m)
+
+    R0: 9.87e-3 # lumen radius (m)
+
+    E: 400.0e3 # Young's modulus (Pa)
+    h0: 0.82e-3
+
+    inlet: Q
+    inlet file: single-artery_inlet.dat
+    inlet number: 1
+
+    outlet: wk3
+    # Rt: 1.0
+    R1: 1.17e7
+    R2: 1.12e8
+    Cc: 1.0163e-8
