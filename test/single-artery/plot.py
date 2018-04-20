@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-pA = np.loadtxt("single-artery_results/A1_P.out")
+pA = np.loadtxt("single-artery_results/A1_P.last")
 
 fig = plt.figure(1)
 fig.clf()

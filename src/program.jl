@@ -69,7 +69,7 @@ function runSimulation(input_filename :: String;
 
             out_files && transferLastToOut(vessels)
 
-            if err <= data["solver"]["convergence tollerance"]
+            if err <= data["solver"]["convergence tolerance"]
                 break
             end
 

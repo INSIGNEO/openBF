@@ -4,7 +4,7 @@ solver:
   Ccfl: 0.9
   cycles: 100
   jump: 100
-  convergence tollerance: 5.0
+  convergence tolerance: 5.0
 
 blood:
   mu:  4.0e-3

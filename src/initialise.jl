@@ -70,7 +70,7 @@ function checkSections(data :: Dict{Any,Any})
     end
 
     checkSection(data, "blood", ["mu", "rho"])
-    checkSection(data, "solver", ["Ccfl", "cycles", "convergence tollerance"])
+    checkSection(data, "solver", ["Ccfl", "cycles", "convergence tolerance"])
 
     if ~haskey(data["solver"], "jump")
         data["solver"]["jump"] = 100
@@ -607,7 +607,7 @@ function parseCommandline()
             help = "Print STDOUT - default false"
             action = :store_true
         "--out_files", "-f"
-            help = "Save complete results sotry rather than only the last cardiac cycle"
+            help = "Save complete results story rather than only the last cardiac cycle"
             action = :store_true
     end
 

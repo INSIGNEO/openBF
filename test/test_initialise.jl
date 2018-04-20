@@ -8,7 +8,7 @@ data = openBF.loadYAMLFile("test.yml")
 
 @test_nowarn openBF.checkSections(data)
 @test_nowarn openBF.checkSection(data, "blood", ["mu", "rho"])
-@test_nowarn openBF.checkSection(data, "solver", ["Ccfl", "cycles", "convergence tollerance"])
+@test_nowarn openBF.checkSection(data, "solver", ["Ccfl", "cycles", "convergence tolerance"])
 
 delete!(data, "project name")
 @test_throws ErrorException openBF.checkSections(data)

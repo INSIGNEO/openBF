@@ -181,5 +181,4 @@ module openBF
     include("check_convergence.jl")
 
     include("program.jl")
-
 end
