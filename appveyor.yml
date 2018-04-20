@@ -41,4 +41,4 @@ build_script:
 
 test_script:
   - cd test
-  - C:\projects\julia\bin\julia "Pkg.test(\"openBF\")"
+  - C:\projects\julia\bin\julia -e "Pkg.test(\"openBF\")"

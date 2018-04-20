@@ -6,7 +6,10 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) || [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) || [![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-green.svg)](https://julialang.org/downloads/)
+[![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) || [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf)
+
+[![Tests](https://img.shields.io/badge/julia%20v0.6.0-Tests%20pass-green.svg)](https://julialang.org/downloads/) || [![codecov](https://codecov.io/gh/INSIGNEO/openBF/branch/master/graph/badge.svg)](https://codecov.io/gh/INSIGNEO/openBF)
+
 
 <!-- [![Tests](https://img.shields.io/badge/julia%20v0.3.11-Tests%20pass-brightgreen.svg)](https://julialang.org/downloads/oldreleases.html) -->
 
