@@ -1,0 +1,41 @@
+project name: conjunction
+
+blood:
+  rho: 1060.0 # density [kg/m^3]
+  mu: 4.e-3   # dynamic viscosity [Pa⋅s]
+
+solver:
+  Ccfl: 0.9   # Courant number
+  cycles: 100 # maximum number of cycles
+  jump: 100   # timesteps per cycle to be saved
+  convergence tolerance: 5.0 # percentage value
+
+network:
+  - label: P
+
+    sn: 1     # proximal (source) node
+    tn: 2     # distal (target) node
+
+    L: 8.6e-2 # length (m)
+
+    R0: 0.758242250e-2   # proximal lumen radius (m)
+
+    E: 500.0e3 # Young's modulus (Pa)
+
+    inlet: Q
+    inlet file: /home/ale/postdoc/openBF/test/conjunction/conjunction_inlet.dat
+    inlet number: 1
+
+  - label: d1
+
+    sn: 2
+    tn: 3
+
+    L: 8.5e-2 # length (m)
+
+    R0: 0.5492e-2   # proximal lumen radius (m)
+
+    E: 700.0e3 # Young's modulus (Pa)
+
+    outlet: reflection
+    Rt: 0.0
