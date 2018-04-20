@@ -35,7 +35,7 @@ newA = openBF.areaFromPressure(vessels[1].P[1], vessels[1].A0[1], vessels[1].bet
                                 vessels[1].Pext)
 @test newA == vessels[1].A[1]
 
-@test isapprox(openBF.inputFromData(0.0, heart), -5.24e-07, atol=1e-7)
+@test isapprox(openBF.inputFromData(0.0, heart), -5.239e-07, atol=1e-7)
 
 @test_nowarn openBF.setOutletBC(dt, vessels[3])
 @test isapprox(vessels[3].A[end], 9.5e-5, atol=1e-5)

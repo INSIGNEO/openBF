@@ -37,10 +37,8 @@ install:
 build_script:
 # Need to convert from shallow to complete for Pkg.clone to work
   - IF EXIST .git\shallow (git fetch --unshallow)
-  - C:\projects\julia\bin\julia -e "versioninfo(); Pkg.clone(pwd())
-  # - mkdir C:\Users\appveyor\.julia\v0.6\openBF
-  - xcopy src C:\Users\appveyor\.julia\v0.6\openBF\
+  - C:\projects\julia\bin\julia -e "versioninfo(); Pkg.clone(pwd(), \"openBF\"); Pkg.build(\"openBF\")"
 
 test_script:
   - cd test
-  - C:\projects\julia\bin\julia runtests.jl"
+  - C:\projects\julia\bin\julia "Pkg.test(\"openBF\")"
