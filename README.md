@@ -49,17 +49,12 @@ Have you used openBF for your research? Let us know!
 
 ### Julia and openBF installation (Linux)
 
-- Obtain latest Julia release for your platform [here](https://julialang.org/downloads/) and create a command alias; for example, Julia 0.6.0
-```bash
-$ cd ~/Dowloads
-$ wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
-$ tar -xzvf julia-0.6.0-linux-x86_64.tar.gz
-$ mv julia-0.6.0-linux-x86_64 ~/julia0.6
-$ rm julia-0.6.0-linux-x86_64.tar.gz
-$ echo "alias julia='~/julia0.6/bin/julia'" > ~/.bashrc
-$ source ~/.bashrc
-$ julia
-```
+- Obtain the latest Julia release for your platform [here](https://julialang.org/downloads/).
+- Create a `julia` command alias:
+  - Linux: `$ echo "alias julia='<julia installation path>/bin/julia'" > ~/.bashrc`
+  - MacOSX: `$ echo "alias julia='<julia installation path>/bin/julia'" > ~/.bash_profile`
+  - Windows: [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)
+  Now you can run Julia by typing `julia` in the command line.
 
 - Add openBF
 ```bash

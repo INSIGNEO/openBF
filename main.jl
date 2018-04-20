@@ -24,3 +24,5 @@ verbose = parsed_args["verbose"]
 out_files = parsed_args["out_files"]
 
 openBF.runSimulation(input_filename, verbose=verbose, out_files=out_files)
+
+rm("main.jl")
