@@ -19,19 +19,20 @@ Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) f
 
 ### Installation
 
-Provided you already have a Julia installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add and test openBF as
+Provided you already have a Julia installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add openBF as
 
 ```julia
 julia> Pkg.clone("https://github.com/INSIGNEO/openBF.git")
-julia> Pkg.test("openBF")
 ```
 
-If no errors are shown you are all set. Use openBF as
+and use it as
 
 ```julia
 julia> using openBF
 julia> openBF.runSimulation("<input file name>.yml")
 ```
+
+[![asciicast](https://asciinema.org/a/HtmTZQGoMLhAfL0RVzg3bxvLR.png)](https://asciinema.org/a/HtmTZQGoMLhAfL0RVzg3bxvLR)
 
 You can also create (MacOSX/Linux only) an openBF alias as
 
@@ -50,6 +51,8 @@ optional arguments:
                    last cardiac cycle
   -h, --help       show this help message and exit
 ```
+
+[![asciicast](https://asciinema.org/a/yzT8QwJMtIzEbzabM6ixOcVJL.png)](https://asciinema.org/a/yzT8QwJMtIzEbzabM6ixOcVJL)
 
 ### input.yml template
 
