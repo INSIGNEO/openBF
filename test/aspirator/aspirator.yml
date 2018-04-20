@@ -22,7 +22,7 @@ network:
 
     inlet: Q
     inlet number: 1
-    inlet file: /home/ale/postdoc/openBF/test/aspirator/aspirator_inlet.dat
+    inlet file: aspirator_inlet.dat
 
   - label: in2
     sn: 3
@@ -35,7 +35,7 @@ network:
 
     inlet: Q
     inlet number: 2
-    inlet file: /home/ale/postdoc/openBF/test/aspirator/aspirator_2_inlet.dat
+    inlet file: aspirator_2_inlet.dat
 
   - label: d
     sn: 2

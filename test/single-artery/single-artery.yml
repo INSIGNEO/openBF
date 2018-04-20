@@ -24,7 +24,7 @@ network:
     h0: 0.82e-3
 
     inlet: Q
-    inlet file: /home/ale/postdoc/openBF/test/single-artery/single-artery_inlet.dat
+    inlet file: single-artery_inlet.dat
     inlet number: 1
 
     outlet: wk3

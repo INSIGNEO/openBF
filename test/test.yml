@@ -21,7 +21,7 @@ network:
     E: 500.0e3
     Pext: 10000.0
     inlet: Q
-    inlet file: /home/ale/postdoc/openBF/test/inlet.dat
+    inlet file: inlet.dat
     inlet number: 1
     outlet: wk2
     R1: 6.8123e7

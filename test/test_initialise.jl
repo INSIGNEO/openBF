@@ -92,11 +92,6 @@ inlet, heart = openBF.buildHeart(data["network"][2])
 @test heart.inlet_number == 0
 @test heart.inlet_type == "none"
 
-openBF.makeResultsFolder(data)
-cd("..")
-@test isdir("test_results")
-cd("test_results")
-
 vessel = openBF.buildVessel(1, data["network"][1], blood, 100)
 @test typeof(vessel) == Vessel
 
@@ -108,5 +103,7 @@ v = vessels[1]
 R1, R2 = openBF.computeWindkesselInletImpedance(v.R2, blood, v.A0, v.gamma)
 @test R1 + R2 == v.R2
 
+openBF.makeResultsFolder(data)
 cd("..")
+@test isdir("test_results")
 rm("test_results", recursive=true)

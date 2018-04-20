@@ -349,12 +349,6 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
 
     Pcn = 0.0
 
-    # temp_A_name = join((vessel_name,"_A.temp"))
-    # temp_Q_name = join((vessel_name,"_Q.temp"))
-    # temp_u_name = join((vessel_name,"_u.temp"))
-    # temp_c_name = join((vessel_name,"_c.temp"))
-    # temp_P_name = join((vessel_name,"_P.temp"))
-
     last_A_name = join((vessel_name,"_A.last"))
     last_Q_name = join((vessel_name,"_Q.last"))
     last_u_name = join((vessel_name,"_u.last"))
@@ -367,36 +361,6 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     out_c_name = join((vessel_name,"_c.out"))
     out_P_name = join((vessel_name,"_P.out"))
 
-    # temp_A = open(temp_A_name, "w")
-    # temp_Q = open(temp_Q_name, "w")
-    # temp_u = open(temp_u_name, "w")
-    # temp_c = open(temp_c_name, "w")
-    # temp_P = open(temp_P_name, "w")
-    #
-    # last_A = open(last_A_name, "w")
-    # last_Q = open(last_Q_name, "w")
-    # last_u = open(last_u_name, "w")
-    # last_c = open(last_c_name, "w")
-    # last_P = open(last_P_name, "w")
-    #
-    # out_A = open(out_A_name, "w")
-    # out_Q = open(out_Q_name, "w")
-    # out_u = open(out_u_name, "w")
-    # out_c = open(out_c_name, "w")
-    # out_P = open(out_P_name, "w")
-    #
-    # close(last_A)
-    # close(last_Q)
-    # close(last_u)
-    # close(last_c)
-    # close(last_P)
-    #
-    # close(out_A)
-    # close(out_Q)
-    # close(out_u)
-    # close(out_c)
-    # close(out_P)
-
     return Vessel(vessel_name, ID, sn, tn, inlet, heart,
                   M, dx, invDx, halfDx,
                   beta, gamma, s_15_gamma, gamma_ghost, half_beta_dA0dx,
@@ -407,14 +371,10 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   A_l, Q_l, u_l, c_l, P_l,
                   W1M0, W2M0,
                   U00A, U00Q, U01A, U01Q, UM1A, UM1Q, UM2A, UM2Q,
-                  # temp_P_name, temp_Q_name, temp_A_name,
-                  # temp_c_name, temp_u_name,
                   last_P_name, last_Q_name, last_A_name,
                   last_c_name, last_u_name,
                   out_P_name, out_Q_name, out_A_name,
                   out_c_name, out_u_name,
-                  # temp_P, temp_Q, temp_A, temp_c, temp_u,
-                  # last_P, last_Q, last_A, last_c, last_u,
                   node2, node3, node4,
                   Rt, R1, R2, Cc,
                   Pcn,

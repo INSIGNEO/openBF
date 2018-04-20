@@ -24,13 +24,15 @@ function runSimulation(input_filename :: String;
                        verbose :: Bool = true, out_files :: Bool = true)
 
     data = loadSimulationFiles(input_filename)
-    makeResultsFolder(data)
     blood = buildBlood(data["blood"])
 
     verbose && println("Build $input_filename arterial network \n")
 
     jump = data["solver"]["jump"]
+    
     vessels, edges = buildArterialNetwork(data["network"], blood, jump)
+    makeResultsFolder(data)
+
     Ccfl = data["solver"]["Ccfl"]
     heart = vessels[1].heart
     total_time = data["solver"]["cycles"]*heart.cardiac_T

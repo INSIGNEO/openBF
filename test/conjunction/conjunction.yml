@@ -23,7 +23,7 @@ network:
     E: 500.0e3 # Young's modulus (Pa)
 
     inlet: Q
-    inlet file: /home/ale/postdoc/openBF/test/conjunction/conjunction_inlet.dat
+    inlet file: conjunction_inlet.dat
     inlet number: 1
 
   - label: d1

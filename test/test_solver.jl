@@ -1,8 +1,8 @@
 data = openBF.loadSimulationFiles("test.yml")
-openBF.makeResultsFolder(data)
+
 blood = openBF.buildBlood(data["blood"])
 vessels, edges = openBF.buildArterialNetwork(data["network"], blood, 100)
-
+openBF.makeResultsFolder(data)
 Ccfl = data["solver"]["Ccfl"]
 heart = vessels[1].heart
 

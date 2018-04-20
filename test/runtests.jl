@@ -18,5 +18,5 @@ using openBF
     include("test_conjunction.jl")
     include("test_bifurcation.jl")
     include("test_aspirator.jl")
-    
+
 end

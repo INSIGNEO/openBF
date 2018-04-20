@@ -1,5 +1,5 @@
 data = openBF.loadSimulationFiles("test.yml")
-openBF.makeResultsFolder(data)
+# openBF.makeResultsFolder(data)
 blood = openBF.buildBlood(data["blood"])
 vessels, edges = openBF.buildArterialNetwork(data["network"], blood, 100)
 
@@ -56,5 +56,5 @@ M = vessels[1].M
 
 @test_nowarn openBF.updateGhostCells(vessels)
 
-cd("..")
-rm("test_results", recursive=true)
+# cd("..")
+# rm("test_results", recursive=true)
