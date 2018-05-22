@@ -44,13 +44,13 @@ M, dx, invDx, halfDx = openBF.meshVessel(data["network"][1], data["network"][1][
 @test dx == 0.001
 @test isapprox(invDx, 1.0/0.001, atol=1e-3)
 @test halfDx == 0.0005
-h0 = openBF.computeThickness(data["network"][1], M)
-@test isequal(h0, zeros(Float64, M))
+h0 = openBF.initialiseThickness(data["network"][1], M)
+@test isequal(h0, 0.0)
 
 M, dx, invDx, halfDx = openBF.meshVessel(data["network"][2], data["network"][2]["L"])
 @test M == 86
-h0 = openBF.computeThickness(data["network"][2], M)
-@test ~isequal(h0, zeros(Float64, M))
+h0 = openBF.initialiseThickness(data["network"][2], M)
+@test ~isequal(h0, 0.0)
 
 M, dx, invDx, halfDx = openBF.meshVessel(data["network"][3], data["network"][3]["L"])
 @test M == 1000
@@ -74,8 +74,8 @@ outlet, Rt, R1, R2, Cc = openBF.addOutlet(data["network"][3])
 @test R2 == 3.1013e9
 @test Cc == 3.6664e-10
 
-@test isapprox(openBF.computeViscousTerm(data["network"][1], blood), 0.27, atol=1e-2)
-@test isapprox(openBF.computeViscousTerm(data["network"][2], blood), 0.27, atol=1e-2)
+@test isapprox(openBF.computeViscousTerm(data["network"][1], blood), 0.27*blood.rho_inv, atol=1e-2)
+@test isapprox(openBF.computeViscousTerm(data["network"][2], blood), 0.27*blood.rho_inv, atol=1e-2)
 
 inlet_data = openBF.loadInletData(data["network"][1]["inlet file"])
 @test inlet_data[1,2] != 0.0

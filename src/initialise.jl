@@ -18,7 +18,7 @@ limitations under the License.
 """
     laodSimulationFiles(input_filename :: String)
 
-Load and return YAML input file content.
+Load, check, and return `.yml` input file content.
 """
 function loadSimulationFiles(input_filename :: String)
     data = loadYAMLFile(input_filename)
@@ -32,7 +32,7 @@ end
 """
     loadYAMLFile(filename :: String)
 
-Open a YAML file and return the content as `Dict{Any,Any}`.
+Check existence and open a `.yml` file and return the content as `Dict{Any,Any}`.
 """
 function loadYAMLFile(filename :: String)
     if ~isfile(filename)
@@ -95,7 +95,7 @@ end
 """
     checkNetwork(network :: Array{Dict{Any,Any},1})
 
-Loop trough the network and run check on each single vessel. Check also if at least one
+Loop trough the network and run checks on each single vessel. Check also if at least one
 inlet and one oulet has been defined.
 """
 function checkNetwork(network :: Array{Dict{Any,Any},1})
@@ -247,7 +247,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     Rp, Rd = computeRadii(vessel_data)
     Pext = computePext(vessel_data)
     M, dx, invDx, halfDx = meshVessel(vessel_data, L)
-    h0 = computeThickness(vessel_data, M)
+    h0 = initialiseThickness(vessel_data, M)
     outlet, Rt, R1, R2, Cc = addOutlet(vessel_data)
     viscT = computeViscousTerm(vessel_data, blood)
     inlet, heart = buildHeart(vessel_data)
@@ -266,6 +266,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     Ar = zeros(Float64, M+2)
     Ql = zeros(Float64, M+2)
     Qr = zeros(Float64, M+2)
+    wallT = zeros(Float64, M)
     gamma = zeros(Float64, M)
     dA0dx = zeros(Float64, M)
     slope = zeros(Float64, M)
@@ -296,30 +297,38 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     s_pi = sqrt(pi)
     s_pi_E_over_sigma_squared = s_pi*E/0.75
     one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
-    radius_slope = (Rd - Rp)/(M - 1.0)
+    # radius_slope = computeRadiusSlope(Rp, Rd, M)
+    radius_slope = computeRadiusSlope(Rp, Rd, L)
     ah = 0.2802
     bh = -5.053e2
     ch = 0.1324
     dh = -0.1114e2
 
+    if h0 == 0.0
+        Rmean = 0.5*(Rp + Rd)
+        h0 = computeThickness(Rmean, ah, bh, ch, dh)
+    end
+
     for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
-      if h0[i] == 0.0;
-          h0[i] = R0[i]*(ah*exp(bh*R0[i]) + ch*exp(dh*R0[i]))
-      end
       A0[i] = pi*R0[i]*R0[i]
       A[i] = A0[i]
       inv_A0[i] = 1.0/A0[i]
       s_inv_A0[i] = sqrt(inv_A0[i])
       dA0dx[i] = 2.0*pi*R0[i]*radius_slope
-      dTaudx[i] = s_pi*E*radius_slope*1.3*(h0[i]/R0[i] + R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
-      beta[i] = s_inv_A0[i]*h0[i]*s_pi_E_over_sigma_squared
+      dTaudx[i] = s_pi*E*radius_slope*1.3*(h0/R0[i] + R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      beta[i] = s_inv_A0[i]*h0*s_pi_E_over_sigma_squared
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
       s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
       half_beta_dA0dx[i] = beta[i]*0.5*dA0dx[i]
       P[i] = pressure(A[i], A0[i], beta[i], Pext)
       c[i] = waveSpeed(A[i], gamma[i])
+
+      wallT[i] = 3*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
+
+
+
     end
 
     gamma_ghost[1] = gamma[1]
@@ -365,7 +374,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   M, dx, invDx, halfDx,
                   beta, gamma, s_15_gamma, gamma_ghost, half_beta_dA0dx,
                   A0, inv_A0, s_inv_A0, dA0dx, dTaudx, Pext,
-                  viscT,
+                  viscT, wallT,
                   A, Q, u, c, P,
                   A_t, Q_t, u_t, c_t, P_t,
                   A_l, Q_l, u_l, c_l, P_l,
@@ -382,6 +391,43 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   dU, slopesA, slopesQ,
                   Al, Ar, Ql, Qr, Fl, Fr,
                   outlet)
+end
+
+
+doc"""
+    computeRadiusSlope(Rd :: Float64, Rp :: Float64, L :: Float64).
+
+Calculate the slope for the lumen radius linear tapering as
+
+$\frac{R_d - R_p}{\ell}$
+
+"""
+function computeRadiusSlope(Rp :: Float64, Rd :: Float64, L :: Float64)
+    return (Rd - Rp)/L
+end
+
+
+doc"""
+    computeThickness(R0i :: Float64)
+
+Compute wall thickness based on local lumen radius as
+
+$h_{0i} = R_{0i} \left( a_h e^{b_h R_{0i}} + c_h e^{d_h R_{0i}} \right)$
+
+where
+
+- ah = 0.2802
+- bh = -5.053e2 $m^{-1}$
+- ch = 0.1324
+- dh = -0.1114e2 $m^{-1}$
+
+as reported in
+
+> Avolio AP. Multi-branched model of the human arterial system. Medical and Biological Engineering and Computing. 1980 Nov 1;18(6):709-18.
+"""
+function computeThickness(R0i :: Float64,
+                          ah :: Float64, bh :: Float64, ch :: Float64, dh :: Float64)
+    return R0i*(ah*exp(bh*R0i) + ch*exp(dh*R0i))
 end
 
 
@@ -418,11 +464,14 @@ function computePext(vessel :: Dict{Any,Any})
 end
 
 
-"""
+doc"""
     meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
 
-Pre-compute `dx`, `1/dx`, and `0.5*dx` for the current vessel. The `dx` is computed as
-`L/M` where `M` is the maximum value between `5` (the minimum needed by the solver), the value defined in the `.yml`, and `ceil(L*1e3)` (which would make `dx=1`mm).
+Pre-compute $\Delta x$, $\frac{1}{\Delta x}$ and $\frac{\Delta x}{2}$ for the current vessel. The $\Delta x$ is computed as
+
+$\Delta x = \frac{L}{M}$
+
+where `M` is the maximum value between `5` (the minimum needed by the solver), the value defined in the `.yml`, and `ceil(L*1e3)` (which would make $\Delta x = 1$ mm).
 """
 function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
     if ~haskey(vessel, "M")
@@ -441,16 +490,16 @@ end
 
 
 """
-    computeThickness(vessel :: Dict{Any,Any}, M :: Int)
+    initialiseThickness(vessel :: Dict{Any,Any}, M :: Int)
 
 If vessel thickness is not specified in the `.yml` file, return a `zeroes` array to be
 filed with radius dependent values. Otherwise, return an array with the specified `h0`.
 """
-function computeThickness(vessel :: Dict{Any,Any}, M :: Int)
+function initialiseThickness(vessel :: Dict{Any,Any}, M :: Int)
     if ~haskey(vessel, "h0")
-        return zeros(Float64, M)
+        return 0.0
     else
-        return zeros(Float64, M) + vessel["h0"]
+        return vessel["h0"]
     end
 end
 
@@ -492,11 +541,15 @@ function addOutlet(vessel :: Dict{Any,Any})
 end
 
 
-"""
+doc"""
     computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
-Return `2*(gamma_profile + 2)*pi*blood.mu` where `gamma_profile` is either
-specified in the vessel definition or assumed equal to `9` (plug-flow).
+Return
+
+$2(\gamma_v + 2)\pi\mu$
+
+where $\gamma_v$ (`gamma_profile`) is either specified in the vessel definition or
+assumed equal to `9` (plug-flow).
 """
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
     if haskey(vessel_data, "gamma_profile")
@@ -504,7 +557,7 @@ function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
     else
         gamma_profile = 9
     end
-    return 2*(gamma_profile + 2)*pi*blood.mu
+    return 2*(gamma_profile + 2)*pi*blood.mu*blood.rho_inv
 end
 
 
@@ -539,8 +592,8 @@ end
 
 
 """
-    computeWindkesselInletImpedance(R1 :: Float64, R2 :: Float64, blood :: Blood,
-                                    A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
+    computeWindkesselInletImpedance(R2 :: Float64, blood :: Blood, A0 :: Array{Float64,1},
+                                    gamma :: Array{Float64,1})
 
 In case only one peripheral resistance is defined (two-element windkessel), the second
 one is set as equal to the outlet vessel impedance.

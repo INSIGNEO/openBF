@@ -1,4 +1,4 @@
-project name: single-artery
+project name: tapering
 
 blood:
   rho: 1060.0 # density [kg/m^3]
@@ -8,7 +8,7 @@ solver:
   Ccfl: 0.9   # Courant number
   cycles: 100 # maximum number of cycles
   jump: 100   # timesteps per cycle to be saved
-  convergence tolerance: 5.0 # percentage value
+  convergence tolerance: 26.0 # percentage value
 
 network:
   - label: A1
@@ -16,18 +16,20 @@ network:
     sn: 1     # proximal (source) node
     tn: 2     # distal (target) node
 
-    L: 24.14e-2 # length (m)
+    L: 24.137e-2 # length (m)
 
-    R0: 9.87e-3 # lumen radius (m)
+    Rp: 1.5e-2 # lumen radius (m)
+    Rd: 1.0e-2
 
     E: 400.0e3 # Young's modulus (Pa)
-    h0: 0.82e-3
+    h0: 1.2e-3
 
     inlet: Q
-    inlet file: single-artery_inlet.dat
+    inlet file: tapering_inlet.dat
     inlet number: 1
 
-    outlet: wk3
-    R1: 1.17e7
-    R2: 1.12e8
-    Cc: 1.0163e-8
+    outlet: reflection
+    Rt: 0.0
+    # R1: 1.8503e7
+    # R2: 1.0492e8
+    # Cc: 1.0163e-8

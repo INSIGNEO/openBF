@@ -41,10 +41,14 @@ function waveSpeed(A :: Float64, gamma :: Float64)
 end
 
 
-"""
+doc"""
     calculateDeltaT(vessels :: Array{Vessel,1}, Ccfl :: Float64)
 
-Compute global minimum Δt through CFL condition.
+Compute global minimum Δt through CFL condition. For each vessel the Δt is computed as
+
+$\Delta t = C_{CFL} \frac{\Delta x}{S_{max}}$
+
+where Smax is the maximum between the forward and the backward characteristics, and Ccfl is the Courant-Friedrichs-Lewy condition defined by the user.
 """
 function calculateDeltaT(vessels, Ccfl :: Float64)
     dt = 1.0
@@ -196,8 +200,8 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
 
     for i = 1:v.M+1
-        v.flux[1, i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
-        v.flux[2, i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
+        v.flux[1,i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
+        v.flux[2,i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
     end
 
     for i = 2:v.M+1
@@ -208,9 +212,9 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     #source term
     for i = 1:v.M
         s_A_over_A0 = sqrt(v.A[i])*v.s_inv_A0[i]
-
-        v.Q[i] += dt*b.rho_inv*( -v.viscT*v.Q[i]/v.A[i] + v.A[i]*(v.half_beta_dA0dx[i] - (s_A_over_A0 - 1.)*v.dTaudx[i]))
-
+        # v.Q[i] += dt*b.rho_inv*( -v.viscT*v.Q[i]/v.A[i] + v.A[i]*(v.half_beta_dA0dx[i] - (s_A_over_A0 - 1.)*v.dTaudx[i]))
+        Si = - v.viscT*v.Q[i]/v.A[i] - v.wallT[i]*(sqrt(v.A[i]) - sqrt(v.A0[i]))*v.A[i]
+        v.Q[i] += dt*Si
         v.P[i] = pressure(s_A_over_A0, v.beta[i], v.Pext)
         v.u[i] = v.Q[i]/v.A[i]
         v.c[i] = waveSpeed(v.A[i], v.gamma[i])

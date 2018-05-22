@@ -15,10 +15,10 @@ limitations under the License.
 =#
 
 
-__precompile__()
+(VERSION >= v"0.4" && VERSION != v"0.7") && __precompile__()
 module openBF
 
-    export Vessel, Heart, Blood
+    export Vessel, Heart, Blood, runSimulation
     using YAML
     using ArgParse
     using StaticArrays
@@ -79,6 +79,7 @@ module openBF
         dTaudx          :: Array{Float64,1}
         Pext            :: Float64
         viscT           :: Float64
+        wallT           :: Array{Float64,1}
 
         #Iterative solution
         A :: Array{Float64,1}

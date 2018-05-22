@@ -3,6 +3,8 @@ os:
   - linux
   - osx
 julia:
+  - 0.4
+  - 0.5
   - 0.6
   - nightly
 notifications:
@@ -20,5 +22,5 @@ after_success:
 matrix:
   fast_finish: true
   allow_failures:
-    - julia: nightly
+    - julia: nightly, 0.4, 0.5
     - os: osx

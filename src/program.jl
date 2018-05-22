@@ -16,12 +16,16 @@ limitations under the License.
 
 
 """
-    runSimulation(input_filename :: String; verbose :: Bool = true, clean :: Bool = false)
+    runSimulation(input_filename::String; verbose::Bool=false, out_files::Bool=false)
 
-Main loop wrapper to start a simulation.
+Execute the simulation main loop.
+
+Args:
+    - `input_filename`: The name of the `.yml` input file.
+    - `verbose`: Opt. Boolean flag for STDOUT. Default is `false`.
+    - `out_files`: Opt. Boolean flag to control the `.out` files writing. Default is `false`.
 """
-function runSimulation(input_filename :: String;
-                       verbose :: Bool = true, out_files :: Bool = true)
+function runSimulation(input_filename::String; verbose::Bool=false, out_files::Bool=false)
 
     data = loadSimulationFiles(input_filename)
     blood = buildBlood(data["blood"])
@@ -29,7 +33,7 @@ function runSimulation(input_filename :: String;
     verbose && println("Build $input_filename arterial network \n")
 
     jump = data["solver"]["jump"]
-    
+
     vessels, edges = buildArterialNetwork(data["network"], blood, jump)
     makeResultsFolder(data)
 

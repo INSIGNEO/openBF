@@ -18,7 +18,8 @@ limitations under the License.
 """
     checkConvergence(edge_list, vessels :: Array{Vessel, 1})
 
-Compute the maximum error between two cardiac cycles for all the vessels in the network.
+Compute the maximum error in the pressure and volumetric flow rate waveforms between two
+cardiac cycles at the midpoint of all the vessels in the network.
 """
 function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
     err = zeros(size(edge_list)[1],2) .+ 100
