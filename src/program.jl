@@ -26,7 +26,6 @@ Args:
     - `out_files`: Opt. Boolean flag to control the `.out` files writing. Default is `false`.
 """
 function runSimulation(input_filename::String; verbose::Bool=false, out_files::Bool=false)
-
     data = loadSimulationFiles(input_filename)
     blood = buildBlood(data["blood"])
 

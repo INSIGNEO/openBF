@@ -24,7 +24,7 @@ cardiac cycles at the midpoint of all the vessels in the network.
 function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
     err = zeros(size(edge_list)[1],2) .+ 100
 
-    for i in 1:size(edge_list)[1]
+    @inbounds for i in 1:size(edge_list)[1]
         v = vessels[i]
         lbl = v.label
 

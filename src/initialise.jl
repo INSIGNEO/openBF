@@ -216,15 +216,15 @@ function buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood,
                               jump :: Int)
     vessels = [buildVessel(1, network[1], blood, jump)]
     edges = zeros(Int, length(network), 3)
-    edges[1,1] = vessels[1].ID
-    edges[1,2] = vessels[1].sn
-    edges[1,3] = vessels[1].tn
+    @inbounds edges[1,1] = vessels[1].ID
+    @inbounds edges[1,2] = vessels[1].sn
+    @inbounds edges[1,3] = vessels[1].tn
 
     for i = 2:length(network)
         push!(vessels, buildVessel(i, network[i], blood, jump))
-        edges[i,1] = vessels[i].ID
-        edges[i,2] = vessels[i].sn
-        edges[i,3] = vessels[i].tn
+        @inbounds edges[i,1] = vessels[i].ID
+        @inbounds edges[i,2] = vessels[i].sn
+        @inbounds edges[i,3] = vessels[i].tn
     end
 
     return vessels, edges
@@ -307,7 +307,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
         h0 = computeThickness(Rmean, ah, bh, ch, dh)
     end
 
-    for i = 1:M
+    @fastmath @inbounds for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
       A0[i] = pi*R0[i]*R0[i]
       s_A0[i] = sqrt(A0[i])
@@ -318,7 +318,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
       s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
-      P[i] = pressure(A[i], A0[i], beta[i], Pext)
+      P[i] = pressure(1.0, beta[i], Pext)
       c[i] = waveSpeed(A[i], gamma[i])
       wallT[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
     end
