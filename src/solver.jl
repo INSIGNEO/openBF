@@ -211,11 +211,10 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
 
     #source term
     for i = 1:v.M
-        s_A_over_A0 = sqrt(v.A[i])*v.s_inv_A0[i]
-        # v.Q[i] += dt*b.rho_inv*( -v.viscT*v.Q[i]/v.A[i] + v.A[i]*(v.half_beta_dA0dx[i] - (s_A_over_A0 - 1.)*v.dTaudx[i]))
-        Si = - v.viscT*v.Q[i]/v.A[i] - v.wallT[i]*(sqrt(v.A[i]) - sqrt(v.A0[i]))*v.A[i]
+        s_A = sqrt(v.A[i])
+        Si = - v.viscT*v.Q[i]/v.A[i] - v.wallT[i]*(s_A - v.s_A0[i])*v.A[i]
         v.Q[i] += dt*Si
-        v.P[i] = pressure(s_A_over_A0, v.beta[i], v.Pext)
+        v.P[i] = pressure(s_A*v.s_inv_A0[i], v.beta[i], v.Pext)
         v.u[i] = v.Q[i]/v.A[i]
         v.c[i] = waveSpeed(v.A[i], v.gamma[i])
     end

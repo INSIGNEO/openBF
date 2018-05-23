@@ -259,6 +259,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     c = zeros(Float64, M)
     A0 = zeros(Float64, M)
     R0 = zeros(Float64, M)
+    s_A0 = zeros(Float64, M)
     beta = zeros(Float64, M)
     vA = zeros(Float64, M+2)
     vQ = zeros(Float64, M+2)
@@ -268,9 +269,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     Qr = zeros(Float64, M+2)
     wallT = zeros(Float64, M)
     gamma = zeros(Float64, M)
-    dA0dx = zeros(Float64, M)
     slope = zeros(Float64, M)
-    dTaudx = zeros(Float64, M)
     inv_A0 = zeros(Float64, M)
     dU = zeros(Float64, 2, M+2)
     Fl = zeros(Float64, 2, M+2)
@@ -292,12 +291,11 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     uStar = zeros(Float64, 2, M+2)
     s_15_gamma = zeros(Float64, M)
     gamma_ghost = zeros(Float64, M+2)
-    half_beta_dA0dx = zeros(Float64, M)
+
 
     s_pi = sqrt(pi)
     s_pi_E_over_sigma_squared = s_pi*E/0.75
     one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
-    # radius_slope = computeRadiusSlope(Rp, Rd, M)
     radius_slope = computeRadiusSlope(Rp, Rd, L)
     ah = 0.2802
     bh = -5.053e2
@@ -312,23 +310,17 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
       A0[i] = pi*R0[i]*R0[i]
-      A[i] = A0[i]
+      s_A0[i] = sqrt(A0[i])
       inv_A0[i] = 1.0/A0[i]
       s_inv_A0[i] = sqrt(inv_A0[i])
-      dA0dx[i] = 2.0*pi*R0[i]*radius_slope
-      dTaudx[i] = s_pi*E*radius_slope*1.3*(h0/R0[i] + R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      A[i] = A0[i]
       beta[i] = s_inv_A0[i]*h0*s_pi_E_over_sigma_squared
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
       s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
-      half_beta_dA0dx[i] = beta[i]*0.5*dA0dx[i]
       P[i] = pressure(A[i], A0[i], beta[i], Pext)
       c[i] = waveSpeed(A[i], gamma[i])
-
-      wallT[i] = 3*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
-
-
-
+      wallT[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
     end
 
     gamma_ghost[1] = gamma[1]
@@ -372,8 +364,8 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
 
     return Vessel(vessel_name, ID, sn, tn, inlet, heart,
                   M, dx, invDx, halfDx,
-                  beta, gamma, s_15_gamma, gamma_ghost, half_beta_dA0dx,
-                  A0, inv_A0, s_inv_A0, dA0dx, dTaudx, Pext,
+                  beta, gamma, s_15_gamma, gamma_ghost,
+                  A0, s_A0, inv_A0, s_inv_A0, Pext,
                   viscT, wallT,
                   A, Q, u, c, P,
                   A_t, Q_t, u_t, c_t, P_t,

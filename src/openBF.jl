@@ -71,12 +71,10 @@ module openBF
         gamma           :: Array{Float64,1}
         s_15_gamma      :: Array{Float64,1}
         gamma_ghost     :: Array{Float64,1}
-        half_beta_dA0dx :: Array{Float64,1}
         A0              :: Array{Float64,1}
+        s_A0          :: Array{Float64,1}
         inv_A0          :: Array{Float64,1}
         s_inv_A0        :: Array{Float64,1}
-        dA0dx           :: Array{Float64,1}
-        dTaudx          :: Array{Float64,1}
         Pext            :: Float64
         viscT           :: Float64
         wallT           :: Array{Float64,1}
