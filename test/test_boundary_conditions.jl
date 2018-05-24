@@ -11,11 +11,11 @@ Qref = vessels[1].Q[1]
 dt = openBF.calculateDeltaT(vessels, Ccfl)
 
 @test heart.inlet_type == "Q"
-@inferred openBF.setInletBC(0.0, dt, vessels[1])
+@test_nowarn openBF.setInletBC(0.0, dt, vessels[1])
 @test vessels[1].Q[1] != Qref
-@test vessels[1].P[1] != Pref
+@test vessels[1].P[1] == Pref
 
-@inferred openBF.inletCompatibility(dt, vessels[1], heart)
+@test_nowarn openBF.inletCompatibility(dt, vessels[1], heart)
 @test isapprox(vessels[1].A[1], 1.8e-4, atol=1e-5)
 @test isapprox(vessels[1].P[1], 1e4, atol=1)
 
