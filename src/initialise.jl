@@ -292,7 +292,6 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     s_15_gamma = zeros(Float64, M)
     gamma_ghost = zeros(Float64, M+2)
 
-
     s_pi = sqrt(pi)
     s_pi_E_over_sigma_squared = s_pi*E/0.75
     one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
@@ -459,11 +458,13 @@ end
 doc"""
     meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
 
-Pre-compute $\Delta x$, $\frac{1}{\Delta x}$ and $\frac{\Delta x}{2}$ for the current vessel. The $\Delta x$ is computed as
+Pre-compute $\Delta x$, $\frac{1}{\Delta x}$ and $\frac{\Delta x}{2}$ for the current
+vessel. The $\Delta x$ is computed as
 
 $\Delta x = \frac{L}{M}$
 
-where `M` is the maximum value between `5` (the minimum needed by the solver), the value defined in the `.yml`, and `ceil(L*1e3)` (which would make $\Delta x = 1$ mm).
+where `M` is the maximum value between `5` (the minimum needed by the solver), the value
+defined in the `.yml`, and `ceil(L*1e3)` (which would make $\Delta x = 1$ mm).
 """
 function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
     if ~haskey(vessel, "M")

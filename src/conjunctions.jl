@@ -32,7 +32,8 @@ function solveConjunction(b :: Blood, v1 :: Vessel, v2 :: Vessel)
     k  = @SArray [k1, k2, k3]
 
     J = calculateJacobianConjunction(v1, v2, U0, k)
-    U = newtonRaphson([v1, v2], J, U0, k, calculateWstarConjunction, calculateFConjunction)
+    U = newtonRaphson([v1, v2], J, U0, k
+                      calculateWstarConjunction, calculateFConjunction)
 
     updateConjunction(U, v1, v2)
 end

@@ -36,7 +36,8 @@ end
 """
     inputFromData(t :: Float64, h :: Heart)
 
-Inlet flow waveform is stored in `h` data structure inside `input_data` matrix. `input_data` has two columns and as many rows as time steps.
+Inlet flow waveform is stored in `h` data structure inside `input_data` matrix.
+`input_data` has two columns and as many rows as time steps.
 """
 function inputFromData(t :: Float64, h :: Heart)
 	idt = h.input_data[:,1]

@@ -68,6 +68,7 @@ function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
 
         if u_ok == length(dU) || f_ok == length(dU)
             return U_new
+            
         else
             U = U_new
             W = funW(U, k)

@@ -11,10 +11,6 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  # - julia -e 'Pkg.clone("https://github.com/INSIGNEO/openBF.git")'
-  # - cd test/
-  # - julia --code-coverage runtests.jl
-  # - cd ../
   - julia -e 'Pkg.clone(pwd(), "openBF"); Pkg.build("openBF"); Pkg.test("openBF"; coverage=true)'
 after_success:
   - echo "done!"

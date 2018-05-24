@@ -23,7 +23,7 @@ Execute the simulation main loop.
 Args:
     - `input_filename`: The name of the `.yml` input file.
     - `verbose`: Opt. Boolean flag for STDOUT. Default is `false`.
-    - `out_files`: Opt. Boolean flag to control the `.out` files writing. Default is `false`.
+    - `out_files`: Opt. Boolean flag to control the `.out` files writing. Default `false`.
 """
 function runSimulation(input_filename::String; verbose::Bool=false, out_files::Bool=false)
     data = loadSimulationFiles(input_filename)
