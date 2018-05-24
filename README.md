@@ -29,8 +29,6 @@ julia> using openBF
 julia> openBF.runSimulation("<input file name>.yml")
 ```
 
-[![asciicast](https://asciinema.org/a/HtmTZQGoMLhAfL0RVzg3bxvLR.png)](https://asciinema.org/a/HtmTZQGoMLhAfL0RVzg3bxvLR)
-
 You can also create (MacOSX/Linux only) an openBF alias as
 
 ```bash
@@ -48,8 +46,6 @@ optional arguments:
                    last cardiac cycle
   -h, --help       show this help message and exit
 ```
-
-[![asciicast](https://asciinema.org/a/yzT8QwJMtIzEbzabM6ixOcVJL.png)](https://asciinema.org/a/yzT8QwJMtIzEbzabM6ixOcVJL)
 
 ### Ecosystem
 

@@ -34,8 +34,7 @@ function solveBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
     k = @SArray [k1, k2, k3]
 
     J = calculateJacobianBifurcation(v1, v2, v3, U0, k)
-    U = newtonRaphson([v1, v2, v3], J, U0, k,
-                      calculateWstarBifurcation, calculateFBifurcation)
+    U = newtonRaphson([v1, v2, v3], J, U0, k, calculateWstarBifurcation, calculateFBifurcation)
 
     updateBifurcation(U, v1, v2, v3)
 end
