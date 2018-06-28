@@ -87,7 +87,8 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
         current_time += dt
         if current_time >= total_time
-            verbose && println("Not converged after $passed_cycles cycles, End!")
+            passed_cycles += 1
+            verbose && println("\nNot converged after $passed_cycles cycles, End!")
             break
         end
     end

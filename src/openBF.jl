@@ -72,12 +72,14 @@ module openBF
         s_15_gamma      :: Array{Float64,1}
         gamma_ghost     :: Array{Float64,1}
         A0              :: Array{Float64,1}
-        s_A0          :: Array{Float64,1}
+        s_A0            :: Array{Float64,1}
         inv_A0          :: Array{Float64,1}
         s_inv_A0        :: Array{Float64,1}
         Pext            :: Float64
         viscT           :: Float64
-        wallT           :: Array{Float64,1}
+        wallE           :: Array{Float64,1}
+        wallVa          :: Array{Float64,1}
+        wallVb          :: Array{Float64,1}
 
         #Iterative solution
         A :: Array{Float64,1}

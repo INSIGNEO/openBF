@@ -216,11 +216,32 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     #source term
     @fastmath @inbounds @simd for i = 1:v.M
         s_A = sqrt(v.A[i])
-        Si = - v.viscT*v.Q[i]/v.A[i] - v.wallT[i]*(s_A - v.s_A0[i])*v.A[i]
+        Si = - v.viscT*v.Q[i]/v.A[i] - v.wallE[i]*(s_A - v.s_A0[i])*v.A[i]
         v.Q[i] += dt*Si
+
         v.P[i] = pressure(s_A*v.s_inv_A0[i], v.beta[i], v.Pext)
-        v.u[i] = v.Q[i]/v.A[i]
         v.c[i] = waveSpeedSA(s_A, v.gamma[i])
+
+    end
+
+    #parabolic system (viscoelastic part)
+    if v.wallVa[1] != 0.0
+        Td = 1.0/dt + v.wallVb
+        Tlu = -v.wallVa
+        T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
+
+        d = (1.0/dt - v.wallVb).*v.Q
+        d[1] += v.wallVa[2]*v.Q[2]
+        for i = 2:v.M-1
+            d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
+        end
+        d[end] += v.wallVa[end-1]*v.Q[end-1]
+
+        v.Q = T\d
+    end
+
+    @fastmath @inbounds @simd for i = 1:v.M
+        v.u[i] = v.Q[i]/v.A[i]
     end
 end
 

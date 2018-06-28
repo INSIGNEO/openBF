@@ -245,12 +245,13 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     E = vessel_data["E"]
 
     Rp, Rd = computeRadii(vessel_data)
-    Pext = computePext(vessel_data)
-    M, dx, invDx, halfDx = meshVessel(vessel_data, L)
+    Pext = getPext(vessel_data)
+    M, dx, invDx, halfDx, invDxSq = meshVessel(vessel_data, L)
     h0 = initialiseThickness(vessel_data, M)
     outlet, Rt, R1, R2, Cc = addOutlet(vessel_data)
     viscT = computeViscousTerm(vessel_data, blood)
     inlet, heart = buildHeart(vessel_data)
+    phi = getPhi(vessel_data)
 
     Q = zeros(Float64, M)
     P = zeros(Float64, M)
@@ -267,9 +268,11 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     Ar = zeros(Float64, M+2)
     Ql = zeros(Float64, M+2)
     Qr = zeros(Float64, M+2)
-    wallT = zeros(Float64, M)
+    wallE = zeros(Float64, M)
     gamma = zeros(Float64, M)
     slope = zeros(Float64, M)
+    wallVa = zeros(Float64, M)
+    wallVb = zeros(Float64, M)
     inv_A0 = zeros(Float64, M)
     dU = zeros(Float64, 2, M+2)
     Fl = zeros(Float64, 2, M+2)
@@ -296,6 +299,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     s_pi_E_over_sigma_squared = s_pi*E/0.75
     one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
     radius_slope = computeRadiusSlope(Rp, Rd, L)
+
     ah = 0.2802
     bh = -5.053e2
     ch = 0.1324
@@ -305,6 +309,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
         Rmean = 0.5*(Rp + Rd)
         h0 = computeThickness(Rmean, ah, bh, ch, dh)
     end
+    Cv = 0.5*s_pi*phi*h0/(blood.rho*0.75)
 
     @fastmath @inbounds for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
@@ -319,7 +324,11 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
       gamma_ghost[i+1] = gamma[i]
       P[i] = pressure(1.0, beta[i], Pext)
       c[i] = waveSpeed(A[i], gamma[i])
-      wallT[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
+      wallE[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
+      if phi != 0.0
+          wallVb[i] = Cv*s_inv_A0[i]*invDxSq
+          wallVa[i] = 0.5*wallVb[i]
+      end
     end
 
     gamma_ghost[1] = gamma[1]
@@ -365,7 +374,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   M, dx, invDx, halfDx,
                   beta, gamma, s_15_gamma, gamma_ghost,
                   A0, s_A0, inv_A0, s_inv_A0, Pext,
-                  viscT, wallT,
+                  viscT, wallE, wallVa, wallVb,
                   A, Q, u, c, P,
                   A_t, Q_t, u_t, c_t, P_t,
                   A_l, Q_l, u_l, c_l, P_l,
@@ -441,16 +450,31 @@ end
 
 
 """
-    computePext(vessel :: Dict{Any,Any})
+    getPext(vessel :: Dict{Any,Any})
 
 Extract Pext value for current vessels; return default `Pext = 0.0` if no value is
 specified.
 """
-function computePext(vessel :: Dict{Any,Any})
+function getPext(vessel :: Dict{Any,Any})
     if ~haskey(vessel, "Pext")
         return 0.0
     else
         return vessel["Pext"]
+    end
+end
+
+
+"""
+    getPhi(vessel :: Dict{Any,Any})
+
+Extract `phi` value for current vessels; return default `phi = 0.0` if no value is
+specified.
+"""
+function getPhi(vessel :: Dict{Any,Any})
+    if ~haskey(vessel, "phi")
+        return 0.0
+    else
+        return vessel["phi"]
     end
 end
 
@@ -477,8 +501,9 @@ function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
     dx = L/M
     invDx = M/L
     halfDx = 0.5*dx
+    invDxSq = invDx*invDx
 
-    return M, dx, invDx, halfDx
+    return M, dx, invDx, halfDx, invDxSq
 end
 
 

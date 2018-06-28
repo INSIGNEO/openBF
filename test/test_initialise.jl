@@ -34,15 +34,16 @@ Rp, Rd = openBF.computeRadii(data["network"][1])
 Rp, Rd = openBF.computeRadii(data["network"][2])
 @test Rp == Rd
 
-Pext = openBF.computePext(data["network"][1])
+Pext = openBF.getPext(data["network"][1])
 @test Pext == 10000.0
-Pext = openBF.computePext(data["network"][2])
+Pext = openBF.getPext(data["network"][2])
 @test Pext == 0.0
 
-M, dx, invDx, halfDx = openBF.meshVessel(data["network"][1], data["network"][1]["L"])
+M, dx, invDx, halfDx, invDxSq = openBF.meshVessel(data["network"][1], data["network"][1]["L"])
 @test M == data["network"][1]["M"]
 @test dx == 0.001
 @test isapprox(invDx, 1.0/0.001, atol=1e-3)
+@test isapprox(invDxSq, (1.0/0.001)^2, atol=1e-3)
 @test halfDx == 0.0005
 h0 = openBF.initialiseThickness(data["network"][1], M)
 @test isequal(h0, 0.0)
@@ -52,7 +53,7 @@ M, dx, invDx, halfDx = openBF.meshVessel(data["network"][2], data["network"][2][
 h0 = openBF.initialiseThickness(data["network"][2], M)
 @test ~isequal(h0, 0.0)
 
-M, dx, invDx, halfDx = openBF.meshVessel(data["network"][3], data["network"][3]["L"])
+M, dx, invDx, halfDx, invDxSq = openBF.meshVessel(data["network"][3], data["network"][3]["L"])
 @test M == 1000
 
 outlet, Rt, R1, R2, Cc = openBF.addOutlet(data["network"][1])

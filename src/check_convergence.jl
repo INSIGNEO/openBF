@@ -38,6 +38,6 @@ function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
 
         err[i,2] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
     end
-    
+
     return maximum(err)
 end
