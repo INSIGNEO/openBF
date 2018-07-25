@@ -54,7 +54,7 @@ function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
                 e *= ", "
             end
             e = e[1:end-2]*")"
-            error("Newton-Raphson doesn't converge at $e junction!")
+            error("\nNewton-Raphson doesn't converge at $e junction!")
         end
 
         u_ok = 0
@@ -68,7 +68,7 @@ function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
 
         if u_ok == length(dU) || f_ok == length(dU)
             return U_new
-            
+
         else
             U = U_new
             W = funW(U, k)

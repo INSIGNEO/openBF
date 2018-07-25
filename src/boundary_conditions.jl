@@ -186,7 +186,13 @@ function threeElementWindkessel(dt :: Float64, v :: Vessel)
 
 	dfun(As) = v.R1*(ul + sgamma * (ssAl - 1.25*sqrt(sqrt(As)))) - bA0*0.5/sqrt(As)
 
-	As = newtonSolver(fun, dfun, As)
+    try
+        As = newtonSolver(fun, dfun, As)
+    catch e
+        vlab = v.label
+        println("\nNewton solver doesn't converge at $vlab outlet!")
+        throw(e)
+    end
 
 	us = (pressure(As, v.A0[end], v.beta[end], v.Pext) - Pout)/(As*v.R1)
 
