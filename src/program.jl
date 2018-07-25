@@ -64,7 +64,13 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
             if passed_cycles + 1 > 1
                 err = checkConvergence(edges, vessels)
-                verbose && @printf(" - Error = %4.2f%%\n", err)
+                if verbose == true
+                    if err > 100.0
+                        @printf(" - Conv. error > 100%%\n")
+                    else
+                        @printf(" - Conv. error = %4.2f%%\n", err)
+                    end
+                end
             else
                 err = 100.0
                 verbose && @printf("\n")
