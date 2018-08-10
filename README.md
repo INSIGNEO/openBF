@@ -8,6 +8,8 @@
 
 [![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) [![codecov](https://codecov.io/gh/INSIGNEO/openBF/branch/master/graph/badge.svg)](https://codecov.io/gh/INSIGNEO/openBF)
 
+[![](https://img.shields.io/badge/Julia%20v0.3.11%20--%200.5-Tests%20pass%20v0.3.11-green.svg)](https://github.com/INSIGNEO/openBF/releases/tag/v0.3.11) [![](https://img.shields.io/badge/Julia%20v0.6.x-Tests%20pass%20v0.6.x-green.svg)](https://github.com/INSIGNEO/openBF/releases/tag/v0.6.3)
+
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
 ### Docs
