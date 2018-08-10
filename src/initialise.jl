@@ -399,7 +399,7 @@ end
 
 Calculate the slope for the lumen radius linear tapering as
 
-``$\frac{R_d - R_p}{\ell}$``
+(Rd - Rp)/L
 
 """
 function computeRadiusSlope(Rp :: Float64, Rd :: Float64, L :: Float64)
