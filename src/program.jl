@@ -49,7 +49,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
     counter = 1
-    @time while true
+    while true
         dt = calculateDeltaT(vessels, Ccfl)
         solveModel(vessels, edges, blood, dt, current_time)
         updateGhostCells(vessels)
