@@ -98,7 +98,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
             break
         end
     end
-    verbose && (@printf("\n"); ending_time = (time_ns() - starting_time)/1.0e9))
+    verbose && (@printf("\n"); ending_time = (time_ns() - starting_time)/1.0e9)
     verbose && println("Elapsed time = $ending_time seconds")
 
     writeResults(vessels)
