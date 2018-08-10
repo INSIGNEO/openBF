@@ -84,7 +84,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
                 break
             end
 
-            passed_cycles .+= 1
+            passed_cycles += 1
             verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
             timepoints += heart.cardiac_T
