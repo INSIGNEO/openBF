@@ -412,7 +412,7 @@ end
 
 Compute wall thickness based on local lumen radius as
 
-$h_{0i} = R_{0i} \left( a_h e^{b_h R_{0i}} + c_h e^{d_h R_{0i}} \right)$
+h_{0i} = R_{0i} ( a_h e^{b_h R_{0i}} + c_h e^{d_h R_{0i}} )
 
 where
 
