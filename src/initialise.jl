@@ -559,7 +559,7 @@ function addOutlet(vessel :: Dict{Any,Any})
 end
 
 
-doc"""
+"""
     computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
 Return
