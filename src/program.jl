@@ -46,7 +46,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     current_time = 0.0
     passed_cycles = 0
 
-    verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
+    verbose && (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); starting_time = time_ns())
 
     counter = 1
     while true
@@ -84,8 +84,8 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
                 break
             end
 
-            passed_cycles = passed_cycles .+ 1
-            verbose && @printf("Solving cardiac cycle no: %d", passed_cycles .+ 1)
+            passed_cycles += 1
+            verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
             timepoints = timepoints .+ heart.cardiac_T
             counter = 1
@@ -98,7 +98,8 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
             break
         end
     end
-    verbose && @printf "\n"
+    verbose && (@printf("\n"); ending_time = (time_ns() - starting_time)/1.0e9))
+    verbose && println("Elapsed time = $ending_time seconds")
 
     writeResults(vessels)
 
