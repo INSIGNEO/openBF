@@ -27,7 +27,7 @@ module openBF
     """
     Heart type
     """
-    type Heart
+    mutable struct Heart
         inlet_type :: String
         cardiac_T :: Float64
         input_data :: Array{Float64,2}
@@ -38,7 +38,7 @@ module openBF
     """
     Blood type
     """
-    type Blood
+    mutable struct Blood
         mu  :: Float64
         rho :: Float64
         rho_inv :: Float64
@@ -48,7 +48,7 @@ module openBF
     """
     Vessel type
     """
-    type Vessel
+    mutable struct Vessel
         label :: String
 
         #Topology
