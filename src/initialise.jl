@@ -394,7 +394,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
 end
 
 
-doc"""
+@doc doc"""
     computeRadiusSlope(Rd :: Float64, Rp :: Float64, L :: Float64).
 
 Calculate the slope for the lumen radius linear tapering as
@@ -407,7 +407,7 @@ function computeRadiusSlope(Rp :: Float64, Rd :: Float64, L :: Float64)
 end
 
 
-doc"""
+@doc doc"""
     computeThickness(R0i :: Float64)
 
 Compute wall thickness based on local lumen radius as
@@ -479,7 +479,7 @@ function getPhi(vessel :: Dict{Any,Any})
 end
 
 
-doc"""
+@doc doc"""
     meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
 
 Pre-compute $\Delta x$, $\frac{1}{\Delta x}$ and $\frac{\Delta x}{2}$ for the current
@@ -559,7 +559,7 @@ function addOutlet(vessel :: Dict{Any,Any})
 end
 
 
-doc"""
+@doc doc"""
     computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
 Return
