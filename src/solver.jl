@@ -45,7 +45,7 @@ function waveSpeedSA(sA :: Float64, gamma :: Float64)
 end
 
 
-@doc doc"""
+"""
     calculateDeltaT(vessels :: Array{Vessel,1}, Ccfl :: Float64)
 
 Compute global minimum Δt through CFL condition. For each vessel the Δt is computed as
