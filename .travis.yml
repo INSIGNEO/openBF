@@ -9,7 +9,7 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'import Pkg; Pkg.clone("add https://github.com/dcjones/Codecs.jl"); Pkg.clone("add https://github.com/dcjones/YAML.jl"); Pkg.clone(pwd(), "openBF"); Pkg.build("openBF"); Pkg.test("openBF"; coverage=true)'
+  - julia -e 'import Pkg; Pkg.clone("https://github.com/dcjones/Codecs.jl"); Pkg.clone("https://github.com/dcjones/YAML.jl"); Pkg.clone(pwd(), "openBF"); Pkg.build("openBF"); Pkg.test("openBF"; coverage=true)'
 after_success:
   - echo "done!"
   - julia -e 'import Pkg; cd(Pkg.dir("openBF")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
