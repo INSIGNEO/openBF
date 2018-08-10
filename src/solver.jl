@@ -116,22 +116,22 @@ function solveOutlet(j :: Int, vessel :: Vessel, blood :: Blood, vessels :: Arra
     if vessel.outlet != "none"
         setOutletBC(dt, vessel)
 
-    elseif size(find(edges[:,2] .== t))[1] == 2
-        d1_i = find(edges[:,2] .== t)[1]
-        d2_i = find(edges[:,2] .== t)[2]
+    elseif size(findall(edges[:,2] .== t))[1] == 2
+        d1_i = findall(edges[:,2] .== t)[1]
+        d2_i = findall(edges[:,2] .== t)[2]
         joinVessels(blood, vessel, vessels[d1_i], vessels[d2_i])
 
-    elseif size(find(edges[:,3] .== t))[1] == 1
-        d_i = find(edges[:,2] .== t)[1]
+    elseif size(findall(edges[:,3] .== t))[1] == 1
+        d_i = findall(edges[:,2] .== t)[1]
         joinVessels(blood, vessel, vessels[d_i])
 
-    elseif size(find(edges[:,3] .== t))[1] == 2
-        p1_i = find(edges[:,3] .== t)[1]
-        p2_i = find(edges[:,3] .== t)[2]
+    elseif size(findall(edges[:,3] .== t))[1] == 2
+        p1_i = findall(edges[:,3] .== t)[1]
+        p2_i = findall(edges[:,3] .== t)[2]
 
         if maximum([p1_i, p2_i]) == i
             p2_i = minimum([p1_i, p2_i])
-            d = find(edges[:,2] .== t)[1]
+            d = findall(edges[:,2] .== t)[1]
             solveAnastomosis(vessel, vessels[p2_i], vessels[d])
         end
     end

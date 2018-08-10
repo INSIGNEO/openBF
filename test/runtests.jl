@@ -16,7 +16,7 @@ using openBF
     # include("test_solver.jl")
 
     #integration tests
-    include("test_single-artery.jl")
+    # include("test_single-artery.jl")
     include("test_conjunction.jl")
     include("test_bifurcation.jl")
     include("test_aspirator.jl")
