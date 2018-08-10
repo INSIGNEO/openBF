@@ -50,7 +50,7 @@ end
 
 Compute global minimum Δt through CFL condition. For each vessel the Δt is computed as
 
-$\Delta t = C_{CFL} \frac{\Delta x}{S_{max}}$
+Delta t = C_{CFL} frac{Delta x}{S_{max}}
 
 where Smax is the maximum between the forward and the backward characteristics, and Ccfl is the Courant-Friedrichs-Lewy condition defined by the user.
 """

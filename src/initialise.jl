@@ -417,9 +417,9 @@ h_{0i} = R_{0i} ( a_h e^{b_h R_{0i}} + c_h e^{d_h R_{0i}} )
 where
 
 - ah = 0.2802
-- bh = -5.053e2 $m^{-1}$
+- bh = -5.053e2 m^{-1}
 - ch = 0.1324
-- dh = -0.1114e2 $m^{-1}$
+- dh = -0.1114e2 m^{-1}
 
 as reported in
 
@@ -482,13 +482,13 @@ end
 """
     meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
 
-Pre-compute $\Delta x$, $\frac{1}{\Delta x}$ and $\frac{\Delta x}{2}$ for the current
-vessel. The $\Delta x$ is computed as
+Pre-compute Delta x, frac{1}{Delta x} and frac{Delta x}{2} for the current
+vessel. The Delta x is computed as
 
-$\Delta x = \frac{L}{M}$
+Delta x = frac{L}{M}
 
 where `M` is the maximum value between `5` (the minimum needed by the solver), the value
-defined in the `.yml`, and `ceil(L*1e3)` (which would make $\Delta x = 1$ mm).
+defined in the `.yml`, and `ceil(L*1e3)` (which would make Delta x = 1mm).
 """
 function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
     if ~haskey(vessel, "M")
@@ -564,9 +564,9 @@ doc"""
 
 Return
 
-$2(\gamma_v + 2)\pi\mu$
+2(gamma_v + 2)pi*mu
 
-where $\gamma_v$ (`gamma_profile`) is either specified in the vessel definition or
+where gamma_v (`gamma_profile`) is either specified in the vessel definition or
 assumed equal to `9` (plug-flow).
 """
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
