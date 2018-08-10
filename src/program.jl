@@ -39,17 +39,17 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     Ccfl = data["solver"]["Ccfl"]
     heart = vessels[1].heart
     total_time = data["solver"]["cycles"]*heart.cardiac_T
-    timepoints = linspace(0, heart.cardiac_T, jump)
+    timepoints = range(0, stop=heart.cardiac_T, length=jump)
 
     verbose && println("Start simulation \n")
 
     current_time = 0.0
     passed_cycles = 0
 
-    verbose && (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); tic())
+    verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
 
     counter = 1
-    while true
+    @time while true
         dt = calculateDeltaT(vessels, Ccfl)
         solveModel(vessels, edges, blood, dt, current_time)
         updateGhostCells(vessels)
@@ -98,7 +98,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
             break
         end
     end
-    verbose && (@printf "\n"; toc())
+    verbose && @printf "\n"
 
     writeResults(vessels)
 
