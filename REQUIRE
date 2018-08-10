@@ -1,4 +1,5 @@
 julia 0.6.0
-YAML
+Codecs 0.4.0+
+YAML 0.2.1+
 ArgParse
 StaticArrays
