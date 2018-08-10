@@ -15,7 +15,7 @@ limitations under the License.
 =#
 
 
-# (VERSION >= v"0.4" && VERSION != v"0.7") && __precompile__()
+(VERSION >= v"0.4") && __precompile__(true)
 module openBF
 
     export Vessel, Heart, Blood, runSimulation
