@@ -399,7 +399,7 @@ end
 
 Calculate the slope for the lumen radius linear tapering as
 
-$\frac{R_d - R_p}{\ell}$
+``$\frac{R_d - R_p}{\ell}$``
 
 """
 function computeRadiusSlope(Rp :: Float64, Rd :: Float64, L :: Float64)
@@ -559,7 +559,7 @@ function addOutlet(vessel :: Dict{Any,Any})
 end
 
 
-"""
+doc"""
     computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
 Return
