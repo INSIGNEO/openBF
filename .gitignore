@@ -1,3 +1,4 @@
 test/**/*_results/*
 **/.DS_Store
 cvs_results/*
+docs/build/*
