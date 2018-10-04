@@ -14,7 +14,8 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 ### Docs
 
-Check the library [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
+- openBF __≦v0.6.3__ check this [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
+- openBF __v0.7+__ docs can be built as `julia make.jl` inside the `docs/` folder (this requires [Documenter](https://github.com/JuliaDocs/Documenter.jl) package).
 
 ### Installation
 
