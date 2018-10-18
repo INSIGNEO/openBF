@@ -6,6 +6,8 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Mentioned in Awesome Julia.jl](https://awesome.re/mentioned-badge.svg)](https://github.com/svaksha/Julia.jl/blob/master/Biology.md#bioinformatics)
 
+[![DOI](https://img.shields.io/badge/DOI-10.15131/shef.data.7166183-blue.svg)](https://figshare.com/articles/openBF_Julia_software_for_1D_blood_flow_modelling/7166183)
+
 [![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) [![codecov](https://codecov.io/gh/INSIGNEO/openBF/branch/master/graph/badge.svg)](https://codecov.io/gh/INSIGNEO/openBF)
 
 [![](https://img.shields.io/badge/Julia%20v0.3.11%20--%200.5-Tests%20pass%20v0.3.11-green.svg)](https://github.com/INSIGNEO/openBF/releases/tag/v0.3.11) [![](https://img.shields.io/badge/Julia%20v0.6.x-Tests%20pass%20v0.6.3-green.svg)](https://github.com/INSIGNEO/openBF/releases/tag/v0.6.3) [![](https://img.shields.io/badge/Julia%20v0.7%2B-Tests%20pass%20v1.0-green.svg)]()
@@ -70,10 +72,9 @@ Have you used openBF for your research? Let us know!
 ### Citation
 
 ```
-@phdthesis{melis2017gaussian,
-  title={Gaussian process emulators for 1D vascular models},
-  author={Melis, Alessandro},
-  year={2017},
-  school={University of Sheffield}
-}
+@misc{melis_2018, title={openBF: Julia software for 1D blood flow modelling}, url={https://figshare.com/articles/openBF_Julia_software_for_1D_blood_flow_modelling/7166183/1}, DOI={10.15131/shef.data.7166183}, abstractNote={
+openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in Julia and released under Apache 2.0 free software license.
+
+See https://github.com/INSIGNEO/openBF for the git repository and https://insigneo.github.io/openBF/ for the documentation.
+}, publisher={figshare}, author={Melis, Alessandro}, year={2018}, month={Oct}}
 ```
