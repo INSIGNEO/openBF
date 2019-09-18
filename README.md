@@ -28,6 +28,13 @@ julia> ]
 (v1.0) pkg> add https://github.com/INSIGNEO/openBF
 ```
 
+test it as
+
+```
+julia> ]
+(v1.0) pkg> test openBF
+```
+
 and use it as
 
 ```julia
