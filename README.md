@@ -25,7 +25,7 @@ Provided you already have a Julia v1.0 installation (all platforms [download](ht
 
 ```
 julia> ]
-(v1.0) pkg> clone("https://github.com/INSIGNEO/openBF.git")
+(v1.0) pkg> add https://github.com/INSIGNEO/openBF
 ```
 
 and use it as
