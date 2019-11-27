@@ -1,4 +1,4 @@
-# __openBF__
+# __openBF.jl__
 
 [![TUoS](https://img.shields.io/badge/-The%20University%20of%20Sheffield-blue.svg?colorA=ffffff&colorB=009fe3&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAABsFBMVEUAAABmZplVVYBLPHheUYZJPXlSR3pCOnNgWIdoYI9FPnVMQXc0JGM0KmhEOXI0MW8xMW2Ph6yYkrOWj6%2BOiayinLqWkbIcWJkdWJezrsW2sciclrWmoL0cWpkbXJuCfqQVba4Vba2tqsKBgKWXkbGgm7ioo7%2Bln7umobyppcClob0RdrgSd7ikoLuXkbEeeKwieqmYkrKkn7sAneAAn%2BMBnN8Dn%2BIEj9IEkNQEoOMFi88GicwHnuAInuAVaqkVgrEWa6sWiskYj84ek88mk8wmqOInqOIqhrA4qd45qd87kaA8q988q%2BA9qN0%2Fk51Aqd1CqdxCqd1JnqtNnc9OnKVPnItSmsZUmqZVlsFVnYZVns1bst9ds99ftN9isNtitN9joa1msdtnveZqoaRqrNZqvuZsrdZvk2lylWR0nKZ2oJx%2BfKOBf6WEn5eGr3iIr3eduNWfmbifmrifudWim6mjnKmloLymrz2psTuuqb6uqsOwq8C0taG2tqS4tqy4tra6uTC6ui6%2FsCK%2FsCPBvdHDv9LFwtfGwtjOy9rPzdvUlaHmkpb%2B%2FPz%2B%2Fv7%2F%2FPz%2F%2F%2F9OZpcfAAAAM3RSTlMABQYRExUZHyAgJS8xMTFTVFleZmiJkpOTmp2oqba9wsTFxcfO0dPX3OLj5%2Bf19v39%2Fv4kncL4AAAAvElEQVR4AWNgYBIQV9Q20NdRkOBnZGBg4DExTQ9taIzMMDbhA3PdzMqbmyosXaHc4kCvvHy%2FgAIINzElvL%2B%2FvzcoLQ7E5bX1TOhq624P8bDhBnLZTEwye%2Fr7%2BpNNTFgYgMApJreuprY%2BK94RyOGSlEv19XZx9vFPkpViZ1BRZ7WKdq%2Bsto%2B1ZtZQYhAp1FS2iCopDTaX1yoSZmDgkNHrsAuLcOjUleZkAAGxqtbsnJYyUQYoEFIzMlQVBLEA%2FZgsl9iPrB4AAAAASUVORK5CYII%3D)](https://www.sheffield.ac.uk)
 [![INSIGNEO](https://img.shields.io/badge/-INSIGNEO-red.svg?colorA=ffffff&colorB=cf2020&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAABC1BMVEUAAAD%2FAAC%2FAADMGhrRFxfSHh7VHBzJGxvTISHKICDMHx%2FOHR3RJCTTIyPOISHPICDMHR3NIyPNICDRISHQHx%2FQHx%2FOHx%2FQISHOICDQICDQHx%2FOHx%2FPISHQISHQICDOICDQISHOICDQICDPISHPICDQISHPICDPICDOHx%2FPISHPISHQISHPICDPISHPISHQICDOICDOICDPHx%2FPICDPICDOICDPICDPICDPICDPHx%2FPICDPICDQICDPICDPHx%2FQISHOICDPICDPICDPICDPICDPHx%2FMISHOICDPICDQICDPICDPISHPHx%2FPICDPICDPICDPICDPICDPICDOICDPHx%2FPICDPICDPICDPICDi8V76AAAAWHRSTlMAAgQKCxESExcYGRocHR8gIyRITVFSU1ZYYWJjZGZnaWxucXV5fH%2BAg4SFjI%2BUlZeYqKuusbK2ubrDxcbHycvMzdHU2Nrb4uLl5%2Bnq6%2Bzt7u%2F09vf7%2FP3%2B%2FHERCQAAAKVJREFUeAEdx%2BVCg2AAhtHHAANDMQRD7ECwO7DDjViM7b3%2FK9n4zr9Dxdk6jjc4s02si46kK7tMLGDuW%2Fq%2FvdxZlt5shh7VWhsGTqWvTVYll0q4PjMyy7VuYHQ7nIL98oVMAey183sI9EtNPpzXfz7BV8aHIpi%2Fe3ch1iuHysYxnFxHTDf1bD7xpMKBxa6Kk6WVKFXPY8BLZTQWMMYOHvK%2FZHcS6AOapR0V%2FpSSVQAAAABJRU5ErkJggg%3D%3D)](https://insigneo.org/)
@@ -91,9 +91,17 @@ Have you used openBF for your research? Let us know!
 ### Citation
 
 ```
-@misc{melis_2018, title={openBF: Julia software for 1D blood flow modelling}, url={https://figshare.com/articles/openBF_Julia_software_for_1D_blood_flow_modelling/7166183/1}, DOI={10.15131/shef.data.7166183}, abstractNote={
+@misc{openBF.jl-2018,
+title={openBF: Julia software for 1D blood flow modelling}, 
+url={https://figshare.com/articles/openBF_Julia_software_for_1D_blood_flow_modelling/7166183/1}, 
+DOI={10.15131/shef.data.7166183}, 
+abstractNote={
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in Julia and released under Apache 2.0 free software license.
 
 See https://github.com/INSIGNEO/openBF for the git repository and https://insigneo.github.io/openBF/ for the documentation.
-}, publisher={figshare}, author={Melis, Alessandro}, year={2018}, month={Oct}}
+}, 
+publisher={figshare}, 
+author={Melis, Alessandro}, 
+year={2018}, 
+month={Oct}}
 ```
