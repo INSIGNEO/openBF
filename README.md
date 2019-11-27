@@ -10,8 +10,6 @@
 
 [![Build Status](https://travis-ci.org/INSIGNEO/openBF.svg?branch=master)](https://travis-ci.org/INSIGNEO/openBF) [![Build status](https://ci.appveyor.com/api/projects/status/88aoe1wo7nd2ao4l?svg=true&passingText=win64%20build%20passing&failingText=win64%20build%20fails)](https://ci.appveyor.com/project/alemelis/openbf) [![codecov](https://codecov.io/gh/INSIGNEO/openBF/branch/master/graph/badge.svg)](https://codecov.io/gh/INSIGNEO/openBF)
 
-[![](https://img.shields.io/badge/Julia%20v0.3.11%20--%200.5-Tests%20pass%20v0.3.11-green.svg)](https://github.com/INSIGNEO/openBF/releases/tag/v0.3.11) [![](https://img.shields.io/badge/Julia%20v0.6.x-Tests%20pass%20v0.6.3-green.svg)](https://github.com/INSIGNEO/openBF/releases/tag/v0.6.3) [![](https://img.shields.io/badge/Julia%20v0.7%2B-Tests%20pass%20v1.0-green.svg)]()
-
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
 ### Docs
@@ -21,18 +19,18 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 ### Installation
 
-Provided you already have a Julia v1.0 installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add openBF as
+Provided you already have a Julia v1.x installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add openBF as
 
 ```
 julia> ]
-(v1.0) pkg> add https://github.com/INSIGNEO/openBF
+(v1.x) pkg> add https://github.com/INSIGNEO/openBF
 ```
 
 test it as
 
 ```
 julia> ]
-(v1.0) pkg> test openBF
+(v1.x) pkg> test openBF
 ```
 
 and use it as
@@ -45,7 +43,7 @@ julia> openBF.runSimulation("<input file name>.yml")
 You can also create (MacOSX/Linux only) an openBF alias as
 
 ```bash
-$ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
+$ echo "alias openBF='cp ~/.julia/v1.x/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 $ openBF -h
 usage: main.jl [-v] [-f] [-h] input_filename
@@ -58,6 +56,20 @@ optional arguments:
   -f, --out_files  Save complete results story rather than only the
                    last cardiac cycle
   -h, --help       show this help message and exit
+```
+
+### How to dev
+
+```
+$ git clone https://github.com/INSIGNEO/openBF.git
+$ cd openBF
+$ julia
+julia> ]
+(v1.x) pkg> add Revise
+(v1.x) pkg> activate .
+(openBF) <backspace>
+julia> using Revise
+julia> using openBF
 ```
 
 ### Ecosystem
