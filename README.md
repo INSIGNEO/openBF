@@ -21,18 +21,18 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 ### Installation
 
-Provided you already have a Julia v1.0 installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add openBF as
+Provided you already have a Julia v1.x installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add openBF as
 
 ```
 julia> ]
-(v1.0) pkg> add https://github.com/INSIGNEO/openBF
+(v1.x) pkg> add https://github.com/INSIGNEO/openBF
 ```
 
 test it as
 
 ```
 julia> ]
-(v1.0) pkg> test openBF
+(v1.x) pkg> test openBF
 ```
 
 and use it as
@@ -45,7 +45,7 @@ julia> openBF.runSimulation("<input file name>.yml")
 You can also create (MacOSX/Linux only) an openBF alias as
 
 ```bash
-$ echo "alias openBF='cp ~/.julia/v0.6/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
+$ echo "alias openBF='cp ~/.julia/v1.x/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 $ openBF -h
 usage: main.jl [-v] [-f] [-h] input_filename
@@ -58,6 +58,20 @@ optional arguments:
   -f, --out_files  Save complete results story rather than only the
                    last cardiac cycle
   -h, --help       show this help message and exit
+```
+
+### How to dev
+
+```
+$ git clone https://github.com/INSIGNEO/openBF.git
+$ cd openBF
+$ julia
+julia> ]
+(v1.x) pkg> add Revise
+(v1.x) pkg> activate .
+(openBF) <backspace>
+julia> using Revise
+julia> using openBF
 ```
 
 ### Ecosystem
