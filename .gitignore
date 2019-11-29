@@ -1,5 +1,12 @@
 test/**/*_results/*
+
 **/.DS_Store
+
 cvs_results/*
+
 docs/build/*
+
 Manifest.toml
+
+benchmark/*.swp
+benchmark/tune.json
