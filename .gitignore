@@ -10,3 +10,4 @@ Manifest.toml
 
 benchmark/*.swp
 benchmark/tune.json
+**/bm_results.md
