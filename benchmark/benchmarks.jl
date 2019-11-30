@@ -26,19 +26,18 @@ sA = sqrt(A)
 SUITE["solver"]["waveSpeedSA"] = @benchmarkable openBF.waveSpeedSA(sA, γ)
 
 Ccfl = data["solver"]["Ccfl"]
-SUITE["solver"]["calculateDeltaT"] = @benchmarkable openBF.calculateDeltaT(vessels,
-	Ccfl)
-dt = openBF.calculateDeltaT(vessels, Ccfl)
-
+SUITE["solver"]["calculateDeltaT"] = @benchmarkable openBF.calculateDeltaT(
+	vessels, Ccfl)
+Δt = openBF.calculateDeltaT(vessels, Ccfl)
 
 SUITE["solver"]["solveModel"] = @benchmarkable openBF.solveModel(vessels, edges,
-	blood, dt, 0.0)
+	blood, Δt, 0.0)
 
 SUITE["solver"]["solveVessel"] = @benchmarkable openBF.solveVessel(vessels[1],
-	blood, dt, 0.0)
+	blood, Δt, 0.0)
 
 # SUITE["solver"]["solveOutlet"] = @benchmarkable openBF.solveOutlet(1,
-# 	vessels[1], blood, vessels, edges, dt)
+# 	vessels[1], blood, vessels, edges, Δt)
 
 v = vessels[1]
 SUITE["solver"]["computeLimiter"] = @benchmarkable openBF.computeLimiter(v,
