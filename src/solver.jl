@@ -58,7 +58,7 @@ function calculateDeltaT(vessels :: Array{Vessel,1}, Ccfl :: Float64)
     dt = 1.0
     for v in vessels
         Smax = 0.0
-        for j in 1:v.M
+        @inbounds for j in 1:v.M
             lambda = abs(v.u[j] + v.c[j])
             Smax < lambda && (Smax = lambda)
         end

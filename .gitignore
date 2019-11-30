@@ -10,5 +10,5 @@ Manifest.toml
 
 benchmark/*.swp
 benchmark/tune.json
-**/bm_results.md
-**/bm_results.html
+**/bm_*.md
+**/bm_*.html
