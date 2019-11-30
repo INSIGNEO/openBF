@@ -37,7 +37,7 @@ end
 Compute pulse wave velocity at the given node.
 """
 function waveSpeed(A :: Float64, gamma :: Float64)
-    return sqrt(3*gamma*sqrt(A)*0.5)
+    return sqrt(1.5*gamma*sqrt(A))
 end
 
 function waveSpeedSA(sA :: Float64, gamma :: Float64)
@@ -54,7 +54,7 @@ Delta t = C_{CFL} frac{Delta x}{S_{max}}
 
 where Smax is the maximum between the forward and the backward characteristics, and Ccfl is the Courant-Friedrichs-Lewy condition defined by the user.
 """
-function calculateDeltaT(vessels, Ccfl :: Float64)
+function calculateDeltaT(vessels :: Array{Vessel,1}, Ccfl :: Float64)
     dt = 1.0
     for v in vessels
         Smax = 0.0
@@ -75,8 +75,8 @@ end
 
 Run the solver on each vessel one-by-one as listed in the .yml file.
 """
-function solveModel(vessels :: Array{Vessel,1}, edges :: Array{Int,2}, blood :: Blood,
-                    dt :: Float64, current_time :: Float64)
+function solveModel(vessels :: Array{Vessel,1}, edges :: Array{Int,2},
+                    blood :: Blood, dt :: Float64, current_time :: Float64)
     @inbounds for j in 1:size(edges)[1]
         @inbounds i = edges[j,1]
         @inbounds v = vessels[i]
