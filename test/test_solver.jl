@@ -18,6 +18,8 @@ p = openBF.pressure(A, A0, beta, Pext)
 
 c = openBF.waveSpeed(A, gamma)
 @test isapprox(c, 6.33, atol=1e-2)
+cSA = openBF.waveSpeedSA(sqrt(A), gamma)
+@test isapprox(cSA, 6.33, atol=1e-2)
 
 dt = openBF.calculateDeltaT(vessels, Ccfl)
 @test isapprox(dt, 1e-4, atol=1e-4)
