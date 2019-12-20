@@ -355,7 +355,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     if haskey(vessel_data, "Rc")
     corrRI = (A[end]/Ac[end])^0.25*drummond2F1(0.25,0.5,1.5,1-A[end]/Ac[end])/2
     else
-    corrRI = 1
+    corrRI = 1.0
     end
 
     W1M0 = u[end] - 4.0*c[end]*corrRI           # MODIFIED THIS LINE
@@ -592,8 +592,8 @@ function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
         gamma_profile = vessel_data["gamma_profile"]
     else
         gamma_profile = 9
-    return 2*(gamma_profile + 2)*pi*blood.mu*blood.rho_inv
     end
+    return 2*(gamma_profile + 2)*pi*blood.mu*blood.rho_inv
 
 end
 
