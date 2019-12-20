@@ -112,6 +112,13 @@ function inverseRiemannInvariants(W1 :: Float64, W2 :: Float64, v :: Vessel)
   return u, c
 end
 
+function inverseRiemannInvariants(W1 :: Float64, W2 :: Float64)
+  @fastmath u = 0.5*(W1 + W2)
+  @fastmath c = (W2 - W1)*0.125
+
+  return u, c
+end
+
 
 """
     areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
@@ -196,7 +203,7 @@ function threeElementWindkessel(dt :: Float64, v :: Vessel)
 
 	us = (pressure(As + v.Ac[end], v.A0[end], v.beta[end], v.Pext) - Pout)/(As*v.R1)		# MODIFIED THIS LINE
 
-	v.A[end] = As
+    v.A[end] = As 
 	v.u[end] = us
 end
 

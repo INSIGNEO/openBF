@@ -40,6 +40,10 @@ function waveSpeed(A :: Float64, gamma :: Float64, Ac :: Float64)
     return sqrt(3*gamma*0.5*sqrt(A))*sqrt(1-Ac/A)           # MODIFIED THIS LINE
 end
 
+function waveSpeed(A :: Float64, gamma :: Float64)
+    return sqrt(3*gamma*0.5*sqrt(A))
+end
+
 function waveSpeedSA(sA :: Float64, gamma :: Float64)
     return sqrt(1.5*gamma*sA)
 end
@@ -258,7 +262,7 @@ function computeFlux(v :: Vessel, A :: Array{Float64,1}, Q :: Array{Float64,1},
                      Flux :: Array{Float64,2})
     @fastmath @inbounds @simd for i in 1:v.M+2
         Flux[1,i] = Q[i]
-        Flux[2,i] = Q[i]*Q[i]/(A[i] - v.Ac[i]) + v.gamma_ghost[i]*A[i]*sqrt(A[i]) - 3*v.gamma_ghost[i]*v.Ac[i]*sqrt(A[i])
+        Flux[2,i] = Q[i]*Q[i]/(A[i]) + v.gamma_ghost[i]*A[i]*sqrt(A[i]) #- 3*v.gamma_ghost[i]*v.Ac[i]*sqrt(A[i])
     end
 
     return Flux
