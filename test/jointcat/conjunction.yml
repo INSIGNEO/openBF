@@ -1,0 +1,44 @@
+project name: conjunction
+
+blood:
+  rho: 1060.0 # density [kg/m^3]
+  mu: 4.e-3   # dynamic viscosity [Pa⋅s]
+
+solver:
+  Ccfl: 0.9   # Courant number
+  cycles: 100 # maximum number of cycles
+  jump: 100   # timesteps per cycle to be saved
+  convergence tolerance: 5.3 # percentage value
+
+network:
+  - label: P
+
+    sn: 1     # proximal (source) node
+    tn: 2     # distal (target) node
+
+    L: 12.14e-2 # length (m)
+
+    R0: 9.87e-3   # proximal lumen radius (m)
+    Rc: 2.48e-3          # catheter radius
+
+    E: 400.0e3 # Young's modulus (Pa)
+    h0: 0.82e-3
+
+    inlet: Q
+    inlet file: conjunction_inlet.dat
+    inlet number: 1
+
+  - label: d1
+
+    sn: 2
+    tn: 3
+
+    L: 12.14e-2 # length (m)
+
+    R0: 9.87e-3   # proximal lumen radius (m)
+
+    E: 700.0e3 # Young's modulus (Pa)
+    h0: 0.82e-3
+
+    outlet: reflection
+    Rt: 0.0
