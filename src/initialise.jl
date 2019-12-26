@@ -256,7 +256,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     Q = zeros(Float64, M)
     P = zeros(Float64, M)
     A = zeros(Float64, M)
-    Ac = zeros(Float64, M)          # MODIFIED THIS LINE
+    Ac = pi*Rc*Rc          # MODIFIED THIS LINE
     u = zeros(Float64, M)
     c = zeros(Float64, M)
     A0 = zeros(Float64, M)
@@ -319,13 +319,12 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
       inv_A0[i] = 1.0/A0[i]
       s_inv_A0[i] = sqrt(inv_A0[i])
       A[i] = A0[i]
-      Ac[i] = pi*Rc*Rc              # MODIFIED THIS LINE
       beta[i] = s_inv_A0[i]*h0*s_pi_E_over_sigma_squared
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
       s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
       P[i] = pressure(1.0, beta[i], Pext)
-      c[i] = waveSpeed(A[i], gamma[i], Ac[i])
+      c[i] = waveSpeed(A[i], gamma[i], Ac)
       wallE[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
       if phi != 0.0
           wallVb[i] = Cv*s_inv_A0[i]*invDxSq
@@ -353,9 +352,9 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
 
     # Compute correction factor to Riemann Invariants
     if haskey(vessel_data, "Rc")
-    corrRI = (A[end]/Ac[end])^0.25*drummond2F1(0.25,0.5,1.5,1-A[end]/Ac[end])/2
+    corrRI = (A[end]/Ac)^0.25*drummond2F1(0.25,0.5,1.5,1-A[end]/Ac)/2
     else
-    corrRI = 1
+    corrRI = 1.0
     end
 
     W1M0 = u[end] - 4.0*c[end]*corrRI           # MODIFIED THIS LINE
@@ -399,7 +398,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   slope, flux, uStar, vA, vQ,
                   dU, slopesA, slopesQ,
                   Al, Ar, Ql, Qr, Fl, Fr,
-          Ac, corrRI,
+                  Ac, corrRI,
                   outlet)
 end
 
@@ -449,10 +448,10 @@ distal variables, `Rp` and `Rd`, respectively.
 """
 function computeRadii(vessel :: Dict{Any,Any})
     if ~haskey(vessel, "Rc")        # Modified from there: first define Rc
-    Rc = 0
+        Rc = 0
     else
-    Rc = vessel["Rc"]
-    end                 # to here
+        Rc = vessel["Rc"]
+    end                        # to here
     if ~haskey(vessel, "R0")
         Rp = vessel["Rp"]
         Rd = vessel["Rd"]
@@ -586,7 +585,7 @@ assumed equal to `9` (plug-flow).
 """
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
-    if haskey(vessel_data,"Rc") && (vessel_data["Rc"])>0                # MODIFIED THIS LINE
+    if haskey(vessel_data,"Rc")                     # MODIFIED THIS LINE
     return 2*blood.mu*blood.rho_inv*sqrt(15)
     elseif haskey(vessel_data, "gamma_profile")
         gamma_profile = vessel_data["gamma_profile"]

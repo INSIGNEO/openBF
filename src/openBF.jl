@@ -170,9 +170,9 @@ module openBF
         Fl :: Array{Float64,2}
         Fr :: Array{Float64,2}
 
-    # Catheter
-    Ac :: Array{Float64,1}          # Area of the catheter
-    corrRI :: Float64           # Correction factor to Riemann Invariants
+        # Catheter
+        Ac :: Float64               # Area of the catheter
+        corrRI :: Float64           # Correction factor to Riemann Invariants
 
         #Outlet type
         outlet :: String

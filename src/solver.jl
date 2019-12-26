@@ -32,9 +32,9 @@ end
 
 
 """
-    waveSpeed(A :: Float64, gamma :: Float64)
+    waveSpeed(A :: Float64, gamma :: Float64, Ac :: Float64)
 
-Compute pulse wave velocity at the given node.
+Compute pulse wave velocity at the given node. It includes the catheter.
 """
 function waveSpeed(A :: Float64, gamma :: Float64, Ac :: Float64)
     return sqrt(3*gamma*0.5*sqrt(A))*sqrt(1-Ac/A)           # MODIFIED THIS LINE
@@ -216,15 +216,11 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     #source term
     @fastmath @inbounds @simd for i = 1:v.M
         s_A = sqrt(v.A[i])
-    if v.Ac[1]>0
-        Si = -v.viscT*v.Q[i]/(s_A-sqrt(v.Ac[i]))^2;
-    else
-            Si = - v.viscT*v.Q[i]/v.A[i] - v.wallE[i]*(s_A - v.s_A0[i])*v.A[i]
-    end
+        Si = - v.viscT*v.Q[i]/(s_A-sqrt(v.Ac))^2 - v.wallE[i]*(s_A - v.s_A0[i])*v.A[i]  # MODIFIED THIS LINE
         v.Q[i] += dt*Si
 
         v.P[i] = pressure(s_A*v.s_inv_A0[i], v.beta[i], v.Pext)
-        v.c[i] = waveSpeed(v.A[i], v.gamma[i], v.Ac[i])
+        v.c[i] = waveSpeed(v.A[i], v.gamma[i], v.Ac)
 
     end
 
@@ -245,7 +241,7 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     end
 
     @fastmath @inbounds @simd for i = 1:v.M
-        v.u[i] = v.Q[i]/(v.A[i] - v.Ac[i])          # MODIFIED THIS LINE
+        v.u[i] = v.Q[i]/(v.A[i] - v.Ac)          # MODIFIED THIS LINE
     end
 end
 
@@ -258,7 +254,7 @@ function computeFlux(v :: Vessel, A :: Array{Float64,1}, Q :: Array{Float64,1},
                      Flux :: Array{Float64,2})
     @fastmath @inbounds @simd for i in 1:v.M+2
         Flux[1,i] = Q[i]
-        Flux[2,i] = Q[i]*Q[i]/(A[i] - v.Ac[i]) + v.gamma_ghost[i]*A[i]*sqrt(A[i]) - 3*v.gamma_ghost[i]*v.Ac[i]*sqrt(A[i])
+        Flux[2,i] = Q[i]*Q[i]/(A[i] - v.Ac) + v.gamma_ghost[i]*A[i]*sqrt(A[i]) - 3*v.gamma_ghost[i]*v.Ac*sqrt(A[i]) # MODIFIED
     end
 
     return Flux

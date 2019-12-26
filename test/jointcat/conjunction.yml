@@ -19,9 +19,9 @@ network:
     L: 12.14e-2 # length (m)
 
     R0: 9.87e-3   # proximal lumen radius (m)
-    Rc: 2.48e-3          # catheter radius
+    #Rc: 1.48e-3          # catheter radius
 
-    E: 400.0e3 # Young's modulus (Pa)
+    E: 700.0e3 # Young's modulus (Pa)
     h0: 0.82e-3
 
     inlet: Q

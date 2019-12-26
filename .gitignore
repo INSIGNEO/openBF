@@ -4,3 +4,4 @@ cvs_results/*
 docs/build/*
 Manifest.toml
 *.sh
+*.swp

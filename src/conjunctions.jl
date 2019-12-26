@@ -44,16 +44,16 @@ end
 Return the Jacobian for conjunction equations.
 """
 function calculateJacobianConjunction(v1 :: Vessel, v2 :: Vessel, U, k)
-    @fastmath @inbounds g1 = sqrt(1-v1.Ac[end]/U[3]^4)      # MODIFIED THIS LINE
-    @fastmath @inbounds g2 = sqrt(1-v2.Ac[1]/U[4]^4)      # MODIFIED THIS LINE
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[3]^4)      # MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[4]^4)      # MODIFIED THIS LINE
     @fastmath @inbounds U33 = U[3]*U[3]*U[3]
     @fastmath @inbounds U43 = U[4]*U[4]*U[4]
 
-    @fastmath @inbounds J13 =  4.0*k[1]*(v1.Ac[end]/(2*U[3]*g1) + g1)   # MODIFIED THIS LINE
-    @fastmath @inbounds J24 = -4.0*k[2]*(v2.Ac[1]/(2*U[4]*g2) + g2)     # MODIFIED THIS LINE
+    @fastmath @inbounds J13 =  4.0*k[1]*(v1.Ac/(2*U[3]*g1) + g1)   # MODIFIED THIS LINE
+    @fastmath @inbounds J24 = -4.0*k[2]*(v2.Ac/(2*U[4]*g2) + g2)     # MODIFIED THIS LINE
 
-    @fastmath @inbounds J31 =  U33*U[3] - v1.Ac[end]                    # MODIFIED THIS LINE
-    @fastmath @inbounds J32 = -U43*U[4] + v2.Ac[1]                      # MODIFIED THIS LINE
+    @fastmath @inbounds J31 =  U33*U[3] - v1.Ac                    # MODIFIED THIS LINE
+    @fastmath @inbounds J32 = -U43*U[4] + v2.Ac                      # MODIFIED THIS LINE
     @fastmath @inbounds J33 =  4.0*U[1]*U33
     @fastmath @inbounds J34 = -4.0*U[2]*U43
 
@@ -76,8 +76,8 @@ Return the Riemann invariants at the conjunction node.
 """
 function calculateWstarConjunction(U, k, v1:: Vessel, v2 :: Vessel)
                         # MODIFIED THIS FUNCTION
-    @fastmath @inbounds g1 = sqrt(1-v1.Ac[end]/U[3]^4)      # MODIFIED THIS LINE
-    @fastmath @inbounds g2 = sqrt(1-v2.Ac[1]/U[4]^4)        # MODIFIED THIS LINE
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[3]^4)      # MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[4]^4)        # MODIFIED THIS LINE
     @fastmath @inbounds W1 = U[1] + 4.0*k[1]*U[3]*g1        # MODIFIED THIS LINE
     @fastmath @inbounds W2 = U[2] - 4.0*k[2]*U[4]*g2        # MODIFIED THIS LINE
 
@@ -92,8 +92,8 @@ function calculateFConjunction(vessels :: Array{Vessel,1}, U, k, W)
     v1 = vessels[1]
     v2 = vessels[2]
 
-    @fastmath @inbounds g1 = sqrt(1-v1.Ac[end]/U[3]^4)      # MODIFIED THIS LINE
-    @fastmath @inbounds g2 = sqrt(1-v2.Ac[1]/U[4]^4)        # MODIFIED THIS LINE
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[3]^4)      # MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[4]^4)        # MODIFIED THIS LINE
 
     @fastmath @inbounds U32 = U[3]*U[3]
     @fastmath @inbounds U42 = U[4]*U[4]
@@ -102,7 +102,7 @@ function calculateFConjunction(vessels :: Array{Vessel,1}, U, k, W)
 
     @fastmath @inbounds f2 = U[2] - 4.0*k[2]*U[4]*g2 - W[2]     # MODIFIED THIS LINE
 
-    @fastmath @inbounds f3 = U[1]*(U32*U32 - v1.Ac[end]) - U[2]*(U42*U42 - v2.Ac[1])    # MODIFIED THIS LINE
+    @fastmath @inbounds f3 = U[1]*(U32*U32 - v1.Ac) - U[2]*(U42*U42 - v2.Ac)    # MODIFIED THIS LINE
 
     f4 = 0.5*k[3]*U[1]*U[1] + v1.beta[end]*(U32*v1.s_inv_A0[end] - 1.0) -
         (0.5*k[3]*U[2]*U[2] + v2.beta[1]*(U42*v2.s_inv_A0[1] - 1.0))
@@ -121,14 +121,14 @@ function updateConjunction(U, v1 :: Vessel, v2 :: Vessel)
     @inbounds v2.u[1] = U[2]
 
     @fastmath @inbounds v1.A[end] = U[3]*U[3]*U[3]*U[3]
-    @fastmath @inbounds v1.Q[end] = v1.u[end]*(v1.A[end] - v1.Ac[end])      # MODIFIED THIS LINE
+    @fastmath @inbounds v1.Q[end] = v1.u[end]*(v1.A[end] - v1.Ac)      # MODIFIED THIS LINE
 
     @fastmath @inbounds v2.A[1] = U[4]*U[4]*U[4]*U[4]
-    @fastmath @inbounds v2.Q[1] = v2.u[1]*(v2.A[1] - v2.Ac[1])              # MODIFIED THIS LINE
+    @fastmath @inbounds v2.Q[1] = v2.u[1]*(v2.A[1] - v2.Ac)              # MODIFIED THIS LINE
 
     @inbounds v1.P[end] = pressure(v1.A[end], v1.A0[end], v1.beta[end], v1.Pext)
     @inbounds v2.P[1] = pressure(v2.A[1], v2.A0[1], v2.beta[1], v2.Pext)
 
-    @fastmath @inbounds v1.c[end] = waveSpeed(v1.A[end], v1.gamma[end], v1.Ac[end]) # MODIFIED THIS LINE
-    @fastmath @inbounds v2.c[1] = waveSpeed(v2.A[1], v2.gamma[1], v2.Ac[1])         # MODIFIED THIS LINE
+    @fastmath @inbounds v1.c[end] = waveSpeed(v1.A[end], v1.gamma[end], v1.Ac) # MODIFIED THIS LINE
+    @fastmath @inbounds v2.c[1] = waveSpeed(v2.A[1], v2.gamma[1], v2.Ac)         # MODIFIED THIS LINE
 end

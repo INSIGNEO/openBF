@@ -71,17 +71,17 @@ function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
 	W11, W21 = riemannInvariants(1, v)
 	W12, W22 = riemannInvariants(2, v)
 
-	@fastmath @inbounds W11 += (W12 - W11)*(v.c[1] - v.u[1])*dt*v.invDx
-	@fastmath @inbounds W21 = 2.0*v.Q[1]/(v.A[1]-v.Ac[1]) - W11		# IS THIS CORRECT? OR Q[1]/(v.A[1]-v.Ac[1])??
+	@fastmath @inbounds W11 += (W12 - W11)*(v.c[1]*v.corrRI - v.u[1])*dt*v.invDx		# MODIFIED THIS LINE: added v.corrRI
+	@fastmath @inbounds W21 = 2.0*v.Q[1]/(v.A[1]-v.Ac) - W11		# IS THIS CORRECT? OR Q[1]/(v.A[1]-v.Ac)??
 
 	v.u[1], v.c[1] = inverseRiemannInvariants(W11, W21, v)		# MODIFIED THIS LINE
 
 	if h.inlet_type == "Q"
-		@fastmath @inbounds v.A[1] = v.Q[1]/v.u[1] + v.Ac[1]	# MODIFIED THIS LINE: ADDED  +v.Ac[1]
+		@fastmath @inbounds v.A[1] = v.Q[1]/v.u[1] + v.Ac	# MODIFIED THIS LINE: ADDED  +v.Ac
 		v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
 	else
 		v.A[1] = areaFromPressure(v.P[1], v.A0[1], v.beta[1], v.Pext)
-		@fastmath @inbounds v.Q[1] = v.u[1]*(v.A[1] - v.Ac[1])		# MODIFIED THIS LINE: ADDED -v.Ac[1]
+		@fastmath @inbounds v.Q[1] = v.u[1]*(v.A[1] - v.Ac)		# MODIFIED THIS LINE: ADDED -v.Ac
 	end
 
 end
@@ -155,7 +155,7 @@ function outletCompatibility(dt :: Float64, v :: Vessel)
 	W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
 
 	v.u[end], v.c[end] = inverseRiemannInvariants(W1M, W2M, v)	# MODIFIED THIS LINE
-	v.Q[end] = (v.A[end] - v.Ac[end])*v.u[end]		# MODIFIED THIS LINE: ADDED -v.Ac[end]
+	v.Q[end] = (v.A[end] - v.Ac)*v.u[end]		# MODIFIED THIS LINE: ADDED -v.Ac
 end
 
 
@@ -169,7 +169,7 @@ solution of a Riemann problem at the 0D/1D interface.
 function threeElementWindkessel(dt :: Float64, v :: Vessel)
 	Pout = 0.0
 
-	Al = v.A[end] - v.Ac[end]						# MODIFIED THIS LINE
+	Al = v.A[end]						
 	ul = v.u[end]
 
 	v.Pc += dt/v.Cc * (Al*ul - (v.Pc - Pout)/v.R2)		# PROBABLY MUST BE (Al-v.Ac[end])*ul
@@ -194,7 +194,7 @@ function threeElementWindkessel(dt :: Float64, v :: Vessel)
         throw(e)
     end
 
-	us = (pressure(As + v.Ac[end], v.A0[end], v.beta[end], v.Pext) - Pout)/(As*v.R1)		# MODIFIED THIS LINE
+	us = (pressure(As + v.Ac, v.A0[end], v.beta[end], v.Pext) - Pout)/(As*v.R1)		# MODIFIED THIS LINE
 
 	v.A[end] = As
 	v.u[end] = us
