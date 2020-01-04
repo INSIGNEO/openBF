@@ -46,17 +46,20 @@ end
 Return the Jacobian for bifurcation equations.
 """
 function calculateJacobianBifurcation(v1 :: Vessel, v2 :: Vessel, v3 :: Vessel, U, k)
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[4]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[5]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds g3 = sqrt(1-v3.Ac/U[6]^4)	# MODIFIED THIS LINE
     @fastmath @inbounds U43 = U[4]*U[4]*U[4]
     @fastmath @inbounds U53 = U[5]*U[5]*U[5]
     @fastmath @inbounds U63 = U[6]*U[6]*U[6]
 
-    @fastmath @inbounds J14 = 4.0*k[1]
-    @fastmath @inbounds J25 = -4.0*k[2]
-    @fastmath @inbounds J36 = -4.0*k[3]
+    @fastmath @inbounds J14 = 4.0*k[1]*(v1.Ac/(2*U[4]*g1) + g1)		# MODIFIED THIS LINE
+    @fastmath @inbounds J25 = -4.0*k[2]*(v2.Ac/(2*U[5]*g2) + g2)	# MODIFIED THIS LINE
+    @fastmath @inbounds J36 = -4.0*k[3]*(v3.Ac/(2*U[6]*g3) + g3)	# MODIFIED THIS LINE
 
-    @fastmath @inbounds J41 = U[4]*U43
-    @fastmath @inbounds J42 = -U[5]*U53
-    @fastmath @inbounds J43 = -U[6]*U63
+    @fastmath @inbounds J41 = U[4]*U43 - v1.Ac				# MODIFIED THIS LINE
+    @fastmath @inbounds J42 = -U[5]*U53 + v2.Ac				# MODIFIED THIS LINE
+    @fastmath @inbounds J43 = -U[6]*U63 + v3.Ac				# MODIFIED THIS LINE
     @fastmath @inbounds J44 = 4.0*U[1]*U43
     @fastmath @inbounds J45 = -4.0*U[2]*U53
     @fastmath @inbounds J46 = -4.0*U[3]*U63
@@ -81,10 +84,17 @@ end
 
 Return the Riemann invariants at the bifurcation node.
 """
-function calculateWstarBifurcation(U, k)
-    @fastmath @inbounds W1 = U[1] + 4.0*k[1]*U[4]
-    @fastmath @inbounds W2 = U[2] - 4.0*k[2]*U[5]
-    @fastmath @inbounds W3 = U[3] - 4.0*k[3]*U[6]
+function calculateWstarBifurcation(U, k, vessels :: Array{Vessel,1})
+	# MODIFIED THIS FUNCTION
+    v1 = vessels[1]					# MODIFIED THIS LINE
+    v2 = vessels[2]					# MODIFIED THIS LINE
+    v3 = vessels[3]					# MODIFIED THIS LINE
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[4]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[5]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds g3 = sqrt(1-v3.Ac/U[6]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds W1 = U[1] + 4.0*k[1]*U[4]*g1	# MODIFIED THIS LINE
+    @fastmath @inbounds W2 = U[2] - 4.0*k[2]*U[5]*g2	# MODIFIED THIS LINE
+    @fastmath @inbounds W3 = U[3] - 4.0*k[3]*U[6]*g3	# MODIFIED THIS LINE
 
     return @SArray [W1, W2, W3]
 end
@@ -98,17 +108,21 @@ function calculateFBifurcation(vessels :: Array{Vessel,1}, U, k, W)
     v2 = vessels[2]
     v3 = vessels[3]
 
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[4]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[5]^4)	# MODIFIED THIS LINE
+    @fastmath @inbounds g3 = sqrt(1-v3.Ac/U[6]^4)	# MODIFIED THIS LINE
+
     @fastmath @inbounds U42 = U[4]*U[4]
     @fastmath @inbounds U52 = U[5]*U[5]
     @fastmath @inbounds U62 = U[6]*U[6]
 
-    @fastmath @inbounds f1 = U[1] + 4*k[1]*U[4] - W[1]
+    @fastmath @inbounds f1 = U[1] + 4*k[1]*U[4]*g1 - W[1]	# MODIFIED THIS LINE
 
-    @fastmath @inbounds f2 = U[2] - 4*k[2]*U[5] - W[2]
+    @fastmath @inbounds f2 = U[2] - 4*k[2]*U[5]*g2 - W[2]	# MODIFIED THIS LINE
 
-    @fastmath @inbounds f3 = U[3] - 4*k[3]*U[6] - W[3]
+    @fastmath @inbounds f3 = U[3] - 4*k[3]*U[6]*g3 - W[3]	# MODIFIED THIS LINE
 
-    @fastmath @inbounds f4 = U[1]*(U42*U42) - U[2]*(U52*U52) - U[3]*(U62*U62)
+    @fastmath @inbounds f4 = U[1]*(U42*U42 - v1.Ac) - U[2]*(U52*U52 - v2.Ac) - U[3]*(U62*U62 - v3.Ac)	# MODIFIED THIS LINE
 
     f5 = v1.beta[end]*(U42*v1.s_inv_A0[end] - 1.0) -
         (v2.beta[1]*(U52*v2.s_inv_A0[1] - 1.0))
@@ -134,15 +148,15 @@ function updateBifurcation(U, v1 :: Vessel, v2 :: Vessel, v3 :: Vessel)
     @fastmath @inbounds v2.A[1] = U[5]*U[5]*U[5]*U[5]
     @fastmath @inbounds v3.A[1] = U[6]*U[6]*U[6]*U[6]
 
-    @fastmath @inbounds v1.Q[end] = v1.u[end]*v1.A[end]
-    @fastmath @inbounds v2.Q[1] = v2.u[1]*v2.A[1]
-    @fastmath @inbounds v3.Q[1] = v3.u[1]*v3.A[1]
+    @fastmath @inbounds v1.Q[end] = v1.u[end]*(v1.A[end] - v1.Ac)	# MODIFIED THIS LINE
+    @fastmath @inbounds v2.Q[1] = v2.u[1]*(v2.A[1] - v2.Ac)		# MODIFIED THIS LINE
+    @fastmath @inbounds v3.Q[1] = v3.u[1]*(v3.A[1] - v3.Ac)		# MODIFIED THIS LINE
 
     @inbounds v1.P[end] = pressure(v1.A[end], v1.A0[end], v1.beta[end], v1.Pext)
     @inbounds v2.P[1] = pressure(v2.A[1], v2.A0[1], v2.beta[1], v2.Pext)
     @inbounds v3.P[1] = pressure(v3.A[1], v3.A0[1], v3.beta[1], v3.Pext)
 
-    @fastmath @inbounds v1.c[end] = waveSpeed(v1.A[end], v1.gamma[end])
-    @fastmath @inbounds v2.c[1] = waveSpeed(v2.A[1], v2.gamma[1])
-    @fastmath @inbounds v3.c[1] = waveSpeed(v3.A[1], v3.gamma[1])
+    @fastmath @inbounds v1.c[end] = waveSpeed(v1.A[end], v1.gamma[end], v1.Ac)	# MODIFIED THIS LINE
+    @fastmath @inbounds v2.c[1] = waveSpeed(v2.A[1], v2.gamma[1], v2.Ac)	# MODIFIED THIS LINE
+    @fastmath @inbounds v3.c[1] = waveSpeed(v3.A[1], v3.gamma[1], v3.Ac)	# MODIFIED THIS LINE
 end

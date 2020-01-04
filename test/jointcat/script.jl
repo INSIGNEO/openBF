@@ -1,7 +1,7 @@
 using Revise
 using openBF
-cd("/home/ivan/repos/openBF/test/single-artery/")
-data = openBF.loadSimulationFiles("single-artery.yml")
+cd("/home/ivan/Dropbox/Postdoc/Cardiovascular/openBF/oBF_admin/openBF/test/jointcat/")
+data = openBF.loadSimulationFiles("conjunction.yml")
 blood = openBF.buildBlood(data["blood"])
 jump = data["solver"]["jump"]
 vessels, edges = openBF.buildArterialNetwork(data["network"], blood, jump)

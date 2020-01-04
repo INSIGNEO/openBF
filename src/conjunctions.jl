@@ -74,11 +74,13 @@ end
 
 Return the Riemann invariants at the conjunction node.
 """
-function calculateWstarConjunction(U, k, v1:: Vessel, v2 :: Vessel)
+function calculateWstarConjunction(U, k, vessels :: Array{Vessel,1})
                         # MODIFIED THIS FUNCTION
-    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[3]^4)      # MODIFIED THIS LINE
-    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[4]^4)        # MODIFIED THIS LINE
-    @fastmath @inbounds W1 = U[1] + 4.0*k[1]*U[3]*g1        # MODIFIED THIS LINE
+    v1 = vessels[1]						# MODIFIED THIS LINE
+    v2 = vessels[2]						# MODIFIED THIS LINE
+    @fastmath @inbounds g1 = sqrt(1-v1.Ac/U[3]^4)	        # MODIFIED THIS LINE
+    @fastmath @inbounds g2 = sqrt(1-v2.Ac/U[4]^4)       	# MODIFIED THIS LINE
+    @fastmath @inbounds W1 = U[1] + 4.0*k[1]*U[3]*g1         # MODIFIED THIS LINE
     @fastmath @inbounds W2 = U[2] - 4.0*k[2]*U[4]*g2        # MODIFIED THIS LINE
 
     return @SArray [W1, W2]
