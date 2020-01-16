@@ -586,12 +586,12 @@ assumed equal to `9` (plug-flow).
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
 
     if haskey(vessel_data,"Rc")                     # MODIFIED THIS LINE
-    return 2*blood.mu*blood.rho_inv*sqrt(15)
+    return 2*blood.mu*blood.rho_inv*sqrt(30)
     elseif haskey(vessel_data, "gamma_profile")
         gamma_profile = vessel_data["gamma_profile"]
     else
         gamma_profile = 9
-    return 2*(gamma_profile + 2)*pi*blood.mu*blood.rho_inv
+    return 2*(gamma_profile + 2)*blood.mu*blood.rho_inv
     end
 
 end
