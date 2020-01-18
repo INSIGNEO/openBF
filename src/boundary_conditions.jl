@@ -137,7 +137,12 @@ function setOutletBC(dt :: Float64, v :: Vessel)
 		outletCompatibility(dt, v)
     elseif v.outlet == "wk3"
         threeElementWindkessel(dt, v)
-	end
+    elseif v.outlet == "pressure"			# MODIFIED FROM HERE
+	v.P[end] = 150.0*133.3
+	v.A[end] = areaFromPressure(v.P[end], v.A0[end], v.beta[end], v.Pext[end])
+		outletCompatibility(dt, v)
+	v.Q[end] = v.A[end]*v.u[end]
+    end
 end
 
 

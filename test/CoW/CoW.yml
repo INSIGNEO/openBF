@@ -1,0 +1,330 @@
+project name: CoW
+
+blood:
+  rho: 1060.0 # density [kg/m^3]
+  mu: 4.e-3   # dynamic viscosity [Pa⋅s]
+
+solver:
+  Ccfl: 0.9   # Courant number
+  cycles: 100 # maximum number of cycles
+  jump: 100   # timesteps per cycle to be saved
+  convergence tolerance: 15.0 # percentage value
+
+network:
+  - label: 1-Ascendingaorta
+    sn: 1     # proximal (source) node
+    tn: 2     # distal (target) node
+    L: 0.04 # length (m)
+    R0: 0.012   # proximal lumen radius (m)
+    E: 400000.0 # Young's modulus (Pa)
+    h0: 0.00163
+    inlet: Q
+    inlet file: CoW.dat
+    inlet number: 1
+
+  - label: 2-AorticarchI
+    sn: 2
+    tn: 3
+    L: 0.02
+    R0: 0.0112
+    E: 400000.0
+    h0: 0.00126
+
+  - label: 3-Brachiocephalic
+    sn: 2
+    tn: 4
+    L: 0.034
+    R0: 0.0062
+    E: 400000.0
+    h0: 0.0008
+
+  - label: 4-AorticarchII
+    sn: 3
+    tn: 5
+    L: 0.039
+    R0: 0.0107
+    E: 400000.0
+    h0: 0.00115
+
+  - label: 5-L-commoncarotid
+    sn: 3
+    tn: 6
+    L: 0.208
+    R0: 0.0025
+    E: 400000.0
+    h0: 0.00063
+
+  - label: 6-R-commoncarotid
+    sn: 4
+    tn: 7
+    L: 0.177
+    R0: 0.0025
+    E: 400000.0
+    h0: 0.00063
+
+  - label: 7-R-subclavian
+    sn: 4
+    tn: 8
+    L: 0.034
+    R0: 0.00423
+    E: 400000.0
+    h0: 0.00067
+
+  - label: 8-Thoracicaorta
+    sn: 5
+    tn: 9
+    L: 0.156
+    R0: 0.00999
+    E: 400000.0
+    h0: 0.0011
+    outlet: wk2
+    R1: 0.18e9
+    Cc: 38.7e-10
+
+  - label: 9-L-subclavian
+    sn: 5
+    tn: 10
+    L: 0.034
+    R0: 0.00423
+    E: 400000.0
+    h0: 0.00067
+
+  - label: 10-L-ext-carotid
+    sn: 6
+    tn: 11
+    L: 0.177
+    R0: 0.0015
+    E: 800000.0
+    h0: 0.00038
+    outlet: wk2
+    R1: 5.43e9
+    Cc: 1.27e-10
+
+  - label: 11-L-int-carotidI
+    sn: 6
+    tn: 12
+    L: 0.177
+    R0: 0.002
+    E: 800000.0
+    h0: 0.0005
+
+  - label: 12-R-int-carotidI
+    sn: 7
+    tn: 13
+    L: 0.177
+    R0: 0.002
+    E: 800000.0
+    h0: 0.0005
+
+  - label: 13-R-ext-carotid
+    sn: 7
+    tn: 14
+    L: 0.177
+    R0: 0.0015
+    E: 800000.0
+    h0: 0.00038
+    outlet: wk2
+    R1: 5.43e9
+    Cc: 1.27e-10
+
+  - label: 14-R-vertebral
+    sn: 8
+    tn: 15
+    L: 0.148
+    R0: 0.00136
+    E: 800000.0
+    h0: 0.00034
+
+  - label: 15-R-brachial
+    sn: 8
+    tn: 16
+    L: 0.422
+    R0: 0.00403
+    E: 400000.0
+    h0: 0.00067
+    outlet: wk2
+    R1: 2.68e9
+    Cc: 2.58e-10
+
+  - label: 16-L-brachial
+    sn: 10
+    tn: 17
+    L: 0.422
+    R0: 0.00403
+    E: 400000.0
+    h0: 0.00067
+    outlet: wk2
+    R1: 2.68e9
+    Cc: 2.58e-10
+
+  - label: 17-L-vertebral
+    sn: 10
+    tn: 15
+    L: 0.148
+    R0: 0.00136
+    E: 800000.0
+    h0: 0.00034
+
+  - label: 18-L-int-carotidII
+    sn: 12
+    tn: 18
+    L: 0.005
+    R0: 0.002
+    E: 1600000.0
+    h0: 0.0005
+    ##pext: 13332.0
+
+  - label: 19-L-PCoA
+    sn: 19
+    tn: 12
+    L: 0.015
+    R0: 0.00073
+    E: 1600000.0
+    h0: 0.00018
+    #pext: 13332.0
+
+  - label: 20-R-PCoA
+    sn: 20
+    tn: 13
+    L: 0.015
+    R0: 0.00073
+    E: 1600000.0
+    h0: 0.00018
+    #pext: 13332.0
+
+  - label: 21-R-int-carotidII
+    sn: 13
+    tn: 21
+    L: 0.005
+    R0: 0.002
+    E: 1600000.0
+    h0: 0.0005
+    #pext: 13332.0
+
+  - label: 22-Basilar
+    sn: 15
+    tn: 22
+    L: 0.029
+    R0: 0.00162
+    E: 1600000.0
+    h0: 0.0004
+    #pext: 13332.0
+
+  - label: 23-L-MCA
+    sn: 18
+    tn: 23
+    L: 0.119
+    R0: 0.00143
+    E: 1600000.0
+    h0: 0.00036
+    #pext: 13332.0
+    outlet: wk2
+    R1: 5.97e9
+    Cc: 1.16e-10
+
+
+  - label: 24-R-MCA
+    sn: 21
+    tn: 24
+    L: 0.119
+    R0: 0.00143
+    E: 1600000.0
+    h0: 0.00036
+    outlet: wk2
+    R1: 5.97e9
+    Cc: 1.16e-10
+    #pext: 13332.0
+
+  - label: 25-L-ACA-A1
+    sn: 18
+    tn: 25
+    L: 0.012
+    R0: 0.00117
+    E: 1600000.0
+    h0: 0.00029
+    #pext: 13332.0
+
+  - label: 26-R-ACA-A1
+    sn: 21
+    tn: 26
+    L: 0.012
+    R0: 0.00117
+    E: 1600000.0
+    h0: 0.00029
+    #pext: 13332.0
+
+  - label: 27-L-PCA-P1
+    sn: 22
+    tn: 19
+    L: 0.005
+    R0: 0.00107
+    E: 1600000.0
+    h0: 0.00027
+    #pext: 13332.0
+
+  - label: 28-R-PCA-P1
+    sn: 22
+    tn: 20
+    L: 0.005
+    R0: 0.00107
+    E: 1600000.0
+    h0: 0.00027
+    #pext: 13332.0
+
+  - label: 29-L-ACA-A2
+    sn: 25
+    tn: 27
+    L: 0.103
+    R0: 0.0012
+    E: 1600000.0
+    h0: 0.0003
+    #pext: 13332.0
+    outlet: wk2
+    R1: 8.48e9
+    Cc: 8.2e-11
+
+  - label: 30-R-ACA-A2
+    sn: 26
+    tn: 28
+    L: 0.103
+    R0: 0.0012
+    E: 1600000.0
+    h0: 0.0003
+    #pext: 13332.0
+    outlet: wk2
+    R1: 8.48e9
+    Cc: 8.2e-11
+
+
+  - label: 31-ACoA
+    sn: 25
+    tn: 26
+    L: 0.003
+    R0: 0.00074
+    E: 1600000.0
+    h0: 0.00019
+    #pext: 13332.0
+
+  - label: 32-L-PCA-P2
+    sn: 19
+    tn: 29
+    L: 0.086
+    R0: 0.00105
+    E: 1600000.0
+    h0: 0.00026
+    #pext: 13332.0
+    outlet: wk2
+    R1: 11.08e9
+    Cc: 6.2e-11
+
+  - label: 33-R-PCA-P2
+    sn: 20
+    tn: 30
+    L: 0.086
+    R0: 0.00105
+    E: 1600000.0
+    h0: 0.00026
+    #pext: 13332.0
+    outlet: wk2
+    R1: 11.08e9
+    Cc: 6.2e-11

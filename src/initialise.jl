@@ -246,7 +246,9 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
 
     Rp, Rd = computeRadii(vessel_data)
     Pext = getPext(vessel_data)
+
     M, dx, invDx, halfDx, invDxSq = meshVessel(vessel_data, L)
+
     h0 = initialiseThickness(vessel_data, M)
     outlet, Rt, R1, R2, Cc = addOutlet(vessel_data)
     viscT = computeViscousTerm(vessel_data, blood)
@@ -546,6 +548,11 @@ function addOutlet(vessel :: Dict{Any,Any})
             R1 = 0.0
             R2 = 0.0
             Cc = 0.0
+	elseif outlet == "pressure"
+	    Rt = 0.0
+	    R1 = 0.0
+	    R2 = 0.0
+	    Cc = 0.0
         end
     else
         outlet = "none"
