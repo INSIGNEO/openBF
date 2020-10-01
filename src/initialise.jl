@@ -137,6 +137,10 @@ function checkVessel(i :: Int, vessel :: Dict{Any,Any})
         end
     end
 
+    if vessel["sn"] == vessel["tn"]
+        error("vessel $i has same sn and tn")
+    end
+
     if ~haskey(vessel, "R0")
         if ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd")
             error("vessel $i is missing lumen radius value(s)")
