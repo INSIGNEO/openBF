@@ -16,7 +16,7 @@ limitations under the License.
 
 
 """
-    laodSimulationFiles(input_filename :: String)
+    loadSimulationFiles(input_filename :: String)
 
 Load, check, and return `.yml` input file content.
 """
@@ -101,6 +101,7 @@ inlet and one oulet has been defined.
 function checkNetwork(network :: Array{Dict{Any,Any},1})
     has_inlet = false
     has_outlet = false
+    nodes = Dict{Int,Int}()
     for i = 1:length(network)
         checkVessel(i, network[i])
 
@@ -109,6 +110,23 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
         end
         if haskey(network[i], "outlet")
             has_outlet = true
+        end
+
+        # check max number of vessels per node
+        if ~haskey(nodes, network[i]["sn"])
+            nodes[network[i]["sn"]] = 1
+        else
+            nodes[network[i]["sn"]] += 1
+        end
+        if ~haskey(nodes, network[i]["tn"])
+            nodes[network[i]["tn"]] = 1
+        else
+            nodes[network[i]["tn"]] += 1
+        end
+        if nodes[network[i]["sn"]] > 3
+            error("too many vessels connected at node $(network[i]["sn"])")
+        elseif nodes[network[i]["tn"]] > 3
+            error("too many vessels connected at node $(network[i]["tn"])")
         end
     end
 

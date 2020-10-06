@@ -26,6 +26,9 @@ delete!(data["network"][2], "R0")
 data["network"][2]["sn"] = data["network"][2]["tn"]
 @test_throws ErrorException openBF.checkVessel(2, data["network"][2])
 
+data = openBF.loadYAMLFile("test_connectivity.yml")
+@test_throws ErrorException openBF.checkNetwork(data["network"])
+
 data = openBF.loadYAMLFile("test.yml")
 blood = openBF.buildBlood(data["blood"])
 @test typeof(blood) == Blood
