@@ -163,6 +163,10 @@ function checkVessel(i :: Int, vessel :: Dict{Any,Any})
         if ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd")
             error("vessel $i is missing lumen radius value(s)")
         end
+    else
+        if vessel["R0"] > 0.05
+            @warn "$(vessel["label"]) radius larger than 5cm!"
+        end
     end
 
     if haskey(vessel, "inlet")
