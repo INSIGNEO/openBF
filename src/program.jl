@@ -1,5 +1,5 @@
 #=
-Copyright 2018 INSIGNEO Institute for in silico Medicine
+Copyright 2020 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     jump = data["solver"]["jump"]
 
     vessels, edges = buildArterialNetwork(data["network"], blood, jump)
-    makeResultsFolder(data)
+    makeResultsFolder(data, input_filename)
 
     Ccfl = data["solver"]["Ccfl"]
     heart = vessels[1].heart

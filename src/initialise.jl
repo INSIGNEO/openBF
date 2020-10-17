@@ -1,5 +1,5 @@
 #=
-Copyright 2018 INSIGNEO Institute for in silico Medicine
+Copyright 2020 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -216,7 +216,7 @@ end
 
 Create results folder and cd in.
 """
-function makeResultsFolder(data :: Dict{Any,Any})
+function makeResultsFolder(data :: Dict{Any,Any}, input_filename :: String)
     project_name = data["project name"]
 
     if ~haskey(data, "results folder")
@@ -228,6 +228,8 @@ function makeResultsFolder(data :: Dict{Any,Any})
     if isdir(r_folder) == false
       mkdir(r_folder)
     end
+
+    cp(input_filename, r_folder*"/"*input_filename)
 
     cd(r_folder)
 end

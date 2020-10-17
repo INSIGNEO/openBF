@@ -114,7 +114,7 @@ v = vessels[1]
 R1, R2 = openBF.computeWindkesselInletImpedance(v.R2, blood, v.A0, v.gamma)
 @test R1 + R2 == v.R2
 
-openBF.makeResultsFolder(data)
+openBF.makeResultsFolder(data, "test.yml")
 cd("..")
 @test isdir("test_results")
 rm("test_results", recursive=true)
