@@ -58,6 +58,43 @@ optional arguments:
   -h, --help       show this help message and exit
 ```
 
+### Example
+
+```
+project name: <project name>
+results folder: <path/to/your/results/directory>
+
+blood:
+  rho: 1060.0 # density
+  mu: 4.e-3   # kinematic viscosity
+
+solver:
+  Ccfl: 0.9   # Courant number
+  cycles: 100 # max number of cardiac cycles
+  jump: 100
+  convergence tolerance: 15.0 # convergence min error threshold
+
+network:
+  - label: <vessel name>
+	sn: 1
+    tn: 2
+    E: 400000 # Young's modulus
+    L: 0.04   # length
+    R0: 0.012 # lumen radius
+    inlet number: 1
+    inlet: Q
+    inlet file: <inlet filename>
+  - label: <vessel name>
+  	sn: 2
+    tn: 3
+    E: 400000
+    L: 0.103
+    R0: 0.010
+    outlet: wk2
+  	Cc: 8.2e-11      # peripheral compliance
+    R1: 8480000000.0 # peripheral resistance
+```
+
 ### How to dev
 
 ```
