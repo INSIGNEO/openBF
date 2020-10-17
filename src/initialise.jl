@@ -130,12 +130,23 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
         end
     end
 
-    # outlet nodes must be defined
+    # outlet nodes must be defined and all network connnected
     for i = 1:length(network)
         if nodes[network[i]["tn"]] == 1
             if ~haskey(network[i], "outlet")
                 error("outlet not defined for vessel $(network[i]["label"]),
                     check connectivity")
+            end
+        end
+        delete!(nodes, network[i]["tn"])
+    end
+    for k in keys(network)
+        if k == 1
+            continue
+        else
+            if network[k] == 1
+                error("node $(k) is not an outlet and it is not connected
+                 to at least two vessels, check connectivity")
             end
         end
     end

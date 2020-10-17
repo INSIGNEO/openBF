@@ -33,6 +33,10 @@ data["network"][3]["sn"] = 3
 data["network"][4]["sn"] = 4
 @test_throws ErrorException openBF.checkNetwork(data["network"])
 
+data["network"][4]["outlet"] = "wk2"
+data["network"][3]["sn"] = 6
+@test_throws ErrorException openBF.checkNetwork(data["network"])
+
 data = openBF.loadYAMLFile("test.yml")
 blood = openBF.buildBlood(data["blood"])
 @test typeof(blood) == Blood
