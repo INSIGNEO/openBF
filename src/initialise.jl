@@ -130,6 +130,16 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
         end
     end
 
+    # outlet nodes must be defined
+    for i = 1:length(network)
+        if nodes[network[i]["tn"]] == 1
+            if ~haskey(network[i], "outlet")
+                error("outlet not defined for vessel $(network[i]["label"]),
+                    check connectivity")
+            end
+        end
+    end
+
     if ~has_inlet
         error("missing inlet(s) definition")
     end
