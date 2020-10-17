@@ -1,0 +1,54 @@
+project name: test_connectivity
+
+blood:
+  rho: 1060.0
+  mu: 4.e-3
+
+solver:
+  Ccfl: 0.9
+  cycles: 100
+  jump: 100
+  convergence tolerance: 5.0
+
+network:
+  - label: v1
+    sn: 1
+    tn: 2
+    L: 8.6e-2
+    M: 86
+    Rp: 0.76e-2
+    Rd: 0.7581e-2
+    E: 500.0e3
+    Pext: 10000.0
+    inlet: Q
+    inlet file: inlet.dat
+    inlet number: 1
+    outlet: wk2
+    R1: 6.8123e7
+    Cc: 3.6664e-10
+
+  - label: v2
+    sn: 2
+    tn: 3
+    L: 8.6e-2
+    M: 2
+    R0: 0.5492e-2
+    E: 700.0e3
+    gamma profile: 2
+    
+  - label: v3
+    sn: 2
+    tn: 4
+    L: 8.6e-2
+    M: 2
+    R0: 0.5492e-2
+    E: 700.0e3
+    gamma profile: 2
+
+  - label: v4
+    sn: 2
+    tn: 5
+    L: 8.6e-2
+    M: 1000
+    R0: 0.5492e-2
+    E: 700.0e3

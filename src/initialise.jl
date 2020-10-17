@@ -1,5 +1,5 @@
 #=
-Copyright 2018 INSIGNEO Institute for in silico Medicine
+Copyright 2020 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ limitations under the License.
 
 
 """
-    laodSimulationFiles(input_filename :: String)
+    loadSimulationFiles(input_filename :: String)
 
 Load, check, and return `.yml` input file content.
 """
@@ -101,6 +101,7 @@ inlet and one oulet has been defined.
 function checkNetwork(network :: Array{Dict{Any,Any},1})
     has_inlet = false
     has_outlet = false
+    nodes = Dict{Int,Int}()
     for i = 1:length(network)
         checkVessel(i, network[i])
 
@@ -109,6 +110,33 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
         end
         if haskey(network[i], "outlet")
             has_outlet = true
+        end
+
+        # check max number of vessels per node
+        if ~haskey(nodes, network[i]["sn"])
+            nodes[network[i]["sn"]] = 1
+        else
+            nodes[network[i]["sn"]] += 1
+        end
+        if ~haskey(nodes, network[i]["tn"])
+            nodes[network[i]["tn"]] = 1
+        else
+            nodes[network[i]["tn"]] += 1
+        end
+        if nodes[network[i]["sn"]] > 3
+            error("too many vessels connected at node $(network[i]["sn"])")
+        elseif nodes[network[i]["tn"]] > 3
+            error("too many vessels connected at node $(network[i]["tn"])")
+        end
+    end
+
+    # outlet nodes must be defined
+    for i = 1:length(network)
+        if nodes[network[i]["tn"]] == 1
+            if ~haskey(network[i], "outlet")
+                error("outlet not defined for vessel $(network[i]["label"]),
+                    check connectivity")
+            end
         end
     end
 
@@ -137,9 +165,17 @@ function checkVessel(i :: Int, vessel :: Dict{Any,Any})
         end
     end
 
+    if vessel["sn"] == vessel["tn"]
+        error("vessel $i has same sn and tn")
+    end
+
     if ~haskey(vessel, "R0")
         if ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd")
             error("vessel $i is missing lumen radius value(s)")
+        end
+    else
+        if vessel["R0"] > 0.05
+            @warn "$(vessel["label"]) radius larger than 5cm!"
         end
     end
 
@@ -180,13 +216,20 @@ end
 
 Create results folder and cd in.
 """
-function makeResultsFolder(data :: Dict{Any,Any})
+function makeResultsFolder(data :: Dict{Any,Any}, input_filename :: String)
     project_name = data["project name"]
-    r_folder = join([project_name, "_results"])
+
+    if ~haskey(data, "results folder")
+        r_folder = join([project_name, "_results"])
+    else
+        r_folder = data["results folder"]
+    end
 
     if isdir(r_folder) == false
       mkdir(r_folder)
     end
+
+    cp(input_filename, r_folder*"/"*input_filename)
 
     cd(r_folder)
 end
