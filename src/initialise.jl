@@ -218,7 +218,12 @@ Create results folder and cd in.
 """
 function makeResultsFolder(data :: Dict{Any,Any})
     project_name = data["project name"]
-    r_folder = join([project_name, "_results"])
+
+    if ~haskey(data, "results folder")
+        r_folder = join([project_name, "_results"])
+    else
+        r_folder = data["results folder"]
+    end
 
     if isdir(r_folder) == false
       mkdir(r_folder)
