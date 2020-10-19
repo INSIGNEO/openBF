@@ -229,7 +229,7 @@ function makeResultsFolder(data :: Dict{Any,Any}, input_filename :: String)
       mkdir(r_folder)
     end
 
-    cp(input_filename, r_folder*"/"*input_filename)
+    cp(input_filename, r_folder*"/"*input_filename, force=true)
 
     cd(r_folder)
 end
