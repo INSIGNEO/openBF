@@ -1,0 +1,61 @@
+project name: bifurcation
+
+blood:
+  rho: 1060.0 # density [kg/m^3]
+  mu: 4.e-3   # dynamic viscosity [Pa⋅s]
+
+solver:
+  Ccfl: 0.9   # Courant number
+  cycles: 100 # maximum number of cycles
+  jump: 100   # timesteps per cycle to be saved
+  convergence tolerance: 5.0 # percentage value
+
+network:
+  - label: P
+        # Int. carotid II (Melis et al., 2019)
+    sn: 1     # proximal (source) node
+    tn: 2     # distal (target) node
+
+    L: 0.5e-2 # length (m)
+
+    R0: 0.2e-2   # proximal lumen radius (m)
+    Rc: 0.15e-2   # catheter radius
+
+    E: 1600.0e3 # Young's modulus (Pa)
+    h0: 0.82e-3
+
+    inlet: Q
+    inlet file: bifurcation_inlet.dat
+    inlet number: 1
+
+  - label: d1
+        # ACA I
+    sn: 2
+    tn: 3
+
+    L: 1.2e-2 # length (m)
+
+    R0: 0.117e-2   # proximal lumen radius (m)
+
+    E: 1600.0e3 # Young's modulus (Pa)
+
+    outlet: wk3
+    R1: 6.8123e7
+    R2: 3.1013e9
+    Cc: 3.6664e-10
+
+  - label: d2
+        # MCA
+    sn: 2
+    tn: 4
+
+    L: 11.9e-2 # length (m)
+
+    R0: 0.143e-2   # proximal lumen radius (m)
+
+    E: 1600.0e3 # Young's modulus (Pa)
+
+    outlet: wk3
+    R1: 6.8123e7
+    R2: 3.1013e9
+    Cc: 3.6664e-10

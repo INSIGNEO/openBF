@@ -25,6 +25,9 @@ module openBF
     using DelimitedFiles
     using LinearAlgebra
     using Printf
+    # IMPORT PACKAGE FOR HYPERGEOMETRIC FUNCTIONS
+    using HypergeometricFunctions
+    import HypergeometricFunctions: drummond2F1
 
 
     """
@@ -166,6 +169,10 @@ module openBF
 
         Fl :: Array{Float64,2}
         Fr :: Array{Float64,2}
+
+        # Catheter
+        Ac :: Float64               # Area of the catheter
+        corrRI :: Float64           # Correction factor to Riemann Invariants
 
         #Outlet type
         outlet :: String

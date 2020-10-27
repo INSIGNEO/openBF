@@ -37,7 +37,7 @@ end
 Solve the non-linear junction system by means of Newton-Raphson method.
 """
 function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
-    W = funW(U, k)
+    W = funW(U, k, vessels)          # MODIFIED THIS LINE
     F = funF(vessels, U, k, W)
 
     nr_toll_U = 1e-5
@@ -71,7 +71,7 @@ function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
 
         else
             U = U_new
-            W = funW(U, k)
+            W = funW(U, k, vessels)      # MODIFIED THIS LINE
             F = funF(vessels, U, k, W)
         end
     end
