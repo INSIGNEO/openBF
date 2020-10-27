@@ -63,12 +63,12 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
             if passed_cycles + 1 > 1
-                err = checkConvergence(edges, vessels)
+                err, err_lbl = checkConvergence(edges, vessels)
                 if verbose == true
                     if err > 100.0
-                        @printf(" - Conv. error > 100%%\n")
+                        @printf(" - Conv. error > 100%% @ %s\n", err_lbl)
                     else
-                        @printf(" - Conv. error = %4.2f%%\n", err)
+                        @printf(" - Conv. error = %4.2f%% @ %s\n", err, err_lbl)
                     end
                 end
             else
