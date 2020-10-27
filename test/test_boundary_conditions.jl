@@ -26,11 +26,6 @@ u, c = openBF.inverseRiemannInvariants(W1, W2)
 @test isapprox(u, vessels[1].u[1], atol=1e-4)
 @test c == vessels[1].c[1]
 
-vessels[1].heart.inlet_type = "P"
-openBF.setInletBC(0.0, dt, vessels[1])
-@test vessels[1].Q[1] != Qref
-@test vessels[1].P[1] != Pref
-
 newA = openBF.areaFromPressure(vessels[1].P[1], vessels[1].A0[1], vessels[1].beta[1],
                                 vessels[1].Pext)
 @test newA == vessels[1].A[1]

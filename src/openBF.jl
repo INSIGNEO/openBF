@@ -15,7 +15,7 @@ limitations under the License.
 =#
 
 
-(VERSION >= v"0.4") && __precompile__(true)
+__precompile__(true)
 module openBF
 
     export Vessel, Heart, Blood, runSimulation
@@ -30,7 +30,7 @@ module openBF
     """
     Heart type
     """
-    mutable struct Heart
+    struct Heart
         inlet_type :: String
         cardiac_T :: Float64
         input_data :: Array{Float64,2}
@@ -41,7 +41,7 @@ module openBF
     """
     Blood type
     """
-    mutable struct Blood
+    struct Blood
         mu  :: Float64
         rho :: Float64
         rho_inv :: Float64
