@@ -12,6 +12,8 @@
 
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
+[_Docs_](#docs) | [_Installation_](#installation) | [_Example_](#example) | [_Plot_](#plotting) | [_Dev_](#how-to-dev) | [_Hub_](#ecosystem) | [_Cite_](#cite)
+
 ### Docs
 
 - openBF __≦v0.6.3__ check this [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
@@ -94,6 +96,34 @@ network:
   	Cc: 8.2e-11      # peripheral compliance
     R1: 8480000000.0 # peripheral resistance
 ```
+
+### Plotting
+
+Install [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
+
+```
+julia> ]
+(v1.x) pkg> add Plots
+(v1.x) pkg> <backspace>
+julia> using Plots
+```
+(the first time you run this, the library will be compiled and it may takes several minutes)
+
+plot something
+```
+using DelimitedFiles
+
+# open the result files
+v1 = DelimitedFiles.readdlm("v1_P.last")
+v2 = DelimitedFiles.readdlm("v2_P.last")
+
+plot(v1[:,1], v1[:,end]/133.332, label="v1")
+plot(v2[:,1], v2[:,end]/133.332, label="v2")
+
+xlabel!("time (s)")
+ylabel!("pressure (mmHg)")
+```
+![waveforms](https://user-images.githubusercontent.com/4661737/97332078-f4101d80-1871-11eb-970d-b7761c069688.png)
 
 ### How to dev
 
