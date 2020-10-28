@@ -3,3 +3,8 @@ test/**/*_results/*
 cvs_results/*
 docs/build/*
 Manifest.toml
+README.html
+*.ipynb
+*.dat
+*.yml
+*.yaml
