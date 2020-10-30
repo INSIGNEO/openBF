@@ -225,9 +225,11 @@ function makeResultsFolder(data :: Dict{Any,Any}, input_filename :: String)
         r_folder = data["results folder"]
     end
 
-    if isdir(r_folder) == false
-      mkdir(r_folder)
+    # delete existing folder and results!
+    if isdir(r_folder)
+        rm(r_folder, recursive=true)
     end
+    mkdir(r_folder)
 
     cp(input_filename, r_folder*"/"*input_filename, force=true)
 

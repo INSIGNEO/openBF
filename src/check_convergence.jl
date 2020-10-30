@@ -19,25 +19,32 @@ limitations under the License.
     checkConvergence(edge_list, vessels :: Array{Vessel, 1})
 
 Compute the maximum error in the pressure and volumetric flow rate waveforms between two
-cardiac cycles at the midpoint of all the vessels in the network.
+cardiac cycles at the midpoint of all the vessels in the network. Returns maximum error
+and the label of the vessels where this is occurring.
 """
 function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
-    err = zeros(size(edge_list)[1],2) .+ 100
-
+    maxerr = -1.0
+    maxlbl = ""
     @inbounds for i in 1:size(edge_list)[1]
         v = vessels[i]
         lbl = v.label
 
         w_last = v.Q_l
         w_temp = v.Q_t
-
-        err[i,1] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
+        err = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
+        if err > maxerr
+            maxerr = err
+            maxlbl = lbl
+        end
 
         w_last = v.P_l
         w_temp = v.P_t
-
-        err[i,2] = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
+        err = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
+        if err > maxerr
+            maxerr = err
+            maxlbl = lbl
+        end
     end
 
-    return maximum(err)
+    return (maxerr, maxlbl)
 end
