@@ -23,28 +23,28 @@ cardiac cycles at the midpoint of all the vessels in the network. Returns maximu
 and the label of the vessels where this is occurring.
 """
 function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
-    maxerr = -1.0
-    maxlbl = ""
+    maxerr, maxnorm = -1.0, -1.0
+    maxlbl, maxnormlbl = "", ""
     @inbounds for i in 1:size(edge_list)[1]
         v = vessels[i]
         lbl = v.label
+        
+        for (w_last, w_temp) in zip([v.Q_l, v.P_l],[v.Q_t,v.P_t])
+            err = w_last[:,4].-w_temp[:,4]
+            conv_err = maximum(abs.(err./w_last[:,4])*100)
+            if conv_err > maxerr
+                maxerr = conv_err
+                maxlbl = lbl
+            end
 
-        w_last = v.Q_l
-        w_temp = v.Q_t
-        err = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
-        if err > maxerr
-            maxerr = err
-            maxlbl = lbl
-        end
-
-        w_last = v.P_l
-        w_temp = v.P_t
-        err = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
-        if err > maxerr
-            maxerr = err
-            maxlbl = lbl
+            norm = sqrt(sum(err.^2))/maximum(abs.(err))
+            if norm > maxnorm
+                maxnorm = norm
+                maxnormlbl = lbl
+            end
         end
     end
 
-    return (maxerr, maxlbl)
+    return maxerr, maxlbl, maxnorm, maxnormlbl
 end
+

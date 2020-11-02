@@ -63,16 +63,19 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
             if passed_cycles + 1 > 1
-                err, err_lbl = checkConvergence(edges, vessels)
+                conv_err, conv_err_lbl, err_norm, err_norm_lbl = checkConvergence(edges, vessels)
                 if verbose == true
-                    if err > 100.0
-                        @printf(" - Conv. error > 100%% @ %s\n", err_lbl)
+                    if conv_err > 100.0
+                        @printf(" - Conv. error > 100%% @ %s; Max error norm %4.2f @ %s\n",
+                                conv_err_lbl, err_norm, err_norm_lbl)
                     else
-                        @printf(" - Conv. error = %4.2f%% @ %s\n", err, err_lbl)
+                        @printf(" - Conv. error = %4.2f%% @ %s; Max error norm %4.2f @ %s\n",
+                                conv_err, conv_err_lbl, err_norm, err_norm_lbl)
                     end
                 end
             else
-                err = 100.0
+                conv_err = 100.0
+                err_norm = 100.0
                 verbose && @printf("\n")
             end
 
@@ -80,7 +83,14 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
             out_files && transferLastToOut(vessels)
 
-            if err <= data["solver"]["convergence tolerance"]
+            if haskey(data["solver"], "convergence criteria")
+                criteria = data["solver"]["convergence criteria"]
+            else
+                criteria = "conv_err"
+            end
+
+            if (criteria == "conv_err" && conv_err <= data["solver"]["convergence tolerance"]) || 
+                (criteria == "norm" && err_norm <= data["solver"]["convergence tolerance"])
                 break
             end
 
