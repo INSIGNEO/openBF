@@ -49,6 +49,17 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     verbose && (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); starting_time = time_ns())
 
     counter = 1
+    if haskey(data["solver"], "convergence criteria")
+        conv_criteria = data["solver"]["convergence criteria"]
+    else
+        conv_criteria = "norm"
+    end
+    if conv_criteria == "err"
+        previous_err = 100.0
+    elseif conv_criteria == "norm"
+        previous_err = zeros(length(vessels),2).+100_000
+    end
+    conv_toll = data["solver"]["convergence tolerance"] 
     while true
         dt = calculateDeltaT(vessels, Ccfl)
         solveModel(vessels, edges, blood, dt, current_time)
@@ -63,36 +74,23 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
             if passed_cycles + 1 > 1
-                conv_err, conv_err_lbl, err_norm, err_norm_lbl = checkConvergence(edges, vessels)
+                err, err_loc, err_q, norms = checkConvergence(vessels, previous_err, conv_criteria)
                 if verbose == true
-                    if conv_err > 100.0
-                        @printf(" - Conv. error > 100%% @ %s; Max error norm %4.2f @ %s\n",
-                                conv_err_lbl, err_norm, err_norm_lbl)
+                    if err > 100.0
+                        @printf(" - Conv. error for %s > 100%% @ %s", err_q, err_loc)
                     else
-                        @printf(" - Conv. error = %4.2f%% @ %s; Max error norm %4.2f @ %s\n",
-                                conv_err, conv_err_lbl, err_norm, err_norm_lbl)
+                        @printf(" - Conv. error for %s = %4.2f%% @ %s", err_q, err, err_loc)
                     end
                 end
-            else
-                conv_err = 100.0
-                err_norm = 100.0
-                verbose && @printf("\n")
+                previous_norms = norms
             end
+            verbose && @printf("\n")
 
             transferTempToLast(vessels)
 
             out_files && transferLastToOut(vessels)
 
-            if haskey(data["solver"], "convergence criteria")
-                criteria = data["solver"]["convergence criteria"]
-            else
-                criteria = "conv_err"
-            end
-
-            if (criteria == "conv_err" && conv_err <= data["solver"]["convergence tolerance"]) || 
-                (criteria == "norm" && err_norm <= data["solver"]["convergence tolerance"])
-                break
-            end
+            passed_cycles+1>1 && err <= conv_toll && break
 
             passed_cycles += 1
             verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
