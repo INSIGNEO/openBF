@@ -49,11 +49,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     verbose && (@printf("Solving cardiac cycle no: %02d", passed_cycles + 1); starting_time = time_ns())
 
     counter = 1
-    if haskey(data["solver"], "convergence criteria")
-        conv_criteria = data["solver"]["convergence criteria"]
-    else
-        conv_criteria = "norm"
-    end
+    conv_criteria = "norm"
     conv_toll = data["solver"]["convergence tolerance"] 
 
     while true
@@ -70,8 +66,8 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
             if passed_cycles + 1 > 1
-                err, err_loc = computeConvError(conv_criteria, vessels)
-                verbose && printConvError(conv_criteria, err, err_loc)
+                err, err_loc = computeConvError(vessels)
+                verbose && printConvError(err, err_loc)
             else
                 print('\n')
             end
@@ -80,7 +76,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
             out_files && transferLastToOut(vessels)
 
-            passed_cycles+1>1 && checkConvergence(conv_criteria, err, conv_toll) && break
+            passed_cycles+1>1 && checkConvergence(err, conv_toll) && break
 
             passed_cycles += 1
             verbose && @printf("Solving cardiac cycle no: %02d", passed_cycles + 1)
