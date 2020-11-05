@@ -74,15 +74,16 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
             if passed_cycles + 1 > 1
-                err, err_loc, err_q, norms = checkConvergence(vessels, previous_err, conv_criteria)
+                # err, err_loc, err_q, norms = checkConvergence(vessels, previous_err, conv_criteria)
+                err, err_loc, err_q, norms = checkConvergence(conv_criteria, vessels, previous_err)
                 if verbose == true
-                    if err > 100.0
-                        @printf(" - Conv. error for %s > 100%% @ %s", err_q, err_loc)
-                    else
-                        @printf(" - Conv. error for %s = %4.2f%% @ %s", err_q, err, err_loc)
-                    end
+                    # if err > 100.0
+                    #     @printf(" - Conv. error for %s > 100%% @ %s", err_q, err_loc)
+                    # else
+                        @printf(" - Conv. error for %s = %e%% @ %s", err_q, err, err_loc)
+                    # end
                 end
-                previous_norms = norms
+                previous_err = norms
             end
             verbose && @printf("\n")
 
@@ -90,7 +91,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
             out_files && transferLastToOut(vessels)
 
-            passed_cycles+1>1 && err <= conv_toll && break
+            passed_cycles+1>1 && err/133.332 <= conv_toll && break
 
             passed_cycles += 1
             verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
