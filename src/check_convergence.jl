@@ -17,80 +17,74 @@ limitations under the License.
 struct ConvCriteria{T} end
 ConvCriteria(s::AbstractString) = ConvCriteria{Symbol(s)}()
 
-calc_error(w_last, w_tmp) = w_last.-w_tmp
-calc_conv(err, w_last) = maximum(abs.(err./w_last))*100.0
-calc_norm(err) = sqrt(sum(err.^2))
-
-Base.@kwdef struct ConvError{T}
-    max::Float64 = 100.0
-    loc::String = ""
-    var::String = ""
-    prev::T
-end
-
-ConvError(::ConvCriteria{:err}) = ConvError(prev=100.0)
-ConvError(::ConvCriteria{:norm}, N::Int64) = ConvError(prev=zeros(N,2).+100_000)
-ConvError(criteria::String, args...) = ConvError(ConvCriteria(criteria), args...)
-
 """
-    checkConvergence(edge_list, vessels :: Array{Vessel, 1})
+    computeConvError(edge_list, vessels :: Array{Vessel, 1})
 
 Compute the maximum error in the pressure and volumetric flow rate waveforms between two
 cardiac cycles at the midpoint of all the vessels in the network. Returns maximum error
 and the label of the vessels where this is occurring.
 """
-function checkConvergence(::ConvCriteria{:err}, vessels :: Array{Vessel, 1})
+function computeConvError(::ConvCriteria{:err}, vessels :: Array{Vessel, 1})
     maxerr = -1.0
-    maxlbl, maxlblq = "", ""
+    maxloc = ""
     @inbounds for v=vessels
         for (w_last, w_temp, lblq) in zip([v.Q_l, v.P_l],[v.Q_t,v.P_t], ["Q","P"])
-            err = calc_error(w_last[:,4], w_temp[:,4])
-            conv_err = calc_conv(err, w_last[:,4])
+            err = w_last[:,4] .- w_temp[:,4]
+            conv_err = maximum(abs.(err./w_last[:,4]))*100.0
             if conv_err > maxerr
                 maxerr = conv_err
-                maxlbl = v.label
-                maxlblq = lblq
+                maxloc = v.label
             end
         end
     end
-    return maxerr, maxlbl, maxlblq, maxerr
+    return maxerr, maxloc
 end
-
 
 function calcNorms(vessels :: Array{Vessel, 1})
     norms = zeros(length(vessels),2)
     @inbounds for (i,v) in enumerate(vessels)
-        for (w_last, w_temp, col) in zip([v.Q_l, v.P_l], [v.Q_t,v.P_t], [1, 2])
-            err = calc_error(w_last[:,4], w_temp[:,4])
-            norm = calc_norm(err)
-            norms[i,col] = calc_norm(err)
-        end
+        err = v.P_l[:,4] .- v.P_t[:,4]
+        norms[i] = sqrt(sum(err.^2))
     end
     return norms
 end
 
-function checkConvergence(::ConvCriteria{:norm}, vessels :: Array{Vessel, 1},
-                              previous_norms::Array{Float64,2})
+function computeConvError(::ConvCriteria{:norm}, vessels :: Array{Vessel, 1})
     current_norms = calcNorms(vessels)
-    delta =  current_norms# current_norms.*100 ./previous_norms
-    # delta[:,1] ./= maximum(delta[:,1])
-    maxnorm, ci = findmax(abs.(delta[:,2]))
-    
-    maxnormlbl = vessels[ci[1]].label
-    maxlblq = ci[1] == 1 ? "Q" : "P"
-    return maxnorm, maxnormlbl, maxlblq, current_norms
-    # ConvError(max=maxnorm, loc=maxnormlbl, var=maxlblq, prev=current_norms)
+    maxnorm, ci = findmax(current_norms)
+    maxnormloc = vessels[ci[1]].label
+    return maxnorm, maxnormloc
+end
+
+function computeConvError(criteria::String, args...)
+    computeConvError(ConvCriteria(criteria), args...)
+end
+
+function printConvError(criteria::String, args...)
+    printConvError(ConvCriteria(criteria), args...)
+end
+
+function printConvError(::ConvCriteria{:norm}, err::Float64, loc::String)
+    err /= 133.332
+    if err > 100.0
+        @printf(" - Error norm > 100.00 mmHg\n")
+    else
+        @printf(" - Error norm = %6.2f mmHg @ %s\n", err, loc)
+    end
+
+end
+
+function printConvError(::ConvCriteria{:err}, err::Float64, loc::String)
+    if err > 100.0
+        @printf(" - Conv. error > 100.00%%\n")
+    else
+        @printf(" - Conv. error = %6.2f%% @ %s\n", err, loc)
+    end
 end
 
 function checkConvergence(criteria::String, args...)
-    # vessels :: Array{Vessel, 1},
-    #                       previous_err :: Union{Array{Float64,2},Float64},
-    #                       conv_criteria :: String)
     checkConvergence(ConvCriteria(criteria), args...)
 end
-    # if conv_criteria == "err"
-    #     return checkConvergenceError(vessels)
-    # elseif conv_criteria == "norm"
-    #     return checkConvergenceNorm(vessels, previous_err)
-    # end
-# end
+
+checkConvergence(::ConvCriteria{:err}, err::Float64, toll::Float64)=err <= toll
+checkConvergence(::ConvCriteria{:norm}, err::Float64, toll::Float64)=err/133.332 <= toll

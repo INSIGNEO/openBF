@@ -46,7 +46,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     current_time = 0.0
     passed_cycles = 0
 
-    verbose && (@printf("Solving cardiac cycle no: %d", passed_cycles + 1); starting_time = time_ns())
+    verbose && (@printf("Solving cardiac cycle no: %02d", passed_cycles + 1); starting_time = time_ns())
 
     counter = 1
     if haskey(data["solver"], "convergence criteria")
@@ -54,12 +54,8 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     else
         conv_criteria = "norm"
     end
-    if conv_criteria == "err"
-        previous_err = 100.0
-    elseif conv_criteria == "norm"
-        previous_err = zeros(length(vessels),2).+100_000
-    end
     conv_toll = data["solver"]["convergence tolerance"] 
+
     while true
         dt = calculateDeltaT(vessels, Ccfl)
         solveModel(vessels, edges, blood, dt, current_time)
@@ -74,27 +70,20 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
           (current_time - heart.cardiac_T*passed_cycles + dt) > heart.cardiac_T
 
             if passed_cycles + 1 > 1
-                # err, err_loc, err_q, norms = checkConvergence(vessels, previous_err, conv_criteria)
-                err, err_loc, err_q, norms = checkConvergence(conv_criteria, vessels, previous_err)
-                if verbose == true
-                    # if err > 100.0
-                    #     @printf(" - Conv. error for %s > 100%% @ %s", err_q, err_loc)
-                    # else
-                        @printf(" - Conv. error for %s = %e%% @ %s", err_q, err, err_loc)
-                    # end
-                end
-                previous_err = norms
+                err, err_loc = computeConvError(conv_criteria, vessels)
+                verbose && printConvError(conv_criteria, err, err_loc)
+            else
+                print('\n')
             end
-            verbose && @printf("\n")
 
             transferTempToLast(vessels)
 
             out_files && transferLastToOut(vessels)
 
-            passed_cycles+1>1 && err/133.332 <= conv_toll && break
+            passed_cycles+1>1 && checkConvergence(conv_criteria, err, conv_toll) && break
 
             passed_cycles += 1
-            verbose && @printf("Solving cardiac cycle no: %d", passed_cycles + 1)
+            verbose && @printf("Solving cardiac cycle no: %02d", passed_cycles + 1)
 
             timepoints = timepoints .+ heart.cardiac_T
             counter = 1
