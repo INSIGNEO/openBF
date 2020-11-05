@@ -14,37 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+function calcNorms(vessels :: Array{Vessel, 1})
+    norms = zeros(length(vessels),2)
+    @inbounds for (i,v) in enumerate(vessels)
+        err = v.P_l[:,4] .- v.P_t[:,4]
+        norms[i] = sqrt(sum(err.^2))
+    end
+    return norms
+end
 
 """
-    checkConvergence(edge_list, vessels :: Array{Vessel, 1})
-
-Compute the maximum error in the pressure and volumetric flow rate waveforms between two
-cardiac cycles at the midpoint of all the vessels in the network. Returns maximum error
-and the label of the vessels where this is occurring.
+    computeConvError(edge_list, vessels :: Array{Vessel, 1})
 """
-function checkConvergence(edge_list, vessels :: Array{Vessel, 1})
-    maxerr = -1.0
-    maxlbl = ""
-    @inbounds for i in 1:size(edge_list)[1]
-        v = vessels[i]
-        lbl = v.label
+function computeConvError(vessels :: Array{Vessel, 1})
+    current_norms = calcNorms(vessels)
+    maxnorm, ci = findmax(current_norms)
+    maxnormloc = vessels[ci[1]].label
+    return maxnorm, maxnormloc
+end
 
-        w_last = v.Q_l
-        w_temp = v.Q_t
-        err = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
-        if err > maxerr
-            maxerr = err
-            maxlbl = lbl
-        end
-
-        w_last = v.P_l
-        w_temp = v.P_t
-        err = maximum(abs.((w_last[:,4].-w_temp[:,4])./w_last[:,4])*100)
-        if err > maxerr
-            maxerr = err
-            maxlbl = lbl
-        end
+function printConvError(err::Float64, loc::String)
+    err /= 133.332
+    if err > 100.0
+        @printf(" - Error norm > 100.00 mmHg\n")
+    else
+        @printf(" - Error norm = %6.2f mmHg @ %s\n", err, loc)
     end
 
-    return (maxerr, maxlbl)
 end
+
+checkConvergence(err::Float64, toll::Float64) = err/133.332 <= toll

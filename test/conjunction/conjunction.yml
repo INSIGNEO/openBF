@@ -8,7 +8,7 @@ solver:
   Ccfl: 0.9   # Courant number
   cycles: 100 # maximum number of cycles
   jump: 100   # timesteps per cycle to be saved
-  convergence tolerance: 5.0 # percentage value
+  convergence tolerance: 1.0 # percentage value
 
 network:
   - label: P

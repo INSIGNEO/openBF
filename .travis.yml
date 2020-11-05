@@ -3,8 +3,7 @@ os:
   - linux
   - osx
 julia:
-  - 1.0
-  - 1.5
+  - 1
 notifications:
   email: false
 after_success:
