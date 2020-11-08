@@ -123,3 +123,16 @@ function writeResults(v :: Vessel)
 		writedlm(a, b, " ")
 	end
 end
+
+
+"""
+	writeConv(data :: Dict{Any,Any}, passed_cycles :: Int)
+
+Write `.conv` file 
+"""
+function writeConv(data :: Dict{Any,Any}, passed_cycles :: Int)
+	f_name = join([data["project name"],".conv"])
+	conv_file = open(f_name, "w")
+	write(conv_file, join(["Converged after ", string(passed_cycles)," iterations\n"]))
+	close(conv_file)
+end

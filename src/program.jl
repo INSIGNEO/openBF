@@ -76,7 +76,10 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
             out_files && transferLastToOut(vessels)
 
-            passed_cycles+1>1 && checkConvergence(err, conv_toll) && break
+            if (passed_cycles+1>1 && checkConvergence(err, conv_toll))
+	        writeConv(data, passed_cycles)
+		break
+            end
 
             passed_cycles += 1
             verbose && @printf("Solving cardiac cycle no: %02d", passed_cycles + 1)
@@ -96,6 +99,6 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
     verbose && println("Elapsed time = $ending_time seconds")
 
     writeResults(vessels)
-
+    
     cd("..")
 end
