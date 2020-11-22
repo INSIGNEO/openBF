@@ -28,6 +28,13 @@ julia> ]
 (v1.x) pkg> add https://github.com/INSIGNEO/openBF
 ```
 
+update it as
+
+```
+julia> ]
+(v1.x) pkg> update openBF
+```
+
 test it as
 
 ```
