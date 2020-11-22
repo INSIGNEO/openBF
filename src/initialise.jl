@@ -232,8 +232,23 @@ function makeResultsFolder(data :: Dict{Any,Any}, input_filename :: String)
     mkdir(r_folder)
 
     cp(input_filename, r_folder*"/"*input_filename, force=true)
+    copyInletFiles(data, r_folder)
 
     cd(r_folder)
+end
+
+
+"""
+    copyInletFiles(data :: Dict{Any,Any}, r_folder :: String)
+
+Copy inlet .dat files to results folder.
+"""
+function copyInletFiles(data :: Dict{Any,Any}, r_folder :: String)
+    for vessel in data["network"]
+        if haskey(vessel, "inlet file")
+            cp(vessel["inlet file"], r_folder*"/"*vessel["inlet file"], force=true)
+        end
+    end
 end
 
 
