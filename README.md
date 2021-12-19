@@ -55,7 +55,7 @@ You can also create (MacOSX/Linux only) an openBF alias as
 $ echo "alias openBF='cp ~/.julia/v1.x/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
 $ source ~/.bashrc
 $ openBF -h
-usage: main.jl [-v] [-f] [-h] input_filename
+usage: main.jl [-v] [-f] [-c] [-h] input_filename
 
 positional arguments:
   input_filename   .yml input file name
@@ -64,6 +64,7 @@ optional arguments:
   -v, --verbose    Print STDOUT - default false
   -f, --out_files  Save complete results story rather than only the
                    last cardiac cycle
+  -c, --conv_ceil  Ceil convergence value to 100 mmHg (default true)
   -h, --help       show this help message and exit
 ```
 
