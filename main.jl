@@ -22,7 +22,8 @@ parsed_args = openBF.parseCommandline()
 input_filename = parsed_args["input_filename"]
 verbose = parsed_args["verbose"]
 out_files = parsed_args["out_files"]
+conv_ceil = parsed_args["conv_ceil"]
 
-openBF.runSimulation(input_filename, verbose=verbose, out_files=out_files)
+openBF.runSimulation(input_filename, verbose=verbose, out_files=out_files, conv_ceil=conv_ceil)
 
 rm("main.jl")

@@ -24,8 +24,11 @@ Args:
     - `input_filename`: The name of the `.yml` input file.
     - `verbose`: Opt. Boolean flag for STDOUT. Default is `false`.
     - `out_files`: Opt. Boolean flag to control the `.out` files writing. Default `false`.
+    - `conv_ceil`: Opt. Boolean flag to ceil at 100 mmHg convergence error . Default `false`.
 """
-function runSimulation(input_filename::String; verbose::Bool=false, out_files::Bool=false)
+function runSimulation(input_filename::String; verbose::Bool=false,
+        out_files::Bool=false, conv_ceil::Bool=false)
+
     data = loadSimulationFiles(input_filename)
     blood = buildBlood(data["blood"])
 
@@ -67,7 +70,7 @@ function runSimulation(input_filename::String; verbose::Bool=false, out_files::B
 
             if passed_cycles + 1 > 1
                 err, err_loc = computeConvError(vessels)
-                verbose && printConvError(err, err_loc)
+                verbose && printConvError(err, err_loc, conv_ceil)
             else
                 print('\n')
             end

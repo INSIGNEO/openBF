@@ -695,10 +695,13 @@ function parseCommandline()
             help = ".yml input file name"
             required = true
         "--verbose", "-v"
-            help = "Print STDOUT - default false"
+            help = "Print STDOUT (default false)"
             action = :store_true
         "--out_files", "-f"
-            help = "Save complete results story rather than only the last cardiac cycle"
+            help = "Save complete results story rather than only the last cardiac cycle (default true)"
+            action = :store_true
+        "--conv_ceil", "-c"
+            help = "Ceil convergence value to 100 mmHg (default true)"
             action = :store_true
     end
 
