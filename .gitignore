@@ -9,3 +9,4 @@ README.html
 *.yml
 *.yaml
 *.conv
+**/*.swp

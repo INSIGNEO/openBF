@@ -1,5 +1,5 @@
 #=
-Copyright 2020 INSIGNEO Institute for in silico Medicine
+Copyright 2022 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ function computeConvError(vessels :: Array{Vessel, 1})
     return maxnorm, maxnormloc
 end
 
-function printConvError(err::Float64, loc::String)
+function printConvError(err::Float64, loc::String, conv_ceil::Bool)
     err /= 133.332
-    if err > 100.0
+    if err > 100.0 && conv_ceil
         @printf(" - Error norm > 100.00 mmHg\n")
     else
         @printf(" - Error norm = %6.2f mmHg @ %s\n", err, loc)
