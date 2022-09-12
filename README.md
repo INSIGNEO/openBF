@@ -158,6 +158,7 @@ julia> using openBF
 
 openBF has been used in the following works:
 
+- Ning W, Sharma K, Sourbron SP, Benemerito I, Marzo A. [Distinguishing hypertensive renal injury from diabetic nephropathy using MR imaging and computational modelling of renal blood flow](https://vph-conference.org/), _VPH2022_ September 2022, Porto, PO _In proceedings_
 - Benemerito I, Narata AP, Narracott A, Marzo A. [Determining clinically-viable biomarkers for ischaemic stroke through a mechanistic and machine learning approach](https://link.springer.com/article/10.1007/s10439-022-02956-7). _Annals of Biomedical Engineering_, 2022. DOI: 10.1007/s10439-022-02956-7
 - Mustafa A. [An efficient computational approach to guide intervention in treatment of stroke](https://etheses.whiterose.ac.uk/29992/). _PhD Thesis_, 2021
 - Benemerito I, Jordan B, Mustafa A, Marzo A. [Quantification of the effects of ageing, hypertension and atherosclerosis on flow
