@@ -44,7 +44,7 @@ function newtonRaphson(vessels :: Array{Vessel,1}, J, U, k, funW, funF)
     nr_toll_F = 1e-5
 
     while true
-        @fastmath dU = J\(-F)
+        dU = J\(-F)
         U_new = U .+ dU
 
         if any(isnan(dot(F,F)))
