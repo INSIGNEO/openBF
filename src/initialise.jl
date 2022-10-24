@@ -276,15 +276,15 @@ function buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood,
                               jump :: Int)
     vessels = [buildVessel(1, network[1], blood, jump)]
     edges = zeros(Int, length(network), 3)
-    @inbounds edges[1,1] = vessels[1].ID
-    @inbounds edges[1,2] = vessels[1].sn
-    @inbounds edges[1,3] = vessels[1].tn
+    edges[1,1] = vessels[1].ID
+    edges[1,2] = vessels[1].sn
+    edges[1,3] = vessels[1].tn
 
     for i = 2:length(network)
         push!(vessels, buildVessel(i, network[i], blood, jump))
-        @inbounds edges[i,1] = vessels[i].ID
-        @inbounds edges[i,2] = vessels[i].sn
-        @inbounds edges[i,3] = vessels[i].tn
+        edges[i,1] = vessels[i].ID
+        edges[i,2] = vessels[i].sn
+        edges[i,3] = vessels[i].tn
     end
 
     return vessels, edges
@@ -371,7 +371,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     end
     Cv = 0.5*s_pi*phi*h0/(blood.rho*0.75)
 
-    @fastmath @inbounds for i = 1:M
+    for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
       A0[i] = pi*R0[i]*R0[i]
       s_A0[i] = sqrt(A0[i])

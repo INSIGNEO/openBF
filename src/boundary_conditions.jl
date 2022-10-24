@@ -47,15 +47,15 @@ function inputFromData(t :: Float64, h :: Heart)
 
 	t -= t_hat*h.cardiac_T
 
-	idx = 0
-	@inbounds for i in 1:length(idt)
+	idx = 1
+	for i in 1:length(idt)
 		if ((t >= idt[i]) && (t <= idt[i+1]))
 			idx=i
 			break
 		end
 	end
 
-	@inbounds qu = idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) /
+	qu = idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) /
        (idt[idx+1] - idt[idx])
 
 	return qu
@@ -71,17 +71,17 @@ function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
 	W11, W21 = riemannInvariants(1, v)
 	W12, W22 = riemannInvariants(2, v)
 
-	@fastmath @inbounds W11 += (W12 - W11)*(v.c[1] - v.u[1])*dt*v.invDx
-	@fastmath @inbounds W21 = 2.0*v.Q[1]/v.A[1] - W11
+	W11 += (W12 - W11)*(v.c[1] - v.u[1])*dt*v.invDx
+	W21 = 2.0*v.Q[1]/v.A[1] - W11
 
 	v.u[1], v.c[1] = inverseRiemannInvariants(W11, W21)
 
 	if h.inlet_type == "Q"
-		@fastmath @inbounds v.A[1] = v.Q[1]/v.u[1]
+		v.A[1] = v.Q[1]/v.u[1]
 		v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
 	else
 		v.A[1] = areaFromPressure(v.P[1], v.A0[1], v.beta[1], v.Pext)
-		@fastmath @inbounds v.Q[1] = v.u[1]*v.A[1]
+		v.Q[1] = v.u[1]*v.A[1]
 	end
 
 end
@@ -93,8 +93,8 @@ end
 Calculate Riemann invariants at the node `i` from `u` and `c`.
 """
 function riemannInvariants(i :: Int, v :: Vessel)
-  @fastmath @inbounds W1 = v.u[i] - 4.0*v.c[i]
-  @fastmath @inbounds W2 = v.u[i] + 4.0*v.c[i]
+  W1 = v.u[i] - 4.0*v.c[i]
+  W2 = v.u[i] + 4.0*v.c[i]
 
   return W1, W2
 end
@@ -106,8 +106,8 @@ end
 Calculate `u` and `c` given `W1` and `W2`
 """
 function inverseRiemannInvariants(W1 :: Float64, W2 :: Float64)
-  @fastmath u = 0.5*(W1 + W2)
-  @fastmath c = (W2 - W1)*0.125
+  u = 0.5*(W1 + W2)
+  c = (W2 - W1)*0.125
 
   return u, c
 end

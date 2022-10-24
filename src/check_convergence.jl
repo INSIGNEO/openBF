@@ -16,7 +16,7 @@ limitations under the License.
 
 function calcNorms(vessels :: Array{Vessel, 1})
     norms = zeros(length(vessels),2)
-    @inbounds for (i,v) in enumerate(vessels)
+    for (i,v) in enumerate(vessels)
         err = v.P_l[:,4] .- v.P_t[:,4]
         norms[i] = sqrt(sum(err.^2))
     end

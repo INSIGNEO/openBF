@@ -77,9 +77,9 @@ Run the solver on each vessel one-by-one as listed in the .yml file.
 """
 function solveModel(vessels :: Array{Vessel,1}, edges :: Array{Int,2}, blood :: Blood,
                     dt :: Float64, current_time :: Float64)
-    @inbounds for j in 1:size(edges)[1]
-        @inbounds i = edges[j,1]
-        @inbounds v = vessels[i]
+    for j in 1:size(edges)[1]
+        i = edges[j,1]
+        v = vessels[i]
 
         solveVessel(v, blood, dt, current_time)
         solveOutlet(j, v, blood, vessels, edges, dt)
@@ -110,8 +110,8 @@ Join vessel in case of junction or apply outlet boundary condition otherwise.
 """
 function solveOutlet(j :: Int, vessel :: Vessel, blood :: Blood, vessels :: Array{Vessel,1},
                      edges :: Array{Int,2}, dt :: Float64)
-    @inbounds i = edges[j,1]
-    @inbounds t = edges[j,3]
+    i = edges[j,1]
+    t = edges[j,3]
 
     if vessel.outlet != "none"
         setOutletBC(dt, vessel)
@@ -144,13 +144,13 @@ end
 Run MUSCL solver along the vessel.
 """
 function muscl(v :: Vessel, dt :: Float64, b :: Blood)
-    @inbounds v.vA[1] = v.U00A
-    @inbounds v.vA[end] = v.UM1A
+    v.vA[1] = v.U00A
+    v.vA[end] = v.UM1A
 
-    @inbounds v.vQ[1] = v.U00Q
-    @inbounds v.vQ[end] = v.UM1Q
+    v.vQ[1] = v.U00Q
+    v.vQ[end] = v.UM1Q
 
-    @fastmath @inbounds @simd for i = 2:v.M+1
+    for i = 2:v.M+1
         v.vA[i] = v.A[i-1]
         v.vQ[i] = v.Q[i-1]
     end
@@ -158,7 +158,7 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.slopesA = computeLimiter(v, v.vA, v.invDx, v.dU, v.slopesA)
     v.slopesQ = computeLimiter(v, v.vQ, v.invDx, v.dU, v.slopesQ)
 
-    @fastmath @inbounds @simd for i = 1:v.M+2
+    for i = 1:v.M+2
         slopeA_halfDx = v.slopesA[i]*v.halfDx
         v.Al[i] = v.vA[i] + slopeA_halfDx
         v.Ar[i] = v.vA[i] - slopeA_halfDx
@@ -171,28 +171,28 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
     v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
 
-    @fastmath dxDt = v.dx/dt
-    @fastmath invDxDt = 1.0/dxDt
+    dxDt = v.dx/dt
+    invDxDt = 1.0/dxDt
 
-    @fastmath @inbounds @simd for i = 1:v.M+1
+    for i = 1:v.M+1
         v.flux[1,i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
         v.flux[2,i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
     end
 
-    @fastmath @inbounds @simd for i = 2:v.M+1
+    for i = 2:v.M+1
         v.uStar[1,i] = v.vA[i] + invDxDt*(v.flux[1,i-1] - v.flux[1,i])
         v.uStar[2,i] = v.vQ[i] + invDxDt*(v.flux[2,i-1] - v.flux[2,i])
     end
 
-    @inbounds v.uStar[1,1] = v.uStar[1,2]
-    @inbounds v.uStar[2,1] = v.uStar[2,2]
-    @inbounds v.uStar[1,end] = v.uStar[1,end-1]
-    @inbounds v.uStar[2,end] = v.uStar[2,end-1]
+    v.uStar[1,1] = v.uStar[1,2]
+    v.uStar[2,1] = v.uStar[2,2]
+    v.uStar[1,end] = v.uStar[1,end-1]
+    v.uStar[2,end] = v.uStar[2,end-1]
 
     v.slopesA = computeLimiter(v, v.uStar, 1, v.invDx, v.dU, v.slopesA)
     v.slopesQ = computeLimiter(v, v.uStar, 2, v.invDx, v.dU, v.slopesQ)
 
-    @fastmath @inbounds @simd for i = 1:v.M+2
+    for i = 1:v.M+2
         v.Al[i] = v.uStar[1,i] + v.slopesA[i]*v.halfDx
         v.Ar[i] = v.uStar[1,i] - v.slopesA[i]*v.halfDx
 
@@ -203,18 +203,18 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
     v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
 
-    @fastmath @inbounds @simd for i = 1:v.M+1
+    for i = 1:v.M+1
         v.flux[1,i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
         v.flux[2,i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
     end
 
-    @fastmath @inbounds @simd for i = 2:v.M+1
+    for i = 2:v.M+1
         v.A[i-1] = 0.5*(v.A[i-1] + v.uStar[1,i] + invDxDt*(v.flux[1,i-1] - v.flux[1,i]))
         v.Q[i-1] = 0.5*(v.Q[i-1] + v.uStar[2,i] + invDxDt*(v.flux[2,i-1] - v.flux[2,i]))
     end
 
     #source term
-    @fastmath @inbounds @simd for i = 1:v.M
+    for i = 1:v.M
         s_A = sqrt(v.A[i])
         Si = - v.viscT*v.Q[i]/v.A[i] - v.wallE[i]*(s_A - v.s_A0[i])*v.A[i]
         v.Q[i] += dt*Si
@@ -240,7 +240,7 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
         v.Q = T\d
     end
 
-    @fastmath @inbounds @simd for i = 1:v.M
+    for i = 1:v.M
         v.u[i] = v.Q[i]/v.A[i]
     end
 end
@@ -252,7 +252,7 @@ end
 """
 function computeFlux(v :: Vessel, A :: Array{Float64,1}, Q :: Array{Float64,1},
                      Flux :: Array{Float64,2})
-    @fastmath @inbounds @simd for i in 1:v.M+2
+    for i in 1:v.M+2
         Flux[1,i] = Q[i]
         Flux[2,i] = Q[i]*Q[i]/A[i] + v.gamma_ghost[i]*A[i]*sqrt(A[i])
     end
@@ -291,7 +291,7 @@ end
     superBee(v :: Vessel, dU :: Array{Float64,2}, slopes :: Array{Float64,1})
 """
 function superBee(v :: Vessel, dU :: Array{Float64,2}, slopes :: Array{Float64,1})
-    @fastmath @inbounds @simd for i in 1:v.M+2
+    for i in 1:v.M+2
         s1 = minMod(dU[1,i], 2*dU[2,i])
         s2 = minMod(2*dU[1,i], dU[2,i])
         slopes[i] = maxMod(s1, s2)
@@ -307,7 +307,7 @@ end
 """
 function computeLimiter(v :: Vessel, U :: Array{Float64,1}, invDx :: Float64,
                         dU :: Array{Float64,2}, slopes :: Array{Float64,1})
-    @fastmath @inbounds @simd for i = 2:v.M+2
+    for i = 2:v.M+2
         dU[1,i]   = (U[i] - U[i-1])*v.invDx
         dU[2,i-1] = dU[1,i]
     end
@@ -319,8 +319,8 @@ end
 function computeLimiter(v :: Vessel, U :: Array{Float64,2}, idx :: Int,
                         invDx :: Float64, dU :: Array{Float64,2},
                         slopes :: Array{Float64,1})
-    @inbounds U = U[idx,:]
-    @fastmath @inbounds @simd for i = 2:v.M+2
+    U = U[idx,:]
+    for i = 2:v.M+2
         dU[1,i]   = (U[i] - U[i-1])*invDx
         dU[2,i-1] = dU[1,i]
     end

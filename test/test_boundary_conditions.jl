@@ -13,7 +13,7 @@ dt = openBF.calculateDeltaT(vessels, Ccfl)
 @test heart.inlet_type == "Q"
 @test_nowarn openBF.setInletBC(0.0, dt, vessels[1])
 @test vessels[1].Q[1] != Qref
-@test vessels[1].P[1] == Pref
+@test isapprox(vessels[1].P[1], Pref, atol=1e-5)
 
 @test_nowarn openBF.inletCompatibility(dt, vessels[1], heart)
 @test isapprox(vessels[1].A[1], 1.8e-4, atol=1e-5)
@@ -28,7 +28,7 @@ u, c = openBF.inverseRiemannInvariants(W1, W2)
 
 newA = openBF.areaFromPressure(vessels[1].P[1], vessels[1].A0[1], vessels[1].beta[1],
                                 vessels[1].Pext)
-@test newA == vessels[1].A[1]
+@test isapprox(newA, vessels[1].A[1], atol=1e-10)
 
 @test isapprox(openBF.inputFromData(0.0, heart), -5.239e-07, atol=1e-7)
 
