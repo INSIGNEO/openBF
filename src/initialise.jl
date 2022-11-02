@@ -100,6 +100,7 @@ inlet and one oulet has been defined.
 """
 function checkNetwork(network :: Array{Dict{Any,Any},1})
     has_inlet = false
+    inlets = Set()
     has_outlet = false
     nodes = Dict{Int,Int}()
     for i = 1:length(network)
@@ -107,6 +108,11 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
 
         if haskey(network[i], "inlet")
             has_inlet = true
+            inlet_node = network[i]["sn"]
+            if inlet_node in inlets
+                error("inlet $inlet_node used multiple times")
+            end
+            push!(inlets, network[i]["sn"])
         end
         if haskey(network[i], "outlet")
             has_outlet = true

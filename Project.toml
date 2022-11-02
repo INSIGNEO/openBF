@@ -1,7 +1,7 @@
 name = "openBF"
 uuid = "e815b1a4-10eb-11ea-25f1-272ff651e618"
 authors = ["alessandro <alessandro_melis@rocketmail.com>"]
-version = "1.4.0"
+version = "1.5.0"
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
