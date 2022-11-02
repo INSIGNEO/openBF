@@ -17,6 +17,12 @@ delete!(data["blood"], "mu")
 @test_throws ErrorException openBF.checkSection(data, "blood", ["mu", "rho"])
 
 @test_nowarn openBF.checkNetwork(data["network"])
+
+two_inlets_same_node = deepcopy(data)
+two_inlets_same_node["network"][2]["inlet"] = "Q"
+two_inlets_same_node["network"][2]["sn"] = 1
+@test_throws ErrorException openBF.checkNetwork(two_inlets_same_node["network"])
+
 delete!(data["network"][1], "inlet")
 @test_throws ErrorException openBF.checkNetwork(data["network"])
 
