@@ -16,17 +16,10 @@ limitations under the License.
 
 
 """
-	saveTempData(t :: Float64, vessels :: Array{Vessel, 1}, counter :: Int)
+	saveTempData(t :: Float64, vessel :: Vessel, counter :: Int)
 
 Save current solution to `temporary` arrays.
 """
-function saveTempData(t :: Float64, vessels :: Array{Vessel, 1}, counter :: Int)
-	for v in vessels
-		saveTempData(t, v, counter)
-	end
-end
-
-
 function saveTempData(t :: Float64, v :: Vessel, counter :: Int)
 	v.P_t[counter,:] = [t, v.P[1], v.P[v.node2], v.P[v.node3], v.P[v.node4], v.P[end]]
 	v.A_t[counter,:] = [t, v.A[1], v.A[v.node2], v.A[v.node3], v.A[v.node4], v.A[end]]
@@ -37,17 +30,10 @@ end
 
 
 """
-	transferTempToLast(vessels :: Array{Vessel, 1})
+	transferTempToLast(vessel :: Vessel)
 
 Copy (deepcopy) `temporary` arrays content to `last` arrays.
 """
-function transferTempToLast(vessels :: Array{Vessel, 1})
-	for v in vessels
-		transferTempToLast(v)
-	end
-end
-
-
 function transferTempToLast(v :: Vessel)
 	v.A_l = deepcopy(v.A_t)
 	v.P_l = deepcopy(v.P_t)
@@ -58,17 +44,10 @@ end
 
 
 """
-	transferLastToOut(vessels :: Array{Vessel, 1})
+	transferLastToOut(vessel :: Vessel)
 
 Write `last` arrays content to `.out` files.
 """
-function transferLastToOut(vessels :: Array{Vessel, 1})
-	for v in vessels
-		transferLastToOut(v)
-	end
-end
-
-
 function transferLastToOut(v :: Vessel)
 	lastP = v.P_l
 	lastQ = v.Q_l
@@ -93,17 +72,10 @@ end
 
 
 """
-	writeResults(vessels :: Array{Vessel, 1})
+	writeResults(vessel :: Vessel)
 
 Write `last` arrays content to `.last` files.
 """
-function writeResults(vessels :: Array{Vessel, 1})
-	for v in vessels
-		writeResults(v)
-	end
-end
-
-
 function writeResults(v :: Vessel)
 	lastP = v.P_l
 	lastQ = v.Q_l

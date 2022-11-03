@@ -61,7 +61,7 @@ function runSimulation(input_filename::String; verbose::Bool=false,
         updateGhostCells(vessels)
 
         if current_time >= timepoints[counter]
-            saveTempData(current_time, vessels, counter)
+            saveTempData.(current_time, vessels, counter)
             counter += 1
         end
 
@@ -75,9 +75,9 @@ function runSimulation(input_filename::String; verbose::Bool=false,
                 print('\n')
             end
 
-            transferTempToLast(vessels)
+            transferTempToLast.(vessels)
 
-            out_files && transferLastToOut(vessels)
+            out_files && transferLastToOut.(vessels)
 
             if (passed_cycles+1>1 && checkConvergence(err, conv_toll))
 	        writeConv(data, passed_cycles)
@@ -101,7 +101,7 @@ function runSimulation(input_filename::String; verbose::Bool=false,
     verbose && (@printf("\n"); ending_time = (time_ns() - starting_time)/1.0e9)
     verbose && println("Elapsed time = $ending_time seconds")
 
-    writeResults(vessels)
+    writeResults.(vessels)
     
     cd("..")
 end
