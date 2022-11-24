@@ -22,10 +22,8 @@ Load, check, and return `.yml` input file content.
 """
 function loadSimulationFiles(input_filename :: String)
     data = loadYAMLFile(input_filename)
-
     checkInputFile(data)
-
-    return data
+    data
 end
 
 
@@ -35,11 +33,8 @@ end
 Check existence and open a `.yml` file and return the content as `Dict{Any,Any}`.
 """
 function loadYAMLFile(filename :: String)
-    if ~isfile(filename)
-        error("missing file $filename")
-    end
-
-    return YAML.load(open(filename))
+    ~isfile(filename) && error("missing file $filename")
+    YAML.load(open(filename))
 end
 
 
@@ -61,20 +56,14 @@ end
 Look for the four sections in the input data. Run integrity checks for `blood` and
 `solver` sections.
 """
+raiseMissingKey(data::Dict{Any,Any}, key::String) = ~haskey(data, key) && error("missing section $key in YAML input file")
+
 function checkSections(data :: Dict{Any,Any})
     keys = ["project name", "network", "blood", "solver"]
-    for key in keys
-        if ~haskey(data, key)
-            error("missing section $key in YAML input file")
-        end
-    end
-
-    checkSection(data, "blood", ["mu", "rho"])
-    checkSection(data, "solver", ["Ccfl", "cycles", "convergence tolerance"])
-
-    if ~haskey(data["solver"], "jump")
-        data["solver"]["jump"] = 100
-    end
+    raiseMissingKey.(Ref(data), keys)
+    checkSection.(Ref(data), "blood", ["mu", "rho"])
+    checkSection.(Ref(data), "solver", ["Ccfl", "cycles", "convergence tolerance"])
+    ~haskey(data["solver"], "jump") && (data["solver"]["jump"] = 100)
 end
 
 
@@ -83,13 +72,7 @@ end
 
 Look for a list of keys in the given data section.
 """
-function checkSection(data :: Dict{Any,Any}, section :: String, keys :: Array{String,1})
-    for key in keys
-        if ~haskey(data[section], key)
-            error("missing $key in $section section")
-        end
-    end
-end
+checkSection(data::Dict{Any,Any}, section::String, key::String) = ~haskey(data[section], key) && error("missing $key in $section section")
 
 
 """
@@ -105,12 +88,8 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
     for i = 1:length(network)
         checkVessel(i, network[i])
 
-        if haskey(network[i], "inlet")
-            has_inlet = true
-        end
-        if haskey(network[i], "outlet")
-            has_outlet = true
-        end
+        haskey(network[i], "inlet") && (has_inlet = true)
+        haskey(network[i], "outlet") && (has_outlet = true)
 
         # check max number of vessels per node
         if ~haskey(nodes, network[i]["sn"])
@@ -132,21 +111,11 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
 
     # outlet nodes must be defined
     for i = 1:length(network)
-        if nodes[network[i]["tn"]] == 1
-            if ~haskey(network[i], "outlet")
-                error("outlet not defined for vessel $(network[i]["label"]),
-                    check connectivity")
-            end
-        end
+        nodes[network[i]["tn"]] == 1 && ~haskey(network[i], "outlet") && error("outlet not @ $(network[i]["label"])")
     end
 
-    if ~has_inlet
-        error("missing inlet(s) definition")
-    end
-
-    if ~has_outlet
-        error("missing outlet(s) definition")
-    end
+    ~has_inlet && error("missing inlet(s) definition")
+    ~has_outlet && error("missing outlet(s) definition")
 end
 
 
@@ -165,18 +134,12 @@ function checkVessel(i :: Int, vessel :: Dict{Any,Any})
         end
     end
 
-    if vessel["sn"] == vessel["tn"]
-        error("vessel $i has same sn and tn")
-    end
+    vessel["sn"] == vessel["tn"] && error("vessel $i has same sn and tn")
 
     if ~haskey(vessel, "R0")
-        if ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd")
-            error("vessel $i is missing lumen radius value(s)")
-        end
+        ~haskey(vessel, "Rp") && ~haskey(vessel, "Rd") && error("vessel $i is missing lumen radius value(s)")
     else
-        if vessel["R0"] > 0.05
-            @warn "$(vessel["label"]) radius larger than 5cm!"
-        end
+        vessel["R0"] > 0.05 && @warn "$(vessel["label"]) radius larger than 5cm!"
     end
 
     if haskey(vessel, "inlet")
@@ -187,9 +150,7 @@ function checkVessel(i :: Int, vessel :: Dict{Any,Any})
             error("vessel $i inlet file $file_path not found")
         end
 
-        if ~haskey(vessel, "inlet number")
-            error("inlet vessel $i is missing the inlet number")
-        end
+        ~haskey(vessel, "inlet number") && error("inlet vessel $i is missing the inlet number")
     end
 
     if haskey(vessel, "outlet")
@@ -382,7 +343,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
       s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
-      P[i] = pressure(1.0, beta[i], Pext)
+      P[i] = pressure(1.0, 1.0, beta[i], Pext)
       c[i] = waveSpeed(A[i], gamma[i])
       wallE[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
       if phi != 0.0
@@ -485,10 +446,7 @@ as reported in
 
 > Avolio AP. Multi-branched model of the human arterial system. Medical and Biological Engineering and Computing. 1980 Nov 1;18(6):709-18.
 """
-function computeThickness(R0i :: Float64,
-                          ah :: Float64, bh :: Float64, ch :: Float64, dh :: Float64)
-    return R0i*(ah*exp(bh*R0i) + ch*exp(dh*R0i))
-end
+computeThickness(R0i::Float64, ah::Float64, bh::Float64, ch::Float64, dh::Float64) = (exp(bh*R0i)ah + exp(dh*R0i)ch)R0i
 
 
 """
@@ -502,10 +460,9 @@ function computeRadii(vessel :: Dict{Any,Any})
         Rp = vessel["Rp"]
         Rd = vessel["Rd"]
         return Rp, Rd
-    else
-        R0 = vessel["R0"]
-        return R0, R0
     end
+    R0 = vessel["R0"]
+    return R0, R0
 end
 
 
@@ -515,13 +472,7 @@ end
 Extract Pext value for current vessels; return default `Pext = 0.0` if no value is
 specified.
 """
-function getPext(vessel :: Dict{Any,Any})
-    if ~haskey(vessel, "Pext")
-        return 0.0
-    else
-        return vessel["Pext"]
-    end
-end
+getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 0.0 : vessel["Pext"]
 
 
 """
@@ -530,13 +481,7 @@ end
 Extract `phi` value for current vessels; return default `phi = 0.0` if no value is
 specified.
 """
-function getPhi(vessel :: Dict{Any,Any})
-    if ~haskey(vessel, "phi")
-        return 0.0
-    else
-        return vessel["phi"]
-    end
-end
+getPhi(vessel :: Dict{Any,Any}) = ~haskey(vessel, "phi") ? 0.0 : vessel["phi"]
 
 
 """
@@ -573,13 +518,7 @@ end
 If vessel thickness is not specified in the `.yml` file, return a `zeroes` array to be
 filed with radius dependent values. Otherwise, return an array with the specified `h0`.
 """
-function initialiseThickness(vessel :: Dict{Any,Any}, M :: Int)
-    if ~haskey(vessel, "h0")
-        return 0.0
-    else
-        return vessel["h0"]
-    end
-end
+initialiseThickness(vessel::Dict{Any,Any}, M::Int) = ~haskey(vessel, "h0") ? 0.0 : vessel["h0"]
 
 
 """
@@ -630,12 +569,8 @@ where gamma_v (`gamma_profile`) is either specified in the vessel definition or
 assumed equal to `9` (plug-flow).
 """
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
-    if haskey(vessel_data, "gamma_profile")
-        gamma_profile = vessel_data["gamma_profile"]
-    else
-        gamma_profile = 9
-    end
-    return 2*(gamma_profile + 2)*pi*blood.mu*blood.rho_inv
+    gamma_profile = haskey(vessel_data, "gamma_profile") ? vessel_data["gamma_profile"] : 9
+    2(gamma_profile + 2)pi*blood.mu*blood.rho_inv
 end
 
 
@@ -652,9 +587,8 @@ function buildHeart(vessel :: Dict{Any,Any})
         inlet_number = vessel["inlet number"]
 
         return true, Heart(inlet_type, cardiac_period, input_data, inlet_number)
-    else
-        return false, Heart("none", 0.0, zeros(1,2), 0)
     end
+    return false, Heart("none", 0.0, zeros(1,2), 0)
 end
 
 
@@ -664,9 +598,7 @@ end
 Read discretised inlet data from inlet file. Return an `Array{Float64, 2}` whose first
 columun contains time variable and second column contains the inlet time function.
 """
-function loadInletData(inlet_file :: String)
-    return readdlm(inlet_file)
-end
+loadInletData(inlet_file :: String) = readdlm(inlet_file)
 
 
 """

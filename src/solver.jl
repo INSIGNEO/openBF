@@ -21,14 +21,16 @@ limitations under the License.
 Compute pressure at a specific node by means of the linear-elastic constitutive
 equation.
 """
-function pressure(A :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
-    return Pext + beta*(sqrt(A/A0) - 1.0)
-end
+# function pressure(A :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
+#     return Pext + beta*(sqrt(A/A0) - 1.0)
+# end
 
-# version with pre-computed `sqrt(A/A0)`
-function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
-    return Pext + beta*(s_A_over_A0 - 1.0)
-end
+pressure(A::Float64, A0::Float64, β::Float64, Pext::Float64) = muladd(β, √(A/A0)-1.0, Pext)
+
+# # version with pre-computed `sqrt(A/A0)`
+# function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
+#     return Pext + beta*(s_A_over_A0 - 1.0)
+# end
 
 
 """
@@ -36,13 +38,15 @@ end
 
 Compute pulse wave velocity at the given node.
 """
-function waveSpeed(A :: Float64, gamma :: Float64)
-    return sqrt(3*gamma*sqrt(A)*0.5)
-end
+# function waveSpeed(A :: Float64, gamma :: Float64)
+#     return sqrt(3*gamma*sqrt(A)*0.5)
+# end
 
-function waveSpeedSA(sA :: Float64, gamma :: Float64)
-    return sqrt(1.5*gamma*sA)
-end
+waveSpeed(A::Float64, γ::Float64) = √(1.5γ√A)
+
+# function waveSpeedSA(sA :: Float64, gamma :: Float64)
+#     return sqrt(1.5*gamma*sA)
+# end
 
 
 """
@@ -54,19 +58,7 @@ Delta t = C_{CFL} frac{Delta x}{S_{max}}
 
 where Smax is the maximum between the forward and the backward characteristics, and Ccfl is the Courant-Friedrichs-Lewy condition defined by the user.
 """
-function calculateDeltaT(vessels, Ccfl :: Float64)
-    dt = 1.0
-    for v in vessels
-        Smax = 0.0
-        for j in 1:v.M
-            lambda = abs(v.u[j] + v.c[j])
-            Smax < lambda && (Smax = lambda)
-        end
-        vessel_dt = v.dx*Ccfl/Smax
-        dt > vessel_dt && (dt = vessel_dt)
-    end
-    return dt
-end
+calculateDeltaT(vessels::Array{Vessel,1}, C::Float64) = minimum([v.dx*C/maximum(abs.(v.u+v.c)) for v=vessels])
 
 
 """
@@ -94,10 +86,7 @@ Apply inlet boundary condition (if any) and run MUSCL solver along the vessel.
 """
 function solveVessel(vessel :: Vessel, blood :: Blood, dt :: Float64,
                      current_time :: Float64)
-    if vessel.inlet
-        setInletBC(current_time, dt, vessel)
-    end
-
+    vessel.inlet && setInletBC(current_time, dt, vessel)
     muscl(vessel, dt, blood)
 end
 
@@ -144,29 +133,19 @@ end
 Run MUSCL solver along the vessel.
 """
 function muscl(v :: Vessel, dt :: Float64, b :: Blood)
-    v.vA[1] = v.U00A
-    v.vA[end] = v.UM1A
+    v.vA[1], v.vA[end] = v.U00A, v.UM1A
+    v.vQ[1], v.vQ[end] = v.U00Q, v.UM1Q
 
-    v.vQ[1] = v.U00Q
-    v.vQ[end] = v.UM1Q
+    v.vA[2:v.M+1] = v.A
+    v.vQ[2:v.M+1] = v.Q
 
-    for i = 2:v.M+1
-        v.vA[i] = v.A[i-1]
-        v.vQ[i] = v.Q[i-1]
-    end
+    v.slopesA = computeLimiter(v, v.vA, v.invDx, v.dU)
+    v.slopesQ = computeLimiter(v, v.vQ, v.invDx, v.dU)
 
-    v.slopesA = computeLimiter(v, v.vA, v.invDx, v.dU, v.slopesA)
-    v.slopesQ = computeLimiter(v, v.vQ, v.invDx, v.dU, v.slopesQ)
-
-    for i = 1:v.M+2
-        slopeA_halfDx = v.slopesA[i]*v.halfDx
-        v.Al[i] = v.vA[i] + slopeA_halfDx
-        v.Ar[i] = v.vA[i] - slopeA_halfDx
-
-        slopeQ_halfDX = v.slopesQ[i]*v.halfDx
-        v.Ql[i] = v.vQ[i] + slopeQ_halfDX
-        v.Qr[i] = v.vQ[i] - slopeQ_halfDX
-    end
+    v.Al = muladd(v.slopesA, v.halfDx, v.vA) 
+    v.Ar = muladd(-v.slopesA, v.halfDx, v.vA) 
+    v.Ql = muladd(v.slopesQ, v.halfDx, v.vQ) 
+    v.Qr = muladd(-v.slopesQ, v.halfDx, v.vQ) 
 
     v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
     v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
@@ -189,8 +168,8 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.uStar[1,end] = v.uStar[1,end-1]
     v.uStar[2,end] = v.uStar[2,end-1]
 
-    v.slopesA = computeLimiter(v, v.uStar, 1, v.invDx, v.dU, v.slopesA)
-    v.slopesQ = computeLimiter(v, v.uStar, 2, v.invDx, v.dU, v.slopesQ)
+    v.slopesA = computeLimiter(v, v.uStar, 1, v.invDx, v.dU)
+    v.slopesQ = computeLimiter(v, v.uStar, 2, v.invDx, v.dU)
 
     for i = 1:v.M+2
         v.Al[i] = v.uStar[1,i] + v.slopesA[i]*v.halfDx
@@ -219,8 +198,8 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
         Si = - v.viscT*v.Q[i]/v.A[i] - v.wallE[i]*(s_A - v.s_A0[i])*v.A[i]
         v.Q[i] += dt*Si
 
-        v.P[i] = pressure(s_A*v.s_inv_A0[i], v.beta[i], v.Pext)
-        v.c[i] = waveSpeedSA(s_A, v.gamma[i])
+        v.P[i] = pressure(v.A[i], v.A0[1], v.beta[i], v.Pext)
+        v.c[i] = waveSpeed(v.A[i], v.gamma[i])
 
     end
 
@@ -240,9 +219,7 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
         v.Q = T\d
     end
 
-    for i = 1:v.M
-        v.u[i] = v.Q[i]/v.A[i]
-    end
+    v.u = v.Q./v.A
 end
 
 
@@ -252,78 +229,54 @@ end
 """
 function computeFlux(v :: Vessel, A :: Array{Float64,1}, Q :: Array{Float64,1},
                      Flux :: Array{Float64,2})
-    for i in 1:v.M+2
-        Flux[1,i] = Q[i]
-        Flux[2,i] = Q[i]*Q[i]/A[i] + v.gamma_ghost[i]*A[i]*sqrt(A[i])
-    end
-
-    return Flux
+    Flux[1,:] = Q
+    Flux[2,:] = Q.*Q./A .+ v.gamma_ghost.*A.*.√A
+    Flux
 end
 
 
 """
     maxMod(a :: Float64, b :: Float64)
 """
-function maxMod(a :: Float64, b :: Float64)
-    if a > b
-        return a
-    else
-        return b
-    end
-end
+maxMod(a::Float64, b::Float64) = max(a, b)
 
 
 """
     minMod(a :: Float64, b :: Float64)
 """
-function minMod(a :: Float64, b :: Float64)
-    if a <= 0.0 || b <= 0.0
-        return 0.0
-    elseif a < b
-        return a
-    else
-        return b
-    end
-end
+minMod(a::Float64, b::Float64) = a≤0.0 || b≤0.0 ? 0.0 : min(a, b)
 
 
 """
-    superBee(v :: Vessel, dU :: Array{Float64,2}, slopes :: Array{Float64,1})
+    superBee(dU :: Array{Float64,2})
 """
-function superBee(v :: Vessel, dU :: Array{Float64,2}, slopes :: Array{Float64,1})
-    for i in 1:v.M+2
-        s1 = minMod(dU[1,i], 2*dU[2,i])
-        s2 = minMod(2*dU[1,i], dU[2,i])
-        slopes[i] = maxMod(s1, s2)
-    end
-
-    return slopes
+function superBee(dU::Array{Float64,2})
+    s1 = minMod.(dU[1,:], 2dU[2,:])
+    s2 = minMod.(2dU[1,:], dU[2,:])
+    maxMod.(s1, s2)
 end
 
 
 """
     computeLimiter(v :: Vessel, U :: Array{Float64,1}, invDx :: Float64,
-                   dU :: Array{Float64,2}, slopes :: Array{Float64,1})
+                   dU :: Array{Float64,2})
 """
 function computeLimiter(v :: Vessel, U :: Array{Float64,1}, invDx :: Float64,
-                        dU :: Array{Float64,2}, slopes :: Array{Float64,1})
+                        dU :: Array{Float64,2})
     for i = 2:v.M+2
         dU[1,i]   = (U[i] - U[i-1])*v.invDx
         dU[2,i-1] = dU[1,i]
     end
-
-    return superBee(v, dU, slopes)
+    superBee(dU)
 end
 
 
 function computeLimiter(v :: Vessel, U :: Array{Float64,2}, idx :: Int,
-                        invDx :: Float64, dU :: Array{Float64,2},
-                        slopes :: Array{Float64,1})
+        invDx :: Float64, dU :: Array{Float64,2})
     U = U[idx,:]
     for i = 2:v.M+2
         dU[1,i]   = (U[i] - U[i-1])*invDx
         dU[2,i-1] = dU[1,i]
     end
-
-    return superBee(v, dU, slopes)
+    superBee(dU)
 end

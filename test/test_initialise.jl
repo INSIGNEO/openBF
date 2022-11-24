@@ -7,14 +7,14 @@ data = openBF.loadYAMLFile("test.yml")
 @test_nowarn openBF.checkInputFile(data)
 
 @test_nowarn openBF.checkSections(data)
-@test_nowarn openBF.checkSection(data, "blood", ["mu", "rho"])
-@test_nowarn openBF.checkSection(data, "solver", ["Ccfl", "cycles", "convergence tolerance"])
+@test_nowarn openBF.checkSection.(Ref(data), "blood", ["mu", "rho"])
+@test_nowarn openBF.checkSection.(Ref(data), "solver", ["Ccfl", "cycles", "convergence tolerance"])
 
 delete!(data, "project name")
 @test_throws ErrorException openBF.checkSections(data)
 
 delete!(data["blood"], "mu")
-@test_throws ErrorException openBF.checkSection(data, "blood", ["mu", "rho"])
+@test_throws ErrorException openBF.checkSection.(Ref(data), "blood", ["mu", "rho"])
 
 @test_nowarn openBF.checkNetwork(data["network"])
 delete!(data["network"][1], "inlet")
