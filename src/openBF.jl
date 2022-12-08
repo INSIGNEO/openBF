@@ -70,26 +70,26 @@ module openBF
         halfDx  :: Float64
 
         #Physical constants
-        beta            :: Array{Float64,1}
-        gamma           :: Array{Float64,1}
-        s_15_gamma      :: Array{Float64,1}
-        gamma_ghost     :: Array{Float64,1}
-        A0              :: Array{Float64,1}
-        s_A0            :: Array{Float64,1}
-        inv_A0          :: Array{Float64,1}
-        s_inv_A0        :: Array{Float64,1}
+        beta            :: Vector{Float64}
+        gamma           :: Vector{Float64}
+        s_15_gamma      :: Vector{Float64}
+        gamma_ghost     :: Vector{Float64}
+        A0              :: Vector{Float64}
+        s_A0            :: Vector{Float64}
+        inv_A0          :: Vector{Float64}
+        s_inv_A0        :: Vector{Float64}
         Pext            :: Float64
         viscT           :: Float64
-        wallE           :: Array{Float64,1}
-        wallVa          :: Array{Float64,1}
-        wallVb          :: Array{Float64,1}
+        wallE           :: Vector{Float64}
+        wallVa          :: Vector{Float64}
+        wallVb          :: Vector{Float64}
 
         #Iterative solution
-        A :: Array{Float64,1}
-        Q :: Array{Float64,1}
-        u :: Array{Float64,1}
-        c :: Array{Float64,1}
-        P :: Array{Float64,1}
+        A :: Vector{Float64}
+        Q :: Vector{Float64}
+        u :: Vector{Float64}
+        c :: Vector{Float64}
+        P :: Vector{Float64}
 
         A_t :: Array{Float64,2}
         Q_t :: Array{Float64,2}
@@ -144,31 +144,35 @@ module openBF
         Pc :: Float64
 
         #Slope
-        slope :: Array{Float64,1}
+        slope :: Vector{Float64}
 
         #MUSCLArrays
-        flux :: Array{Float64,2}
+        fluxA :: Vector{Float64}
+        fluxQ :: Vector{Float64}
         uStar :: Array{Float64,2}
 
-        vA :: Array{Float64,1}
-        vQ :: Array{Float64,1}
+        vA :: Vector{Float64}
+        vQ :: Vector{Float64}
 
         dU :: Array{Float64,2}
 
-        slopesA :: Array{Float64,1}
-        slopesQ :: Array{Float64,1}
+        slopesA :: Vector{Float64}
+        slopesQ :: Vector{Float64}
 
-        Al :: Array{Float64,1}
-        Ar :: Array{Float64,1}
+        Al :: Vector{Float64}
+        Ar :: Vector{Float64}
 
-        Ql :: Array{Float64,1}
-        Qr :: Array{Float64,1}
+        Ql :: Vector{Float64}
+        Qr :: Vector{Float64}
 
-        Fl :: Array{Float64,2}
-        Fr :: Array{Float64,2}
+        Fl :: Vector{Float64}
+        Fr :: Vector{Float64}
 
         #Outlet type
         outlet :: String
+
+        dTaudx :: Vector{Float64}
+        dA0dx :: Vector{Float64}
     end
 
     include("initialise.jl")

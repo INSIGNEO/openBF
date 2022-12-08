@@ -58,7 +58,7 @@ function runSimulation(input_filename::String; verbose::Bool=false,
     while true
         dt = calculateDeltaT(vessels, Ccfl)
         solveModel(vessels, edges, blood, dt, current_time)
-        updateGhostCells(vessels)
+        updateGhostCells.(vessels)
 
         if current_time >= timepoints[counter]
             saveTempData.(current_time, vessels, counter)
@@ -80,8 +80,8 @@ function runSimulation(input_filename::String; verbose::Bool=false,
             out_files && transferLastToOut.(vessels)
 
             if (passed_cycles+1>1 && checkConvergence(err, conv_toll))
-	        writeConv(data, passed_cycles)
-		break
+                writeConv(data, passed_cycles)
+                break
             end
 
             passed_cycles += 1

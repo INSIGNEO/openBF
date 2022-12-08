@@ -48,17 +48,14 @@ function inputFromData(t :: Float64, h :: Heart)
 	t -= t_hat*h.cardiac_T
 
 	idx = 1
-	for i in 1:length(idt)
+	for i in eachindex(idt)
 		if ((t >= idt[i]) && (t <= idt[i+1]))
 			idx=i
 			break
 		end
 	end
 
-	qu = idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) /
-       (idt[idx+1] - idt[idx])
-
-	return qu
+	idq[idx]+(t-idt[idx])*(idq[idx+1]-idq[idx])/(idt[idx+1]-idt[idx])
 end
 
 
@@ -83,7 +80,6 @@ function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
 		v.A[1] = areaFromPressure(v.P[1], v.A0[1], v.beta[1], v.Pext)
 		v.Q[1] = v.u[1]*v.A[1]
 	end
-
 end
 
 
@@ -119,9 +115,7 @@ end
 Inverse constitutive equation. This is used only when a pressure inlet-time-function is
 imposed (not recommended).
 """
-function areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
-   return A0 * ((P-Pext)/beta + 1.0)*((P-Pext)/beta + 1.0)
-end
+areaFromPressure(P::Float64, A0::Float64, β::Float64, Pext::Float64) = A0*((P-Pext)/β+1.0)*((P-Pext)/β+1.0)
 
 
 """
@@ -231,11 +225,4 @@ function updateGhostCells(v :: Vessel)
 	v.UM1Q = v.Q[v.M]
 	v.UM2A = v.A[v.M-1]
 	v.UM2Q = v.Q[v.M-1]
-end
-
-
-function updateGhostCells(vessels :: Array{Vessel,1})
-	for vessel in vessels
-		updateGhostCells(vessel)
-	end
 end

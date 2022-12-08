@@ -49,7 +49,7 @@ M = vessels[1].M
 @test vessels[1].UM2A == vessels[1].A[M-1]
 @test vessels[1].UM2Q == vessels[1].Q[M-1]
 
-@test_nowarn openBF.updateGhostCells(vessels)
+@test_nowarn openBF.updateGhostCells.(vessels)
 
 # cd("..")
 # rm("test_results", recursive=true)

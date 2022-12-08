@@ -72,7 +72,7 @@ end
 
 Look for a list of keys in the given data section.
 """
-checkSection(data::Dict{Any,Any}, section::String, key::String) = ~haskey(data[section], key) && error("missing $key in $section section")
+checkSection(d::Dict{Any,Any}, s::String, k::String) = ~haskey(d[s], k) && error("missing $k in $s")
 
 
 """
@@ -85,7 +85,7 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
     has_inlet = false
     has_outlet = false
     nodes = Dict{Int,Int}()
-    for i = 1:length(network)
+    for i = eachindex(network)
         checkVessel(i, network[i])
 
         haskey(network[i], "inlet") && (has_inlet = true)
@@ -97,11 +97,13 @@ function checkNetwork(network :: Array{Dict{Any,Any},1})
         else
             nodes[network[i]["sn"]] += 1
         end
+
         if ~haskey(nodes, network[i]["tn"])
             nodes[network[i]["tn"]] = 1
         else
             nodes[network[i]["tn"]] += 1
         end
+
         if nodes[network[i]["sn"]] > 3
             error("too many vessels connected at node $(network[i]["sn"])")
         elseif nodes[network[i]["tn"]] > 3
@@ -295,9 +297,11 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     wallVa = zeros(Float64, M)
     wallVb = zeros(Float64, M)
     inv_A0 = zeros(Float64, M)
+    dTaudx = zeros(Float64, M)
+    dA0dx = zeros(Float64, M)
     dU = zeros(Float64, 2, M+2)
-    Fl = zeros(Float64, 2, M+2)
-    Fr = zeros(Float64, 2, M+2)
+    Fl = zeros(Float64, M+2)
+    Fr = zeros(Float64, M+2)
     s_inv_A0 = zeros(Float64, M)
     slopesA = zeros(Float64, M+2)
     slopesQ = zeros(Float64, M+2)
@@ -311,7 +315,8 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     A_l = zeros(Float64, jump, 6)
     u_l = zeros(Float64, jump, 6)
     c_l = zeros(Float64, jump, 6)
-    flux  = zeros(Float64, 2, M+2)
+    fluxA  = zeros(Float64, M+1)
+    fluxQ  = zeros(Float64, M+1)
     uStar = zeros(Float64, 2, M+2)
     s_15_gamma = zeros(Float64, M)
     gamma_ghost = zeros(Float64, M+2)
@@ -350,6 +355,8 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
           wallVb[i] = Cv*s_inv_A0[i]*invDxSq
           wallVa[i] = 0.5*wallVb[i]
       end
+      dTaudx[i] = sqrt(pi)*wallE[i]*radius_slope*1.3*(h0/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      dA0dx[i] = 2*pi*R0[i]*radius_slope
     end
 
     gamma_ghost[1] = gamma[1]
@@ -408,10 +415,10 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   node2, node3, node4,
                   Rt, R1, R2, Cc,
                   Pcn,
-                  slope, flux, uStar, vA, vQ,
+                  slope, fluxA, fluxQ, uStar, vA, vQ,
                   dU, slopesA, slopesQ,
                   Al, Ar, Ql, Qr, Fl, Fr,
-                  outlet)
+                  outlet, dTaudx, dA0dx)
 end
 
 
@@ -423,9 +430,7 @@ Calculate the slope for the lumen radius linear tapering as
 (Rd - Rp)/L
 
 """
-function computeRadiusSlope(Rp :: Float64, Rd :: Float64, L :: Float64)
-    return (Rd - Rp)/L
-end
+computeRadiusSlope(Rp::Float64, Rd::Float64, L::Float64) = (Rd - Rp)/L
 
 
 """
@@ -602,14 +607,14 @@ loadInletData(inlet_file :: String) = readdlm(inlet_file)
 
 
 """
-    computeWindkesselInletImpedance(R2 :: Float64, blood :: Blood, A0 :: Array{Float64,1},
-                                    gamma :: Array{Float64,1})
+    computeWindkesselInletImpedance(R2 :: Float64, blood :: Blood, A0 :: Vector{Float64},
+                                    gamma :: Vector{Float64})
 
 In case only one peripheral resistance is defined (two-element windkessel), the second
 one is set as equal to the outlet vessel impedance.
 """
 function computeWindkesselInletImpedance(R2 :: Float64, blood :: Blood,
-    A0 :: Array{Float64,1}, gamma :: Array{Float64,1})
+    A0 :: Vector{Float64}, gamma :: Vector{Float64})
 
     R1 = blood.rho*waveSpeed(A0[end], gamma[end])/A0[end]
     R2 -= R1

@@ -38,16 +38,7 @@ pressure(A::Float64, A0::Float64, β::Float64, Pext::Float64) = muladd(β, √(A
 
 Compute pulse wave velocity at the given node.
 """
-# function waveSpeed(A :: Float64, gamma :: Float64)
-#     return sqrt(3*gamma*sqrt(A)*0.5)
-# end
-
 waveSpeed(A::Float64, γ::Float64) = √(1.5γ√A)
-
-# function waveSpeedSA(sA :: Float64, gamma :: Float64)
-#     return sqrt(1.5*gamma*sA)
-# end
-
 
 """
     calculateDeltaT(vessels :: Array{Vessel,1}, Ccfl :: Float64)
@@ -58,7 +49,9 @@ Delta t = C_{CFL} frac{Delta x}{S_{max}}
 
 where Smax is the maximum between the forward and the backward characteristics, and Ccfl is the Courant-Friedrichs-Lewy condition defined by the user.
 """
-calculateDeltaT(vessels::Array{Vessel,1}, C::Float64) = minimum([v.dx*C/maximum(abs.(v.u+v.c)) for v=vessels])
+calculateDeltaT(v::Vessel, C::Float64) = v.dx*C/maximum(abs.(v.u+v.c)) 
+calculateDeltaT(v::Array{Vessel,1}, C::Float64) = minimum(calculateDeltaT.(v,C))
+
 
 
 """
@@ -135,105 +128,92 @@ Run MUSCL solver along the vessel.
 function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.vA[1], v.vA[end] = v.U00A, v.UM1A
     v.vQ[1], v.vQ[end] = v.U00Q, v.UM1Q
-
     v.vA[2:v.M+1] = v.A
     v.vQ[2:v.M+1] = v.Q
 
-    v.slopesA = computeLimiter(v, v.vA, v.invDx, v.dU)
-    v.slopesQ = computeLimiter(v, v.vQ, v.invDx, v.dU)
+    computeLimiter!(v.slopesA, v, v.vA, v.invDx, v.dU)
+    computeLimiter!(v.slopesQ, v, v.vQ, v.invDx, v.dU)
 
     v.Al = muladd(v.slopesA, v.halfDx, v.vA) 
     v.Ar = muladd(-v.slopesA, v.halfDx, v.vA) 
     v.Ql = muladd(v.slopesQ, v.halfDx, v.vQ) 
     v.Qr = muladd(-v.slopesQ, v.halfDx, v.vQ) 
 
-    v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
-    v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
+    computeFlux!(v.Fl, v.gamma_ghost, v.Al, v.Ql)
+    computeFlux!(v.Fr, v.gamma_ghost, v.Ar, v.Qr)
 
     dxDt = v.dx/dt
     invDxDt = 1.0/dxDt
 
-    for i = 1:v.M+1
-        v.flux[1,i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
-        v.flux[2,i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
-    end
+    v.fluxA = (v.Qr[2:v.M+2].+v.Ql[1:v.M+1].-dxDt.*(v.Ar[2:v.M+2].-v.Al[1:v.M+1])).*0.5
+    v.fluxQ = (v.Fr[2:v.M+2].+v.Fl[1:v.M+1].-dxDt.*(v.Qr[2:v.M+2].-v.Ql[1:v.M+1])).*0.5
 
-    for i = 2:v.M+1
-        v.uStar[1,i] = v.vA[i] + invDxDt*(v.flux[1,i-1] - v.flux[1,i])
-        v.uStar[2,i] = v.vQ[i] + invDxDt*(v.flux[2,i-1] - v.flux[2,i])
-    end
-
+    # TODO: replace uStar matrix with two vectors
+    v.uStar[1,2:v.M+1] = v.vA[2:v.M+1].-invDxDt.*diff(v.fluxA)
+    v.uStar[2,2:v.M+1] = v.vQ[2:v.M+1].-invDxDt.*diff(v.fluxQ)
     v.uStar[1,1] = v.uStar[1,2]
     v.uStar[2,1] = v.uStar[2,2]
     v.uStar[1,end] = v.uStar[1,end-1]
     v.uStar[2,end] = v.uStar[2,end-1]
 
-    v.slopesA = computeLimiter(v, v.uStar, 1, v.invDx, v.dU)
-    v.slopesQ = computeLimiter(v, v.uStar, 2, v.invDx, v.dU)
+    computeLimiter!(v.slopesA, v, v.uStar[1,:], v.invDx, v.dU)
+    computeLimiter!(v.slopesQ, v, v.uStar[2,:], v.invDx, v.dU)
 
-    for i = 1:v.M+2
-        v.Al[i] = v.uStar[1,i] + v.slopesA[i]*v.halfDx
-        v.Ar[i] = v.uStar[1,i] - v.slopesA[i]*v.halfDx
+    v.Al = v.uStar[1,:].+v.slopesA.*v.halfDx
+    v.Ar = v.uStar[1,:].-v.slopesA.*v.halfDx
+    v.Ql = v.uStar[2,:].+v.slopesQ.*v.halfDx
+    v.Qr = v.uStar[2,:].-v.slopesQ.*v.halfDx
 
-        v.Ql[i] = v.uStar[2,i] + v.slopesQ[i]*v.halfDx
-        v.Qr[i] = v.uStar[2,i] - v.slopesQ[i]*v.halfDx
-    end
+    computeFlux!(v.Fl, v.gamma_ghost, v.Al, v.Ql)
+    computeFlux!(v.Fr, v.gamma_ghost, v.Ar, v.Qr)
 
-    v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
-    v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
-
-    for i = 1:v.M+1
-        v.flux[1,i] = 0.5*(v.Fr[1,i+1] + v.Fl[1,i] - dxDt*(v.Ar[i+1] - v.Al[i]))
-        v.flux[2,i] = 0.5*(v.Fr[2,i+1] + v.Fl[2,i] - dxDt*(v.Qr[i+1] - v.Ql[i]))
-    end
-
-    for i = 2:v.M+1
-        v.A[i-1] = 0.5*(v.A[i-1] + v.uStar[1,i] + invDxDt*(v.flux[1,i-1] - v.flux[1,i]))
-        v.Q[i-1] = 0.5*(v.Q[i-1] + v.uStar[2,i] + invDxDt*(v.flux[2,i-1] - v.flux[2,i]))
-    end
+    v.fluxA = (v.Qr[2:v.M+2].+v.Ql[1:v.M+1].-dxDt.*(v.Ar[2:v.M+2].-v.Al[1:v.M+1])).*0.5
+    v.fluxQ = (v.Fr[2:v.M+2].+v.Fl[1:v.M+1].-dxDt.*(v.Qr[2:v.M+2].-v.Ql[1:v.M+1])).*0.5
+    
+    v.A = (v.A.+v.uStar[1,2:v.M+1].-invDxDt.*diff(v.fluxA)).*0.5
+    v.Q = (v.Q.+v.uStar[2,2:v.M+1].-invDxDt.*diff(v.fluxQ)).*0.5
 
     #source term
-    for i = 1:v.M
-        s_A = sqrt(v.A[i])
-        Si = - v.viscT*v.Q[i]/v.A[i] - v.wallE[i]*(s_A - v.s_A0[i])*v.A[i]
-        v.Q[i] += dt*Si
-
-        v.P[i] = pressure(v.A[i], v.A0[1], v.beta[i], v.Pext)
-        v.c[i] = waveSpeed(v.A[i], v.gamma[i])
-
+    dt_rho_inv = dt/b.rho
+    for i = eachindex(v.A)
+      s_A0_inv = sqrt(1.0/v.A0[i])
+      s_A = sqrt(v.A[i])
+      s_A_inv = 1.0/s_A
+      v.Q[i] += dt_rho_inv*( -v.viscT*v.Q[i]/v.A[i] +
+                v.A[i]*(v.beta[i]*0.5*v.dA0dx[i] -
+                (s_A*s_A0_inv-1.)*v.dTaudx[i]))
     end
 
-    #parabolic system (viscoelastic part)
-    if v.wallVa[1] != 0.0
-        Td = 1.0/dt + v.wallVb
-        Tlu = -v.wallVa
-        T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
+    v.P = pressure.(v.A, v.A0, v.beta, v.Pext)
+    v.c = waveSpeed.(v.A, v.gamma)
+    
 
-        d = (1.0/dt - v.wallVb).*v.Q
-        d[1] += v.wallVa[2]*v.Q[2]
-        for i = 2:v.M-1
-            d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
-        end
-        d[end] += v.wallVa[end-1]*v.Q[end-1]
+    ##parabolic system (viscoelastic part)
+    #if v.wallVa[1] != 0.0
+    #    Td = 1.0/dt + v.wallVb
+    #    Tlu = -v.wallVa
+    #    T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
 
-        v.Q = T\d
-    end
+    #    d = (1.0/dt - v.wallVb).*v.Q
+    #    d[1] += v.wallVa[2]*v.Q[2]
+    #    for i = 2:v.M-1
+    #        d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
+    #    end
+    #    d[end] += v.wallVa[end-1]*v.Q[end-1]
+
+    #    v.Q = T\d
+    #end
 
     v.u = v.Q./v.A
 end
 
 
 """
-    computeFlux(v :: Vessel, A :: Array{Float64,1}, Q :: Array{Float64,1},
-                Flux :: Array{Float64,2})
+    computeFlux(F::Vector{Float64}, gamma_ghost::Vector{Float64}, A::Vector{Float64}, Q::Vector{Float64})
 """
-function computeFlux(v :: Vessel, A :: Array{Float64,1}, Q :: Array{Float64,1},
-                     Flux :: Array{Float64,2})
-    Flux[1,:] = Q
-    Flux[2,:] = Q.*Q./A .+ v.gamma_ghost.*A.*.√A
-    Flux
+function computeFlux!(F::Vector{Float64}, gamma_ghost::Vector{Float64}, A::Vector{Float64}, Q::Vector{Float64})
+    F[:] = Q.*Q./A.+gamma_ghost.*A.*.√A
 end
-
 
 """
     maxMod(a :: Float64, b :: Float64)
@@ -258,25 +238,14 @@ end
 
 
 """
-    computeLimiter(v :: Vessel, U :: Array{Float64,1}, invDx :: Float64,
+    computeLimiter(v :: Vessel, U :: Vector{Float64}, invDx :: Float64,
                    dU :: Array{Float64,2})
 """
-function computeLimiter(v :: Vessel, U :: Array{Float64,1}, invDx :: Float64,
+function computeLimiter!(slopes::Vector{Float64}, v :: Vessel, U :: Vector{Float64}, invDx :: Float64,
                         dU :: Array{Float64,2})
     for i = 2:v.M+2
         dU[1,i]   = (U[i] - U[i-1])*v.invDx
         dU[2,i-1] = dU[1,i]
     end
-    superBee(dU)
-end
-
-
-function computeLimiter(v :: Vessel, U :: Array{Float64,2}, idx :: Int,
-        invDx :: Float64, dU :: Array{Float64,2})
-    U = U[idx,:]
-    for i = 2:v.M+2
-        dU[1,i]   = (U[i] - U[i-1])*invDx
-        dU[2,i-1] = dU[1,i]
-    end
-    superBee(dU)
+    slopes = superBee(dU)
 end
