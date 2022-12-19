@@ -1,7 +1,6 @@
 using Documenter, openBF
 
 makedocs(
-    format = :html,
     sitename = "openBF",
     pages = [
         "Home" => "index.md",
