@@ -159,6 +159,7 @@ julia> using openBF
 openBF has been used in the following works:
 
 _Journal Papers_
+- Benemerito I, Mustafa A, Wang N, Narata AP, Narracott A, Marzo A. [A multiscale computational framework to evaluate flow alterations during mechanical thrombectomy for treatment of ischaemic stroke](https://www.frontiersin.org/articles/10.3389/fcvm.2023.1117449/full). _Frontiers in Cardiovascular Medicine_, 2023. DOI: 10.3389/fcvm.2023.1117749
 - Benemerito I, Narata AP, Narracott A, Marzo A. [Determining clinically-viable biomarkers for ischaemic stroke through a mechanistic and machine learning approach](https://link.springer.com/article/10.1007/s10439-022-02956-7). _Annals of Biomedical Engineering_, 2022. DOI: 10.1007/s10439-022-02956-7
 - Melis A, Moura F, Larrabide I, Janot K, Clayton RH, Marzo A. [Improved biomechanical metrics of cerebral vasospasm identified via sensitivity analysis of a 1D cerebral circulation model](https://www.sciencedirect.com/science/article/pii/S0021929019302830). _Journal of Biomechanics_, 2019. DOI: 10.1016/j.biomech.2019.04.019
 - Melis A, Clayton RH, Marzo A. [Bayesian sensitivity analysis of a 1D vascular model with Gaussian process emulators](http://rdcu.be/AqLm). _International Journal for Numerical Methods in Biomedical Engineering_, 2017. DOI: 10.1002/cnm.2882
