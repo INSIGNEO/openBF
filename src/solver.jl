@@ -1,20 +1,3 @@
-#=
-Copyright 2022 INSIGNEO Institute for in silico Medicine
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-=#
-
-
 """
     pressure(A :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
 
@@ -148,21 +131,18 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.fluxA = (v.Qr[2:v.M+2].+v.Ql[1:v.M+1].-dxDt.*(v.Ar[2:v.M+2].-v.Al[1:v.M+1])).*0.5
     v.fluxQ = (v.Fr[2:v.M+2].+v.Fl[1:v.M+1].-dxDt.*(v.Qr[2:v.M+2].-v.Ql[1:v.M+1])).*0.5
 
-    # TODO: replace uStar matrix with two vectors
-    v.uStar[1,2:v.M+1] = v.vA[2:v.M+1].-invDxDt.*diff(v.fluxA)
-    v.uStar[2,2:v.M+1] = v.vQ[2:v.M+1].-invDxDt.*diff(v.fluxQ)
-    v.uStar[1,1] = v.uStar[1,2]
-    v.uStar[2,1] = v.uStar[2,2]
-    v.uStar[1,end] = v.uStar[1,end-1]
-    v.uStar[2,end] = v.uStar[2,end-1]
+    v.uStarA[2:v.M+1] =view(v.vA,2:v.M+1).-invDxDt.*diff(v.fluxA)
+    v.uStarQ[2:v.M+1] =view(v.vQ,2:v.M+1).-invDxDt.*diff(v.fluxQ)
+    v.uStarA[1], v.uStarA[end] = v.uStarA[2], v.uStarA[end-1]
+    v.uStarQ[1], v.uStarQ[end] = v.uStarQ[2], v.uStarQ[end-1]
 
-    computeLimiter!(v.slopesA, v, v.uStar[1,:], v.invDx, v.dU)
-    computeLimiter!(v.slopesQ, v, v.uStar[2,:], v.invDx, v.dU)
+    computeLimiter!(v.slopesA, v, v.uStarA, v.invDx, v.dU)
+    computeLimiter!(v.slopesQ, v, v.uStarQ, v.invDx, v.dU)
 
-    v.Al = v.uStar[1,:].+v.slopesA.*v.halfDx
-    v.Ar = v.uStar[1,:].-v.slopesA.*v.halfDx
-    v.Ql = v.uStar[2,:].+v.slopesQ.*v.halfDx
-    v.Qr = v.uStar[2,:].-v.slopesQ.*v.halfDx
+    v.Al = v.uStarA.+v.slopesA.*v.halfDx
+    v.Ar = v.uStarA.-v.slopesA.*v.halfDx
+    v.Ql = v.uStarQ.+v.slopesQ.*v.halfDx
+    v.Qr = v.uStarQ.-v.slopesQ.*v.halfDx
 
     computeFlux!(v.Fl, v.gamma_ghost, v.Al, v.Ql)
     computeFlux!(v.Fr, v.gamma_ghost, v.Ar, v.Qr)
@@ -170,8 +150,8 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.fluxA = (v.Qr[2:v.M+2].+v.Ql[1:v.M+1].-dxDt.*(v.Ar[2:v.M+2].-v.Al[1:v.M+1])).*0.5
     v.fluxQ = (v.Fr[2:v.M+2].+v.Fl[1:v.M+1].-dxDt.*(v.Qr[2:v.M+2].-v.Ql[1:v.M+1])).*0.5
     
-    v.A = (v.A.+v.uStar[1,2:v.M+1].-invDxDt.*diff(v.fluxA)).*0.5
-    v.Q = (v.Q.+v.uStar[2,2:v.M+1].-invDxDt.*diff(v.fluxQ)).*0.5
+    v.A = (v.A.+v.uStarA[2:v.M+1].-invDxDt.*diff(v.fluxA)).*0.5
+    v.Q = (v.Q.+v.uStarQ[2:v.M+1].-invDxDt.*diff(v.fluxQ)).*0.5
 
     #source term
     dt_rho_inv = dt/b.rho
@@ -188,21 +168,21 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.c = waveSpeed.(v.A, v.gamma)
     
 
-    ##parabolic system (viscoelastic part)
-    #if v.wallVa[1] != 0.0
-    #    Td = 1.0/dt + v.wallVb
-    #    Tlu = -v.wallVa
-    #    T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
+    #parabolic system (viscoelastic part)
+    if v.wallVa[1] != 0.0
+        Td = 1.0/dt + v.wallVb
+        Tlu = -v.wallVa
+        T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
 
-    #    d = (1.0/dt - v.wallVb).*v.Q
-    #    d[1] += v.wallVa[2]*v.Q[2]
-    #    for i = 2:v.M-1
-    #        d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
-    #    end
-    #    d[end] += v.wallVa[end-1]*v.Q[end-1]
+        d = (1.0/dt - v.wallVb).*v.Q
+        d[1] += v.wallVa[2]*v.Q[2]
+        for i = 2:v.M-1
+            d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
+        end
+        d[end] += v.wallVa[end-1]*v.Q[end-1]
 
-    #    v.Q = T\d
-    #end
+        v.Q = T\d
+    end
 
     v.u = v.Q./v.A
 end

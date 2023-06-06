@@ -149,7 +149,8 @@ module openBF
         #MUSCLArrays
         fluxA :: Vector{Float64}
         fluxQ :: Vector{Float64}
-        uStar :: Array{Float64,2}
+        uStarA :: Vector{Float64}
+        uStarQ :: Vector{Float64}
 
         vA :: Vector{Float64}
         vQ :: Vector{Float64}

@@ -317,7 +317,8 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     c_l = zeros(Float64, jump, 6)
     fluxA  = zeros(Float64, M+1)
     fluxQ  = zeros(Float64, M+1)
-    uStar = zeros(Float64, 2, M+2)
+    uStarA = zeros(Float64, M+2)
+    uStarQ = zeros(Float64, M+2)
     s_15_gamma = zeros(Float64, M)
     gamma_ghost = zeros(Float64, M+2)
 
@@ -415,7 +416,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   node2, node3, node4,
                   Rt, R1, R2, Cc,
                   Pcn,
-                  slope, fluxA, fluxQ, uStar, vA, vQ,
+                  slope, fluxA, fluxQ, uStarA, uStarQ, vA, vQ,
                   dU, slopesA, slopesQ,
                   Al, Ar, Ql, Qr, Fl, Fr,
                   outlet, dTaudx, dA0dx)
