@@ -332,20 +332,21 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     ch = 0.1324
     dh = -0.1114e2
 
-    if h0 == 0.0
-        Rmean = 0.5*(Rp + Rd)
-        h0 = computeThickness(Rmean, ah, bh, ch, dh)
-    end
+    # if all(h0 .== 0.0)
+    Rmean = 0.5*(Rp + Rd)
+    h0 = computeThickness(Rmean, ah, bh, ch, dh)
+    # end
     Cv = 0.5*s_pi*phi*h0/(blood.rho*0.75)
 
     for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
       A0[i] = pi*R0[i]*R0[i]
+      h0i = computeThickness(R0[i], ah, bh, ch, dh)
       s_A0[i] = sqrt(A0[i])
       inv_A0[i] = 1.0/A0[i]
       s_inv_A0[i] = sqrt(inv_A0[i])
       A[i] = A0[i]
-      beta[i] = s_inv_A0[i]*h0*s_pi_E_over_sigma_squared
+      beta[i] = s_inv_A0[i]*h0i*s_pi_E_over_sigma_squared
       gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
       s_15_gamma[i] = sqrt(1.5*gamma[i])
       gamma_ghost[i+1] = gamma[i]
@@ -356,7 +357,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
           wallVb[i] = Cv*s_inv_A0[i]*invDxSq
           wallVa[i] = 0.5*wallVb[i]
       end
-      dTaudx[i] = sqrt(pi)*wallE[i]*radius_slope*1.3*(h0/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      dTaudx[i] = sqrt(pi)*wallE[i]*radius_slope*1.3*(h0i/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
       dA0dx[i] = 2*pi*R0[i]*radius_slope
     end
 
@@ -576,7 +577,7 @@ assumed equal to `9` (plug-flow).
 """
 function computeViscousTerm(vessel_data :: Dict{Any,Any}, blood :: Blood)
     gamma_profile = haskey(vessel_data, "gamma_profile") ? vessel_data["gamma_profile"] : 9
-    2(gamma_profile + 2)pi*blood.mu*blood.rho_inv
+    2(gamma_profile + 2)pi*blood.mu #*blood.rho_inv
 end
 
 

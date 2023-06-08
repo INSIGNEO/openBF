@@ -198,14 +198,17 @@ end
 """
     maxMod(a :: Float64, b :: Float64)
 """
-maxMod(a::Float64, b::Float64) = max(a, b)
+# maxMod(a::Float64, b::Float64) = max(a, b)
 
+maxMod(a::Float64, b::Float64) = 0.5 * sum(sign, (a, b)) * maximum(abs.((a,b)))
 
 """
     minMod(a :: Float64, b :: Float64)
 """
-minMod(a::Float64, b::Float64) = a≤0.0 || b≤0.0 ? 0.0 : min(a, b)
+# minMod(a::Float64, b::Float64) = a≤0.0 || b≤0.0 ? 0.0 : min(a, b)
 
+
+minMod(a::Float64, b::Float64) = 0.5 * sum(sign, (a, b)) * minimum(abs.((a,b)))
 
 """
     superBee(dU :: Array{Float64,2})
@@ -224,8 +227,10 @@ end
 function computeLimiter!(slopes::Vector{Float64}, v :: Vessel, U :: Vector{Float64}, invDx :: Float64,
                         dU :: Array{Float64,2})
     for i = 2:v.M+2
-        dU[1,i]   = (U[i] - U[i-1])*v.invDx
-        dU[2,i-1] = dU[1,i]
+        dU[1,i] = (U[i] - U[i-1])*v.invDx
+    end
+    for i = 1:v.M+1
+        dU[2,i] = (U[i+1] - U[i])*v.invDx
     end
     slopes = superBee(dU)
 end
