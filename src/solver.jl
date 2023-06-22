@@ -8,7 +8,10 @@ equation.
 #     return Pext + beta*(sqrt(A/A0) - 1.0)
 # end
 
-pressure(A::Float64, A0::Float64, β::Float64, Pext::Float64) = muladd(β, √(A/A0)-1.0, Pext)
+pressure(A::Float64, A0::Float64, β::Float64, Pext::Float64) = Pext + β*(sqrt(A/A0) - 1.0) 
+
+
+#muladd(β, √(A/A0)-1.0, Pext)
 
 # # version with pre-computed `sqrt(A/A0)`
 # function pressure(s_A_over_A0 :: Float64, beta :: Float64, Pext :: Float64)
@@ -108,7 +111,7 @@ end
 
 Run MUSCL solver along the vessel.
 """
-function muscl(v :: Vessel, dt :: Float64, b :: Blood)
+function muscl_(v :: Vessel, dt :: Float64, b :: Blood)
     v.vA[1], v.vA[end] = v.U00A, v.UM1A
     v.vQ[1], v.vQ[end] = v.U00Q, v.UM1Q
     v.vA[2:v.M+1] = v.A
@@ -153,15 +156,43 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     v.A = (v.A.+v.uStarA[2:v.M+1].-invDxDt.*diff(v.fluxA)).*0.5
     v.Q = (v.Q.+v.uStarQ[2:v.M+1].-invDxDt.*diff(v.fluxQ)).*0.5
 
+    for i = 1:v.M
+
+        v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
+        v.u[i] = v.Q[i]/v.A[i]
+        v.c[i] = waveSpeed(v.A[i], v.gamma[i])
+      end
+
     #source term
     dt_rho_inv = dt/b.rho
+
     for i = eachindex(v.A)
       s_A0_inv = sqrt(1.0/v.A0[i])
       s_A = sqrt(v.A[i])
       s_A_inv = 1.0/s_A
-      v.Q[i] += dt_rho_inv*( -v.viscT*v.Q[i]/v.A[i] +
-                v.A[i]*(v.beta[i]*0.5*v.dA0dx[i] -
-                (s_A*s_A0_inv-1.)*v.dTaudx[i]))
+      A0_inv = 1/v.A0[i]
+      # v.Q[i] += dt_rho_inv*( -v.viscT*v.Q[i]/v.A[i] +
+      #           v.A[i]*(v.beta[i]*0.5*v.dA0dx[i] -
+      #           (s_A*s_A0_inv-1.)*v.dTaudx[i]))
+    # v.Q[i] -= v.viscT*v.Q[i]/(v.A[i])*dt_rho_inv   #viscosity
+    #     # v.Q[i] += dt*0.5*v.beta[i]*v.A[i]^1.5/(v.A0[i]*b.rho)*v.dA0dx[i]   #dP/dA0
+    # v.Q[i] += 0.5*v.beta[i]*v.A[i]^1.5*A0_inv*dt_rho_inv*v.dA0dx[i]   #dP/dA0
+    # v.Q[i] -= (v.A[i]*dt_rho_inv)*(sqrt(v.A[i]*A0_inv)-1.)*v.dTaudx[i]  #dP/dh0
+    #     # v.Q[i] += dt*v.A[i]*s_A*rho_inv *
+    #     #           (0.5*v.beta[i]*s_A0_inv*s_A0_inv*v.dA0dx[i] -
+    #     #           (s_A0_inv - s_A_inv)*v.dTaudx[i] -
+    #     #            2*(b.gamma_profile + 2)*pi*b.mu*v.Q[i]*
+    #     #            s_A_inv*s_A_inv*s_A_inv*s_A_inv*s_A_inv )
+
+    # v.Q[i] += dt_rho_inv*( -v.viscT*v.Q[i]*s_A_inv*s_A_inv +
+    #                     v.A[i]*(v.beta[i]*0.5*v.dA0dx[i] -
+    #                             (s_A*s_A0_inv-1.)*v.dTaudx[i]))
+
+
+        v.Q[i] -= v.viscT*v.Q[i]/(v.A[i]*b.rho)*dt   #viscosity
+        v.Q[i] += dt*0.5*v.beta[i]*v.A[i]^1.5/(v.A0[i]*b.rho)*v.dA0dx[i]   #dP/dA0
+        v.Q[i] -= dt*(v.A[i]/b.rho)*(sqrt(v.A[i]/v.A0[i])-1.)*v.dTaudx[i]  #dP/dh0
+
     end
 
     v.P = pressure.(v.A, v.A0, v.beta, v.Pext)
@@ -169,24 +200,170 @@ function muscl(v :: Vessel, dt :: Float64, b :: Blood)
     
 
     #parabolic system (viscoelastic part)
-    if v.wallVa[1] != 0.0
-        Td = 1.0/dt + v.wallVb
-        Tlu = -v.wallVa
-        T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
+    # if v.wallVa[1] != 0.0
+    #     Td = 1.0/dt + v.wallVb
+    #     Tlu = -v.wallVa
+    #     T = Tridiagonal(Tlu[1:end-1], Td, Tlu[2:end])
 
-        d = (1.0/dt - v.wallVb).*v.Q
-        d[1] += v.wallVa[2]*v.Q[2]
-        for i = 2:v.M-1
-            d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
-        end
-        d[end] += v.wallVa[end-1]*v.Q[end-1]
+    #     d = (1.0/dt - v.wallVb).*v.Q
+    #     d[1] += v.wallVa[2]*v.Q[2]
+    #     for i = 2:v.M-1
+    #         d[i] += v.wallVa[i+1]*v.Q[i+1] + v.wallVa[i-1]*v.Q[i-1]
+    #     end
+    #     d[end] += v.wallVa[end-1]*v.Q[end-1]
 
-        v.Q = T\d
-    end
+    #     v.Q = T\d
+    # end
 
     v.u = v.Q./v.A
 end
 
+function muscl(v :: Vessel, dt :: Float64, b :: Blood)
+
+  v.vA[1] = v.U00A
+  v.vA[end] = v.UM1A
+
+  v.vQ[1] = v.U00Q
+  v.vQ[end] = v.UM1Q
+
+  for i = 2:v.M+1
+    v.vA[i] = v.A[i-1]
+    v.vQ[i] = v.Q[i-1]
+  end
+
+  v.slopesA = computeLimiter(v, v.vA, v.invDx, v.dU, v.slopesA)
+  v.slopesQ = computeLimiter(v, v.vQ, v.invDx, v.dU, v.slopesQ)
+
+  for i = 1:v.M+2
+    v.Al[i] = v.vA[i] + v.slopesA[i]*v.halfDx
+    v.Ar[i] = v.vA[i] - v.slopesA[i]*v.halfDx
+
+    v.Ql[i] = v.vQ[i] + v.slopesQ[i]*v.halfDx
+    v.Qr[i] = v.vQ[i] - v.slopesQ[i]*v.halfDx
+  end
+
+  v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
+  v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
+
+  dxDt = v.dx/dt
+  invDxDt = 1.0/dxDt
+
+  for i = 1:v.M+1
+    v.flux[1, i] = 0.5 * ( v.Fr[1, i+1] + v.Fl[1, i] - dxDt *
+                        (v.Ar[i+1]    - v.Al[i]) )
+    v.flux[2, i] = 0.5 * ( v.Fr[2, i+1] + v.Fl[2, i] - dxDt *
+                        (v.Qr[i+1]    - v.Ql[i]) )
+  end
+
+  for i = 2:v.M+1
+    v.uStar[1, i] = v.vA[i] + invDxDt * (v.flux[1, i-1] - v.flux[1, i])
+    v.uStar[2, i] = v.vQ[i] + invDxDt * (v.flux[2, i-1] - v.flux[2, i])
+  end
+
+  v.uStar[1,1] = v.uStar[1,2]
+  v.uStar[2,1] = v.uStar[2,2]
+  v.uStar[1,end] = v.uStar[1,end-1]
+  v.uStar[2,end] = v.uStar[2,end-1]
+
+  v.slopesA = computeLimiter(v, vec(v.uStar[1,:]), v.invDx, v.dU, v.slopesA)
+  v.slopesQ = computeLimiter(v, vec(v.uStar[2,:]), v.invDx, v.dU, v.slopesQ)
+
+  for i = 1:v.M+2
+    v.Al[i] = v.uStar[1,i] + v.slopesA[i]*v.halfDx
+    v.Ar[i] = v.uStar[1,i] - v.slopesA[i]*v.halfDx
+
+    v.Ql[i] = v.uStar[2,i] + v.slopesQ[i]*v.halfDx
+    v.Qr[i] = v.uStar[2,i] - v.slopesQ[i]*v.halfDx
+  end
+
+  v.Fl = computeFlux(v, v.Al, v.Ql, v.Fl)
+  v.Fr = computeFlux(v, v.Ar, v.Qr, v.Fr)
+
+  for i = 1:v.M+1
+    v.flux[1, i] = 0.5 * ( v.Fr[1, i+1] + v.Fl[1, i] - dxDt *
+                        (v.Ar[i+1]    - v.Al[i]) )
+    v.flux[2, i] = 0.5 * ( v.Fr[2, i+1] + v.Fl[2, i] - dxDt *
+                        (v.Qr[i+1]    - v.Ql[i]) )
+  end
+
+  for i = 2:v.M+1
+    v.A[i-1] = 0.5*(v.A[i-1] + v.uStar[1, i] + invDxDt *
+                    (v.flux[1, i-1] - v.flux[1, i]) )
+    v.Q[i-1] = 0.5*(v.Q[i-1] + v.uStar[2, i] + invDxDt *
+                    (v.flux[2, i-1] - v.flux[2, i]))
+  end
+
+  #source term
+  gamma_profile = 2
+  for i = 1:v.M
+    v.Q[i] -= 2*(gamma_profile+2)*pi*b.mu*v.Q[i]/(v.A[i]*b.rho)*dt   #viscosity
+    v.Q[i] += dt*0.5*v.beta[i]*v.A[i]^1.5/(v.A0[i]*b.rho)*v.dA0dx[i]   #dP/dA0
+    v.Q[i] -= dt*(v.A[i]/b.rho)*(sqrt(v.A[i]/v.A0[i])-1.)*v.dTaudx[i]  #dP/dh0
+
+    v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
+    v.u[i] = v.Q[i]/v.A[i]
+    v.c[i] = waveSpeed(v.A[i], v.gamma[i])
+  end
+
+end
+
+function computeFlux(v :: Vessel, A :: Array{Float64, 1},
+                     Q :: Array{Float64, 1}, Flux :: Array{Float64, 2})
+
+  for i in 1:v.M+2
+    Flux[1,i] = Q[i]
+    Flux[2,i] = Q[i]*Q[i]/A[i] + v.gamma_ghost[i] * A[i]^1.5
+  end
+
+  return Flux
+end
+
+function computeLimiter(v :: Vessel, U :: Array{Float64, 1},
+                        invDx :: Float64, dU :: Array{Float64, 2},
+                        slopes :: Array{Float64, 1})
+
+  for i = 2:v.M+2
+    dU[1, i]   = (U[i] - U[i-1])*invDx
+    dU[2, i-1] = (U[i] - U[i-1])*invDx
+  end
+
+  return superBee(v, dU, slopes)
+
+end
+
+function superBee(v :: Vessel, dU :: Array{Float64, 2}, slopes :: Array{Float64, 1})
+
+  for i in 1:v.M+2
+    s1 = minmod(dU[1,i], 2*dU[2,i])
+    s2 = minmod(2*dU[1,i], dU[2,i])
+    slopes[i] = maxmod(s1, s2)
+  end
+
+  return slopes
+end
+
+function maxmod(a :: Float64, b :: Float64)
+  if abs(a) > abs(b)
+    return a
+
+  else
+    return b
+
+  end
+end
+
+function minmod(a :: Float64, b :: Float64)
+  if a*b <= 0.
+    return 0.
+
+  elseif abs(a) < abs(b)
+    return a
+
+  else
+    return b
+
+  end
+end
 
 """
     computeFlux(F::Vector{Float64}, gamma_ghost::Vector{Float64}, A::Vector{Float64}, Q::Vector{Float64})

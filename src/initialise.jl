@@ -300,8 +300,8 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     dTaudx = zeros(Float64, M)
     dA0dx = zeros(Float64, M)
     dU = zeros(Float64, 2, M+2)
-    Fl = zeros(Float64, M+2)
-    Fr = zeros(Float64, M+2)
+    Fl = zeros(Float64, 2, M+2)
+    Fr = zeros(Float64, 2, M+2)
     s_inv_A0 = zeros(Float64, M)
     slopesA = zeros(Float64, M+2)
     slopesQ = zeros(Float64, M+2)
@@ -315,10 +315,8 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     A_l = zeros(Float64, jump, 6)
     u_l = zeros(Float64, jump, 6)
     c_l = zeros(Float64, jump, 6)
-    fluxA  = zeros(Float64, M+1)
-    fluxQ  = zeros(Float64, M+1)
-    uStarA = zeros(Float64, M+2)
-    uStarQ = zeros(Float64, M+2)
+    flux = zeros(Float64, 2, M+2)
+    uStar = zeros(Float64, 2, M+2)
     s_15_gamma = zeros(Float64, M)
     gamma_ghost = zeros(Float64, M+2)
 
@@ -334,35 +332,53 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
 
     # if all(h0 .== 0.0)
     Rmean = 0.5*(Rp + Rd)
-    h0 = computeThickness(Rmean, ah, bh, ch, dh)
+    h0 = zeros(Float64, M)
     # end
     Cv = 0.5*s_pi*phi*h0/(blood.rho*0.75)
+    sigma = 0.5
 
     for i = 1:M
       R0[i] = radius_slope*(i - 1)*dx + Rp
       A0[i] = pi*R0[i]*R0[i]
-      h0i = computeThickness(R0[i], ah, bh, ch, dh)
+      h0[i] = computeThickness(R0[i], ah, bh, ch, dh)
       s_A0[i] = sqrt(A0[i])
       inv_A0[i] = 1.0/A0[i]
       s_inv_A0[i] = sqrt(inv_A0[i])
-      A[i] = A0[i]
-      beta[i] = s_inv_A0[i]*h0i*s_pi_E_over_sigma_squared
-      gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
-      s_15_gamma[i] = sqrt(1.5*gamma[i])
-      gamma_ghost[i+1] = gamma[i]
-      P[i] = pressure(1.0, 1.0, beta[i], Pext)
-      c[i] = waveSpeed(A[i], gamma[i])
-      wallE[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
-      if phi != 0.0
-          wallVb[i] = Cv*s_inv_A0[i]*invDxSq
-          wallVa[i] = 0.5*wallVb[i]
-      end
-      dTaudx[i] = sqrt(pi)*wallE[i]*radius_slope*1.3*(h0i/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      # A[i] = A0[i]
+      # beta[i] = s_inv_A0[i]*h0i*s_pi_E_over_sigma_squared
+      # gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
+      # beta[i] = sqrt(pi./A0[i]) .* h0i*E / (1 - sigma^2)
+      # gamma[i] = beta[i] / (3*blood.rho*R0[i]*sqrt(pi))
+      # s_15_gamma[i] = sqrt(1.5*gamma[i])
+      # gamma_ghost[i+1] = gamma[i]
+      # P[i] = pressure(A[i], A0[i], beta[i], Pext)
+      # # A[i] = A0[i]*(P[i]/beta[i] + 1)^2
+      # c[i] = waveSpeed(A[i], gamma[i])
+      # wallE[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
+      # if phi != 0.0
+      #     wallVb[i] = Cv*s_inv_A0[i]*invDxSq
+      #     wallVa[i] = 0.5*wallVb[i]
+      # end
+      # dTaudx[i] = sqrt(pi)*wallE[i]*radius_slope*1.3*(h0i/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      # dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0i/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+      # dA0dx[i] = 2*pi*R0[i]*radius_slope
       dA0dx[i] = 2*pi*R0[i]*radius_slope
+      dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0[i]/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
     end
+    beta  = sqrt.(pi./A0) .* h0*E / (1 - sigma^2)
+    gamma = beta ./ (3*blood.rho*R0*sqrt(pi))
+    s_15_gamma = sqrt.(1.5 .*gamma)
+    gamma_ghost = zeros(Float64, M+2)
+  gamma_ghost[2:M+1] = gamma
+  gamma_ghost[1] = gamma[1]
+  gamma_ghost[end] = gamma[end]
 
-    gamma_ghost[1] = gamma[1]
-    gamma_ghost[end] = gamma[end]
+  A = zeros(Float64, M)  + A0
+  Q = zeros(Float64, M)
+  u = zeros(Float64, M)  + Q./A
+  c = zeros(Float64, M)
+  c = waveSpeed.(A, gamma)
+  P = pressure.( A, A0, beta, Pext)
 
     if outlet == "wk2"
         R1, R2 = computeWindkesselInletImpedance(R2, blood, A0, gamma)
@@ -417,7 +433,7 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
                   node2, node3, node4,
                   Rt, R1, R2, Cc,
                   Pcn,
-                  slope, fluxA, fluxQ, uStarA, uStarQ, vA, vQ,
+                  slope, flux, uStar, vA, vQ,
                   dU, slopesA, slopesQ,
                   Al, Ar, Ql, Qr, Fl, Fr,
                   outlet, dTaudx, dA0dx)
@@ -432,7 +448,7 @@ Calculate the slope for the lumen radius linear tapering as
 (Rd - Rp)/L
 
 """
-computeRadiusSlope(Rp::Float64, Rd::Float64, L::Float64) = (Rd - Rp)/L
+computeRadiusSlope(Rp::Float64, Rd::Float64, M::Float64) = (Rd - Rp)/(M-1)
 
 
 """
@@ -479,7 +495,7 @@ end
 Extract Pext value for current vessels; return default `Pext = 0.0` if no value is
 specified.
 """
-getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 0.0 : vessel["Pext"]
+getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 1e4 : vessel["Pext"]
 
 
 """
@@ -507,7 +523,7 @@ function meshVessel(vessel :: Dict{Any,Any}, L :: Float64)
         M = maximum([5, convert(Int, ceil(L*1e3))])
     else
         M = vessel["M"]
-        M = maximum([5, M, convert(Int, ceil(L*1e3))])
+        M = maximum([5, M]) #, convert(Int, ceil(L*1e3))])
     end
 
     dx = L/M

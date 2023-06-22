@@ -147,10 +147,8 @@ module openBF
         slope :: Vector{Float64}
 
         #MUSCLArrays
-        fluxA :: Vector{Float64}
-        fluxQ :: Vector{Float64}
-        uStarA :: Vector{Float64}
-        uStarQ :: Vector{Float64}
+        flux :: Array{Float64, 2}
+        uStar :: Array{Float64, 2}
 
         vA :: Vector{Float64}
         vQ :: Vector{Float64}
@@ -166,8 +164,8 @@ module openBF
         Ql :: Vector{Float64}
         Qr :: Vector{Float64}
 
-        Fl :: Vector{Float64}
-        Fr :: Vector{Float64}
+        Fl :: Array{Float64,2}
+        Fr :: Array{Float64,2}
 
         #Outlet type
         outlet :: String

@@ -19,10 +19,10 @@ network:
     L: 24.137e-2 # length (m)
 
     Rp: 1.5e-2 # lumen radius (m)
-    Rd: 1.0e-2
+    Rd: 1.45e-2
 
     E: 400.0e3 # Young's modulus (Pa)
-    h0: 1.2e-3
+    # h0: 1.2e-3
 
     inlet: Q
     inlet file: tapering_inlet.dat
