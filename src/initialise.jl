@@ -495,7 +495,7 @@ end
 Extract Pext value for current vessels; return default `Pext = 0.0` if no value is
 specified.
 """
-getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 1e4 : vessel["Pext"]
+getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 0.0 : vessel["Pext"]
 
 
 """
