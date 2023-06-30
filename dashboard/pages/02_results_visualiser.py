@@ -20,7 +20,7 @@ UNITS = {
     "c": "$(m \cdot s^{-1})$",
 }
 
-uploaded_file = st.file_uploader("Choose a file")
+uploaded_file = st.file_uploader("Pick a file (.temp, .last or .out)")
 if uploaded_file:
     vessel, q = strip_filename(uploaded_file.name)
     df = pd.read_csv(uploaded_file, sep=" ", header=None)
