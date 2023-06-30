@@ -59,41 +59,42 @@ with c2:
         file_name=f"{y['project_name']}.yaml",
     )
 
-    nodes = []
-    edges = []
-    seen_nodes = []
-    for v in y["network"]:
-        if v["sn"] not in seen_nodes:
-            nodes.append(
-                Node(
-                    id=v["sn"],
-                    label=str(v["sn"]),
-                    size=10 if "inlet" in v else 5,
+    with st.expander("Graph"):
+        nodes = []
+        edges = []
+        seen_nodes = []
+        for v in y["network"]:
+            if v["sn"] not in seen_nodes:
+                nodes.append(
+                    Node(
+                        id=v["sn"],
+                        label=str(v["sn"]),
+                        size=10 if "inlet" in v else 5,
+                    )
                 )
-            )
-            seen_nodes.append(v["sn"])
+                seen_nodes.append(v["sn"])
 
-        if v["tn"] not in seen_nodes:
-            nodes.append(
-                Node(
-                    id=v["tn"],
-                    label=str(v["tn"]),
-                    size=1 if "outlet" in v else 5,
+            if v["tn"] not in seen_nodes:
+                nodes.append(
+                    Node(
+                        id=v["tn"],
+                        label=str(v["tn"]),
+                        size=1 if "outlet" in v else 5,
+                    )
                 )
-            )
-            seen_nodes.append(v["tn"])
+                seen_nodes.append(v["tn"])
 
-        edges.append(Edge(source=v["sn"], label=v["label"], target=v["tn"]))
+            edges.append(Edge(source=v["sn"], label=v["label"], target=v["tn"]))
 
-    config = Config(
-        width=750,
-        height=950,
-        directed=True,
-        hierarchical=False,
-        physics=True,
-    )
+        config = Config(
+            width=750,
+            height=950,
+            directed=True,
+            hierarchical=False,
+            physics=True,
+        )
 
-    agraph(nodes=nodes, edges=edges, config=config)
+        agraph(nodes=nodes, edges=edges, config=config)
 
 with c1:
     st.divider()
