@@ -36,7 +36,13 @@ Delta t = C_{CFL} frac{Delta x}{S_{max}}
 where Smax is the maximum between the forward and the backward characteristics, and Ccfl is the Courant-Friedrichs-Lewy condition defined by the user.
 """
 calculateDeltaT(v::Vessel, C::Float64) = v.dx*C/maximum(abs.(v.u+v.c)) 
-calculateDeltaT(v::Array{Vessel,1}, C::Float64) = minimum(calculateDeltaT.(v,C))
+function calculateDeltaT(vs, C::Float64)
+    dt = []
+    for v in values(vs)
+        push!(dt,calculateDeltaT(v,C))
+    end
+    minimum(dt)
+end
 
 
 
@@ -46,16 +52,62 @@ calculateDeltaT(v::Array{Vessel,1}, C::Float64) = minimum(calculateDeltaT.(v,C))
 
 Run the solver on each vessel one-by-one as listed in the .yml file.
 """
-function solveModel(vessels :: Array{Vessel,1}, edges :: Array{Int,2}, blood :: Blood,
+function solveModel(grafo, vessels, edges, blood :: Blood,
                     dt :: Float64, current_time :: Float64)
-    for j in 1:size(edges)[1]
-        i = edges[j,1]
-        v = vessels[i]
+cedges=collect(edges)
+for i in 1:length(cedges)
+    s = Graphs.src(cedges[i])
+    t = Graphs.dst(cedges[i])
+    e = Graphs.Edge(s, t)
 
-        solveVessel(v, blood, dt, current_time)
-        solveOutlet(j, v, blood, vessels, edges, dt)
+    if s == 1
+      setInletBC(current_time, dt, vessels[e])
     end
+
+    muscl(vessels[e], dt, blood)
+
+    if Graphs.outdegree(grafo, t) == 0
+      setOutletBC(dt, vessels[e])
+
+    elseif Graphs.outdegree(grafo, t) == 1
+      if Graphs.indegree(grafo, t) == 1
+        d = first(outneighbors(grafo, t))
+        joinVessels(
+          blood,
+          vessels[e],
+          vessels[Graphs.Edge(t, d)])
+
+      else
+        # TODO: anastomosis
+
+        # es = Graphs.in_edges(grafo, t)
+        # if i == max(findedge(grafo, es[1]), findedge(grafo, es[2]))
+        #   a = findedge(grafo, es[1])
+        #   b = findedge(grafo, es[2])
+        #   c = findedge(Graphs.out_edges(grafo, t)[1])
+        #   solveAnastomosis(vessels[a], vessels[b], vessels[c])
+        # end
+      end
+
+    elseif Graphs.outdegree(grafo, t) == 2
+            d1, d2 = outneighbors(grafo, t)
+      joinVessels(
+        blood,
+        vessels[e], 
+        vessels[Graphs.Edge(t, d1)],
+        vessels[Graphs.Edge(t, d2)])
+    end
+
 end
+    # for j in 1:size(edges)[1]
+    #     i = edges[j,1]
+    #     v = vessels[i]
+
+    #     solveVessel(v, blood, dt, current_time)
+    #     solveOutlet(j, v, blood, vessels, edges, dt)
+    # end
+end
+
 
 
 """

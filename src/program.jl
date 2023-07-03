@@ -36,11 +36,14 @@ function runSimulation(input_filename::String; verbose::Bool=false,
 
     jump = data["solver"]["jump"]
 
-    vessels, edges = buildArterialNetwork(data["network"], blood, jump)
+    grafo, vessels, edges = buildArterialNetwork(data["network"], blood, jump)
     makeResultsFolder(data, input_filename)
 
     Ccfl = data["solver"]["Ccfl"]
-    heart = vessels[1].heart
+    
+    # TODO: messy
+    heart = vessels[collect(edges)[1]].heart
+
     total_time = data["solver"]["cycles"]*heart.cardiac_T
     timepoints = range(0, stop=heart.cardiac_T, length=jump)
 
@@ -57,11 +60,11 @@ function runSimulation(input_filename::String; verbose::Bool=false,
 
     while true
         dt = calculateDeltaT(vessels, Ccfl)
-        solveModel(vessels, edges, blood, dt, current_time)
-        updateGhostCells.(vessels)
+        solveModel(grafo, vessels, edges, blood, dt, current_time)
+        updateGhostCells(vessels)
 
         if current_time >= timepoints[counter]
-            saveTempData.(current_time, vessels, counter)
+            saveTempData(current_time, vessels, counter)
             counter += 1
         end
 
@@ -75,9 +78,9 @@ function runSimulation(input_filename::String; verbose::Bool=false,
                 print('\n')
             end
 
-            transferTempToLast.(vessels)
+            transferTempToLast(vessels)
 
-            out_files && transferLastToOut.(vessels)
+            out_files && transferLastToOut(vessels)
 
             if (passed_cycles+1>1 && checkConvergence(err, conv_toll))
                 writeConv(data, passed_cycles)
@@ -101,7 +104,31 @@ function runSimulation(input_filename::String; verbose::Bool=false,
     verbose && (@printf("\n"); ending_time = (time_ns() - starting_time)/1.0e9)
     verbose && println("Elapsed time = $ending_time seconds")
 
-    writeResults.(vessels)
+    writeResults(vessels)
     
     cd("..")
+end
+
+function transferTempToLast(vs)
+    for v in values(vs)
+        transferTempToLast(v)
+    end
+end
+
+function transferLastToOut(vs)
+    for v in values(vs)
+        transferLastToOut(v)
+    end
+end
+
+function writeResults(vs)
+    for v in values(vs)
+        writeResults(v)
+    end
+end
+
+function saveTempData(current_time, vs, counter)
+    for v in values(vs)
+        saveTempData(current_time, v, counter)
+    end
 end

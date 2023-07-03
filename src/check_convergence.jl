@@ -33,6 +33,16 @@ function computeConvError(vessels :: Array{Vessel, 1})
     return maxnorm, maxnormloc
 end
 
+function computeConvError(vessels)
+    current_norms = calcNorms(collect(values(vessels)))
+    maxnorm, ci = findmax(current_norms)
+
+    # TODO fix
+    maxnormloc = "" #vessels[ci[1]].label
+    
+    return maxnorm, maxnormloc
+end
+
 function printConvError(err::Float64, loc::String, conv_ceil::Bool)
     err /= 133.332
     if err > 100.0 && conv_ceil

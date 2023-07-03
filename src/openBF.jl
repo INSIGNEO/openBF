@@ -25,6 +25,7 @@ module openBF
     using DelimitedFiles
     using LinearAlgebra
     using Printf
+    using Graphs
 
 
     """

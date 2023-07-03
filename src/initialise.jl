@@ -237,20 +237,34 @@ system, respectively.
 """
 function buildArterialNetwork(network :: Array{Dict{Any,Any},1}, blood :: Blood,
                               jump :: Int)
-    vessels = [buildVessel(1, network[1], blood, jump)]
-    edges = zeros(Int, length(network), 3)
-    edges[1,1] = vessels[1].ID
-    edges[1,2] = vessels[1].sn
-    edges[1,3] = vessels[1].tn
+    n = length(network)+1
+    grafo = Graphs.SimpleDiGraph(n)
+    v = buildVessel(1, network[1], blood, jump)
+    vessels = Dict(Graphs.Edge(v.sn, v.tn)=>v)
+    Graphs.add_edge!(grafo, v.sn, v.tn)
 
     for i = 2:length(network)
-        push!(vessels, buildVessel(i, network[i], blood, jump))
-        edges[i,1] = vessels[i].ID
-        edges[i,2] = vessels[i].sn
-        edges[i,3] = vessels[i].tn
+        v = buildVessel(i, network[i], blood, jump)
+        Graphs.add_edge!(grafo, v.sn, v.tn)
+        vessels[Graphs.Edge(v.sn, v.tn)] = v
     end
 
-    return vessels, edges
+    edges = Graphs.edges(grafo)
+
+    # vessels = [buildVessel(1, network[1], blood, jump)]
+    # edges = zeros(Int, length(network), 3)
+    # edges[1,1] = vessels[1].ID
+    # edges[1,2] = vessels[1].sn
+    # edges[1,3] = vessels[1].tn
+
+    # for i = 2:length(network)
+    #     push!(vessels, buildVessel(i, network[i], blood, jump))
+    #     edges[i,1] = vessels[i].ID
+    #     edges[i,2] = vessels[i].sn
+    #     edges[i,3] = vessels[i].tn
+    # end
+
+    return grafo, vessels, edges
 end
 
 
@@ -270,115 +284,46 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     Rp, Rd = computeRadii(vessel_data)
     Pext = getPext(vessel_data)
     M, dx, invDx, halfDx, invDxSq = meshVessel(vessel_data, L)
-    h0 = initialiseThickness(vessel_data, M)
     outlet, Rt, R1, R2, Cc = addOutlet(vessel_data)
-    viscT = computeViscousTerm(vessel_data, blood)
+    viscT = computeViscousTerm(vessel_data, blood) # ---------------> ???
     inlet, heart = buildHeart(vessel_data)
-    phi = getPhi(vessel_data)
-
-    Q = zeros(Float64, M)
-    P = zeros(Float64, M)
-    A = zeros(Float64, M)
-    u = zeros(Float64, M)
-    c = zeros(Float64, M)
-    A0 = zeros(Float64, M)
-    R0 = zeros(Float64, M)
-    s_A0 = zeros(Float64, M)
-    beta = zeros(Float64, M)
-    vA = zeros(Float64, M+2)
-    vQ = zeros(Float64, M+2)
-    Al = zeros(Float64, M+2)
-    Ar = zeros(Float64, M+2)
-    Ql = zeros(Float64, M+2)
-    Qr = zeros(Float64, M+2)
-    wallE = zeros(Float64, M)
-    gamma = zeros(Float64, M)
-    slope = zeros(Float64, M)
-    wallVa = zeros(Float64, M)
-    wallVb = zeros(Float64, M)
-    inv_A0 = zeros(Float64, M)
-    dTaudx = zeros(Float64, M)
-    dA0dx = zeros(Float64, M)
-    dU = zeros(Float64, 2, M+2)
-    Fl = zeros(Float64, 2, M+2)
-    Fr = zeros(Float64, 2, M+2)
-    s_inv_A0 = zeros(Float64, M)
-    slopesA = zeros(Float64, M+2)
-    slopesQ = zeros(Float64, M+2)
-    Q_t = zeros(Float64, jump, 6)
-    P_t = zeros(Float64, jump, 6)
-    A_t = zeros(Float64, jump, 6)
-    u_t = zeros(Float64, jump, 6)
-    c_t = zeros(Float64, jump, 6)
-    Q_l = zeros(Float64, jump, 6)
-    P_l = zeros(Float64, jump, 6)
-    A_l = zeros(Float64, jump, 6)
-    u_l = zeros(Float64, jump, 6)
-    c_l = zeros(Float64, jump, 6)
-    flux = zeros(Float64, 2, M+2)
-    uStar = zeros(Float64, 2, M+2)
-    s_15_gamma = zeros(Float64, M)
-    gamma_ghost = zeros(Float64, M+2)
-
-    s_pi = sqrt(pi)
-    s_pi_E_over_sigma_squared = s_pi*E/0.75
-    one_over_rho_s_p = 1.0/(3.0*blood.rho*s_pi)
-    radius_slope = computeRadiusSlope(Rp, Rd, L)
 
     ah = 0.2802
     bh = -5.053e2
     ch = 0.1324
     dh = -0.1114e2
-
-    # if all(h0 .== 0.0)
-    Rmean = 0.5*(Rp + Rd)
     h0 = zeros(Float64, M)
-    # end
-    Cv = 0.5*s_pi*phi*h0/(blood.rho*0.75)
-    sigma = 0.5
+    R0 = zeros(Float64, M)
+    radius_slope = computeRadiusSlope(Rp, Rd, L)
+    dTaudx = zeros(Float64, M)
 
     for i = 1:M
-      R0[i] = radius_slope*(i - 1)*dx + Rp
-      A0[i] = pi*R0[i]*R0[i]
-      h0[i] = computeThickness(R0[i], ah, bh, ch, dh)
-      s_A0[i] = sqrt(A0[i])
-      inv_A0[i] = 1.0/A0[i]
-      s_inv_A0[i] = sqrt(inv_A0[i])
-      # A[i] = A0[i]
-      # beta[i] = s_inv_A0[i]*h0i*s_pi_E_over_sigma_squared
-      # gamma[i] = beta[i]*one_over_rho_s_p/R0[i]
-      # beta[i] = sqrt(pi./A0[i]) .* h0i*E / (1 - sigma^2)
-      # gamma[i] = beta[i] / (3*blood.rho*R0[i]*sqrt(pi))
-      # s_15_gamma[i] = sqrt(1.5*gamma[i])
-      # gamma_ghost[i+1] = gamma[i]
-      # P[i] = pressure(A[i], A0[i], beta[i], Pext)
-      # # A[i] = A0[i]*(P[i]/beta[i] + 1)^2
-      # c[i] = waveSpeed(A[i], gamma[i])
-      # wallE[i] = 3.0*beta[i]*radius_slope*inv_A0[i]*s_pi*blood.rho_inv
-      # if phi != 0.0
-      #     wallVb[i] = Cv*s_inv_A0[i]*invDxSq
-      #     wallVa[i] = 0.5*wallVb[i]
-      # end
-      # dTaudx[i] = sqrt(pi)*wallE[i]*radius_slope*1.3*(h0i/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
-      # dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0i/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
-      # dA0dx[i] = 2*pi*R0[i]*radius_slope
-      dA0dx[i] = 2*pi*R0[i]*radius_slope
-      dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0[i]/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
+        R0[i] = radius_slope*(i - 1)*dx + Rp
+        h0[i] = computeThickness(R0[i], ah, bh, ch, dh)
+        dTaudx[i] = sqrt(pi)*E*radius_slope*1.3*(h0[i]/R0[i]+R0[i]*(ah*bh*exp(bh*R0[i]) + ch*dh*exp(dh*R0[i])))
     end
+    A0 = pi.*R0.^2
+    s_A0 = sqrt.(A0)
+    inv_A0 = 1.0 ./ A0
+    s_inv_A0 = sqrt.(inv_A0)
+    dA0dx = 2*pi.*R0.*radius_slope
+    
+    sigma = 0.5
     beta  = sqrt.(pi./A0) .* h0*E / (1 - sigma^2)
+
     gamma = beta ./ (3*blood.rho*R0*sqrt(pi))
     s_15_gamma = sqrt.(1.5 .*gamma)
-    gamma_ghost = zeros(Float64, M+2)
-  gamma_ghost[2:M+1] = gamma
-  gamma_ghost[1] = gamma[1]
-  gamma_ghost[end] = gamma[end]
 
-  A = zeros(Float64, M)  + A0
-  Q = zeros(Float64, M)
-  u = zeros(Float64, M)  + Q./A
-  c = zeros(Float64, M)
-  c = waveSpeed.(A, gamma)
-  P = pressure.( A, A0, beta, Pext)
+    gamma_ghost = zeros(Float64, M+2)
+    gamma_ghost[2:M+1] = gamma
+    gamma_ghost[1] = gamma[1]
+    gamma_ghost[end] = gamma[end]
+
+    A = zeros(Float64, M)  + A0
+    P = pressure.( A, A0, beta, Pext)
+    Q = zeros(Float64, M)
+    u = zeros(Float64, M)  + Q./A
+    c = waveSpeed.(A, gamma)
 
     if outlet == "wk2"
         R1, R2 = computeWindkesselInletImpedance(R2, blood, A0, gamma)
@@ -416,6 +361,34 @@ function buildVessel(ID :: Int, vessel_data :: Dict{Any,Any}, blood :: Blood, ju
     out_c_name = join((vessel_name,"_c.out"))
     out_P_name = join((vessel_name,"_P.out"))
 
+    vA = zeros(Float64, M+2)
+    vQ = zeros(Float64, M+2)
+    Al = zeros(Float64, M+2)
+    Ar = zeros(Float64, M+2)
+    Ql = zeros(Float64, M+2)
+    Qr = zeros(Float64, M+2)
+    wallE = zeros(Float64, M)  # ???
+    slope = zeros(Float64, M)
+    wallVa = zeros(Float64, M) # ???
+    wallVb = zeros(Float64, M) # ???
+    Q_t = zeros(Float64, jump, 6)
+    P_t = zeros(Float64, jump, 6)
+    A_t = zeros(Float64, jump, 6)
+    u_t = zeros(Float64, jump, 6)
+    c_t = zeros(Float64, jump, 6)
+    Q_l = zeros(Float64, jump, 6)
+    P_l = zeros(Float64, jump, 6)
+    A_l = zeros(Float64, jump, 6)
+    u_l = zeros(Float64, jump, 6)
+    c_l = zeros(Float64, jump, 6)
+    flux = zeros(Float64, 2, M+2)
+    uStar = zeros(Float64, 2, M+2)
+    dU = zeros(Float64, 2, M+2)
+    Fl = zeros(Float64, 2, M+2)
+    Fr = zeros(Float64, 2, M+2)
+    s_inv_A0 = zeros(Float64, M)
+    slopesA = zeros(Float64, M+2)
+    slopesQ = zeros(Float64, M+2)
     return Vessel(vessel_name, ID, sn, tn, inlet, heart,
                   M, dx, invDx, halfDx,
                   beta, gamma, s_15_gamma, gamma_ghost,
@@ -495,7 +468,7 @@ end
 Extract Pext value for current vessels; return default `Pext = 0.0` if no value is
 specified.
 """
-getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 0.0 : vessel["Pext"]
+getPext(vessel :: Dict{Any,Any}) = ~haskey(vessel, "Pext") ? 10.0e3 : vessel["Pext"]
 
 
 """

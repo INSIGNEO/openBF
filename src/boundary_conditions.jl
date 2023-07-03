@@ -226,3 +226,9 @@ function updateGhostCells(v :: Vessel)
 	v.UM2A = v.A[v.M-1]
 	v.UM2Q = v.Q[v.M-1]
 end
+
+function updateGhostCells(vs)
+	for v in values(vs)
+		updateGhostCells(v)
+	end
+end
