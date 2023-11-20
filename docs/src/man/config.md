@@ -33,7 +33,7 @@ It contains the values for the numerical scheme parameters:
 
 - `cycles` is the maximum number of cardiac cycles to be simulated. This is used to stop openBF execution in case of non-converging simulations. An openBF simulation usually takes less than 20 cardiac cycles to converge.
 
-- `convergence tolerance` is the maximum percentage error allowed between two consecutive cardiac cycle to claim convergence. During openBF development and validation, this was set to $5$%.
+- `convergence tolerance` is the maximum error in $mmHg$ allowed between two consecutive cardiac cycle to claim convergence.
 
 - `jump` is the number of time-points to be saved in the result files.
 
@@ -98,7 +98,7 @@ project name: <project name> # String
 solver:
   Ccfl: <Courant's number> # 0.0 < Ccfl ≤ 1.0; Float
   cycles: <Max number of cardiac cycles> # Int
-  convergence tolerance: <Max %error between two cycles> # Float
+  convergence_tolerance: <Max %error between two cycles> # Pressure, Float
   jump: <Number of timepoints in result files; default 100> # Int
 
 blood:

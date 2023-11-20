@@ -7,7 +7,7 @@ solver:
   Ccfl: 0.9
   cycles: 2
   jump: 100
-  convergence tolerance: 1.0
+  convergence_tolerance: 1.0
 network:
   - label: v0
     sn: 1

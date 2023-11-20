@@ -64,6 +64,7 @@ function run_simulation(
 
     passed_cycles = 0
     counter = 1
+    conv_error = floatmax()
     @time while true
         step!(network, dt, current_time)
 
@@ -97,7 +98,7 @@ function run_simulation(
             counter = 1
         end
         current_time += dt
-        if current_time >= total_time || passed_cycles == config["solver"]["cycles"]
+        if current_time >= total_time || passed_cycles == config["solver"]["cycles"] || conv_error < config["solver"]["convergence_tolerance"]
             verbose && finish!(prog)
             break
         end
