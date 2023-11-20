@@ -30,8 +30,8 @@ function Network(
     graph = SimpleDiGraph(length(config) + 1)
 
     vessels = Dict()
-    for (i, vessel_config) in enumerate(config)
-        vessel = Vessel(vessel_config, i, blood, Ccfl)
+    for vessel_config in config
+        vessel = Vessel(vessel_config, blood, Ccfl)
         add_edge!(graph, vessel.sn, vessel.tn)
         vessels[(vessel.sn, vessel.tn)] = vessel
         verbose && next!(prog)

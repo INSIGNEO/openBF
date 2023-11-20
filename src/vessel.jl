@@ -15,7 +15,6 @@ mutable struct Vessel
     label::SubString{String}
 
     #Topological notation
-    ID::Int64
     sn::Int64
     tn::Int64
 
@@ -147,7 +146,7 @@ function radii(config::Dict{Any,Any})
 end
 
 
-function Vessel(config::Dict{Any,Any}, ID::Int64, b::Blood, Ccfl::Float64)
+function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     vessel_name = config["label"]
     sn = config["sn"]
     tn = config["tn"]
@@ -258,7 +257,6 @@ function Vessel(config::Dict{Any,Any}, ID::Int64, b::Blood, Ccfl::Float64)
     
     Vessel(
         vessel_name,
-        ID,
         sn,
         tn,
         M,
