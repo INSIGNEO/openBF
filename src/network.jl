@@ -25,7 +25,7 @@ function Network(
     Ccfl::Float64;
     verbose = false,
 )
-    prog = verbose ? Progress(length(config); desc = "Building network:") : Nothing
+    prog = verbose ? Progress(length(config); desc = "Building network:") : nothing
 
     graph = SimpleDiGraph(length(config) + 1)
 

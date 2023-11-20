@@ -16,6 +16,8 @@ using Graphs
 using ProgressMeter
 using StaticArrays
 
+export run_simulation
+
 include("vessel.jl")
 include("network.jl")
 include("solver.jl")

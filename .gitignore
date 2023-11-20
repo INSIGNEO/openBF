@@ -1,7 +1,6 @@
-test/**/*_results/*
+**/*_results
 **/.DS_Store
-cvs_results/*
-docs/build/*
+docs/build
 Manifest.toml
 README.html
 *.ipynb
@@ -10,4 +9,5 @@ README.html
 *.yaml
 *.conv
 **/*.swp
-adan56*/*
+adan56*
+plot*

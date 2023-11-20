@@ -28,13 +28,17 @@ function run_simulation(
 
     project_name = config["project_name"]
     blood = Blood(config["blood"])
+
+    # TODO: multiple inlets (therefore aspiration)
     heart = Heart(config["project_name"])
 
     # TODO: results dir from config
     ###############################################
-    results_dir = project_name * "_results"       #
-    ~isdir(results_dir) && mkdir(results_dir)     #
-    cd(results_dir)                               #
+    results_dir = project_name * "_results"
+    ~isdir(results_dir) && mkdir(results_dir)
+    # TODO: handle absolute paths
+    cp(yaml_config, joinpath(results_dir, yaml_config))
+    cd(results_dir)
     ###############################################
 
     network = Network(
@@ -56,7 +60,7 @@ function run_simulation(
     # TODO: progress over cardiac cycle with convergence
     prog =
         verbose ? ProgressUnknown(desc = "Solving:", spinner = true, showspeed = true) :
-        Nothing
+        nothing
 
     passed_cycles = 0
     counter = 1

@@ -129,9 +129,9 @@ function mesh(config::Dict{Any,Any})
     L = config["L"]
     M = getdefault(config, "M", 5)
     M = max(M, 5)
-    M = max(M, ceil(Int, config["L"]*1e-3))
+    M = max(M, ceil(Int, config["L"] * 1e-3))
 
-    dx = L/M
+    dx = L / M
     invDx = M / L
     halfDx = 0.5 * dx
 
@@ -157,6 +157,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     E = config["E"]
 
     Pext = getdefault(config, "Pext", 0.0)
+
     initial_pressure = getdefault(config, "initial_pressure", 0.0)
     initial_flow = getdefault(config, "initial_flow", 0.0)
 
@@ -254,7 +255,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     Fr = zeros(Float64, 2, M + 2)
 
     gamma_profile = getdefault(config, "gamma_profile", 2)
-    
+
     Vessel(
         vessel_name,
         sn,

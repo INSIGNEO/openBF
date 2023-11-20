@@ -1,11 +1,11 @@
 project_name: "network"
-write_results: ["P"]
+write_results: ["P", "Q", "A", "u", "c"]
 blood:
   rho: 1060.0
   mu: 0.004
 solver:
   Ccfl: 0.9
-  cycles: 100
+  cycles: 2
   jump: 100
   convergence tolerance: 1.0
 network:
@@ -17,16 +17,13 @@ network:
     Rp: 0.82e-2
     Rd: 0.758242250e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
+    gamma profile: 9
   - label: v1
     sn: 2
     tn: 3
     L: 0.01
     R0: 0.5492e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
   - label: v2
     sn: 2
     tn: 4
@@ -34,8 +31,6 @@ network:
     M: 10
     R0: 0.5492e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
   - label: v3
     sn: 4
     tn: 5
@@ -43,8 +38,6 @@ network:
     M: 10
     R0: 0.5492e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
   - label: v4
     sn: 3
     tn: 5
@@ -52,8 +45,6 @@ network:
     M: 10
     R0: 0.5492e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
   - label: v5
     sn: 5
     tn: 6
@@ -61,8 +52,6 @@ network:
     M: 10
     R0: 0.758242250e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
   - label: v6
     sn: 6
     tn: 7
@@ -70,9 +59,6 @@ network:
     M: 10
     R0: 0.5492e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
-    outlet: Rt
     Rt: 0.0
   - label: v7
     sn: 6
@@ -81,8 +67,6 @@ network:
     M: 10
     R0: 0.5492e-2
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
   - label: v8
     sn: 8
     tn: 9
@@ -90,18 +74,11 @@ network:
     M: 10
     R0: 0.0043590032887046775
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
-    outlet: Rt
     Rt: 0.0
   - label: v9
     sn: 8
     tn: 10
     L: 0.01
-    M: 10
     R0: 0.0043590032887046775
     E: 125000.0
-    gamma profile: 2
-    Pext: 0.0
-    outlet: Rt
     Rt: 0.0
