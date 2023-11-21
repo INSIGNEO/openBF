@@ -29,7 +29,7 @@ function run_simulation(
     project_name = config["project_name"]
     blood = Blood(config["blood"])
 
-    # TODO: multiple inlets (therefore aspiration)
+    # TODO: multiple inlets
     heart = Heart(config["project_name"])
 
     # TODO: results dir from config

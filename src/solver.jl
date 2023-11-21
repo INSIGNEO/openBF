@@ -119,6 +119,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         v.u[i] = v.Q[i] / v.A[i]
         v.c[i] = wave_speed(v.A[i], v.gamma[i])
     end
+
+    # TODO: bring back viscoelasticity and parabolic system solution
 end
 
 function limiter!(
