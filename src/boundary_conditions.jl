@@ -88,9 +88,7 @@ function set_outlet_bc(dt::Float64, v::Vessel)
         outlet_compatibility!(dt, v)
     else
         wk3!(dt, v)
-
     end
-
 end
 
 function outlet_compatibility!(dt::Float64, v::Vessel)
