@@ -137,11 +137,11 @@ function limiter!(
     superbee!(v, dU, slopes)
 end
 
+maxmod(v) = 0.5*sum(sign, v)*maximum(abs.(v))
+minmod(v) = 0.5*sum(sign, v)*minimum(abs.(v))
 function superbee!(v::Vessel, dU::Array{Float64,2}, slopes::Vector{Float64})
     for i = 1:v.M+2
-        s1 = minmod(dU[1, i], 2 * dU[2, i])
-        s2 = minmod(2 * dU[1, i], dU[2, i])
-        slopes[i] = maxmod(s1, s2)
+        slopes[i] = maxmod((minmod((dU[1, i], 2 * dU[2, i])), minmod((2 * dU[1, i], dU[2, i]))))
     end
 end
 
@@ -150,13 +150,4 @@ function flux!(v::Vessel, A::Vector{Float64}, Q::Vector{Float64}, Flux::Array{Fl
         Flux[1, i] = Q[i]
         Flux[2, i] = Q[i] * Q[i] / A[i] + v.gamma_ghost[i] * A[i]^1.5
     end
-end
-
-maxmod(a::Float64, b::Float64) = abs(a) > abs(b) ? a : b
-
-function minmod(a::Float64, b::Float64)
-    if a * b <= 0.0
-        return 0.0
-    end
-    abs(a) < abs(b) ? a : b
 end

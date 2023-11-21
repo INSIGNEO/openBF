@@ -17,6 +17,9 @@ function step!(n::Network, dt::Float64, current_time::Float64)
     update_ghost_cells!(n)
 end
 
+getprog(cycle::Int64, verbose::Bool) = verbose ? ProgressUnknown(desc = "Solving cycle #$cycle:", spinner = true, showspeed = true) :
+        nothing
+
 function run_simulation(
     yaml_config::String;
     verbose::Bool = false,
@@ -57,12 +60,9 @@ function run_simulation(
     current_time = 0.0
     dt = calculate_Δt(network)
 
-    # TODO: progress over cardiac cycle with convergence
-    prog =
-        verbose ? ProgressUnknown(desc = "Solving:", spinner = true, showspeed = true) :
-        nothing
-
     passed_cycles = 0
+    prog = getprog(passed_cycles, verbose)
+
     counter = 1
     conv_error = floatmax()
     @time while true
@@ -86,20 +86,16 @@ function run_simulation(
             move_temp_to_last(network, config)
             out_files && append_last_to_out(network, config)
 
-            if passed_cycles > 0 && verbose
-                if conv_error > 100.0 && conv_ceil
-                    @printf(" - Error norm > 100.00 mmHg\n")
-                else
-                    @printf(" - Error norm = %6.2f mmHg @ %s\n", conv_error, error_loc)
-                end
-            end
+            passed_cycles > 0 && verbose && finish!(prog, showvalues=[("Error (mmHg)", conv_error), ("@", error_loc)])
+            verbose && println()
+            
             checkpoints = checkpoints .+ heart.cardiac_period
             passed_cycles += 1
             counter = 1
+            prog = getprog(passed_cycles, verbose)
         end
         current_time += dt
         if current_time >= total_time || passed_cycles == config["solver"]["cycles"] || conv_error < config["solver"]["convergence_tolerance"]
-            verbose && finish!(prog)
             break
         end
     end
