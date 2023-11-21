@@ -1,188 +1,92 @@
-#=
-Copyright 2022 INSIGNEO Institute for in silico Medicine
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-=#
-
-
-__precompile__(true)
+# __openBF__ is a computational library written
+# in [Julia](julialang.org) for blood flow simulations
+# in straight elastic arteries. Navier-Stokes equations are reduced
+# to 1D form and solved along the longitudinal direction. Numerical
+# solution is achieved via a first-order finite volume solver
+# based on the Godunov' method. For an usage example refer to
+# [main.jl](main.html) file and its documentation.
 module openBF
 
-    export Vessel, Heart, Blood, runSimulation
-    using YAML
-    using ArgParse
-    using StaticArrays
-    using DelimitedFiles
-    using LinearAlgebra
-    using Printf
+# ### Import external libraries
+
+# [__Roots__](https://github.com/JuliaLang/Roots.jl) "contains
+# simple routines for finding roots of continuous scalar functions
+# of a single real variable." It is used for the solution of interface
+# problems in [conjunctions.jl](conjunctions.html) and
+# [bifurcations.jl](bifurcations.html).
+# using Roots
+
+# [__Graphs__](https://github.com/JuliaLang/Graphs.jl) "is a
+# Julia package that provides graph types and algorithms."
+# It is used for arterial tree parsing and described in
+# [utilities.jl](godunov.html#solveModel).
+using Graphs
+
+# [__ProgressMeter__](https://github.com/timholy/ProgressMeter.jl)
+# provides a simple implementation of a loading bar to be shown while
+# running the solution.
+using ProgressMeter
+
+# [__PyCall__](https://github.com/stevengj/PyCall.jl)
+# "provides a @pyimport macro that mimics a Python import statement: it
+# imports a Python module and provides Julia wrappers for all of the functions
+# and constants therein, including automatic conversion of types between Julia
+# and Python." It is used to import
+# [`scipy.signal`](http://docs.scipy.org/doc/scipy/reference/signal.html)
+# which is used in [check_convergence.jl](check_convergence.html).
+# using PyCall
+# @pyimport scipy.signal as signal
+# using DSP
+
+# ### Import openBF' files
+
+# OpenBF' own types are contained in [BTypes.jl](BTypes.html) where
+# data structures for vessels, blood, and numerical scheme
+# are specified.
+using BTypes
+# using Printf
+# using DelimitedFiles
 
 
-    """
-    Heart type
-    """
-    struct Heart
-        inlet_type :: String
-        cardiac_T :: Float64
-        input_data :: Array{Float64,2}
-        inlet_number :: Int
-    end
+# Data structures and output files are initialised at the beginning
+# of each simulation. [initialise.jl](initialise.html) contains all
+# the functions needed to read model description and the
+# global settings.
+include("initialise.jl")
 
+# Inlet and outlets boundary conditions are applied at each time step,
+# and vessels extremity nodes are updated with functions defined in
+# [boundary_conditions.jl](boundary_conditions.html).
+include("boundary_conditions.jl")
 
-    """
-    Blood type
-    """
-    struct Blood
-        mu  :: Float64
-        rho :: Float64
-        rho_inv :: Float64
-    end
+# Interface problems (junctions and bifurcations) are solved via the
+# method of characteristics. The function in
+# [junctions.jl](junctions.html) discriminates between
+# [conjunctions](conjunctions.html) and
+# [bifurcations](bifurcations.jl), and calls the appropriate solver.
+include("junctions.jl")
+include("conjunctions.jl")
+include("bifurcations.jl")
 
+# [godunov.jl](godunov.html) contains Godunov' method functions.
+include("godunov.jl")
 
-    """
-    Vessel type
-    """
-    mutable struct Vessel
-        label :: String
+# [MUSCL.jl](MUSCL.html) is where the MUSCL method is implemented.
+include("MUSCL.jl")
 
-        #Topology
-        ID :: Int
-        sn :: Int
-        tn :: Int
+# Conversions from pressure to cross-sectional area (and vice versa),
+# or from cross-sectional area to wave speed (and vice versa) are
+# handled by functions in [converter.jl](converter.html); Riemann
+# invariants are computed in the same location as well.
+include("converter.jl")
 
-        #Inlet
-        inlet :: Bool
-        heart :: Heart
+# Input and output writing functions are stored defined in
+# [IOutils.jl](IOutils.html).
+include("IOutils.jl")
 
-        #Numerical constants
-        M       :: Int
-        dx      :: Float64
-        invDx   :: Float64
-        halfDx  :: Float64
+# Convergence check functions are all defined in [check_convergence.jl](check_convergence.html).
+include("check_convergence.jl")
 
-        #Physical constants
-        beta            :: Array{Float64,1}
-        gamma           :: Array{Float64,1}
-        s_15_gamma      :: Array{Float64,1}
-        gamma_ghost     :: Array{Float64,1}
-        A0              :: Array{Float64,1}
-        s_A0            :: Array{Float64,1}
-        inv_A0          :: Array{Float64,1}
-        s_inv_A0        :: Array{Float64,1}
-        Pext            :: Float64
-        viscT           :: Float64
-        wallE           :: Array{Float64,1}
-        wallVa          :: Array{Float64,1}
-        wallVb          :: Array{Float64,1}
+include("anastomosis.jl")
 
-        #Iterative solution
-        A :: Array{Float64,1}
-        Q :: Array{Float64,1}
-        u :: Array{Float64,1}
-        c :: Array{Float64,1}
-        P :: Array{Float64,1}
-
-        A_t :: Array{Float64,2}
-        Q_t :: Array{Float64,2}
-        u_t :: Array{Float64,2}
-        c_t :: Array{Float64,2}
-        P_t :: Array{Float64,2}
-
-        A_l :: Array{Float64,2}
-        Q_l :: Array{Float64,2}
-        u_l :: Array{Float64,2}
-        c_l :: Array{Float64,2}
-        P_l :: Array{Float64,2}
-
-        #Riemann invariants
-        W1M0 :: Float64
-        W2M0 :: Float64
-
-        #Ghost cells
-        U00A :: Float64
-        U00Q :: Float64
-        U01A :: Float64
-        U01Q :: Float64
-
-        UM1A :: Float64
-        UM1Q :: Float64
-        UM2A :: Float64
-        UM2Q :: Float64
-
-        #Result file names
-        last_P_name :: String
-        last_Q_name :: String
-        last_A_name :: String
-        last_c_name :: String
-        last_u_name :: String
-
-        out_P_name :: String
-        out_Q_name :: String
-        out_A_name :: String
-        out_c_name :: String
-        out_u_name :: String
-
-        #Saving nodes
-        node2 :: Int
-        node3 :: Int
-        node4 :: Int
-
-        #Peripheral boundary condition
-        Rt :: Float64
-        R1 :: Float64
-        R2 :: Float64
-        Cc :: Float64
-        Pc :: Float64
-
-        #Slope
-        slope :: Array{Float64,1}
-
-        #MUSCLArrays
-        flux :: Array{Float64,2}
-        uStar :: Array{Float64,2}
-
-        vA :: Array{Float64,1}
-        vQ :: Array{Float64,1}
-
-        dU :: Array{Float64,2}
-
-        slopesA :: Array{Float64,1}
-        slopesQ :: Array{Float64,1}
-
-        Al :: Array{Float64,1}
-        Ar :: Array{Float64,1}
-
-        Ql :: Array{Float64,1}
-        Qr :: Array{Float64,1}
-
-        Fl :: Array{Float64,2}
-        Fr :: Array{Float64,2}
-
-        #Outlet type
-        outlet :: String
-    end
-
-    include("initialise.jl")
-
-    include("boundary_conditions.jl")
-    include("solver.jl")
-
-    include("junctions.jl")
-    include("conjunctions.jl")
-    include("bifurcations.jl")
-    include("anastomosis.jl")
-
-    include("IOutils.jl")
-    include("check_convergence.jl")
-
-    include("program.jl")
 end
