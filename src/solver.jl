@@ -20,7 +20,6 @@ function solve!(n::Network, dt::Float64, current_time::Float64)
             if indegree(n.graph, t) == 1 # conjunction
                 d = first(outneighbors(n.graph, t))
                 join_vessels!(n.blood, n.vessels[(s, t)], n.vessels[(t, d)])
-                # TODO: test ANASTOMOSIS!!!
             elseif indegree(n.graph, t) == 2 # anastomosis
                 p1, p2 = inneighbors(n.graph, t)
                 if t == max(p1, p2)
@@ -137,11 +136,12 @@ function limiter!(
     superbee!(v, dU, slopes)
 end
 
-maxmod(v) = 0.5*sum(sign, v)*maximum(abs.(v))
-minmod(v) = 0.5*sum(sign, v)*minimum(abs.(v))
+maxmod(v) = 0.5 * sum(sign, v) * maximum(abs.(v))
+minmod(v) = 0.5 * sum(sign, v) * minimum(abs.(v))
 function superbee!(v::Vessel, dU::Array{Float64,2}, slopes::Vector{Float64})
     for i = 1:v.M+2
-        slopes[i] = maxmod((minmod((dU[1, i], 2 * dU[2, i])), minmod((2 * dU[1, i], dU[2, i]))))
+        slopes[i] =
+            maxmod((minmod((dU[1, i], 2 * dU[2, i])), minmod((2 * dU[1, i], dU[2, i]))))
     end
 end
 

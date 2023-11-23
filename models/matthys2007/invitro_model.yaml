@@ -1,0 +1,392 @@
+project_name: invitro_model
+write_results: ["P", "Q"]
+blood:
+  rho: 1050.0
+  mu: 0.0025
+solver:
+  Ccfl: 0.9
+  cycles: 100
+  jump: 100
+  convergence_tolerance: 1.0
+network:
+  - label: v1
+    sn: 1
+    tn: 2
+    L: 0.036
+    E: 683224.72873
+    M: 36
+    Rp: 0.0144
+    Rd: 0.013
+    gamma profile: 9
+  - label: v2
+    sn: 2
+    tn: 3
+    L: 0.028
+    E: 689627.056087
+    M: 28
+    Rp: 0.011
+    Rd: 0.00729
+    gamma profile: 9
+  - label: v3
+    sn: 3
+    tn: 4
+    L: 0.145
+    E: 701344.643961
+    M: 145
+    Rp: 0.00537
+    Rd: 0.00386
+    outlet: wk3
+    R1: 2670000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v4
+    sn: 3
+    tn: 5
+    L: 0.218
+    E: 685437.626959
+    M: 218
+    Rp: 0.00436
+    Rd: 0.00334
+    gamma profile: 9
+  - label: v5
+    sn: 5
+    tn: 6
+    L: 0.165
+    E: 672370.044545
+    M: 165
+    Rp: 0.00334
+    Rd: 0.00278
+    gamma profile: 9
+  - label: v6
+    sn: 6
+    tn: 7
+    L: 0.235
+    E: 676958.952069
+    M: 235
+    Rp: 0.00207
+    Rd: 0.00207
+    outlet: wk3
+    R1: 3920000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v7
+    sn: 6
+    tn: 8
+    L: 0.177
+    E: 689695.573386
+    M: 177
+    Rp: 0.0021
+    Rd: 0.0021
+    outlet: wk3
+    R1: 3240000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v8
+    sn: 2
+    tn: 9
+    L: 0.021
+    E: 676746.681416
+    M: 21
+    Rp: 0.013
+    Rd: 0.0125
+    gamma profile: 9
+  - label: v9
+    sn: 9
+    tn: 10
+    L: 0.178
+    E: 706203.082009
+    M: 178
+    Rp: 0.00558
+    Rd: 0.00373
+    outlet: wk3
+    R1: 3110000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v10
+    sn: 9
+    tn: 11
+    L: 0.029
+    E: 671553.78194
+    M: 29
+    Rp: 0.0125
+    Rd: 0.0118
+    gamma profile: 9
+  - label: v11
+    sn: 11
+    tn: 12
+    L: 0.227
+    E: 698554.184936
+    M: 227
+    Rp: 0.00442
+    Rd: 0.00339
+    gamma profile: 9
+  - label: v12
+    sn: 12
+    tn: 13
+    L: 0.175
+    E: 698549.765792
+    M: 175
+    Rp: 0.00339
+    Rd: 0.00284
+    gamma profile: 9
+  - label: v13
+    sn: 13
+    tn: 14
+    L: 0.245
+    E: 684480.692899
+    M: 245
+    Rp: 0.00207
+    Rd: 0.00207
+    outlet: wk3
+    R1: 3740000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v14
+    sn: 13
+    tn: 15
+    L: 0.191
+    E: 694061.608164
+    M: 191
+    Rp: 0.00207
+    Rd: 0.00207
+    outlet: wk3
+    R1: 3770000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v15
+    sn: 11
+    tn: 16
+    L: 0.056
+    E: 683145.847472
+    M: 56
+    Rp: 0.0118
+    Rd: 0.011
+    gamma profile: 9
+  - label: v16
+    sn: 16
+    tn: 17
+    L: 0.195
+    E: 684853.806986
+    M: 195
+    Rp: 0.00412
+    Rd: 0.00322
+    outlet: wk3
+    R1: 2590000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v17
+    sn: 16
+    tn: 18
+    L: 0.072
+    E: 675178.969386
+    M: 72
+    Rp: 0.011
+    Rd: 0.00926
+    gamma profile: 9
+  - label: v18
+    sn: 18
+    tn: 19
+    L: 0.038
+    E: 678030.939641
+    M: 38
+    Rp: 0.00397
+    Rd: 0.00397
+    gamma profile: 9
+  - label: v19
+    sn: 19
+    tn: 20
+    L: 0.013
+    E: 680213.764316
+    M: 13
+    Rp: 0.00431
+    Rd: 0.00431
+    gamma profile: 9
+  - label: v20
+    sn: 20
+    tn: 21
+    L: 0.191
+    E: 655677.818214
+    M: 191
+    Rp: 0.00183
+    Rd: 0.00183
+    outlet: wk3
+    R1: 3540000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v21
+    sn: 20
+    tn: 22
+    L: 0.198
+    E: 702496.708576
+    M: 198
+    Rp: 0.00192
+    Rd: 0.00192
+    outlet: wk3
+    R1: 4240000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v22
+    sn: 19
+    tn: 23
+    L: 0.186
+    E: 679062.295831
+    M: 186
+    Rp: 0.00331
+    Rd: 0.00289
+    outlet: wk3
+    R1: 3750000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v23
+    sn: 18
+    tn: 24
+    L: 0.062
+    E: 675509.6448
+    M: 62
+    Rp: 0.00926
+    Rd: 0.00801
+    gamma profile: 9
+  - label: v24
+    sn: 24
+    tn: 25
+    L: 0.12
+    E: 661516.470398
+    M: 120
+    Rp: 0.00259
+    Rd: 0.00259
+    outlet: wk3
+    R1: 3460000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v25
+    sn: 24
+    tn: 26
+    L: 0.007
+    E: 681713.317604
+    M: 7
+    Rp: 0.0079
+    Rd: 0.0079
+    gamma profile: 9
+  - label: v26
+    sn: 26
+    tn: 27
+    L: 0.118
+    E: 684061.941605
+    M: 118
+    Rp: 0.00255
+    Rd: 0.00255
+    outlet: wk3
+    R1: 3450000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v27
+    sn: 26
+    tn: 28
+    L: 0.104
+    E: 687436.089311
+    M: 104
+    Rp: 0.0078
+    Rd: 0.00588
+    gamma profile: 9
+  - label: v28
+    sn: 28
+    tn: 29
+    L: 0.205
+    E: 692444.986296
+    M: 205
+    Rp: 0.0039
+    Rd: 0.00338
+    gamma profile: 9
+  - label: v29
+    sn: 29
+    tn: 30
+    L: 0.216
+    E: 714263.751693
+    M: 216
+    Rp: 0.00338
+    Rd: 0.00231
+    gamma profile: 9
+  - label: v30
+    sn: 30
+    tn: 31
+    L: 0.206
+    E: 665179.173719
+    M: 206
+    Rp: 0.00231
+    Rd: 0.0021
+    gamma profile: 9
+  - label: v31
+    sn: 28
+    tn: 32
+    L: 0.201
+    E: 688672.654228
+    M: 201
+    Rp: 0.00402
+    Rd: 0.00334
+    gamma profile: 9
+  - label: v32
+    sn: 32
+    tn: 33
+    L: 0.195
+    E: 713776.539748
+    M: 195
+    Rp: 0.00334
+    Rd: 0.00226
+    gamma profile: 9
+  - label: v33
+    sn: 33
+    tn: 34
+    L: 0.207
+    E: 688122.521471
+    M: 207
+    Rp: 0.00226
+    Rd: 0.00212
+    gamma profile: 9
+  - label: v34
+    sn: 31
+    tn: 35
+    L: 0.163
+    E: 658738.249745
+    M: 163
+    Rp: 0.00155
+    Rd: 0.00155
+    outlet: wk3
+    R1: 5160000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v35
+    sn: 31
+    tn: 36
+    L: 0.151
+    E: 676978.372391
+    M: 151
+    Rp: 0.00153
+    Rd: 0.00153
+    outlet: wk3
+    R1: 5650000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v36
+    sn: 34
+    tn: 37
+    L: 0.149
+    E: 667185.529175
+    M: 149
+    Rp: 0.00158
+    Rd: 0.00158
+    outlet: wk3
+    R1: 4590000000.0
+    Cc: 1e-13
+    gamma profile: 9
+  - label: v37
+    sn: 34
+    tn: 38
+    L: 0.126
+    E: 676820.268487
+    M: 126
+    Rp: 0.00155
+    Rd: 0.00155
+    outlet: wk3
+    R1: 3160000000.0
+    Cc: 1e-13
+    gamma profile: 9

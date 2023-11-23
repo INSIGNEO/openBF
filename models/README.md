@@ -1,10 +1,7 @@
 ## Models
 
-- [Ascending aorta](boilleau2015/aorta)
-- [Common carotid](boilleau2015/common_carotid)
-- [Iliac bifurcation](boilleau2015/iliac_bifurcation)
 - Systemic circulation:
-  - [ADAN56](boilleau2015/adan56)
+  - [ADAN56](boileau2015/adan56)
   - [In vitro model](matthys2007)
 - [Circle of Willis](alastruey2007)
 

@@ -12,3 +12,4 @@ README.html
 plot*
 !models/**/*.yaml
 !models/**/*.dat
+**/__pycache__

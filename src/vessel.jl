@@ -68,6 +68,7 @@ mutable struct Vessel
     R1::Float64
     R2::Float64
     Cc::Float64
+    Pc::Float64
 
     #Slope
     slope::Vector{Float64}
@@ -138,7 +139,9 @@ function mesh(config::Dict{Any,Any})
 end
 
 function radii(config::Dict{Any,Any})
-    ~haskey(config, "R0") && ~haskey(config, "Rp") && error("missing radius in $(config["label"])")
+    ~haskey(config, "R0") &&
+        ~haskey(config, "Rp") &&
+        error("missing radius in $(config["label"])")
     R0 = getdefault(config, "R0", 0.0)
     Rp = getdefault(config, "Rp", R0)
     Rd = getdefault(config, "Rd", Rp)
@@ -229,6 +232,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     if R2 == 0.0
         R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
     end
+    Pc = 0.0
 
     slope = zeros(Float64, M)
 
@@ -293,6 +297,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         R1,
         R2,
         Cc,
+        Pc,
         slope,
         flux,
         uStar,
