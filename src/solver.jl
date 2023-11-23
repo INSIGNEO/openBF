@@ -24,7 +24,7 @@ function solve!(n::Network, dt::Float64, current_time::Float64)
                 p1, p2 = inneighbors(n.graph, t)
                 if t == max(p1, p2)
                     d = outneighbors(grado, t)
-                    solveAnastomosis(
+                    join_anastomosis!(
                         n.vessels[(p1, t)],
                         n.vessels[(p2, t)],
                         n.vessels[(t, d)],

@@ -1,4 +1,3 @@
-# TODO: generic implementation for all junctions
 function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
 
     U = SA[v1.u[end], v2.u[1], sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1]))]
@@ -25,7 +24,7 @@ function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
         u_ok = sum(abs.(dU) .<= nr_toll_U)
         f_ok = sum(abs.(F) .<= nr_toll_F)
 
-        if u_ok == length(dU) || f_ok == length(dU)
+        if u_ok == 4 || f_ok == 4
             break
         else
             W = w_star_conj(U, k)

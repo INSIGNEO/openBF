@@ -24,7 +24,7 @@ function newton_raphson(
         u_ok = sum(abs.(dU) .<= nr_toll_U)
         f_ok = sum(abs.(F) .<= nr_toll_F)
 
-        if u_ok == length(dU) || f_ok == length(dU)
+        if u_ok == 6 || f_ok == 6
             return U
         else
             W = w_star_bifurcation(U, k)
