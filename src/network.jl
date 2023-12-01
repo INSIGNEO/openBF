@@ -18,6 +18,8 @@ struct Network
     heart::Heart
 end
 
+number_of_nodes(config::Vector{Dict{Any,Any}}) = union(Set(c["sn"] for c in config),Set(c["tn"] for c in config))|>length
+
 function Network(
     config::Vector{Dict{Any,Any}},
     blood::Blood,
@@ -27,7 +29,7 @@ function Network(
 )
     prog = verbose ? Progress(length(config); desc = "Building network:") : nothing
 
-    graph = SimpleDiGraph(length(config) + 1)
+    graph = SimpleDiGraph(number_of_nodes(config))
 
     vessels = Dict()
     for vessel_config in config
@@ -36,5 +38,14 @@ function Network(
         vessels[(vessel.sn, vessel.tn)] = vessel
         verbose && next!(prog)
     end
+    check(graph)
+
     Network(graph, vessels, blood, heart)
+end
+
+function check(g::SimpleDiGraph)
+    δin(g) != 0 && error("no input vessel")
+    δout(g) != 0 && error("no output vessel(s)")
+    has_self_loops(g) && error("self loop detected, i.e. sn == tn")
+    Δin(g) > 2 || Δout(g) > 2 && error("vertex belonging to more than 3 vessels")
 end
