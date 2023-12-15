@@ -96,9 +96,7 @@ mutable struct Vessel
 
 end
 
-getdefault(d, k, v) = haskey(d, k) ? d[k] : v
-
-wave_speed(A::Float64, gamma::Float64) = sqrt(3 * gamma * sqrt(A) * 0.5)
+wave_speed(A::Float64, gamma::Float64) = sqrt(1.5 * gamma * sqrt(A))
 function wave_speed(A::Array{Float64,1}, gamma::Array{Float64,1}, c::Array{Float64,1})
 
     for i = 1:length(A)
@@ -127,7 +125,7 @@ end
 
 function mesh(config::Dict{Any,Any})
     L = config["L"]
-    M = getdefault(config, "M", 5)
+    M = get(config, "M", 5)
     M = max(M, 5)
     M = max(M, ceil(Int, config["L"] * 1e-3))
 
@@ -142,9 +140,9 @@ function radii(config::Dict{Any,Any})
     ~haskey(config, "R0") &&
         ~haskey(config, "Rp") &&
         error("missing radius in $(config["label"])")
-    R0 = getdefault(config, "R0", 0.0)
-    Rp = getdefault(config, "Rp", R0)
-    Rd = getdefault(config, "Rd", Rp)
+    R0 = get(config, "R0", 0.0)
+    Rp = get(config, "Rp", R0)
+    Rd = get(config, "Rd", Rp)
     Rp, Rd
 end
 
@@ -159,10 +157,10 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
 
     E = config["E"]
 
-    Pext = getdefault(config, "Pext", 0.0)
+    Pext = get(config, "Pext", 0.0)
 
-    initial_pressure = getdefault(config, "initial_pressure", 0.0)
-    initial_flow = getdefault(config, "initial_flow", 0.0)
+    initial_pressure = get(config, "initial_pressure", 0.0)
+    initial_flow = get(config, "initial_flow", 0.0)
 
     A0 = zeros(Float64, M)
     R0 = zeros(Float64, M)
@@ -225,10 +223,10 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     node3 = round(Int, M * 0.5)
     node4 = round(Int, M * 0.75)
 
-    Rt = getdefault(config, "Rt", 0.0)
-    R1 = getdefault(config, "R1", 0.0)
-    R2 = getdefault(config, "R2", 0.0)
-    Cc = getdefault(config, "Cc", 0.0)
+    Rt = get(config, "Rt", 0.0)
+    R1 = get(config, "R1", 0.0)
+    R2 = get(config, "R2", 0.0)
+    Cc = get(config, "Cc", 0.0)
     if R2 == 0.0
         R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
     end
@@ -256,7 +254,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     Fl = zeros(Float64, 2, M + 2)
     Fr = zeros(Float64, 2, M + 2)
 
-    gamma_profile = getdefault(config, "gamma_profile", 2)
+    gamma_profile = get(config, "gamma_profile", 2)
 
     Vessel(
         vessel_name,
