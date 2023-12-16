@@ -23,11 +23,6 @@ function flush_to_temp(t::Float64, v::Vessel, config)
                 temp,
                 join((t, v.u[1], v.u[v.node2], v.u[v.node3], v.u[v.node4], v.u[end]), " "),
             )
-        elseif l == "c"
-            println(
-                temp,
-                join((t, v.c[1], v.c[v.node2], v.c[v.node3], v.c[v.node4], v.c[end]), " "),
-            )
         end
         close(temp)
     end

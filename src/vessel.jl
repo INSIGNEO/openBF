@@ -39,8 +39,8 @@ mutable struct Vessel
     A::Vector{Float64}
     Q::Vector{Float64}
     u::Vector{Float64}
-    c::Vector{Float64}
     P::Vector{Float64}
+    maxuc::Float64
 
     #Riemann invariants
     W1M0::Float64
@@ -205,6 +205,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     c = wave_speed(A, gamma, c)
     P = zeros(Float64, M)
     P = pressure(A, A0, beta, Pext, P)
+    maxuc = maximum(abs.(u + c))
 
     U00A = A0[1]
     U01A = A0[2]
@@ -276,8 +277,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         A,
         Q,
         u,
-        c,
         P,
+        maxuc,
         W1M0,
         W2M0,
         U00A,

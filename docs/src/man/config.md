@@ -10,10 +10,10 @@ This is a string that will be used to name the results folder. At the end of the
 Following the `write_results` list is defined.
 
 ```yaml
-write_results: ["P"] # ["P", "Q", "u", "A", "c"]
+write_results: ["P"] # ["P", "Q", "u", "A"]
 ```
 
-Here you can specify which quantities to write in the output files (`P`ressure, `Q` flow, `u` velocity, `A`rea and `c` wave speed). These are all optional except for `P`.
+Here you can specify which quantities to write in the output files (`P`ressure, `Q` flow, `u` velocity and `A`rea). These are all optional except for `P`.
 
 Then there are three main sections: `solver`, `blood`, and `network`.
 

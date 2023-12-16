@@ -59,11 +59,6 @@ function join_anastomosis!(v1::Vessel, v2::Vessel, v3::Vessel)
     v1.P[end] = pressure(v1.A[end], v1.A0[end], v1.beta[end], v1.Pext)
     v2.P[end] = pressure(v2.A[end], v2.A0[end], v2.beta[end], v2.Pext)
     v3.P[1] = pressure(v3.A[1], v3.A0[1], v3.beta[1], v3.Pext)
-
-    v1.c[end] = wave_speed(v1.A[end], v1.gamma[end])
-    v2.c[end] = wave_speed(v2.A[end], v2.gamma[end])
-    v3.c[1] = wave_speed(v3.A[1], v3.gamma[1])
-
 end
 
 function w_star_anastomosis(U::SVector, k::SVector)

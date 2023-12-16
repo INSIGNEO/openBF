@@ -1,11 +1,5 @@
 __precompile__(true)
 module openBF
-# [__Roots__](https://github.com/JuliaLang/Roots.jl) "contains
-# simple routines for finding roots of continuous scalar functions
-# of a single real variable." It is used for the solution of interface
-# problems in [conjunctions.jl](conjunctions.html) and
-# [bifurcations.jl](bifurcations.html).
-# using Roots
 
 using Printf
 using LinearAlgebra

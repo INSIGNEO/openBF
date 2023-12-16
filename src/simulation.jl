@@ -8,7 +8,7 @@ end
 function get_conv_error(v::Vessel)
     current = readdlm(v.label * "_P.temp")
     prev = readdlm(v.label * "_P.last")
-    sqrt(sum(current[:, 4] - prev[:, 4]) .^ 2) / 133.332
+    sqrt(sum((current[:, 4] - prev[:, 4]) .^ 2)/v.M) / 133.332
 end
 
 function step!(n::Network, dt::Float64, current_time::Float64)
@@ -42,7 +42,7 @@ function run_simulation(
     results_dir = project_name * "_results"
     ~isdir(results_dir) && mkdir(results_dir)
     # TODO: handle absolute paths
-    cp(yaml_config, joinpath(results_dir, yaml_config))
+    cp(yaml_config, joinpath(results_dir, yaml_config), force=true)
     cd(results_dir)
     ###############################################
 
@@ -90,7 +90,7 @@ function run_simulation(
 
             passed_cycles > 0 &&
                 verbose &&
-                finish!(prog, showvalues = [("Error (mmHg)", conv_error), ("@", error_loc)])
+                finish!(prog, showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)])
             verbose && println()
 
             checkpoints = checkpoints .+ heart.cardiac_period

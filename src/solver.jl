@@ -1,5 +1,5 @@
 calculate_Δt(n::Network) =
-    minimum(v.dx * v.Ccfl / maximum(abs, v.u .+ v.c) for (_, v) in n.vessels)
+    minimum(v.dx * v.Ccfl / v.maxuc for (_, v) in n.vessels)
 
 function solve!(n::Network, dt::Float64, current_time::Float64)
     for edge in edges(n.graph)
@@ -109,6 +109,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     #source term
+    v.maxuc = 0.0
     for i = 1:v.M
         v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt   #viscosity
         v.Q[i] += dt * 0.5 * v.beta[i] * v.A[i]^1.5 / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
@@ -116,7 +117,11 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
 
         v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
         v.u[i] = v.Q[i] / v.A[i]
-        v.c[i] = wave_speed(v.A[i], v.gamma[i])
+        
+        uc = abs(wave_speed(v.A[i], v.gamma[i]) + v.u[i])
+        if uc > v.maxuc
+            v.maxuc = uc
+        end
     end
 
     # TODO: bring back viscoelasticity and parabolic system solution
