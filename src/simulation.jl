@@ -40,6 +40,7 @@ function run_simulation(
     # TODO: results dir from config
     ###############################################
     results_dir = project_name * "_results"
+    isdir(results_dir) && rm(results_dir, recursive=true)
     ~isdir(results_dir) && mkdir(results_dir)
     # TODO: handle absolute paths
     cp(yaml_config, joinpath(results_dir, yaml_config), force=true)
