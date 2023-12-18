@@ -3,6 +3,7 @@
 - Systemic circulation:
   - [ADAN56](boileau2015/adan56)
   - [In vitro model](matthys2007)
+  - [Charlton et al.](Charlton2019)
 - [Circle of Willis](alastruey2007)
 
 ## Contribute
