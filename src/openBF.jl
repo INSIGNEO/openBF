@@ -9,6 +9,7 @@ using YAML
 using Graphs
 using ProgressMeter
 using StaticArrays
+using Statistics
 
 export run_simulation
 

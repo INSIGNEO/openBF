@@ -1,5 +1,5 @@
 calculate_Δt(n::Network) =
-    minimum(v.dx * v.Ccfl / v.maxuc for (_, v) in n.vessels)
+    minimum(v.dx * v.Ccfl / maximum(abs, v.u .+ v.c) for (_, v) in n.vessels)
 
 function solve!(n::Network, dt::Float64, current_time::Float64)
     for edge in edges(n.graph)
@@ -20,11 +20,12 @@ function solve!(n::Network, dt::Float64, current_time::Float64)
             if indegree(n.graph, t) == 1 # conjunction
                 d = first(outneighbors(n.graph, t))
                 join_vessels!(n.blood, n.vessels[(s, t)], n.vessels[(t, d)])
+                # TODO: test ANASTOMOSIS!!!
             elseif indegree(n.graph, t) == 2 # anastomosis
                 p1, p2 = inneighbors(n.graph, t)
                 if t == max(p1, p2)
                     d = outneighbors(grado, t)
-                    join_anastomosis!(
+                    solveAnastomosis(
                         n.vessels[(p1, t)],
                         n.vessels[(p2, t)],
                         n.vessels[(t, d)],
@@ -109,21 +110,15 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     #source term
-    v.maxuc = 0.0
     for i = 1:v.M
         v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt   #viscosity
         v.Q[i] += dt * 0.5 * v.beta[i] * v.A[i]^1.5 / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
         v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]  #dP/dh0
 
+        v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
         v.u[i] = v.Q[i] / v.A[i]
-        
-        uc = abs(wave_speed(v.A[i], v.gamma[i]) + v.u[i])
-        if uc > v.maxuc
-            v.maxuc = uc
-        end
+        v.c[i] = wave_speed(v.A[i], v.gamma[i])
     end
-
-    # TODO: bring back viscoelasticity and parabolic system solution
 end
 
 function limiter!(
@@ -140,18 +135,18 @@ function limiter!(
     superbee!(v, dU, slopes)
 end
 
-maxmod(v) = 0.5 * sum(sign, v) * maximum(abs.(v))
-minmod(v) = 0.5 * sum(sign, v) * minimum(abs.(v))
-function superbee!(v::Vessel, dU::Array{Float64,2}, slopes::Vector{Float64})
-    for i = 1:v.M+2
-        slopes[i] =
-            maxmod((minmod((dU[1, i], 2 * dU[2, i])), minmod((2 * dU[1, i], dU[2, i]))))
-    end
-end
-
 function flux!(v::Vessel, A::Vector{Float64}, Q::Vector{Float64}, Flux::Array{Float64,2})
     for i = 1:v.M+2
         Flux[1, i] = Q[i]
         Flux[2, i] = Q[i] * Q[i] / A[i] + v.gamma_ghost[i] * A[i]^1.5
+    end
+end
+
+maxmod(v) = 0.5 * sum(sign, v) * maximum(abs, v)
+minmod(v) = 0.5 * sum(sign, v) * minimum(abs, v)
+function superbee!(v::Vessel, dU::Array{Float64,2}, slopes::Vector{Float64})
+    for i = 1:v.M+2
+        slopes[i] =
+            maxmod((minmod((dU[1, i], 2 * dU[2, i])), minmod((2 * dU[1, i], dU[2, i]))))
     end
 end

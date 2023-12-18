@@ -8,13 +8,7 @@ end
 function get_conv_error(v::Vessel)
     current = readdlm(v.label * "_P.temp")
     prev = readdlm(v.label * "_P.last")
-    sqrt(sum((current[:, 4] - prev[:, 4]) .^ 2)/v.M) / 133.332
-end
-
-function step!(n::Network, dt::Float64, current_time::Float64)
-    dt = calculate_Δt(n)
-    solve!(n, dt, current_time)
-    update_ghost_cells!(n)
+    sqrt(mean(current[:, 4] - prev[:, 4]) .^ 2) / 133.332
 end
 
 getprog(cycle::Int64, verbose::Bool) =
@@ -22,9 +16,8 @@ getprog(cycle::Int64, verbose::Bool) =
     ProgressUnknown(desc = "Solving cycle #$cycle:", spinner = true, showspeed = true) :
     nothing
 
-function run_simulation(
-    yaml_config::String;
-    verbose::Bool = false,
+function run_simulation(yaml_config::String;
+    verbose::Bool = true,
     out_files::Bool = false,
     conv_ceil::Bool = false,
 )
@@ -33,51 +26,44 @@ function run_simulation(
 
     project_name = config["project_name"]
     blood = Blood(config["blood"])
-
-    # TODO: multiple inlets
     heart = Heart(config["project_name"])
 
     # TODO: results dir from config
-    ###############################################
+    ########################################
     results_dir = project_name * "_results"
     isdir(results_dir) && rm(results_dir, recursive=true)
     ~isdir(results_dir) && mkdir(results_dir)
-    # TODO: handle absolute paths
     cp(yaml_config, joinpath(results_dir, yaml_config), force=true)
     cd(results_dir)
-    ###############################################
+    #########################################
 
-    network = Network(
-        config["network"],
-        blood,
-        heart,
-        config["solver"]["Ccfl"],
-        verbose = verbose,
-    )
-
+    network = Network(config["network"], blood, heart, config["solver"]["Ccfl"], verbose=verbose)
     total_time = config["solver"]["cycles"] * heart.cardiac_period
     jump = config["solver"]["jump"]
     checkpoints = range(0, stop = heart.cardiac_period, length = jump)
 
     verbose && println("\nStart simulation")
-    current_time = 0.0
-    dt = calculate_Δt(network)
+    # TODO: log stats
 
+    current_time = 0.0
     passed_cycles = 0
     prog = getprog(passed_cycles, verbose)
-
     counter = 1
     conv_error = floatmax()
     @time while true
-        step!(network, dt, current_time)
+
+        # step
+        dt = calculate_Δt(network)
+        solve!(network, dt, current_time)
+        update_ghost_cells!(network)
+        verbose && next!(prog)
 
         if current_time >= checkpoints[counter]
-            flush_to_temp(current_time, network, config)
+            flush_to_temp(current_time, network)
             counter += 1
         end
 
-        verbose && next!(prog)
-
+        # at the end of the cardiac cycle
         if (current_time - heart.cardiac_period * passed_cycles) >= heart.cardiac_period &&
            (current_time - heart.cardiac_period * passed_cycles + dt) > heart.cardiac_period
 
@@ -86,25 +72,32 @@ function run_simulation(
                 conv_error, error_loc = get_conv_error(network)
             end
 
-            move_temp_to_last(network, config)
-            out_files && append_last_to_out(network, config)
+            move_temp_to_last(network)
+            out_files && append_last_to_out(network)
 
-            passed_cycles > 0 &&
-                verbose &&
-                finish!(prog, showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)])
-            verbose && println()
+            if verbose
+                if passed_cycles > 0
+                    finish!(prog, showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)])
+                else
+                    finish!(prog)
+                end
+                println()
+            end
 
             checkpoints = checkpoints .+ heart.cardiac_period
             passed_cycles += 1
-            counter = 1
             prog = getprog(passed_cycles, verbose)
+            counter = 1
         end
-        current_time += dt
+
+        # at the end of the simulation
         if current_time >= total_time ||
            passed_cycles == config["solver"]["cycles"] ||
            conv_error < config["solver"]["convergence_tolerance"]
+            finish!(prog)
             break
         end
+        current_time += dt
     end
     cd("..")
 end
