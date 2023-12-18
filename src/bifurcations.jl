@@ -64,10 +64,6 @@ function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
     v1.Q[end] = v1.u[end] * v1.A[end]
     v2.Q[1] = v2.u[1] * v2.A[1]
     v3.Q[1] = v3.u[1] * v3.A[1]
-
-    v1.P[end] = pressure(v1.A[end], v1.A0[end], v1.beta[end], v1.Pext)
-    v2.P[1] = pressure(v2.A[1], v2.A0[1], v2.beta[1], v2.Pext)
-    v3.P[1] = pressure(v3.A[1], v3.A0[1], v3.beta[1], v3.Pext)
 end
 
 

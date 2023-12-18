@@ -39,7 +39,6 @@ mutable struct Vessel
     A::Vector{Float64}
     Q::Vector{Float64}
     u::Vector{Float64}
-    P::Vector{Float64}
     maxuc::Float64
 
     #Riemann invariants
@@ -97,31 +96,8 @@ mutable struct Vessel
 end
 
 wave_speed(A::Float64, gamma::Float64) = sqrt(1.5 * gamma * sqrt(A))
-function wave_speed(A::Array{Float64,1}, gamma::Array{Float64,1}, c::Array{Float64,1})
 
-    for i = 1:length(A)
-        c[i] = wave_speed(A[i], gamma[i])
-    end
-
-    return c
-end
-
-pressure(A::Float64, A0::Float64, beta::Float64, Pext::Float64) =
-    Pext + beta * (sqrt(A / A0) - 1.0)
-function pressure(
-    A::Array{Float64,1},
-    A0::Array{Float64,1},
-    beta::Array{Float64,1},
-    Pext::Float64,
-    p::Array{Float64,1},
-)
-    p .= Pext .+ beta .* (sqrt.(A ./ A0) .- 1.0)
-    return p
-end
-
-function area_from_pressure(P::Float64, A0::Float64, beta::Float64, Pext::Float64)
-    return A0 * ((P - Pext) / beta + 1) * ((P - Pext) / beta + 1)
-end
+pressure(A::Float64, A0::Float64, beta::Float64, Pext::Float64) = Pext + beta * (sqrt(A / A0) - 1.0)
 
 function mesh(config::Dict{Any,Any})
     L = config["L"]
@@ -159,12 +135,11 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
 
     Pext = get(config, "Pext", 0.0)
 
-    initial_pressure = get(config, "initial_pressure", 0.0)
     initial_flow = get(config, "initial_flow", 0.0)
 
     A0 = zeros(Float64, M)
     R0 = zeros(Float64, M)
-    h0 = zeros(Float64, M)
+    h0 = zeros(Float64, M) .+ get(config, "h0", 0.0)
 
     dA0dx = zeros(Float64, M)
     dTaudx = zeros(Float64, M)
@@ -175,7 +150,9 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     dh = -0.1114e2
     for i = 1:M
         R0[i] = radius_slope * (i - 1) * dx + Rp
-        h0[i] = R0[i] * (ah * exp(bh * R0[i]) + ch * exp(dh * R0[i]))
+        if ~haskey(config, "h0")
+            h0[i] = R0[i] * (ah * exp(bh * R0[i]) + ch * exp(dh * R0[i]))
+        end
         A0[i] = pi * R0[i] * R0[i]
         dA0dx[i] = 2 * pi * R0[i] * radius_slope
         dTaudx[i] =
@@ -201,10 +178,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     A = zeros(Float64, M) + A0
     Q = zeros(Float64, M) .+ initial_flow
     u = zeros(Float64, M) + Q ./ A
-    c = zeros(Float64, M)
-    c = wave_speed(A, gamma, c)
-    P = zeros(Float64, M)
-    P = pressure(A, A0, beta, Pext, P)
+    c = wave_speed.(A, gamma)
     maxuc = maximum(abs.(u + c))
 
     U00A = A0[1]
@@ -277,7 +251,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         A,
         Q,
         u,
-        P,
         maxuc,
         W1M0,
         W2M0,

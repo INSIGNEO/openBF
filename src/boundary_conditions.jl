@@ -27,11 +27,7 @@ function riemann_invariants(i::Int64, v::Vessel)
     W1, W2
 end
 
-function inv_riemann_invariants(W1::Float64, W2::Float64)
-    u = 0.5 * (W1 + W2)
-    c = (W2 - W1) * 0.125
-    u, c
-end
+inv_riemann_invariants(W1::Float64, W2::Float64) = 0.5 * (W1 + W2)
 
 function inlet_compatibility!(dt::Float64, v::Vessel)
     W11, W21 = riemann_invariants(1, v)
@@ -40,20 +36,11 @@ function inlet_compatibility!(dt::Float64, v::Vessel)
     W11 += (W12 - W11) * (wave_speed(v.A[1], v.gamma[1]) - v.u[1]) * dt / v.dx
     W21 = 2 * v.Q[1] / v.A[1] - W11
 
-    v.u[1], _ = inv_riemann_invariants(W11, W21)
-
+    v.u[1] = inv_riemann_invariants(W11, W21)
     v.A[1] = v.Q[1] / v.u[1]
-    v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
 end
 
-function set_outlet_bc(dt::Float64, v::Vessel)
-    if v.R1 == 0.0
-        v.P[end] = 2 * v.P[end-1] - v.P[end-2]
-        outlet_compatibility!(dt, v)
-    else
-        wk3!(dt, v)
-    end
-end
+set_outlet_bc(dt::Float64, v::Vessel) = v.R1 != 0.0 ? wk3!(dt, v) : outlet_compatibility!(dt, v)
 
 function outlet_compatibility!(dt::Float64, v::Vessel)
     W1M1, W2M1 = riemann_invariants(v.M - 1, v)
@@ -62,7 +49,7 @@ function outlet_compatibility!(dt::Float64, v::Vessel)
     W2M += (W2M1 - W2M) * (v.u[end] + wave_speed(v.A[v.M], v.gamma[v.M])) * dt / v.dx
     W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
 
-    v.u[end], _ = inv_riemann_invariants(W1M, W2M)
+    v.u[end] = inv_riemann_invariants(W1M, W2M)
     v.Q[end] = v.A[end] * v.u[end]
 end
 

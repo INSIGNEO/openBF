@@ -115,7 +115,6 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         v.Q[i] += dt * 0.5 * v.beta[i] * v.A[i]^1.5 / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
         v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]  #dP/dh0
 
-        v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
         v.u[i] = v.Q[i] / v.A[i]
         
         uc = abs(wave_speed(v.A[i], v.gamma[i]) + v.u[i])
