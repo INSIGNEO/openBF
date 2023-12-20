@@ -14,7 +14,6 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 Read the [documentation](https://insigneo.github.io/openBF) for installation and run instructions.
 
-
 ### Citation
 
 ```
