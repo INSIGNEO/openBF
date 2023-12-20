@@ -6,7 +6,7 @@ blood:
 solver:
   Ccfl: 0.9
   cycles: 2
-  jump: 100
+  jump: 10
   convergence_tolerance: 1.0
 network:
   - label: v0
