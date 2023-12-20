@@ -24,6 +24,11 @@ function run_simulation(
 )
     verbose && println("Loading config...")
     config = load_yaml_config(yaml_config)
+
+    tosave = config["write_results"]
+    isempty(tosave) && (tosave = ["P"])
+    "P" ∉ tosave && push!(tosave, "P")
+
     verbose && println("project name: $(config["project_name"])")
 
     project_name = config["project_name"]
@@ -66,7 +71,7 @@ function run_simulation(
         verbose && next!(prog)
 
         if current_time >= checkpoints[counter]
-            flush_to_temp(current_time, network)
+            flush_to_temp(current_time, network, tosave)
             counter += 1
         end
 
@@ -79,8 +84,8 @@ function run_simulation(
                 conv_error, error_loc = get_conv_error(network)
             end
 
-            move_temp_to_last(network)
-            out_files && append_last_to_out(network)
+            move_temp_to_last(network, tosave)
+            out_files && append_last_to_out(network, tosave)
 
             if verbose
                 if passed_cycles > 0

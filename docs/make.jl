@@ -20,3 +20,7 @@ makedocs(
 
 
 # TODO: add link to dashboard
+
+deploydocs(
+    repo = "github.com/INSIGNEO/openBF.git",
+)
