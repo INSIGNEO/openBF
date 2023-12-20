@@ -16,13 +16,15 @@ getprog(cycle::Int64, verbose::Bool) =
     ProgressUnknown(desc = "Solving cycle #$cycle:", spinner = true, showspeed = true) :
     nothing
 
-function run_simulation(yaml_config::String;
+function run_simulation(
+    yaml_config::String;
     verbose::Bool = true,
     out_files::Bool = false,
     conv_ceil::Bool = false,
 )
     verbose && println("Loading config...")
     config = load_yaml_config(yaml_config)
+    verbose && println("project name: $(config["project_name"])")
 
     project_name = config["project_name"]
     blood = Blood(config["blood"])
@@ -31,19 +33,24 @@ function run_simulation(yaml_config::String;
     # TODO: results dir from config
     ########################################
     results_dir = project_name * "_results"
-    isdir(results_dir) && rm(results_dir, recursive=true)
+    isdir(results_dir) && rm(results_dir, recursive = true)
     ~isdir(results_dir) && mkdir(results_dir)
-    cp(yaml_config, joinpath(results_dir, yaml_config), force=true)
+    cp(yaml_config, joinpath(results_dir, yaml_config), force = true)
     cd(results_dir)
     #########################################
 
-    network = Network(config["network"], blood, heart, config["solver"]["Ccfl"], verbose=verbose)
+    network = Network(
+        config["network"],
+        blood,
+        heart,
+        config["solver"]["Ccfl"],
+        verbose = verbose,
+    )
     total_time = config["solver"]["cycles"] * heart.cardiac_period
     jump = config["solver"]["jump"]
     checkpoints = range(0, stop = heart.cardiac_period, length = jump)
 
     verbose && println("\nStart simulation")
-    # TODO: log stats
 
     current_time = 0.0
     passed_cycles = 0
@@ -77,7 +84,10 @@ function run_simulation(yaml_config::String;
 
             if verbose
                 if passed_cycles > 0
-                    finish!(prog, showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)])
+                    finish!(
+                        prog,
+                        showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)],
+                    )
                 else
                     finish!(prog)
                 end

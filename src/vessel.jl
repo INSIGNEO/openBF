@@ -98,7 +98,8 @@ end
 
 wave_speed(A::Float64, gamma::Float64) = sqrt(1.5 * gamma * sqrt(A))
 
-pressure(A::Float64, A0::Float64, beta::Float64, Pext::Float64) = Pext + beta * (sqrt(A / A0) - 1.0)
+pressure(A::Float64, A0::Float64, beta::Float64, Pext::Float64) =
+    Pext + beta * (sqrt(A / A0) - 1.0)
 
 function mesh(config::Dict{Any,Any})
     L = config["L"]

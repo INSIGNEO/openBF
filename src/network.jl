@@ -18,7 +18,13 @@ struct Network
     heart::Heart
 end
 number_of_nodes(config::Vector{Dict{Any,Any}}) = maximum(c["tn"] for c in config)
-function Network(config::Vector{Dict{Any,Any}}, blood::Blood, heart::Heart, Ccfl::Float64; verbose = true)
+function Network(
+    config::Vector{Dict{Any,Any}},
+    blood::Blood,
+    heart::Heart,
+    Ccfl::Float64;
+    verbose = true,
+)
     prog = verbose ? Progress(length(config); desc = "Building network:") : nothing
 
     graph = SimpleDiGraph(number_of_nodes(config))

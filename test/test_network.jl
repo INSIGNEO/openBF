@@ -1,3 +1,4 @@
+println("test network")
 test_folder = "network"
 cd(test_folder)
 
