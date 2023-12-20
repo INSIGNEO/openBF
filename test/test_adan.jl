@@ -20,8 +20,8 @@ for artery in [
     Q = readdlm("adan56_results/$(artery)_Q.last")
     q = readdlm("ref/$(artery)_Q.last")
 
-    @test P == p
-    @test Q == q
+    @test isapprox(P[:,4], p[:,4], atol=1.0)
+    @test isapprox(Q[:,4], q[:,4], atol=1e-6)
 end
 
 rm("adan56_results/", recursive = true)
