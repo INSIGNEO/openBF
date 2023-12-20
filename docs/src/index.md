@@ -1,6 +1,6 @@
 # openBF
 
-openBF is a computational library written in [Julia](https://insigneo.github.io/openBF/Docs/doc-files/julialang.org) for 1D blood flow simulations in elastic arteries.
+openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
 ## Publications 
 
