@@ -10,11 +10,7 @@ function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
     ]
 
     #Parameters vector
-    k1 = sqrt(0.5 * 3 * v1.gamma[end])
-    k2 = sqrt(0.5 * 3 * v2.gamma[1])
-    k3 = sqrt(0.5 * 3 * v3.gamma[1])
-    k = [k1, k2, k3]
-
+    k = sqrt.(1.5 .* (v1.gamma[end], v2.gamma[1], v3.gamma[1]))
     W = w_star_bifurcation(U, k)
     J = jacobian_bifurcation(v1, v2, v3, U, k)
     F = f_bifurcation(v1, v2, v3, U, k, W)
@@ -76,7 +72,7 @@ function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
 end
 
 
-function w_star_bifurcation(U::Array, k::Array)
+function w_star_bifurcation(U::Array, k::Tuple)
     W1 = U[1] + 4 * k[1] * U[4]
     W2 = U[2] - 4 * k[2] * U[5]
     W3 = U[3] - 4 * k[3] * U[6]
@@ -85,7 +81,7 @@ function w_star_bifurcation(U::Array, k::Array)
 end
 
 
-function f_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Array, W::Array)
+function f_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple, W::Array)
     f1 = U[1] + 4 * k[1] * U[4] - W[1]
     f2 = U[2] - 4 * k[2] * U[5] - W[2]
     f3 = U[3] - 4 * k[3] * U[6] - W[3]
@@ -102,7 +98,7 @@ function f_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Array, W
 end
 
 
-function jacobian_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Array)
+function jacobian_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple)
     J = zeros(6, 6) + I(6)
 
     J[1, 4] = 4 * k[1]

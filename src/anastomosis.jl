@@ -12,11 +12,7 @@ function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
     ]
 
     #Parameters vector
-    k1 = sqrt(0.5 * 3 * v1.gamma)
-    k2 = sqrt(0.5 * 3 * v2.gamma)
-    k3 = sqrt(0.5 * 3 * v3.gamma)
-    k = [k1, k2, k3]
-
+    k = sqrt.(1.5 .* (v1.gamma[end], v2.gamma[end], v3.gamma[1]))
     W = calculateWstarAn(U, k)
     J = calculateJacobianAn(v1, v2, v3, U, k)
     F = calculateFofUAn(v1, v2, v3, U, k, W)
@@ -27,7 +23,6 @@ function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
 
     while true
         dU = J \ (-F)
-        # U_new = U + 0.01*dU
         U_new = U + dU
 
         if any(isnan(dot(F, F)))
@@ -78,7 +73,7 @@ function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
 
 end
 
-function calculateWstarAn(U::Array, k::Array)
+function calculateWstarAn(U::Array, k::Tuple)
 
     W1 = U[1] + 4 * k[1] * U[4]
     W2 = U[2] + 4 * k[2] * U[5]
@@ -87,7 +82,7 @@ function calculateWstarAn(U::Array, k::Array)
     return [W1, W2, W3]
 end
 
-function calculateFofUAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Array, W::Array)
+function calculateFofUAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple, W::Array)
 
     f1 = U[1] + 4 * k[1] * U[4] - W[1]
 
@@ -110,7 +105,7 @@ function calculateFofUAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Array,
     return [f1, f2, f3, f4, f5, f6]
 end
 
-function calculateJacobianAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Array)
+function calculateJacobianAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple)
 
     J = eye(6)
 

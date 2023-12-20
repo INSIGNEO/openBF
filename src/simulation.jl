@@ -94,7 +94,7 @@ function run_simulation(yaml_config::String;
         if current_time >= total_time ||
            passed_cycles == config["solver"]["cycles"] ||
            conv_error < config["solver"]["convergence_tolerance"]
-            finish!(prog)
+            verbose && finish!(prog)
             break
         end
         current_time += dt

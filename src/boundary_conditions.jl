@@ -4,36 +4,10 @@ function set_inlet_bc(t::Float64, dt::Float64, v::Vessel, h::Heart)
 end
 
 function inlet_from_data(t::Float64, h::Heart)
-
-    # --------------------------------------------------------------------------
-    # Functioning
-    # --------------------------------------------------------------------------
-    # Inlet flow waveform is stored in `h` data structure inside `input_data`
-    # matrix. `input_data` has two columns and as many rows as time steps. The
-    # first column (`input_data[:,1]`) contains the time variable. The second
-    # column (`input_data[:,2]`) contains the flow variable. The two arrays are
-    # copied into two variables, `idt` and `idq` respectively.
-    # --------------------------------------------------------------------------
     idt = h.input_data[:, 1]
     idq = h.input_data[:, 2]
-    # `t_hat` variable tells us how many cardiac cycles have already been
-    # simulated. This is calculated with `div(a, b)` which returns `a/b`,
-    # truncating to an integer.
     t_hat = div(t, h.cardiac_period)
-    # The current time is then updated by subtracting as many cardiac cycles as
-    # those already passed. This is done in order to have a reference within the
-    # cardiac cycle, i.e. in order to know at what point (*when*) in the cardiac
-    # cycle the simulation is running.
     t -= t_hat * h.cardiac_period
-    # The waveform is given in a discrete form and usually with a small amount
-    # of points along the cardiac cycle. Usually, the numerical $\Delta t$ is
-    # small enough to fall between two time steps reported in `idt`. This
-    # loop skims all the entries in `idt` and finds the time interval containing
-    # the current time `t`. The variable `idx` is initialised to zero for
-    # simplicity.
-    #
-    # <div style="text-align:center">
-    # <img src="images/idt_array.png" width="200"></div>
     idx = 0
     for i = 1:length(idt)
         if ((t >= idt[i]) && (t <= idt[i+1]))
@@ -41,16 +15,7 @@ function inlet_from_data(t::Float64, h::Heart)
             break
         end
     end
-    # The flow `qu` is then computed at the current time by a linear
-    # interpolation between the two known flows (`idq[idx]` and `idq[idx+1]`)
-    # at the ends of the time interval.
-    qu = idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) / (idt[idx+1] - idt[idx])
-    # --------------------------------------------------------------------------
-    # Returns:
-    # ---------- ---------------------------------------------------------------
-    # `qu`       `::Float` inlet flow rate at current time.
-    # --------------------------------------------------------------------------
-    return qu
+    idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) / (idt[idx+1] - idt[idx])
 end
 
 function riemann_invariants(i::Int64, v::Vessel)

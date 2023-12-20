@@ -1,11 +1,7 @@
 function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
 
     U = [v1.u[end], v2.u[1], sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1]))]
-
-    k1 = sqrt(0.5 * 3 * v1.gamma[end])
-    k2 = sqrt(0.5 * 3 * v2.gamma[1])
-    k = [k1, k2]
-
+    k = sqrt.(1.5 .* (v1.gamma[end], v2.gamma[1]))
     W = w_star_conj(U, k)
     J = jacobian_conj(b, v1, v2, U, k)
     F = f_conj(b, v1, v2, U, k, W)
@@ -58,7 +54,7 @@ function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
 end
 
 
-function w_star_conj(U::Array, k::Array)
+function w_star_conj(U::Array, k::Tuple)
 
     W1 = U[1] + 4 * k[1] * U[3]
     W2 = U[2] - 4 * k[2] * U[4]
@@ -67,7 +63,7 @@ function w_star_conj(U::Array, k::Array)
 end
 
 
-function f_conj(b::Blood, v1::Vessel, v2::Vessel, U::Array, k::Array, W::Array)
+function f_conj(b::Blood, v1::Vessel, v2::Vessel, U::Array, k::Tuple, W::Array)
 
     f1 = U[1] + 4 * k[1] * U[3] - W[1]
 
@@ -83,7 +79,7 @@ function f_conj(b::Blood, v1::Vessel, v2::Vessel, U::Array, k::Array, W::Array)
 end
 
 
-function jacobian_conj(b::Blood, v1::Vessel, v2::Vessel, U::Array, k::Array)
+function jacobian_conj(b::Blood, v1::Vessel, v2::Vessel, U::Array, k::Tuple)
 
     J = zeros(4, 4) + I(4)
 
