@@ -67,7 +67,7 @@ __Optional__ parameters are:
 
 - `Pext` vessel external pressure in $Pa$, default $0.0 Pa$;
 
-- `gamma profile` is the radial velocity profile parameter used in the calculation of the viscous losses term, default $2$ (parabolic profile).
+- `gamma_profile` is the radial velocity profile parameter used in the calculation of the viscous losses term, default $2$ (parabolic profile).
 
 ## Boundary conditions
 
@@ -93,12 +93,14 @@ In case of three-element windkessel:
 The configuration file template is reported below. This contains all the mandatory and optional paramenter that can be specified in openBF. The parameter type is reported for each line after the #.
 
 ```yml
-project name: <project name> # String
+project_name: <project name> # String
+
+write_results: ["P"] # ["P", "Q", "u", "A"]
 
 solver:
   Ccfl: <Courant's number> # 0.0 < Ccfl ≤ 1.0; Float
   cycles: <Max number of cardiac cycles> # Int
-  convergence_tolerance: <Max %error between two cycles> # Pressure, Float
+  convergence_tolerance: <Max RMSE between two cycles> # Pressure, Float
   jump: <Number of timepoints in result files; default 100> # Int
 
 blood:
@@ -111,25 +113,26 @@ network:
     tn: <target node> # Int
 
     L: <length> # [m]; Float
+    M: <number of divisions along the vessel; default so that Δx = L/M = 1.0mm; minimum M=5> # Int (optional)
     E: <wall Young's modulus> # [Pa]; Float
+    h0: <wall thickness; default computed as h0(x) = f(R0)> # [m]; Float (optional)
 
     R0: <constant lumen radius> # [m]; Float
-    #------ OR ------ to assign a linear change of radius along the vessel
+    #------ OR ------ to assign a linear tapering
     Rp: <proximal lumen radius, i.e. lumen radius at sn>
     Rd: <distal lumen radius, i.e. lumen radius at tn>
 
-    M: <number of divisions along the vessel; default M: Δx = L/M = 1.0mm> # Int
-    Pext: <external pressure; default 0.0 Pa> # [Pa]; Float
+    Pext: <external pressure; default 0.0 Pa> # [Pa]; Float (optional)
 
-    gamma profile: <radial velocity profile parameter; default 9> # ≥ 2.0; Float
+    gamma_profile: <radial velocity profile parameter; default 9> # ≥ 2.0; Float
 
-    # outlet: wk2
+    # outlet wk2
     R1: <windkessel peripheral resistance> # [Pa⋅s⋅m^-3]; Float
     Cc: <compliance> # [m^3⋅Pa^-1]; Float
-    #------ OR ------ outlet: wk3
+    #------ OR ------ outlet wk3
     R1: <windkessel inlet impedance>
     R2: <peripheral resistance>
     Cc: <compliance>
-    #------ OR ------ outlet: reflection
+    #------ OR ------ outlet reflection
     Rt: <reflection coefficient> # 1.0 ≤ Rt ≥ -1.0; Float
 ```

@@ -130,16 +130,13 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     tn = config["tn"]
     Rp, Rd = radii(config)
     L, M, dx, invDx, halfDx = mesh(config)
-    #   h0          =     m[7]
     E = config["E"]
-
 
     Pext = get(config, "Pext", 0.0)
     initial_pressure = get(config, "initial_pressure", 0.0)
     initial_flow = get(config, "initial_flow", 0.0)
 
     sigma = 0.5
-
 
     A0 = zeros(Float64, M)
     R0 = zeros(Float64, M)
@@ -170,15 +167,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
             )
     end
 
-    #   prIntln(dA0dx[end])
-
-    # Elastic constants for trans-mural [pressure](converter.html#pressure)
-    # (`beta`) and [wave speed](converter.html#wave_speed) (`gamma`)
-    # calculation:
-    # $$
-    #   \beta = \sqrt{\frac{\pi}{A_0}} \frac{h_0 E}{1 - \sigma^2}, \quad
-    #   \gamma = \frac{\beta}{3 \rho R_0 \sqrt{\pi}} .
-    # $$
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)
     gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
 
@@ -187,25 +175,12 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     gamma_ghost[1] = gamma[1]
     gamma_ghost[end] = gamma[end]
 
-    # Initialise conservative (`A` and `Q`) and primitive (`u`, `c`, and `P`)
-    # variables arrays with initial values. `A` is taken as the unstressed
-    # cross-sectional area `A0` and `Q` is everywhere the `initial_flow`
-    # specified in [`project_constants.jl`](../index.html#project_constants).
-    # The longitudinal velocity `u` comes from the definition of `Q`
-    # $$
-    #     Q = u A .
-    # $$
-    # `c` and `P` are computed with `beta` and `gamma` by
-    # [`pressure`](converter.html#pressure) and
-    # [`wave_speed`](converter.html#wave_speed) functions.
     A = zeros(Float64, M) + A0
     Q = zeros(Float64, M) .+ initial_flow
     u = zeros(Float64, M) + Q ./ A
     c = wave_speed.(A, gamma)
     P = pressure.(A, A0, beta, Pext)
 
-    # [Ghost cells](godunov.html) are initialised
-    # as the Internal nodes.
     U00A = A0[1]
     U01A = A0[2]
     UM1A = A0[M]
@@ -215,9 +190,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     U01Q = initial_flow
     UM1Q = initial_flow
     UM2Q = initial_flow
-    # Forward and backward
-    # [Riemann invariants](converter.html#riemannInvariants)
-    # at the vessel outlet node.
+
     W1M0 = u[end] - 4 * c[end]
     W2M0 = u[end] + 4 * c[end]
 
@@ -233,7 +206,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
     end
 
-    # `Pcn` is the pressure through the peripheral compliance of the three
+    # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
     # artery-vein interface.
     Pc = 0.0
