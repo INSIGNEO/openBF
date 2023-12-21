@@ -10,11 +10,6 @@ makedocs(
         "Quickstart" => "man/quickstart.md",
         "Configuration" => "man/config.md",
         "Examples" => "man/examples.md",
-        # "Manual" => Any[
-        #     # "Guide" => "man/guide.md",
-        #     # "man/config.md",
-        #     # "man/examples.md"
-        # ]
     ],
 )
 
