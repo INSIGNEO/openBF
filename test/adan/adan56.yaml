@@ -10,6 +10,7 @@ solver:
   convergence_tolerance: 1.0
 network:
   - label: aortic_arch_I
+    phi_v: 0.0
     sn: 1
     tn: 2
     L: 0.0744137655
@@ -23,6 +24,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: brachiocephalic_trunk
+    phi_v: 0.0
     sn: 2
     tn: 3
     L: 0.0473512778
@@ -33,6 +35,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: aortic_arch_II
+    phi_v: 0.0
     sn: 2
     tn: 4
     L: 0.0096038364
@@ -43,6 +46,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: subclavian_R_I
+    phi_v: 0.0
     sn: 3
     tn: 5
     L: 0.015740629
@@ -53,6 +57,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_carotid_R
+    phi_v: 0.0
     sn: 3
     tn: 6
     L: 0.0812193581
@@ -63,6 +68,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: vertebral_R
+    phi_v: 0.0
     sn: 5
     tn: 7
     L: 0.2044531883
@@ -77,6 +83,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: subclavian_R_II
+    phi_v: 0.0
     sn: 5
     tn: 8
     L: 0.0411187821
@@ -87,6 +94,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: axillary_R
+    phi_v: 0.0
     sn: 8
     tn: 9
     L: 0.1200020481
@@ -97,6 +105,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: brachial_R
+    phi_v: 0.0
     sn: 9
     tn: 10
     L: 0.2231082046
@@ -107,6 +116,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: radial_R
+    phi_v: 0.0
     sn: 10
     tn: 11
     L: 0.3008857661
@@ -121,6 +131,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: ulnar_R_I
+    phi_v: 0.0
     sn: 10
     tn: 12
     L: 0.0297562408
@@ -131,6 +142,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_interosseous_R
+    phi_v: 0.0
     sn: 12
     tn: 13
     L: 0.0162660658
@@ -141,6 +153,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: ulnar_R_II
+    phi_v: 0.0
     sn: 12
     tn: 14
     L: 0.2392616296
@@ -155,6 +168,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_interosseous_R
+    phi_v: 0.0
     sn: 13
     tn: 15
     L: 0.2305613685
@@ -169,6 +183,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: external_carotid_R
+    phi_v: 0.0
     sn: 6
     tn: 16
     L: 0.0608968774
@@ -183,6 +198,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: internal_carotid_R
+    phi_v: 0.0
     sn: 6
     tn: 17
     L: 0.1321099628
@@ -197,6 +213,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_carotid_L
+    phi_v: 0.0
     sn: 4
     tn: 18
     L: 0.1213190392
@@ -207,6 +224,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: aortic_arch_III
+    phi_v: 0.0
     sn: 4
     tn: 19
     L: 0.0069785313
@@ -217,6 +235,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: external_carotid_L
+    phi_v: 0.0
     sn: 18
     tn: 20
     L: 0.0608970599
@@ -231,6 +250,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: internal_carotid_L
+    phi_v: 0.0
     sn: 18
     tn: 21
     L: 0.1321103835
@@ -245,6 +265,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: subclavian_L_I
+    phi_v: 0.0
     sn: 19
     tn: 22
     L: 0.0493841253
@@ -255,6 +276,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: aortic_arch_IV
+    phi_v: 0.0
     sn: 19
     tn: 23
     L: 0.0430576701
@@ -265,6 +287,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: vertebral_L
+    phi_v: 0.0
     sn: 22
     tn: 24
     L: 0.2041538087
@@ -279,6 +302,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: subclavian_L_II
+    phi_v: 0.0
     sn: 22
     tn: 25
     L: 0.0411187859
@@ -289,6 +313,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: axillary_L
+    phi_v: 0.0
     sn: 25
     tn: 26
     L: 0.120002137
@@ -299,6 +324,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: brachial_L
+    phi_v: 0.0
     sn: 26
     tn: 27
     L: 0.2231087827
@@ -309,6 +335,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: radial_L
+    phi_v: 0.0
     sn: 27
     tn: 28
     L: 0.3108844061
@@ -323,6 +350,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: ulnar_L_I
+    phi_v: 0.0
     sn: 27
     tn: 29
     L: 0.0297557899
@@ -333,6 +361,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_interosseous_L
+    phi_v: 0.0
     sn: 29
     tn: 30
     L: 0.0162660627
@@ -343,6 +372,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: ulnar_L_II
+    phi_v: 0.0
     sn: 29
     tn: 31
     L: 0.2392621589
@@ -357,6 +387,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_interosseous_L
+    phi_v: 0.0
     sn: 30
     tn: 32
     L: 0.2305624697
@@ -371,6 +402,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: thoracic_aorta_I
+    phi_v: 0.0
     sn: 23
     tn: 33
     L: 0.0098970813
@@ -381,6 +413,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_intercostal_T6_R
+    phi_v: 0.0
     sn: 33
     tn: 34
     L: 0.1968810988
@@ -395,6 +428,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: thoracic_aorta_II
+    phi_v: 0.0
     sn: 33
     tn: 35
     L: 0.0078803844
@@ -405,6 +439,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_intercostal_T6_L
+    phi_v: 0.0
     sn: 35
     tn: 36
     L: 0.17803022
@@ -419,6 +454,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: thoracic_aorta_III
+    phi_v: 0.0
     sn: 35
     tn: 37
     L: 0.0155559176
@@ -429,6 +465,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_intercostal_T7_R
+    phi_v: 0.0
     sn: 37
     tn: 38
     L: 0.2015603447
@@ -443,6 +480,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: thoracic_aorta_IV
+    phi_v: 0.0
     sn: 37
     tn: 39
     L: 0.0053270486
@@ -453,6 +491,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_intercostal_T7_L
+    phi_v: 0.0
     sn: 39
     tn: 40
     L: 0.1851762417
@@ -467,6 +506,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: thoracic_aorta_V
+    phi_v: 0.0
     sn: 39
     tn: 41
     L: 0.1215607465
@@ -477,6 +517,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: thoracic_aorta_VI
+    phi_v: 0.0
     sn: 41
     tn: 42
     L: 0.0032476667
@@ -487,6 +528,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: celiac_trunk
+    phi_v: 0.0
     sn: 42
     tn: 43
     L: 0.0168238334
@@ -497,6 +539,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: abdominal_aorta_I
+    phi_v: 0.0
     sn: 42
     tn: 44
     L: 0.0139884345
@@ -507,6 +550,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_hepatic
+    phi_v: 0.0
     sn: 43
     tn: 45
     L: 0.0665545523
@@ -521,6 +565,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: splenic_I
+    phi_v: 0.0
     sn: 43
     tn: 46
     L: 0.003948745
@@ -531,6 +576,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: left_gastric
+    phi_v: 0.0
     sn: 46
     tn: 47
     L: 0.0928669141
@@ -545,6 +591,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: splenic_II
+    phi_v: 0.0
     sn: 46
     tn: 48
     L: 0.0644027418
@@ -559,6 +606,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: superior_mesenteric
+    phi_v: 0.0
     sn: 44
     tn: 49
     L: 0.2163983238
@@ -573,6 +621,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: abdominal_aorta_II
+    phi_v: 0.0
     sn: 44
     tn: 50
     L: 0.0043191256
@@ -583,6 +632,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: renal_L
+    phi_v: 0.0
     sn: 50
     tn: 51
     L: 0.021836535
@@ -597,6 +647,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: abdominal_aorta_III
+    phi_v: 0.0
     sn: 50
     tn: 52
     L: 0.0119772827
@@ -607,6 +658,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: renal_R
+    phi_v: 0.0
     sn: 52
     tn: 53
     L: 0.0377174249
@@ -621,6 +673,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: abdominal_aorta_IV
+    phi_v: 0.0
     sn: 52
     tn: 54
     L: 0.0540893766
@@ -631,6 +684,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: inferior_mesenteric
+    phi_v: 0.0
     sn: 54
     tn: 55
     L: 0.0902385435
@@ -645,6 +699,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: abdominal_aorta_V
+    phi_v: 0.0
     sn: 54
     tn: 56
     L: 0.042224742
@@ -655,6 +710,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_iliac_R
+    phi_v: 0.0
     sn: 56
     tn: 57
     L: 0.076428564
@@ -665,6 +721,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: common_iliac_L
+    phi_v: 0.0
     sn: 56
     tn: 58
     L: 0.0740380184
@@ -675,6 +732,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: external_iliac_R
+    phi_v: 0.0
     sn: 57
     tn: 59
     L: 0.102210634
@@ -685,6 +743,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: internal_iliac_R
+    phi_v: 0.0
     sn: 57
     tn: 60
     L: 0.0725094209
@@ -699,6 +758,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: femoral_R_I
+    phi_v: 0.0
     sn: 59
     tn: 61
     L: 0.0315912244
@@ -709,6 +769,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: profunda_femoris_R
+    phi_v: 0.0
     sn: 61
     tn: 62
     L: 0.2383937248
@@ -723,6 +784,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: femoral_R_II
+    phi_v: 0.0
     sn: 61
     tn: 63
     L: 0.3192853229
@@ -733,6 +795,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: popliteal_R_I
+    phi_v: 0.0
     sn: 63
     tn: 64
     L: 0.1320290229
@@ -743,6 +806,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: anterior_tibial_R
+    phi_v: 0.0
     sn: 64
     tn: 65
     L: 0.3862156733
@@ -757,6 +821,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: popliteal_R_II
+    phi_v: 0.0
     sn: 64
     tn: 66
     L: 0.0087974289
@@ -767,6 +832,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: tibiofibular_trunk_R
+    phi_v: 0.0
     sn: 66
     tn: 67
     L: 0.0361626766
@@ -777,6 +843,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_tibial_R
+    phi_v: 0.0
     sn: 67
     tn: 68
     L: 0.3828848516
@@ -791,6 +858,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: external_iliac_L
+    phi_v: 0.0
     sn: 58
     tn: 69
     L: 0.1022106793
@@ -801,6 +869,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: internal_iliac_L
+    phi_v: 0.0
     sn: 58
     tn: 70
     L: 0.0725093924
@@ -815,6 +884,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: femoral_L_I
+    phi_v: 0.0
     sn: 69
     tn: 71
     L: 0.0315912236
@@ -825,6 +895,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: profunda_femoris_L
+    phi_v: 0.0
     sn: 71
     tn: 72
     L: 0.2383937548
@@ -839,6 +910,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: femoral_L_II
+    phi_v: 0.0
     sn: 71
     tn: 73
     L: 0.3192853183
@@ -849,6 +921,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: popliteal_L_I
+    phi_v: 0.0
     sn: 73
     tn: 74
     L: 0.1320280854
@@ -859,6 +932,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: anterior_tibial_L
+    phi_v: 0.0
     sn: 74
     tn: 75
     L: 0.3862164058
@@ -873,6 +947,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: popliteal_L_II
+    phi_v: 0.0
     sn: 74
     tn: 76
     L: 0.0087973824
@@ -883,6 +958,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: tibiofibular_trunk_L
+    phi_v: 0.0
     sn: 76
     tn: 77
     L: 0.0361636403
@@ -893,6 +969,7 @@ network:
     gamma_profile: 2
     Pext: 10000.0
   - label: posterior_tibial_L
+    phi_v: 0.0
     sn: 77
     tn: 78
     L: 0.3828846476
