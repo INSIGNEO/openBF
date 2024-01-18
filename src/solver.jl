@@ -128,10 +128,35 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     #source term
     for i = 1:v.M
         v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt   #viscosity
-        v.Q[i] += dt * 0.5 * v.beta[i] * v.A[i]^1.5 / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
+        v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
         v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]  #dP/dh0
+    end
 
-        v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
+    #parabolic system (visco-elastic)
+    if v.Cv[1] != 0.0
+        a = v.Cv.*dt/(v.dx*v.dx)
+        Tupper = -a[2:end]
+        Tlower = -a[1:end-1]
+        Tdiagonal = 1.0.+2.0.*a
+        Tdiagonal[1] -= a[1]
+        Tdiagonal[end] -= a[end]
+        
+        T = Tridiagonal(Tupper, Tdiagonal, Tlower)
+
+        d = (1.0 .- 2.0.*a).*v.Q
+        d[1] += a[2]*v.Q[2] + a[1]*v.Q[1]
+        d[2:end-1] .+= a[1:end-2].*v.Q[1:end-2] .+ a[3:end].*v.Q[3:end]
+        d[end] += a[end-1]*v.Q[end-1] + a[end]*v.Q[end]
+
+        v.Q = T\d
+    end
+
+    for i=1:v.M
+        if v.Cv[i] == 0.0 || i == 1 || i == v.M
+            v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
+        else
+            v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext) - v.Cv[i] * b.rho / v.A[i] * (v.Q[i] - v.Q[i-1])/v.dx
+        end
         v.u[i] = v.Q[i] / v.A[i]
         v.c[i] = wave_speed(v.A[i], v.gamma[i])
     end
@@ -154,7 +179,7 @@ end
 function flux!(v::Vessel, A::Vector{Float64}, Q::Vector{Float64}, Flux::Array{Float64,2})
     for i = 1:v.M+2
         Flux[1, i] = Q[i]
-        Flux[2, i] = Q[i] * Q[i] / A[i] + v.gamma_ghost[i] * A[i]^1.5
+        Flux[2, i] = Q[i] * Q[i] / A[i] + v.gamma_ghost[i] * A[i]*sqrt(A[i])
     end
 end
 

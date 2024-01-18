@@ -43,6 +43,7 @@ mutable struct Vessel
 
     #Physical constants
     beta::Vector{Float64}
+    Cv::Vector{Float64}
     gamma::Vector{Float64}
     gamma_ghost::Vector{Float64}
     A0::Vector{Float64}
@@ -184,7 +185,12 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     end
 
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)
+    # beta = zeros(Float64, M) .+ get(config, "beta", 0.0)
+
     gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
+
+    phi_v = get(config, "phi_v", 5000.0)
+    Cv = 2*sqrt(pi)*phi_v.*h0./(b.rho.*sqrt.(A0))
 
     gamma_ghost = zeros(Float64, M + 2)
     gamma_ghost[2:M+1] = gamma
@@ -263,6 +269,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         halfDx,
         Ccfl,
         beta,
+        Cv,
         gamma,
         gamma_ghost,
         A0,

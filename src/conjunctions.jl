@@ -59,7 +59,7 @@ function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
     v1.A[end] = U[3] * U[3] * U[3] * U[3]
     v1.Q[end] = v1.u[end] * v1.A[end]
 
-    v2.A[1] = U[4]^4
+    v2.A[1] = U[4] * U[4] * U[4] * U[4]
     v2.Q[1] = v2.u[1] * v2.A[1]
 
     v1.P[end] = pressure(v1.A[end], v1.A0[end], v1.beta[end], v1.Pext)
@@ -104,8 +104,8 @@ function jacobian_conj(b::Blood, v1::Vessel, v2::Vessel, U::Array, k::Tuple)
 
     J[3, 1] = U[3] * U[3] * U[3] * U[3]
     J[3, 2] = -U[4] * U[4] * U[4] * U[4]
-    J[3, 3] = 4 * U[1] * (U[3] * U[3] * U[3]^3)
-    J[3, 4] = -4 * U[2] * (U[4] * U[4] * U[4]^3)
+    J[3, 3] = 4 * U[1] * U[3] * U[3] * U[3]
+    J[3, 4] = -4 * U[2] * U[4] * U[4] * U[4]
 
     J[4, 3] = 2 * v1.beta[end] * U[3] / sqrt(v1.A0[end])
     J[4, 4] = -2 * v2.beta[1] * U[4] / sqrt(v2.A0[1])
