@@ -189,7 +189,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
 
     gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
 
-    phi_v = get(config, "phi_v", 5000.0)
+    phi_v = get(config, "phi_v", 0.0) # default elastic
     Cv = 2*sqrt(pi)*phi_v.*h0./(b.rho.*sqrt.(A0))
 
     gamma_ghost = zeros(Float64, M + 2)
