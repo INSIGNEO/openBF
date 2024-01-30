@@ -49,7 +49,7 @@ function run_simulation(
 
     project_name = config["project_name"]
     blood = Blood(config["blood"])
-    heart = Heart(config["project_name"])
+    heart = Heart(config["project_name"], get(config, "inlet_file", nothing))
 
     # TODO: results dir from config
     ########################################

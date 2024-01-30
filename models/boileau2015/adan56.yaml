@@ -1,4 +1,5 @@
 project_name: adan56
+inlet_file: "adan56_inlet.dat"
 write_results: ["P", "Q"]
 blood:
   rho: 1060.0
@@ -17,9 +18,6 @@ network:
     M: 74
     Rp: 0.01595
     Rd: 0.0129524399
-    inlet: Q
-    inlet file: adan56_inlet.dat
-    inlet number: 1
     gamma_profile: 2
     Pext: 10000.0
   - label: brachiocephalic_trunk

@@ -76,17 +76,17 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
 
         v.Ql[i] = v.vQ[i] + v.slopesQ[i] * v.halfDx
         v.Qr[i] = v.vQ[i] - v.slopesQ[i] * v.halfDx
-    end
 
-    flux!(v, v.Al, v.Ql, v.Fl)
-    flux!(v, v.Ar, v.Qr, v.Fr)
+        v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+    end
 
     dxDt = v.dx / dt
     invDxDt = 1.0 / dxDt
 
     for i = 1:v.M+1
-        v.flux[1, i] = 0.5 * (v.Fr[1, i+1] + v.Fl[1, i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        v.flux[2, i] = 0.5 * (v.Fr[2, i+1] + v.Fl[2, i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+        v.flux[1, i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        v.flux[2, i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
     end
 
     for i = 2:v.M+1
@@ -99,8 +99,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     v.uStar[1, end] = v.uStar[1, end-1]
     v.uStar[2, end] = v.uStar[2, end-1]
 
-    limiter!(v, vec(v.uStar[1, :]), v.invDx, v.dU, v.slopesA)
-    limiter!(v, vec(v.uStar[2, :]), v.invDx, v.dU, v.slopesQ)
+    limiter!(v, v.uStar[1, :], v.invDx, v.dU, v.slopesA)
+    limiter!(v, v.uStar[2, :], v.invDx, v.dU, v.slopesQ)
 
     for i = 1:v.M+2
         v.Al[i] = v.uStar[1, i] + v.slopesA[i] * v.halfDx
@@ -108,14 +108,14 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
 
         v.Ql[i] = v.uStar[2, i] + v.slopesQ[i] * v.halfDx
         v.Qr[i] = v.uStar[2, i] - v.slopesQ[i] * v.halfDx
+
+        v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
     end
 
-    flux!(v, v.Al, v.Ql, v.Fl)
-    flux!(v, v.Ar, v.Qr, v.Fr)
-
     for i = 1:v.M+1
-        v.flux[1, i] = 0.5 * (v.Fr[1, i+1] + v.Fl[1, i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        v.flux[2, i] = 0.5 * (v.Fr[2, i+1] + v.Fl[2, i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+        v.flux[1, i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        v.flux[2, i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
     end
 
     for i = 2:v.M+1
@@ -127,9 +127,9 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
 
     #source term
     for i = 1:v.M
-        v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt   #viscosity
+        v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt        #viscosity
         v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
-        v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]  #dP/dh0
+        v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]          #dP/dh0
     end
 
     #parabolic system (visco-elastic)
@@ -172,21 +172,13 @@ function limiter!(
         dU[1, i] = (U[i] - U[i-1]) * invDx
         dU[2, i-1] = (U[i] - U[i-1]) * invDx
     end
-    superbee!(v, dU, slopes)
+    superbee!(slopes, dU)
 end
 
-function flux!(v::Vessel, A::Vector{Float64}, Q::Vector{Float64}, Flux::Array{Float64,2})
-    for i = 1:v.M+2
-        Flux[1, i] = Q[i]
-        Flux[2, i] = Q[i] * Q[i] / A[i] + v.gamma_ghost[i] * A[i]*sqrt(A[i])
-    end
-end
-
-maxmod(v) = 0.5 * sum(sign, v) * maximum(abs, v)
-minmod(v) = 0.5 * sum(sign, v) * minimum(abs, v)
-function superbee!(v::Vessel, dU::Array{Float64,2}, slopes::Vector{Float64})
-    for i = 1:v.M+2
-        slopes[i] =
-            maxmod((minmod((dU[1, i], 2 * dU[2, i])), minmod((2 * dU[1, i], dU[2, i]))))
+maxmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*max(abs(a), abs(b))
+minmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*min(abs(a), abs(b))
+function superbee!(slopes::Vector{Float64}, dU::Array{Float64,2})
+    for i = eachindex(slopes)
+        slopes[i] = maxmod(minmod(dU[1, i], 2.0 * dU[2, i]), minmod(2.0 * dU[1, i], dU[2, i]))
     end
 end

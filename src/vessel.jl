@@ -108,8 +108,8 @@ mutable struct Vessel
     Ql::Vector{Float64}
     Qr::Vector{Float64}
 
-    Fl::Array{Float64,2}
-    Fr::Array{Float64,2}
+    Fl::Vector{Float64}
+    Fr::Vector{Float64}
 
 end
 
@@ -185,12 +185,16 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     end
 
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)
-    # beta = zeros(Float64, M) .+ get(config, "beta", 0.0)
-
     gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
 
-    phi_v = get(config, "phi_v", 0.0) # default elastic
-    Cv = 2*sqrt(pi)*phi_v.*h0./(b.rho.*sqrt.(A0))
+    if get(config, "visco-elastic", false)
+        b0=0.6
+        b1=0.00150
+        Γ=b1*0.5./R0 .+ b0
+        Cv=Γ./(b.rho.*sqrt.(A0))
+    else
+        Cv = zeros(Float64, M)
+    end
 
     gamma_ghost = zeros(Float64, M + 2)
     gamma_ghost[2:M+1] = gamma
@@ -254,8 +258,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     Ql = zeros(Float64, M + 2)
     Qr = zeros(Float64, M + 2)
 
-    Fl = zeros(Float64, 2, M + 2)
-    Fr = zeros(Float64, 2, M + 2)
+    Fl = zeros(Float64, M + 2)
+    Fr = zeros(Float64, M + 2)
 
     gamma_profile = get(config, "gamma_profile", 2)
 

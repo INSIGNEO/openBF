@@ -7,6 +7,12 @@ project_name: "my_simulation_name"
 
 This is a string that will be used to name the results folder. At the end of the simulation, all the results files will be found in `project_name_results/` directory.
 
+```yaml
+inlet_file: "my_inlet.dat"
+```
+
+The inlet BC is given trough an ASCII file containing a list of values (pressure or volumetric flow rate) in time. For now, the inlet vessel is the one whose `sn` node is `1`.
+
 Following the `write_results` list is defined.
 
 ```yaml
@@ -69,11 +75,11 @@ __Optional__ parameters are:
 
 - `gamma_profile` is the radial velocity profile parameter used in the calculation of the viscous losses term, default $2$ (parabolic profile).
 
+- `visco-elastic` is a boolean flag (default `false`) which switches the constitutive equation to Kelvin-Voigt model.
+
 ## Boundary conditions
 
 The system boundary conditions (BCs) are applied to inlet vessel(s) and outlet vessel(s).
-
-The inlet BC is given trough an ASCII file containing a list of values (pressure or volumetric flow rate) in time. For now, the inlet vessel is the one whose `sn` node is `1`. The inlet file must be called `<project_name>_inlet.dat`.
 
 In the case a vessel outlet is not connected to any other vessel, an outlet BC must be assigned by imposing a reflection coefficient `Rt` or by coupling a _windkessel_ model. In case of `Rt`:
 
@@ -94,7 +100,7 @@ The configuration file template is reported below. This contains all the mandato
 
 ```yml
 project_name: <project name> # String
-
+inlet_file: <inlet name>.dat
 write_results: ["P"] # ["P", "Q", "u", "A"]
 
 solver:
