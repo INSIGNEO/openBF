@@ -31,7 +31,12 @@ getprog(cycle::Int64, verbose::Bool) =
     verbose ?
     ProgressUnknown(desc = "Solving cycle #$cycle:", spinner = true, showspeed = true) :
     nothing
-
+function get_inlet_file(config)
+    if ~haskey(config, "inlet_file")
+        return config["project_name"]*"_inlet.dat"
+    end
+    config["inlet_file"]
+end
 function run_simulation(
     yaml_config::String;
     verbose::Bool = true,
@@ -49,7 +54,7 @@ function run_simulation(
 
     project_name = config["project_name"]
     blood = Blood(config["blood"])
-    heart = Heart(config["project_name"], get(config, "inlet_file", nothing))
+    heart = Heart(get_inlet_file(config))
 
     # TODO: results dir from config
     ########################################

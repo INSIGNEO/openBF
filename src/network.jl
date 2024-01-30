@@ -20,12 +20,8 @@ struct Heart
 end
 
 load_input_data(project_name::String) = readdlm(project_name * "_inlet.dat")
-function Heart(project_name::String, inlet_file::String=nothing)
-    if isnothing(inlet_file)
-        input_data = load_input_data(project_name)
-    else
-        input_data = readdlm(inlet_file)        
-    end
+function Heart(inlet_file::String)
+    input_data = readdlm(inlet_file)        
     cardiac_period = input_data[end, 1]
     Heart(cardiac_period, input_data)
 end
