@@ -122,7 +122,7 @@ function mesh(config::Dict{Any,Any})
     L = config["L"]
     M = get(config, "M", 5)
     M = max(M, 5)
-    M = max(M, ceil(Int, config["L"] * 1e-3))
+    M = max(M, ceil(Int, config["L"] * 1e3))
 
     dx = L / M
     invDx = M / L
@@ -173,15 +173,12 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         end
         A0[i] = pi * R0[i] * R0[i]
         dA0dx[i] = 2 * pi * R0[i] * radius_slope
-        dTaudx[i] =
-            sqrt(pi) *
-            E *
-            radius_slope *
-            1.3 *
-            (
-                h0[i] / R0[i] +
-                R0[i] * (ah * bh * exp(bh * R0[i]) + ch * dh * exp(dh * R0[i]))
-            )
+
+        if haskey(config, "h0")
+            dTaudx[i] = 0.0
+        else
+            dTaudx[i] = (sqrt(pi) * E * radius_slope * 1.3 * (h0[i] / R0[i] + R0[i] * (ah * bh * exp(bh * R0[i]) + ch * dh * exp(dh * R0[i]))))
+        end
     end
 
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)

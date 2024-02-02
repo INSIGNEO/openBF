@@ -14,6 +14,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+function compute_pressure(n::Network)
+    compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("temp"))
+    compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("last"))
+end
+function compute_pressure(v::Vessel, rho::Float64, ext::String)
+    A = readdlm(v.label * "_A.$(ext)")
+
+    P = zeros(Float64, size(A))
+    P[:,1] = A[:,1]
+
+    for (i, j) in enumerate([1, v.node2, v.node3, v.node4, v.M])
+        @. P[:,i+1] = pressure(A[:,i+1], v.A0[j], v.beta[j], v.Pext)
+
+        if v.Cv[1] != 0.0
+            P[:,i+1] .+= v.Cv[j] .* rho ./ A[:,i+1] .* diff([A[:,i+1];A[end,i+1]])./diff([A[:,1];A[end,1]+(A[end,1]-A[end-1,1])])
+        end
+    end
+
+    open(v.label * "_P.$(ext)", "w") do io
+        writedlm(io, P)
+    end
+end
+
 load_yaml_config(yaml_config::String) = YAML.load_file(yaml_config)
 
 function get_conv_error(n::Network)
@@ -102,6 +125,7 @@ function run_simulation(
 
             # check convergence
             if passed_cycles > 0
+                compute_pressure(network)
                 conv_error, error_loc = get_conv_error(network)
             end
 

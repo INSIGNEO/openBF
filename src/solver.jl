@@ -151,11 +151,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         v.Q = T\d
     end
 
+    #update
     for i=1:v.M
-        v.P[i] = pressure(v.A[i], v.A0[i], v.beta[i], v.Pext)
-        if (v.Cv[i] == 0) && (v.M != i != 1)
-            v.P[i] -= v.Cv[i] * b.rho / v.A[i] * (v.Q[i] - v.Q[i-1])/v.dx
-        end
         v.u[i] = v.Q[i] / v.A[i]
         v.c[i] = wave_speed(v.A[i], v.gamma[i])
     end
