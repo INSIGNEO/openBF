@@ -70,8 +70,9 @@ function run_simulation(
     config = load_yaml_config(yaml_config)
 
     tosave = config["write_results"]
-    isempty(tosave) && (tosave = ["P"])
+    isempty(tosave) && (tosave = ["P", "A"])
     "P" ∉ tosave && push!(tosave, "P")
+    "A" ∉ tosave && push!(tosave, "A")
 
     verbose && println("project name: $(config["project_name"])")
 
