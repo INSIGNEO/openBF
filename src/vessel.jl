@@ -84,6 +84,7 @@ mutable struct Vessel
 
     R1::Float64
     R2::Float64
+    total_peripheral_resistance::Float64
     Cc::Float64
     Pc::Float64
 
@@ -228,6 +229,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     if R2 == 0.0
         R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
     end
+    total_peripheral_resistance = R1 + R2
 
     # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
@@ -299,6 +301,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         Rt,
         R1,
         R2,
+        total_peripheral_resistance,
         Cc,
         Pc,
         slope,

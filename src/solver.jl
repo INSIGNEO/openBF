@@ -31,7 +31,7 @@ function solve!(n::Network, dt::Float64, current_time::Float64)
         muscl!(n.vessels[(s, t)], dt, n.blood)
 
         if outdegree(n.graph, t) == 0 # outlet
-            set_outlet_bc(dt, n.vessels[(s, t)])
+            set_outlet_bc(dt, n.vessels[(s, t)], n.blood.rho)
         elseif outdegree(n.graph, t) == 1
             if indegree(n.graph, t) == 1 # conjunction
                 d = first(outneighbors(n.graph, t))

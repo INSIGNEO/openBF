@@ -62,16 +62,14 @@ function inlet_compatibility(dt::Float64, v::Vessel)
 end
 
 
-function set_outlet_bc(dt::Float64, v::Vessel)
+function set_outlet_bc(dt::Float64, v::Vessel, ρ::Float64)
     # A proximal resistance `R1` set to zero means that a reflection coefficient
     if v.R1 == 0.0
         v.P[end] = 2 * v.P[end-1] - v.P[end-2]
         outlet_compatibility(dt, v)
     else
-        wk3(dt, v)
-
+        wk3(dt, v, ρ)
     end
-
 end
 
 function outlet_compatibility(dt::Float64, v::Vessel)
@@ -87,10 +85,15 @@ function outlet_compatibility(dt::Float64, v::Vessel)
 end
 
 
-function wk3(dt::Float64, v::Vessel)
+function wk3(dt::Float64, v::Vessel, ρ::Float64)
     Pout = 0.0
     Al = v.A[end]
     ul = v.u[end]
+
+    # inlet impedance matching
+    v.R1 = ρ * wave_speed(v.A[end], v.gamma[end]) / v.A[end]
+    v.R2 = v.total_peripheral_resistance - v.R1
+
     v.Pc += dt / v.Cc * (Al * ul - (v.Pc - Pout) / v.R2)
     As = Al
 
@@ -111,13 +114,20 @@ function wk3(dt::Float64, v::Vessel)
     v.u[end] = us
 end
 
-function newtone(f::Function, df::Function, x0)
-    xn = x0 - f(x0) / df(x0)
-    if abs(xn - x0) <= 1e-5
-        return xn
-    else
-        newtone(f, df, xn)
+# function newtone(f::Function, df::Function, x0)
+#     xn = x0 - f(x0) / df(x0)
+#     if abs(xn - x0) <= 1e-5
+#         return xn
+#     else
+#         newtone(f, df, xn)
+#     end
+# end
+
+function newtone(f::Function, df::Function, xn)
+    for _=1:10
+        xn -= f(xn) / df(xn)
     end
+    xn
 end
 
 update_ghost_cells!(n::Network) = update_ghost_cells!.(values(n.vessels))
