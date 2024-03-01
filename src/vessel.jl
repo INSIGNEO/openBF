@@ -85,6 +85,7 @@ mutable struct Vessel
     R1::Float64
     R2::Float64
     total_peripheral_resistance::Float64
+    inlet_impedance_matching::Bool
     Cc::Float64
     Pc::Float64
 
@@ -230,6 +231,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
     end
     total_peripheral_resistance = R1 + R2
+    inlet_impedance_matching = get(config, "inlet_impedance_matching", false)
 
     # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
@@ -302,6 +304,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         R1,
         R2,
         total_peripheral_resistance,
+        inlet_impedance_matching,
         Cc,
         Pc,
         slope,

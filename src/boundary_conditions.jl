@@ -91,8 +91,10 @@ function wk3(dt::Float64, v::Vessel, ρ::Float64)
     ul = v.u[end]
 
     # inlet impedance matching
-    v.R1 = ρ * wave_speed(v.A[end], v.gamma[end]) / v.A[end]
-    v.R2 = v.total_peripheral_resistance - v.R1
+    if v.inlet_impedance_matching
+        v.R1 = ρ * wave_speed(v.A[end], v.gamma[end]) / v.A[end]
+        v.R2 = v.total_peripheral_resistance - v.R1
+    end
 
     v.Pc += dt / v.Cc * (Al * ul - (v.Pc - Pout) / v.R2)
     As = Al
