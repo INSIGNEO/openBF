@@ -138,7 +138,7 @@ def plot_iliac_bifurcation_validation(fignum, figname, figformat):
     FVb = np.loadtxt("ibif/ibif_ref/FV_aorta_bif-bif.dat")
     FVi = np.loadtxt("ibif/ibif_ref/FV_iliac-bif.dat")
 
-    fig = plt.figure(fignum, figsize=(12, 6))
+    fig = plt.figure(fignum, figsize=(9, 6))
     fig.clf()
 
     t3d = np.linspace(0.0, 1.0, B3Da.shape[0])
