@@ -133,7 +133,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     #parabolic system (visco-elastic)
-    if v.Cv[1] != 0.0
+    if any(v.Cv .!= 0.0)
         a = v.Cv.*dt/(v.dx*v.dx)
         Tupper = -a[2:end]
         Tlower = -a[1:end-1]
