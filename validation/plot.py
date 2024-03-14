@@ -249,5 +249,6 @@ plot_single_artery_validation(
 )
 
 # ibif
-
-plot_iliac_bifurcation_validation(3, "ibif", figformat)
+fignum = 3
+figname = "ibif"
+plot_iliac_bifurcation_validation(fignum, figname, figformat)

@@ -28,13 +28,11 @@ def download_reference_data(simulation, gist_id):
         )
 
 
+GISTS = {
+    "cca": "11645e64d3583fee37f1b48e5a897b51",
+    "uta": "6cff8b76b77d2c405a16fa9e990d14a7",
+    "ibif": "feaae8d7d29cc9fa179e109f68abc08",
+}
 if __name__ == "__main__":
-    folders = ["cca", "uta", "ibif"]
-    gist_ids = [
-        "d0075e8d50ef6eefc800a1fa4545b2b1",
-        "6cff8b76b77d2c405a16fa9e990d14a7",
-        "66dfe0f8b0343982c9e0a9edaef746f4",
-    ]
-
-    for folder, gist_id in zip(folders, gist_ids):
-        download_reference_data(folder, gist_id)
+    for simulation, gist_id in GISTS.items():
+        download_reference_data(simulation, gist_id)
