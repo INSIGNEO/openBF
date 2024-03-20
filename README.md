@@ -10,9 +10,24 @@
 
 <a href="https://github.com/INSIGNEO/openBF/actions"><img alt="openbf ci status" src="https://github.com/INSIGNEO/openBF/actions/workflows/ci.yml/badge.svg"></a>
 
+[![chat](https://dcbadge.vercel.app/api/server/xKfr8BgN)](https://discord.gg/xKfr8BgN)
+
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
 Read the [documentation](https://insigneo.github.io/openBF) for installation and run instructions.
+
+## Release notes
+
+### v2.0.0
+This is a complete re-write of openBF solver with several bugfixes and few new functionalities.
+Config files should be backward compatible but please refer to the new [documentation](https://insigneo.github.io/openBF) for more details.
+
+Currently not supported:
+- multiple inlets
+
+If your workflow relies on this feature, we recommend to use [release v1.5.1](https://github.com/INSIGNEO/openBF/releases/tag/v1.5.1).
+
+---
 
 ### Citation
 

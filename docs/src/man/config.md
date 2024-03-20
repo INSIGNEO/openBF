@@ -29,7 +29,7 @@ Then there are three main sections: `solver`, `blood`, and `network`.
 solver:
   Ccfl: 0.9
   cycles: 100
-  convergence tolerance: 5.0
+  convergence_tolerance: 5.0
   jump: 100
 ```
 
@@ -39,7 +39,7 @@ It contains the values for the numerical scheme parameters:
 
 - `cycles` is the maximum number of cardiac cycles to be simulated. This is used to stop openBF execution in case of non-converging simulations. An openBF simulation usually takes less than 20 cardiac cycles to converge.
 
-- `convergence tolerance` is the maximum error in $mmHg$ allowed between two consecutive cardiac cycle to claim convergence.
+- `convergence_tolerance` is the maximum error in $mmHg$ allowed between two consecutive cardiac cycle to claim convergence.
 
 - `jump` is the number of time-points to be saved in the result files.
 
@@ -75,7 +75,6 @@ __Optional__ parameters are:
 
 - `gamma_profile` is the radial velocity profile parameter used in the calculation of the viscous losses term, default $2$ (parabolic profile).
 
-- `visco-elastic` is a boolean flag (default `false`) which switches the constitutive equation to Kelvin-Voigt model.
 
 ## Boundary conditions
 
@@ -93,6 +92,8 @@ In case of three-element windkessel:
 - `R1` first peripheral resistance
 - `R2` second peripheral resistance
 - `Cc` peripheral compliance
+
+You can also enable `inlet_impedance_matching` to let openBF optimise `R1` at runtime. This will match the windkessel inlet impedance and minimise artificial reflections (recommended).
 
 ## Template
 
@@ -139,6 +140,7 @@ network:
     R1: <windkessel inlet impedance>
     R2: <peripheral resistance>
     Cc: <compliance>
+    inlet_impedance_matching: true
     #------ OR ------ outlet reflection
     Rt: <reflection coefficient> # 1.0 ≤ Rt ≥ -1.0; Float
 ```

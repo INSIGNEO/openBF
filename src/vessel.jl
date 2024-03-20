@@ -186,6 +186,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)
     gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
 
+    # TODO: add to docs
+    # TODO: visco-elastic -> visco_elastic ???
     if get(config, "visco-elastic", false)
         b0=0.6
         b1=0.00150
@@ -233,6 +235,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     total_peripheral_resistance = R1 + R2
     inlet_impedance_matching = get(config, "inlet_impedance_matching", false)
 
+
+    # TODO: add to docs
     # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
     # artery-vein interface.
