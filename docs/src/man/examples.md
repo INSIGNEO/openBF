@@ -1,51 +1,7 @@
-# Examples
+The repository [models](https://github.com/insigneo/openbf/models) folder contains configuration and inlet files for:
 
-## Single artery
+- In-vitro model from _Matthys KS, Alastruey J, Peiró J, Khir AW, Segers P, Verdonck PR, Parker KH, Sherwin SJ. [Pulse wave propagation in a model human arterial network: assessment of 1-D numerical simulations against in vitro measurements](https://www.sciencedirect.com/science/article/pii/S0021929011004386). Journal of biomechanics. 2007 Dec 31;40(15):3476-86._
 
-![single-artery](../assets/single-artery.png)
+- Circle of Willis model from _Alastruey J, Parker KH, Peiró J, Byrd SM, Sherwin SJ. [Modelling the circle of Willis to assess the effects of anatomical variations and occlusions on cerebral flows](http://www.sciencedirect.com/science/article/pii/S0021929006002946). Journal of biomechanics. 2007 Dec 31;40(8):1794-805_
 
-```yml
-project name: single-artery
-
-blood:
-  rho: 1060.0 # kg/m^3
-  mu: 4.e-3   # Pa⋅s
-
-solver:
-  Ccfl: 0.9
-  cycles: 100
-  jump: 100
-  convergence tolerance: 5.0
-  
-network:
-  - label: v1
-    sn: 1
-    tn: 2
-
-    L: 24.14e-2 # m
-
-    Rp: 9.87e-3 # m
-    Rd: 9.00e-3 # m
-
-    E: 400.0e3 # Pa
-
-    inlet: Q
-    inlet file: inlet.dat
-    inlet number: 1
-
-    outlet: reflection
-    Rt: 0.5
-```
-
-### Windkessel models
-
-## Conjunctions
-
-### Junction
-
-### Bifurcation
-
-### Anastomosis
-
-## Multiple inlets
-asds
+- Benchmark models from _Boileau E, Nithiarasu P, Blanco PJ, Müller LO, Fossan FE, Hellevik LR, Donders WP, Huberts W, Willemet M, Alastruey J. [A benchmark study of numerical schemes for one‐dimensional arterial blood flow modelling](https://onlinelibrary.wiley.com/doi/abs/10.1002/cnm.2732). International journal for numerical methods in biomedical engineering. 2015 Oct 1;31(10)._

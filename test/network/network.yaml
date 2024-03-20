@@ -1,0 +1,90 @@
+project_name: "network"
+write_results: ["P", "Q", "A", "u", "c"]
+blood:
+  rho: 1060.0
+  mu: 0.004
+solver:
+  Ccfl: 0.9
+  cycles: 2
+  jump: 10
+  convergence_tolerance: 1.0
+network:
+  - label: v0
+    sn: 1
+    tn: 2
+    L: 0.01
+    M: 10
+    Rp: 0.82e-2
+    Rd: 0.758242250e-2
+    E: 125000.0
+    gamma profile: 9
+  - label: v1
+    sn: 2
+    tn: 3
+    L: 0.01
+    R0: 0.5492e-2
+    E: 125000.0
+  - label: v2
+    sn: 2
+    tn: 4
+    L: 0.01
+    M: 10
+    R0: 0.5492e-2
+    E: 125000.0
+  - label: v3
+    sn: 4
+    tn: 5
+    L: 0.01
+    M: 10
+    R0: 0.5492e-2
+    E: 125000.0
+  - label: v4
+    sn: 3
+    tn: 5
+    L: 0.01
+    M: 10
+    R0: 0.5492e-2
+    E: 125000.0
+  - label: v5
+    sn: 5
+    tn: 6
+    L: 0.01
+    M: 10
+    R0: 0.758242250e-2
+    E: 125000.0
+  - label: v6
+    sn: 6
+    tn: 7
+    L: 0.01
+    M: 10
+    R0: 0.5492e-2
+    E: 125000.0
+    Rt: 0.0
+  - label: v7
+    sn: 6
+    tn: 8
+    L: 0.01
+    M: 10
+    R0: 0.5492e-2
+    E: 125000.0
+  - label: v8
+    sn: 8
+    tn: 9
+    L: 0.01
+    M: 10
+    R0: 0.0043590032887046775
+    E: 125000.0
+    Rt: 0.0
+  - label: v9
+    sn: 8
+    tn: 10
+    L: 0.01
+    R0: 0.0043590032887046775
+    E: 125000.0
+  - label: v10
+    sn: 10
+    tn: 11
+    L: 0.01
+    R0: 0.0043590032887046775
+    E: 125000.0
+    Rt: 0.2

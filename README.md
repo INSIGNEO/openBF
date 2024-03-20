@@ -10,173 +10,24 @@
 
 <a href="https://github.com/INSIGNEO/openBF/actions"><img alt="openbf ci status" src="https://github.com/INSIGNEO/openBF/actions/workflows/ci.yml/badge.svg"></a>
 
+[![chat](https://dcbadge.vercel.app/api/server/xKfr8BgN)](https://discord.gg/xKfr8BgN)
+
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
-[_Docs_](#docs) | [_Installation_](#installation) | [_Example_](#example) | [_Plot_](#plotting) | [_Dev_](#how-to-dev) | [_Hub_](#ecosystem) | [_Cite_](#cite)
+Read the [documentation](https://insigneo.github.io/openBF) for installation and run instructions.
 
-### Docs
+## Release notes
 
-- openBF __≦v0.6.3__ check this [website](https://INSIGNEO.github.io/openBF/Docs/index.html) for documentation and tutorials.
-- openBF __v0.7+__ docs can be built as `julia make.jl` inside the `docs/` folder (this requires [Documenter](https://github.com/JuliaDocs/Documenter.jl) package).
+### v2.0.0
+This is a complete re-write of openBF solver with several bugfixes and few new functionalities.
+Config files should be backward compatible but please refer to the new [documentation](https://insigneo.github.io/openBF) for more details.
 
-### Installation
+Currently not supported:
+- multiple inlets
 
-Provided you already have a Julia v1.x installation (all platforms [download](https://julialang.org/downloads/) and Windows [instructions](http://wallyxie.com/weblog/adding-julia-windows-path-command-prompt/)), you can add openBF as
+If your workflow relies on this feature, we recommend to use [release v1.5.1](https://github.com/INSIGNEO/openBF/releases/tag/v1.5.1).
 
-```
-julia> ]
-(v1.x) pkg> add https://github.com/INSIGNEO/openBF
-```
-
-update it as
-
-```
-julia> ]
-(v1.x) pkg> update openBF
-```
-
-test it as
-
-```
-julia> ]
-(v1.x) pkg> test openBF
-```
-
-and use it as
-
-```julia
-julia> using openBF
-julia> openBF.runSimulation("<input file name>.yml")
-```
-
-You can also create (MacOSX/Linux only) an openBF alias as
-
-```bash
-$ echo "alias openBF='cp ~/.julia/v1.x/openBF/main.jl ./main.jl && julia main.jl $1'" >> ~/.bashrc
-$ source ~/.bashrc
-$ openBF -h
-usage: main.jl [-v] [-f] [-c] [-h] input_filename
-
-positional arguments:
-  input_filename   .yml input file name
-
-optional arguments:
-  -v, --verbose    Print STDOUT - default false
-  -f, --out_files  Save complete results story rather than only the
-                   last cardiac cycle
-  -c, --conv_ceil  Ceil convergence value to 100 mmHg (default true)
-  -h, --help       show this help message and exit
-```
-
-### Example
-
-```
-project name: <project name>
-results folder: <path/to/your/results/directory>
-
-blood:
-  rho: 1060.0 # density
-  mu: 4.e-3   # kinematic viscosity
-
-solver:
-  Ccfl: 0.9   # Courant number
-  cycles: 100 # max number of cardiac cycles
-  jump: 100
-  convergence tolerance: 15.0 # convergence min error threshold
-
-network:
-  - label: <vessel name>
-	sn: 1
-    tn: 2
-    E: 400000 # Young's modulus
-    L: 0.04   # length
-    R0: 0.012 # lumen radius
-    inlet number: 1
-    inlet: Q
-    inlet file: <inlet filename>
-  - label: <vessel name>
-  	sn: 2
-    tn: 3
-    E: 400000
-    L: 0.103
-    R0: 0.010
-    outlet: wk2
-  	Cc: 8.2e-11      # peripheral compliance
-    R1: 8480000000.0 # peripheral resistance
-```
-
-### Plotting
-
-Install [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
-
-```
-julia> ]
-(v1.x) pkg> add Plots
-(v1.x) pkg> <backspace>
-julia> using Plots
-```
-(the first time you run this, the library will be compiled and it may takes several minutes)
-
-plot something
-```
-using DelimitedFiles
-
-# open the result files
-v1 = DelimitedFiles.readdlm("v1_P.last")
-v2 = DelimitedFiles.readdlm("v2_P.last")
-
-plot(v1[:,1], v1[:,end]/133.332, label="v1")
-plot(v2[:,1], v2[:,end]/133.332, label="v2")
-
-xlabel!("time (s)")
-ylabel!("pressure (mmHg)")
-```
-![waveforms](https://user-images.githubusercontent.com/4661737/97332078-f4101d80-1871-11eb-970d-b7761c069688.png)
-
-### How to dev
-
-```
-$ git clone https://github.com/INSIGNEO/openBF.git
-$ cd openBF
-$ julia
-julia> ]
-(v1.x) pkg> add Revise
-(v1.x) pkg> activate .
-(openBF) <backspace>
-julia> using Revise
-julia> using openBF
-```
-
-### Ecosystem
-
-- A collection of 1D networks (from literature) solved by means of openBF can be found in the [openBF-hub](https://github.com/alemelis/openBF-hub) repository.
-- The scripts to generate a virtual population of ADAN56s can be found in [openBF-db](https://github.com/alemelis/openBF-db) repository.
-- The scripts to generate aged versions of a template openBF model can be found in [openBF_ageing](https://github.com/ibenemerito88/openBF_ageing).
-- openBF badge [![openBF](https://img.shields.io/badge/-openBF-red.svg?colorA=ffffff&colorB=008080&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAQAAACFzfR7AAAA10lEQVQoz4XQIUvDARCG8R%2BCaUEEqwwMwyKCYbImLCp%2BAoPJpMWyYFnfN1BBP4IGk0FkYBkyDYJgkBXTUOcYbFM8g0M3t%2F98rhz3Pnfh6GfKg7bQ8exG1hh2xE%2B9SCeLuT4xlC39RkeKUr1%2B1uWAGMKF%2Be9wW7gzgzX1IS2EhhVIaQnnSj6HlEerCsKrObgeeSeEPfvy7oUzqCaKVzLy3oUnpnWFsi3txIUP6%2BwKdQvIuh2pvdmAUwcyvfdM2PwjNx0mvz3tRAgVOZPGciw0LfqXmprlwdEX%2F8%2BRhjBYrRoAAAAASUVORK5CYII%3D)](https://github.com/INSIGNEO/openBF)
-
-### Publications
-
-openBF has been used in the following works:
-
-_Journal Papers_
-- Benemerito I, Mustafa A, Wang N, Narata AP, Narracott A, Marzo A. [A multiscale computational framework to evaluate flow alterations during mechanical thrombectomy for treatment of ischaemic stroke](https://www.frontiersin.org/articles/10.3389/fcvm.2023.1117449/full). _Frontiers in Cardiovascular Medicine_, 2023. DOI: 10.3389/fcvm.2023.1117749
-- Benemerito I, Narata AP, Narracott A, Marzo A. [Determining clinically-viable biomarkers for ischaemic stroke through a mechanistic and machine learning approach](https://link.springer.com/article/10.1007/s10439-022-02956-7). _Annals of Biomedical Engineering_, 2022. DOI: 10.1007/s10439-022-02956-7
-- Melis A, Moura F, Larrabide I, Janot K, Clayton RH, Marzo A. [Improved biomechanical metrics of cerebral vasospasm identified via sensitivity analysis of a 1D cerebral circulation model](https://www.sciencedirect.com/science/article/pii/S0021929019302830). _Journal of Biomechanics_, 2019. DOI: 10.1016/j.biomech.2019.04.019
-- Melis A, Clayton RH, Marzo A. [Bayesian sensitivity analysis of a 1D vascular model with Gaussian process emulators](http://rdcu.be/AqLm). _International Journal for Numerical Methods in Biomedical Engineering_, 2017. DOI: 10.1002/cnm.2882
-
-_Conference Papers_
-- Ning W, Sharma K, Sourbron SP, Benemerito I, Marzo A. [Distinguishing hypertensive renal injury from diabetic nephropathy using MR imaging and computational modelling of renal blood flow](https://vph-conference.org/), _VPH2022_ September 2022, Porto, PO _In proceedings_
-- Benemerito I, Jordan B, Mustafa A, Marzo A. [Quantification of the effects of ageing, hypertension and atherosclerosis on flow reversal during a mechanical thrombectomy procedure](https://www.sheffield.ac.uk/insigneo/overview/events/biomedeng-2021-conference), _BioMedEng21_ September 2021, Sheffield, UK _In proceedings_ 
-- Benemerito I, Narata AP, Narracott A, Marzo A. [Pulsatility indices can inform on distal perfusion following ischaemic stroke](https://www.cmbbe-symposium.com/2021/wp-content/uploads/sites/2/2021/09/Program-CMBBE21-A4.qxp_Detailed.pdf), _CMMBE_ September 2021, Online event, _In proceedings_
-- Benemerito I, Narata AP, Narracott A, Marzo A. [Identification of biomarkers for perfusion following an ischaemic event](https://cbmc21.vfairs.com/), _CMBE_ September 2021, Online event, _In proceedings_
-- Melis A, Clayton RH, Marzo A. [A more efficient approach to perform sensitivity analyses in 0D/1D cardiovascular models](http://www.compbiomed.net/2015/cmbe-proceedings.htm), _CMBE_ July 2015, Cachan, FR. _In proceedings_
-
-_PhD theses_
-- Mustafa A. [An efficient computational approach to guide intervention in treatment of stroke](https://etheses.whiterose.ac.uk/29992/). _PhD Thesis_, 2021
-- Melis A. [Gaussian process emulators for 1D vascular models](http://etheses.whiterose.ac.uk/19175/). _PhD Thesis_, 2017.
-
-
-Have you used openBF for your research? Let us know!
+---
 
 ### Citation
 

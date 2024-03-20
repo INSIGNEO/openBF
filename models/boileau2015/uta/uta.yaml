@@ -1,0 +1,24 @@
+project_name: uta
+inlet_file: "uta_inlet.dat"
+write_results: ["P", "Q", "A", "u"]
+blood:
+  rho: 1060.0
+  mu: 4.0e-3
+solver:
+  Ccfl: 0.9
+  cycles: 10
+  jump: 100
+  convergence_tolerance: 1.0
+network:
+  - label: upper_thoracic_aorta
+    sn: 1
+    tn: 2
+    L: 24.137e-2
+    E: 400.0e3
+    R0: 9.87e-3
+    h0: 0.82e-3
+    gamma_profile: 9
+    R1: 1.1752e7
+    R2: 1.1167e8
+    Cc: 1.0163e-8
+    inlet_impedance_matching: false
