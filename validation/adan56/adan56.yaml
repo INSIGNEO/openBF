@@ -1,12 +1,12 @@
 project_name: adan56
 inlet_file: "adan56_inlet.dat"
-write_results: ["P", "Q"]
+write_results: ["P", "Q", "A"]
 blood:
   rho: 1060.0
   mu: 0.004
 solver:
   Ccfl: 0.9
-  cycles: 100
+  cycles: 10
   jump: 100
   convergence_tolerance: 1.0
 network:

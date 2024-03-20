@@ -236,7 +236,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
     # artery-vein interface.
-    Pc = 0.0
+    Pc = get(config, "Pc", 0.0)
 
     #Slope
     slope = zeros(Float64, M)

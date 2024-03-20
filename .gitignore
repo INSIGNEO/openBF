@@ -15,16 +15,13 @@ plot*
 **/__pycache__
 
 # validation
-validation/uta/uta_ref/*
-!validation/uta/uta.yaml
-!validation/uta/uta_inlet.dat
-validation/cca/cca_ref/*
-!validation/cca/cca.yaml
-!validation/cca/cca_inlet.dat
-validation/ibif/ibif_ref/*
-!validation/ibif/ibif.yaml
-!validation/ibif/ibif_inlet.dat
-!validation/plot_style.txt
-!validation/plot.py
-validation/**/*.png
-validation/**/*.eps
+validation/*
+
+# models
+models/Boileau2015/*/*_ref
+models/Boileau2015/*/*_results
+models/**/*.eps
+models/**/*.png
+!models/Boileau2015/plot.py
+!models/Boileau2015/plot_style.txt
+!models/Boileau2015/adan56/plot.py
