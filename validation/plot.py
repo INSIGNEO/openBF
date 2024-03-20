@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 plt.style.use("plot_style.txt")
 
@@ -59,13 +59,18 @@ def plot_single_artery_validation(
         ax = fig.add_subplot(1, 4, i + 1)
 
         if figname == "cca":
-            ax.plot(tFV / T[-1], FV[t0FV:-50, i + 1], color="slategrey", label="1D")
+            ax.plot(
+                tFV / T[-1],
+                FV[t0FV:-50, i + 1],
+                color="slategrey",
+                label="Boileau2015-FV1D",
+            )
             ax.plot(
                 B3D[:, 0] / T[-1],
                 B3D[:, i + 1],
                 linestyle=":",
                 color="gray",
-                label="3D",
+                label="Xiao2015-3D",
             )
             ax.plot(
                 T[:-shift] / T[-1],
@@ -77,14 +82,17 @@ def plot_single_artery_validation(
             ax.plot(T[-shift:] / T[-1], waves[i][:shift], "k", linestyle="--")
         else:
             ax.plot(
-                FV[:, 0] / FV[len(tFV), 0], FV[:, i + 1], color="slategrey", label="1D"
+                FV[:, 0] / FV[len(tFV), 0],
+                FV[:, i + 1],
+                color="slategrey",
+                label="Boileau2015-FV1D",
             )
             ax.plot(
                 B3D[:, 0] / B3D[-1, 0],
                 B3D[:, i + 1],
                 linestyle=":",
                 color="gray",
-                label="3D",
+                label="Xiao2015-3D",
             )
             ax.plot(T / T[-1], waves[i], "k", linestyle="--", label="openBF")
 
@@ -168,9 +176,11 @@ def plot_iliac_bifurcation_validation(fignum, figname, figformat):
                 (qs1d[i][8800:9900, 0] - 8.8) / 1.1,
                 qs1d[i][8800:9900, j + 1],
                 color="slategrey",
-                label="1D",
+                label="Boileau2015-FV1D",
             )
-            ax.plot(t3d, qs3d[i][:, j + 1], color="gray", linestyle=":", label="3D")
+            ax.plot(
+                t3d, qs3d[i][:, j + 1], color="gray", linestyle=":", label="Xiao2015-3D"
+            )
             ax.plot(
                 (P[:, 0] - P[0, 0]) / (P[-1, 0] - P[0, 0]),
                 qsobf[i][j],
