@@ -9,6 +9,8 @@ README.html
 *.yaml
 *.conv
 **/*.swp
+**/*.pyc
+
 plot*
 !models/**/*.yaml
 !models/**/*.dat
