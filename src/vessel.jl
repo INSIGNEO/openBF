@@ -29,6 +29,7 @@ end
 
 mutable struct Vessel
     label::SubString{String}
+    tosave::Bool
 
     #Topological notation
     sn::Int64
@@ -145,6 +146,7 @@ end
 
 function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     vessel_name = config["label"]
+    tosave = get(config, "to_save", true)
     sn = config["sn"]
     tn = config["tn"]
     Rp, Rd = radii(config)
@@ -270,6 +272,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
 
     Vessel(
         vessel_name,
+        tosave,
         sn,
         tn,
         M,

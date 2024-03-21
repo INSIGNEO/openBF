@@ -60,34 +60,40 @@ function get_inlet_file(config)
     end
     config["inlet_file"]
 end
+
+function preamble(yaml_config, verbose)
+
+    verbose && println("Loading config...")
+    config = load_yaml_config(yaml_config)
+
+    project_name = config["project_name"]
+    verbose && println("project name: $project_name")
+
+    temp_save = deepcopy(get(config, "write_results", []))
+    "P" ∉ temp_save && push!(temp_save, "P")
+    "A" ∉ temp_save && push!(temp_save, "A")
+
+    results_dir = get(config, "output_directory", project_name * "_results")
+    isdir(results_dir) && rm(results_dir, recursive = true)
+    ~isdir(results_dir) && mkdir(results_dir)
+    cp(yaml_config, joinpath(results_dir, yaml_config), force = true)
+    cp(config["inlet_file"], joinpath(results_dir, config["inlet_file"]), force = true)
+    cd(results_dir)
+
+    config, temp_save
+end
+
 function run_simulation(
     yaml_config::String;
     verbose::Bool = true,
     out_files::Bool = false,
     conv_ceil::Bool = false,
 )
-    verbose && println("Loading config...")
-    config = load_yaml_config(yaml_config)
+    initial_dir = pwd()
+    config, temp_save = preamble(yaml_config, verbose)
 
-    tosave = config["write_results"]
-    isempty(tosave) && (tosave = ["P", "A"])
-    "P" ∉ tosave && push!(tosave, "P")
-    "A" ∉ tosave && push!(tosave, "A")
-
-    verbose && println("project name: $(config["project_name"])")
-
-    project_name = config["project_name"]
     blood = Blood(config["blood"])
     heart = Heart(get_inlet_file(config))
-
-    # TODO: results dir from config
-    ########################################
-    results_dir = project_name * "_results"
-    isdir(results_dir) && rm(results_dir, recursive = true)
-    ~isdir(results_dir) && mkdir(results_dir)
-    cp(yaml_config, joinpath(results_dir, yaml_config), force = true)
-    cd(results_dir)
-    #########################################
 
     network = Network(
         config["network"],
@@ -116,7 +122,7 @@ function run_simulation(
         verbose && next!(prog)
 
         if current_time >= checkpoints[counter]
-            flush_to_temp(current_time, network, tosave)
+            flush_to_temp(current_time, network, temp_save)
             counter += 1
         end
 
@@ -130,8 +136,8 @@ function run_simulation(
                 conv_error, error_loc = get_conv_error(network)
             end
 
-            move_temp_to_last(network, tosave)
-            out_files && append_last_to_out(network, tosave)
+            move_temp_to_last(network, temp_save)
+            out_files && append_last_to_out(network, temp_save)
 
             if verbose
                 if passed_cycles > 0
@@ -160,5 +166,15 @@ function run_simulation(
         end
         current_time += dt
     end
-    cd("..")
+    tokeep = get(config, "write_results", [])
+    cleanup.(values(network.vessels), Ref(tokeep))
+    cd(initial_dir)
+end
+
+function cleanup(v::Vessel, tokeep)
+    println("Cleaning outputs directory")
+    ~v.tosave && rm.(glob("$(v.label)_*"))
+    for l in ("P", "A", "Q", "u")
+        l ∉ tokeep && rm.(glob("$(v.label)_$l.*"), force=true)
+    end
 end

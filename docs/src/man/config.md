@@ -19,7 +19,7 @@ Following the `write_results` list is defined.
 write_results: ["P"] # ["P", "Q", "u", "A"]
 ```
 
-Here you can specify which quantities to write in the output files (`P`ressure, `Q` flow, `u` velocity and `A`rea). These are all optional except for `P`.
+Here you can specify which quantities to write in the output files (`P`ressure, `Q` flow, `u` velocity and `A`rea). These are all optional but at least one is recommended.
 
 Then there are three main sections: `solver`, `blood`, and `network`.
 
@@ -68,6 +68,8 @@ This contains the list of vessels in the network. Each vessel has the following 
 - `R0` or `Rp` and `Rd` describe the lumen radius. If `R0` is defined, the vessel is assumed to have a constant reference lumen radius; it `Rp` and `Rd` are specified, the vessel is set to taper linearly from the proximal lumen radius (i.e. `Rp`, the lumen radius at `sn`) to the distal lumen radius (i.e. `Rd`, the lumen radius at `tn`).
 
 __Optional__ parameters are:
+
+- `to_save` a boolean flag (default `true`) to tell openBF to save results for the current vessel;
 
 - `M` is the number of division along the vessels used to compute the artery $\Delta x$. When not specified, openBF automatically meshes the arteries so that $\Delta x$ is at least $1 mm$;
 
