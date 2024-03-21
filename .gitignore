@@ -1,7 +1,6 @@
-test/**/*_results/*
+**/*_results
 **/.DS_Store
-cvs_results/*
-docs/build/*
+docs/build
 Manifest.toml
 README.html
 *.ipynb
@@ -10,5 +9,21 @@ README.html
 *.yaml
 *.conv
 **/*.swp
-adan56*/*
 **/*.pyc
+
+plot*
+!models/**/*.yaml
+!models/**/*.dat
+**/__pycache__
+
+# validation
+validation/*
+
+# models
+models/Boileau2015/*/*_ref
+models/Boileau2015/*/*_results
+models/**/*.eps
+models/**/*.png
+!models/Boileau2015/plot.py
+!models/Boileau2015/plot_style.txt
+!models/Boileau2015/adan56/plot.py

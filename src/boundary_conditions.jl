@@ -1,5 +1,5 @@
 #=
-Copyright 2022 INSIGNEO Institute for in silico Medicine
+Copyright 2015-2024 INSIGNEO Institute for in silico Medicine
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,228 +14,133 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-
-"""
-    setInletBC(t :: Float64, dt :: Float64, v :: Vessel,  h  :: Heart)
-
-Flow or pressure value is set from the inlet file stored in the `Heart` structure.
-"""
-function setInletBC(t :: Float64, dt :: Float64, v :: Vessel)
-    h = v.heart
-
-  	if h.inlet_type == "Q"
-		v.Q[1] = inputFromData(t, h)
-  	else
-		v.P[1] = inputFromData(t, h)
-  	end
-
-	inletCompatibility(dt, v, h)
+function set_inlet_bc(t::Float64, dt::Float64, v::Vessel, h::Heart)
+    v.Q[1] = inlet_from_data(t, h)
+    inlet_compatibility(dt, v)
 end
 
-
-"""
-    inputFromData(t :: Float64, h :: Heart)
-
-Inlet flow waveform is stored in `h` data structure inside `input_data` matrix.
-`input_data` has two columns and as many rows as time steps.
-"""
-function inputFromData(t :: Float64, h :: Heart)
-	idt = h.input_data[:,1]
-	idq = h.input_data[:,2]
-
-	t_hat = div(t,h.cardiac_T)
-
-	t -= t_hat*h.cardiac_T
-
-	idx = 0
-	@inbounds for i in 1:length(idt)
-		if ((t >= idt[i]) && (t <= idt[i+1]))
-			idx=i
-			break
-		end
-	end
-
-	@inbounds qu = idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) /
-       (idt[idx+1] - idt[idx])
-
-	return qu
+function inlet_from_data(t::Float64, h::Heart)
+    idt = h.input_data[:, 1]
+    idq = h.input_data[:, 2]
+    t_hat = div(t, h.cardiac_period)
+    t -= t_hat * h.cardiac_period
+    idx = 0
+    for i = 1:length(idt)
+        if ((t >= idt[i]) && (t <= idt[i+1]))
+            idx = i
+            break
+        end
+    end
+    idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) / (idt[idx+1] - idt[idx])
 end
 
+function riemann_invariants(i::Int64, v::Vessel)
+    W1 = v.u[i] - 4 * v.c[i]
+    W2 = v.u[i] + 4 * v.c[i]
+    W1, W2
+end
 
-"""
-    inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
+function inv_riemann_invariants(W1::Float64, W2::Float64)
+    u = 0.5 * (W1 + W2)
+    c = (W2 - W1) * 0.125
+    u, c
+end
 
-Compute compatibility relations at inlet node.
-"""
-function inletCompatibility(dt :: Float64, v :: Vessel, h :: Heart)
-	W11, W21 = riemannInvariants(1, v)
-	W12, W22 = riemannInvariants(2, v)
+function inlet_compatibility(dt::Float64, v::Vessel)
 
-	@fastmath @inbounds W11 += (W12 - W11)*(v.c[1] - v.u[1])*dt*v.invDx
-	@fastmath @inbounds W21 = 2.0*v.Q[1]/v.A[1] - W11
+    W11, W21 = riemann_invariants(1, v)
+    W12, W22 = riemann_invariants(2, v)
 
-	v.u[1], v.c[1] = inverseRiemannInvariants(W11, W21)
+    W11 += (W12 - W11) * (v.c[1] - v.u[1]) * dt / v.dx
+    W21 = 2 * v.Q[1] / v.A[1] - W11
 
-	if h.inlet_type == "Q"
-		@fastmath @inbounds v.A[1] = v.Q[1]/v.u[1]
-		v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
-	else
-		v.A[1] = areaFromPressure(v.P[1], v.A0[1], v.beta[1], v.Pext)
-		@fastmath @inbounds v.Q[1] = v.u[1]*v.A[1]
-	end
+    v.u[1], v.c[1] = inv_riemann_invariants(W11, W21)
+
+    v.A[1] = v.Q[1] / v.u[1]
+    v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
 
 end
 
 
-"""
-    riemannInvariants(i :: Int, v :: Vessel)
+function set_outlet_bc(dt::Float64, v::Vessel, ρ::Float64)
+    # A proximal resistance `R1` set to zero means that a reflection coefficient
+    if v.R1 == 0.0
+        v.P[end] = 2 * v.P[end-1] - v.P[end-2]
+        outlet_compatibility(dt, v)
+    else
+        wk3(dt, v, ρ)
+    end
+end
 
-Calculate Riemann invariants at the node `i` from `u` and `c`.
-"""
-function riemannInvariants(i :: Int, v :: Vessel)
-  @fastmath @inbounds W1 = v.u[i] - 4.0*v.c[i]
-  @fastmath @inbounds W2 = v.u[i] + 4.0*v.c[i]
+function outlet_compatibility(dt::Float64, v::Vessel)
 
-  return W1, W2
+    W1M1, W2M1 = riemann_invariants(v.M - 1, v)
+    W1M, W2M = riemann_invariants(v.M, v)
+
+    W2M += (W2M1 - W2M) * (v.u[end] + v.c[end]) * dt / v.dx
+    W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
+
+    v.u[end], v.c[end] = inv_riemann_invariants(W1M, W2M)
+    v.Q[end] = v.A[end] * v.u[end]
 end
 
 
-"""
-    inverseRiemannInvariants(W1 :: Float64, W2 :: Float64)
+function wk3(dt::Float64, v::Vessel, ρ::Float64)
+    Pout = v.Pc
+    Al = v.A[end]
+    ul = v.u[end]
 
-Calculate `u` and `c` given `W1` and `W2`
-"""
-function inverseRiemannInvariants(W1 :: Float64, W2 :: Float64)
-  @fastmath u = 0.5*(W1 + W2)
-  @fastmath c = (W2 - W1)*0.125
-
-  return u, c
-end
-
-
-"""
-    areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
-
-Inverse constitutive equation. This is used only when a pressure inlet-time-function is
-imposed (not recommended).
-"""
-function areaFromPressure(P :: Float64, A0 :: Float64, beta :: Float64, Pext :: Float64)
-   return A0 * ((P-Pext)/beta + 1.0)*((P-Pext)/beta + 1.0)
-end
-
-
-"""
-    setOutletBC(dt :: Float64, v :: Vessel)
-
-Outlet boundary condition is applied to the last node of the involved vessel. Two
-boundary conditions are available. Either a reflection coefficient is provided or a
-three-element windkessel is coupled.
-"""
-function setOutletBC(dt :: Float64, v :: Vessel)
-    if v.outlet == "reflection"
-        v.P[end] = 2.0*v.P[end-1] - v.P[end-2]
-		outletCompatibility(dt, v)
-    elseif v.outlet == "wk3"
-        threeElementWindkessel(dt, v)
-	end
-end
-
-
-"""
-    function outletCompatibility(dt :: Float64, v :: Vessel)
-
-Outlet compatibility relations compute all the quantities not directly assigned by
-the outlet boundary condition.
-"""
-function outletCompatibility(dt :: Float64, v :: Vessel)
-	W1M1, W2M1 = riemannInvariants(v.M-1, v)
-	W1M, W2M   = riemannInvariants(v.M, v)
-
-	W2M += (W2M1 - W2M)*(v.u[end] + v.c[end])*dt/v.dx
-	W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
-
-	v.u[end], v.c[end] = inverseRiemannInvariants(W1M, W2M)
-	v.Q[end] = v.A[end]*v.u[end]
-end
-
-
-"""
-    function threeElementWindkessel(dt :: Float64, v :: Vessel)
-
-The three element windkessel simulates the perfusion of downstream vessels.
-This 0D model is coupled by `wk3` function to 1D model terminal branches via the
-solution of a Riemann problem at the 0D/1D interface.
-"""
-function threeElementWindkessel(dt :: Float64, v :: Vessel)
-	Pout = 0.0
-
-	Al = v.A[end]
-	ul = v.u[end]
-
-	v.Pc += dt/v.Cc * (Al*ul - (v.Pc - Pout)/v.R2)
-
-	As = Al
-
-	ssAl = sqrt(sqrt(Al))
-	sgamma =  2*sqrt(6*v.gamma[end])
-	sA0 = sqrt(v.A0[end])
-	bA0 = v.beta[end]/sA0
-
-	fun(As) = As*v.R1*(ul + sgamma * (ssAl - sqrt(sqrt(As)))) -
-		(v.Pext + bA0*(sqrt(As) - sA0)) + v.Pc
-
-	dfun(As) = v.R1*(ul + sgamma * (ssAl - 1.25*sqrt(sqrt(As)))) - bA0*0.5/sqrt(As)
-
-    try
-        As = newtonSolver(fun, dfun, As)
-    catch e
-        vlab = v.label
-        println("\nNewton solver doesn't converge at $vlab outlet!")
-        throw(e)
+    # inlet impedance matching
+    if v.inlet_impedance_matching
+        v.R1 = ρ * wave_speed(v.A[end], v.gamma[end]) / v.A[end]
+        v.R2 = abs(v.total_peripheral_resistance - v.R1)
     end
 
-	us = (pressure(As, v.A0[end], v.beta[end], v.Pext) - Pout)/(As*v.R1)
+    v.Pc += dt / v.Cc * (Al * ul - (v.Pc - Pout) / v.R2)
+    As = Al
 
-	v.A[end] = As
-	v.u[end] = us
+    ssAl = sqrt(sqrt(Al))
+    sgamma = 2 * sqrt(6 * v.gamma[end])
+    sA0 = sqrt(v.A0[end])
+    bA0 = v.beta[end] / sA0
+
+    fun(As) =
+        As * v.R1 * (ul + sgamma * (ssAl - sqrt(sqrt(As)))) -
+        (v.Pext + bA0 * (sqrt(As) - sA0)) + v.Pc
+
+    dfun(As) = v.R1 * (ul + sgamma * (ssAl - 1.25 * sqrt(sqrt(As)))) - bA0 * 0.5 / sqrt(As)
+    As = newtone(fun, dfun, As)
+    us = (pressure(As, v.A0[end], v.beta[end], v.Pext) - Pout) / (As * v.R1)
+
+    v.A[end] = As
+    v.u[end] = us
 end
 
+# function newtone(f::Function, df::Function, x0)
+#     xn = x0 - f(x0) / df(x0)
+#     if abs(xn - x0) <= 1e-5
+#         return xn
+#     else
+#         newtone(f, df, xn)
+#     end
+# end
 
-"""
-    function newtonSolver(f, df, x0 :: Float64)
-
-Solve windkessel equation by means of Newton method.
-"""
-function newtonSolver(f, df, x0 :: Float64)
-	xn = x0 - f(x0)/df(x0)
-	if abs(xn-x0)<= 1e-5
-		return xn
-	else
-		newtonSolver(f, df, xn)
-	end
+function newtone(f::Function, df::Function, xn)
+    for _=1:10
+        xn -= f(xn) / df(xn)
+    end
+    xn
 end
 
+update_ghost_cells!(n::Network) = update_ghost_cells!.(values(n.vessels))
+function update_ghost_cells!(v::Vessel)
+    v.U00A = v.A[1]
+    v.U00Q = v.Q[1]
+    v.U01A = v.A[2]
+    v.U01Q = v.Q[2]
 
-"""
-    updateGhostCells(v :: Vessel)
-
-Ghost cells are updated by assuming both ends as transmissive boundaries.
-"""
-function updateGhostCells(v :: Vessel)
-	v.U00A = v.A[1]
-	v.U00Q = v.Q[1]
-	v.U01A = v.A[2]
-	v.U01Q = v.Q[2]
-
-	v.UM1A = v.A[v.M]
-	v.UM1Q = v.Q[v.M]
-	v.UM2A = v.A[v.M-1]
-	v.UM2Q = v.Q[v.M-1]
-end
-
-
-function updateGhostCells(vessels :: Array{Vessel,1})
-	for vessel in vessels
-		updateGhostCells(vessel)
-	end
+    v.UM1A = v.A[v.M]
+    v.UM1Q = v.Q[v.M]
+    v.UM2A = v.A[v.M-1]
+    v.UM2Q = v.Q[v.M-1]
 end
