@@ -29,7 +29,7 @@ def get_solver_props():
             help="number of time steps in the output files",
         )
         y["convergence tolerance"] = st.number_input(
-            "convergence tolerance (%)",
+            "convergence tolerance $(mmHg)$",
             value=1.0,
             min_value=0.1,
             max_value=100.0,

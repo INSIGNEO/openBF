@@ -5,14 +5,16 @@ from typing import Dict
 def get_vessel(i: int) -> Dict:
     v = {}
     with st.expander(f"vessel index {i}"):
-        v["label"] = st.text_input(
+        
+        v["to_save"] = st.checkbox(label="to_save", key=f"to_save {i}", value=True)
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            v["label"] = st.text_input(
             "label",
             value="vessel_name",
             key=f"label {i}",
         )
 
-        c1, c2 = st.columns([1, 1])
-        with c1:
             sn = st.number_input(
                 label="sn",
                 min_value=1,
@@ -49,6 +51,7 @@ def get_vessel(i: int) -> Dict:
                 key=f"E {i}",
             )
         with c2:
+
             tn = st.number_input(
                 label="tn",
                 min_value=2,
@@ -73,6 +76,15 @@ def get_vessel(i: int) -> Dict:
                 help="distal radius",
                 key=f"r0d {i}",
             )
+            Pext = st.number_input(
+                "$P_{ext}$ $(Pa)$",
+                value=0.0,
+                step=1e3,
+                format="%e",
+                help="external pressure",
+                key=f"pext {i}",
+            )
+
             gamma_profile = st.slider(
                 "$\gamma_v$",
                 min_value=2,
@@ -81,15 +93,7 @@ def get_vessel(i: int) -> Dict:
                 key=f"gamma {i}",
             )
 
-        Pext = st.number_input(
-            "$P_{ext}$ $(Pa)$",
-            value=0.0,
-            step=1e3,
-            format="%e",
-            help="external pressure",
-            key=f"pext {i}",
-        )
-
+            
         if sn == tn:
             raise ValueError("source node must be different than target node")
 
@@ -102,30 +106,6 @@ def get_vessel(i: int) -> Dict:
         v["E"] = E
         v["gamma profile"] = gamma_profile
         v["Pext"] = Pext
-
-        if st.checkbox("inlet", key=f"inlet box {i}"):
-            v["inlet"] = st.radio(
-                "",
-                options=["Q", "P"],
-                index=0,
-                horizontal=True,
-                label_visibility="collapsed",
-                key=f"inlet {i}",
-            )
-            v["inlet file"] = st.text_input(
-                "inlet file",
-                help="path to project_name_inlet.dat file",
-                value="inlet.dat",
-                key=f"file {i}",
-            )
-
-            # WARNING what's this???
-            v["inlet number"] = st.number_input(
-                "inlet nuber",
-                value=1,
-                min_value=1,
-                key=f"num input {i}",
-            )
 
         if st.checkbox("outlet", key=f"outlet box {i}"):
             v["outlet"] = st.radio(
@@ -147,6 +127,7 @@ def get_vessel(i: int) -> Dict:
                     key=f"rt {i}",
                 )
             elif v["outlet"] in ["wk2", "wk3"]:
+                v["inlet_impedance_matching"] = st.checkbox(label="inlet_impedance_matching", value=False, key=f"inlet_impedance_matching {i}")
                 c3, c4 = st.columns([1, 1])
                 with c3:
                     v["R1"] = st.number_input(

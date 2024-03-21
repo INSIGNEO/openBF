@@ -11,16 +11,15 @@ def strip_filename(filename):
     return vessel, q
 
 
-MULTIPLIERS = {"P": 1 / 133.332, "Q": 1e6, "A": 1, "u": 1, "c": 1}
+MULTIPLIERS = {"P": 1 / 133.332, "Q": 1e6, "A": 1, "u": 1,}
 UNITS = {
     "P": "$(mmHg)$",
     "Q": "$(ml \cdot s^{-1})$",
     "A": "$(m^2)$",
     "u": "$(m \cdot s^{-1})$",
-    "c": "$(m \cdot s^{-1})$",
 }
 
-uploaded_file = st.file_uploader("Pick a file (.temp, .last or .out)")
+uploaded_file = st.file_uploader("Pick a file")
 if uploaded_file:
     vessel, q = strip_filename(uploaded_file.name)
     df = pd.read_csv(uploaded_file, sep=" ", header=None)
