@@ -118,6 +118,7 @@ blood:
 
 network:
   - label: <vessel name> # String
+    to_save: true # Bool (default true)
     sn: <source node> # Int
     tn: <target node> # Int
 
@@ -142,7 +143,7 @@ network:
     R1: <windkessel inlet impedance>
     R2: <peripheral resistance>
     Cc: <compliance>
-    inlet_impedance_matching: true
+    inlet_impedance_matching: true # Bool (default false)
     #------ OR ------ outlet reflection
     Rt: <reflection coefficient> # 1.0 ≤ Rt ≥ -1.0; Float
 ```
