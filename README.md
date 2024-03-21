@@ -12,6 +12,8 @@
 
 [![chat](https://dcbadge.vercel.app/api/server/xKfr8BgN)](https://discord.gg/xKfr8BgN)
 
+[![openBF](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://openBF.streamlit.app)
+
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
 Read the [documentation](https://insigneo.github.io/openBF/stable) for installation and run instructions.

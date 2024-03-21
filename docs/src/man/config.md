@@ -1,3 +1,7 @@
+Here is a description of the config file and its entries. You can also use openBF [webapp](https://openBF.streamlit.app) to quickly fill in config files.
+
+---
+
 The first line in the configuration file contains the `project_name` variable. 
 
 
