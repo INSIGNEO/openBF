@@ -45,6 +45,7 @@ mutable struct Vessel
     #Physical constants
     beta::Vector{Float64}
     Cv::Vector{Float64}
+    viscoelastic::Bool
     gamma::Vector{Float64}
     gamma_ghost::Vector{Float64}
     A0::Vector{Float64}
@@ -94,13 +95,16 @@ mutable struct Vessel
     slope::Vector{Float64}
 
     #MUSCLArrays
-    flux::Array{Float64,2}
-    uStar::Array{Float64,2}
+    fluxA::Vector{Float64}
+    fluxQ::Vector{Float64}
+    uStarA::Vector{Float64}
+    uStarQ::Vector{Float64}
 
     vA::Vector{Float64}
     vQ::Vector{Float64}
 
-    dU::Array{Float64,2}
+    dUA::Vector{Float64}
+    dUQ::Vector{Float64}
 
     slopesA::Vector{Float64}
     slopesQ::Vector{Float64}
@@ -190,7 +194,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
 
     # TODO: add to docs
     # TODO: visco-elastic -> visco_elastic ???
-    if get(config, "visco-elastic", false)
+    viscoelastic = get(config, "visco-elastic", false)
+    if viscoelastic
         b0=0.6
         b1=0.00150
         Γ=b1*0.5./R0 .+ b0
@@ -248,13 +253,16 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
     slope = zeros(Float64, M)
 
     # MUSCL arrays
-    flux = zeros(Float64, 2, M + 2)
-    uStar = zeros(Float64, 2, M + 2)
+    fluxA = zeros(Float64, M + 2)
+    fluxQ = zeros(Float64, M + 2)
+    uStarA = zeros(Float64, M + 2)
+    uStarQ = zeros(Float64, M + 2)
 
     vA = zeros(Float64, M + 2)
     vQ = zeros(Float64, M + 2)
 
-    dU = zeros(Float64, 2, M + 2)
+    dUA = zeros(Float64, M + 2)
+    dUQ = zeros(Float64, M + 2)
 
     slopesA = zeros(Float64, M + 2)
     slopesQ = zeros(Float64, M + 2)
@@ -282,6 +290,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         Ccfl,
         beta,
         Cv,
+        viscoelastic,
         gamma,
         gamma_ghost,
         A0,
@@ -315,11 +324,14 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         Cc,
         Pc,
         slope,
-        flux,
-        uStar,
+        fluxA,
+        fluxQ,
+        uStarA,
+        uStarQ,
         vA,
         vQ,
-        dU,
+        dUA,
+        dUQ,
         slopesA,
         slopesQ,
         Al,

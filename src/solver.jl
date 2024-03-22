@@ -63,77 +63,77 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     v.vQ[end] = v.UM1Q
 
     for i = 2:v.M+1
-        v.vA[i] = v.A[i-1]
-        v.vQ[i] = v.Q[i-1]
+        @inbounds v.vA[i] = v.A[i-1]
+        @inbounds v.vQ[i] = v.Q[i-1]
     end
 
-    limiter!(v, v.vA, v.invDx, v.dU, v.slopesA)
-    limiter!(v, v.vQ, v.invDx, v.dU, v.slopesQ)
+    limiter!(v, v.vA, v.invDx, v.dUA, v.dUQ, v.slopesA)
+    limiter!(v, v.vQ, v.invDx, v.dUA, v.dUQ, v.slopesQ)
 
-    for i = 1:v.M+2
-        v.Al[i] = v.vA[i] + v.slopesA[i] * v.halfDx
-        v.Ar[i] = v.vA[i] - v.slopesA[i] * v.halfDx
+    for i = eachindex(v.Al) # 1:v.M+2
+        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i] * v.halfDx
+        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i] * v.halfDx
 
-        v.Ql[i] = v.vQ[i] + v.slopesQ[i] * v.halfDx
-        v.Qr[i] = v.vQ[i] - v.slopesQ[i] * v.halfDx
+        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i] * v.halfDx
+        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i] * v.halfDx
 
-        v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
     end
 
     dxDt = v.dx / dt
     invDxDt = 1.0 / dxDt
 
     for i = 1:v.M+1
-        v.flux[1, i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        v.flux[2, i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
     end
 
     for i = 2:v.M+1
-        v.uStar[1, i] = v.vA[i] + invDxDt * (v.flux[1, i-1] - v.flux[1, i])
-        v.uStar[2, i] = v.vQ[i] + invDxDt * (v.flux[2, i-1] - v.flux[2, i])
+        @inbounds v.uStarA[i] = v.vA[i] + invDxDt * (v.fluxA[i-1] - v.fluxA[i])
+        @inbounds v.uStarQ[i] = v.vQ[i] + invDxDt * (v.fluxQ[i-1] - v.fluxQ[i])
     end
 
-    v.uStar[1, 1] = v.uStar[1, 2]
-    v.uStar[2, 1] = v.uStar[2, 2]
-    v.uStar[1, end] = v.uStar[1, end-1]
-    v.uStar[2, end] = v.uStar[2, end-1]
+    v.uStarA[1] = v.uStarA[2]
+    v.uStarQ[1] = v.uStarQ[2]
+    v.uStarA[end] = v.uStarA[end-1]
+    v.uStarQ[end] = v.uStarQ[end-1]
 
-    limiter!(v, v.uStar[1, :], v.invDx, v.dU, v.slopesA)
-    limiter!(v, v.uStar[2, :], v.invDx, v.dU, v.slopesQ)
+    limiter!(v, v.uStarA, v.invDx, v.dUA, v.dUQ, v.slopesA)
+    limiter!(v, v.uStarQ, v.invDx, v.dUA, v.dUQ, v.slopesQ)
 
-    for i = 1:v.M+2
-        v.Al[i] = v.uStar[1, i] + v.slopesA[i] * v.halfDx
-        v.Ar[i] = v.uStar[1, i] - v.slopesA[i] * v.halfDx
+    for i = eachindex(v.Al) # 1:v.M+2
+        @inbounds v.Al[i] = v.uStarA[i] + v.slopesA[i] * v.halfDx
+        @inbounds v.Ar[i] = v.uStarA[i] - v.slopesA[i] * v.halfDx
 
-        v.Ql[i] = v.uStar[2, i] + v.slopesQ[i] * v.halfDx
-        v.Qr[i] = v.uStar[2, i] - v.slopesQ[i] * v.halfDx
+        @inbounds v.Ql[i] = v.uStarQ[i] + v.slopesQ[i] * v.halfDx
+        @inbounds v.Qr[i] = v.uStarQ[i] - v.slopesQ[i] * v.halfDx
 
-        v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
     end
 
     for i = 1:v.M+1
-        v.flux[1, i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        v.flux[2, i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
     end
 
     for i = 2:v.M+1
-        v.A[i-1] =
-            0.5 * (v.A[i-1] + v.uStar[1, i] + invDxDt * (v.flux[1, i-1] - v.flux[1, i]))
-        v.Q[i-1] =
-            0.5 * (v.Q[i-1] + v.uStar[2, i] + invDxDt * (v.flux[2, i-1] - v.flux[2, i]))
+        @inbounds v.A[i-1] =
+            0.5 * (v.A[i-1] + v.uStarA[i] + invDxDt * (v.fluxA[i-1] - v.fluxA[i]))
+        @inbounds v.Q[i-1] =
+            0.5 * (v.Q[i-1] + v.uStarQ[i] + invDxDt * (v.fluxQ[i-1] - v.fluxQ[i]))
     end
 
     #source term
-    for i = 1:v.M
-        v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt        #viscosity
-        v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
-        v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]          #dP/dh0
+    for i = eachindex(v.Q) # 1:v.M
+        @inbounds v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt        #viscosity
+        @inbounds v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
+        @inbounds v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]          #dP/dh0
     end
 
     #parabolic system (visco-elastic)
-    if any(v.Cv .!= 0.0)
+    if v.viscoelastic
         a = v.Cv.*dt/(v.dx*v.dx)
         Tupper = -a[2:end]
         Tlower = -a[1:end-1]
@@ -152,9 +152,9 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     #update
-    for i=1:v.M
-        v.u[i] = v.Q[i] / v.A[i]
-        v.c[i] = wave_speed(v.A[i], v.gamma[i])
+    for i=eachindex(v.u) # 1:v.M
+        @inbounds v.u[i] = v.Q[i] / v.A[i]
+        @inbounds v.c[i] = wave_speed(v.A[i], v.gamma[i])
     end
 end
 
@@ -162,20 +162,21 @@ function limiter!(
     v::Vessel,
     U::Vector{Float64},
     invDx::Float64,
-    dU::Array{Float64,2},
+    dUA::Vector{Float64},
+    dUQ::Vector{Float64},
     slopes::Vector{Float64},
 )
     for i = 2:v.M+2
-        dU[1, i] = (U[i] - U[i-1]) * invDx
-        dU[2, i-1] = (U[i] - U[i-1]) * invDx
+        @inbounds dUA[i] = (U[i] - U[i-1]) * invDx
+        @inbounds dUQ[i-1] = (U[i] - U[i-1]) * invDx
     end
-    superbee!(slopes, dU)
+    superbee!(slopes, dUA, dUQ)
 end
 
 maxmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*max(abs(a), abs(b))
 minmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*min(abs(a), abs(b))
-function superbee!(slopes::Vector{Float64}, dU::Array{Float64,2})
+function superbee!(slopes::Vector{Float64}, dUA::Vector{Float64}, dUQ::Vector{Float64})
     for i = eachindex(slopes)
-        slopes[i] = maxmod(minmod(dU[1, i], 2.0 * dU[2, i]), minmod(2.0 * dU[1, i], dU[2, i]))
+        @inbounds slopes[i] = maxmod(minmod(dUA[i], 2.0 * dUQ[i]), minmod(2.0 * dUA[i], dUQ[i]))
     end
 end
