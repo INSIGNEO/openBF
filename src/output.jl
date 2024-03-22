@@ -20,10 +20,9 @@ function flush_to_temp(t::Float64, v::Vessel, temp_save::Vector{String})
     for (l, a) in zip(("P", "Q", "A", "u"), (v.P, v.Q, v.A, v.u))
         l ∉ temp_save && continue
         l ∉ ("P", "A") && ~v.tosave && continue
-        temp = open(v.label * "_$l.temp", "a")
-        line = join((t, a[1], a[v.node2], a[v.node3], a[v.node4], a[end]), " ")
-        println(temp, line)
-        close(temp)
+        open("$(v.label)_$l.temp", "a") do temp
+            writedlm(temp, [t a[1] a[v.node2] a[v.node3] a[v.node4] a[end]], " ")
+        end
     end
 end
 
@@ -34,7 +33,7 @@ function move_temp_to_last(v::Vessel, temp_save::Vector{String})
     for l in ("P", "Q", "A", "u")
         l ∉ temp_save && continue
         l ∉ ("P", "A") && ~v.tosave && continue
-        mv(v.label * "_$l.temp", v.label * "_$l.last", force = true)
+        mv("$(v.label)_$l.temp", v.label * "_$l.last", force = true)
     end
 end
 
@@ -45,9 +44,9 @@ function append_last_to_out(v::Vessel, temp_save::Vector{String})
     for l in ("P", "Q", "A", "u")
         l ∉ temp_save && continue
         l ∉ ("P", "A") && ~v.tosave && continue
-        out_file = open(v.label * "_$l.out", "a")
-        last_a = readdlm(v.label * "_$l.last")
-        writedlm(out_file, last_a, " ")
-        close(out_file)
+        open("$(v.label)_$l.out", "a") do out_file
+            last_a = readdlm(v.label * "_$l.last")
+            writedlm(out_file, last_a, " ")
+        end
     end
 end
