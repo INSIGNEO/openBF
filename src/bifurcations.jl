@@ -37,7 +37,6 @@ function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
 
     while true
         dU = J \ (-F)
-        # U_new = U + 0.01*dU
         U_new = U + dU
 
         if any(isnan(dot(F, F)))

@@ -172,7 +172,6 @@ function run_simulation(
 end
 
 function cleanup(v::Vessel, tokeep)
-    println("Cleaning outputs directory")
     ~v.tosave && rm.(glob("$(v.label)_*"))
     for l in ("P", "A", "Q", "u")
         l ∉ tokeep && rm.(glob("$(v.label)_$l.*"), force=true)

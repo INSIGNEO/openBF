@@ -116,15 +116,6 @@ function wk3(dt::Float64, v::Vessel, ρ::Float64)
     v.u[end] = us
 end
 
-# function newtone(f::Function, df::Function, x0)
-#     xn = x0 - f(x0) / df(x0)
-#     if abs(xn - x0) <= 1e-5
-#         return xn
-#     else
-#         newtone(f, df, xn)
-#     end
-# end
-
 function newtone(f::Function, df::Function, xn)
     for _=1:10
         xn -= f(xn) / df(xn)
