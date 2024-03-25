@@ -27,3 +27,8 @@ models/**/*.png
 !models/Boileau2015/plot.py
 !models/Boileau2015/plot_style.txt
 !models/Boileau2015/adan56/plot.py
+
+# benchmark
+benchmark/tune.json
+bm_results.md
+judge_bm_results.md
