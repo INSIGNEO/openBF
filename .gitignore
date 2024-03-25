@@ -10,7 +10,7 @@ README.html
 *.conv
 **/*.swp
 **/*.pyc
-
+tmp_sim
 plot*
 !models/**/*.yaml
 !models/**/*.dat
