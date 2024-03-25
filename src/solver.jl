@@ -71,11 +71,11 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     limiter!(v, v.vQ, v.invDx, v.dUA, v.dUQ, v.slopesQ)
 
     for i = eachindex(v.Al) # 1:v.M+2
-        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i] * v.halfDx
-        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i] * v.halfDx
+        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
+        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
 
-        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i] * v.halfDx
-        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i] * v.halfDx
+        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
+        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
 
         @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
         @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
@@ -103,11 +103,11 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     limiter!(v, v.uStarQ, v.invDx, v.dUA, v.dUQ, v.slopesQ)
 
     for i = eachindex(v.Al) # 1:v.M+2
-        @inbounds v.Al[i] = v.uStarA[i] + v.slopesA[i] * v.halfDx
-        @inbounds v.Ar[i] = v.uStarA[i] - v.slopesA[i] * v.halfDx
+        @inbounds v.Al[i] = v.uStarA[i] + v.slopesA[i]
+        @inbounds v.Ar[i] = v.uStarA[i] - v.slopesA[i]
 
-        @inbounds v.Ql[i] = v.uStarQ[i] + v.slopesQ[i] * v.halfDx
-        @inbounds v.Qr[i] = v.uStarQ[i] - v.slopesQ[i] * v.halfDx
+        @inbounds v.Ql[i] = v.uStarQ[i] + v.slopesQ[i]
+        @inbounds v.Qr[i] = v.uStarQ[i] - v.slopesQ[i]
 
         @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
         @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
@@ -170,13 +170,13 @@ function limiter!(
         @inbounds dUA[i] = (U[i] - U[i-1]) * invDx
         @inbounds dUQ[i-1] = (U[i] - U[i-1]) * invDx
     end
-    superbee!(slopes, dUA, dUQ)
+    superbee!(slopes, dUA, dUQ, v.halfDx)
 end
 
 maxmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*max(abs(a), abs(b))
 minmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*min(abs(a), abs(b))
-function superbee!(slopes::Vector{Float64}, dUA::Vector{Float64}, dUQ::Vector{Float64})
+function superbee!(slopes::Vector{Float64}, dUA::Vector{Float64}, dUQ::Vector{Float64}, halfDx)
     for i = eachindex(slopes)
-        @inbounds slopes[i] = maxmod(minmod(dUA[i], 2.0 * dUQ[i]), minmod(2.0 * dUA[i], dUQ[i]))
+        @inbounds slopes[i] = maxmod(minmod(dUA[i], 2.0 * dUQ[i]), minmod(2.0 * dUA[i], dUQ[i])) * halfDx
     end
 end
