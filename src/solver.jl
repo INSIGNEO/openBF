@@ -175,7 +175,7 @@ end
 
 maxmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*max(abs(a), abs(b))
 minmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*min(abs(a), abs(b))
-function superbee!(slopes::Vector{Float64}, dUA::Vector{Float64}, dUQ::Vector{Float64}, halfDx)
+function superbee!(slopes::Vector{Float64}, dUA::Vector{Float64}, dUQ::Vector{Float64}, halfDx::Float64)
     for i = eachindex(slopes)
         @inbounds slopes[i] = maxmod(minmod(dUA[i], 2.0 * dUQ[i]), minmod(2.0 * dUA[i], dUQ[i])) * halfDx
     end
