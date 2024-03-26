@@ -118,6 +118,8 @@ mutable struct Vessel
     Fl::Vector{Float64}
     Fr::Vector{Float64}
 
+    # waveforms
+    waveforms::Dict{String, Array{Float64, 2}}
 end
 
 wave_speed(A::Float64, gamma::Float64) = sqrt(1.5 * gamma * sqrt(A))
@@ -148,7 +150,7 @@ function radii(config::Dict{Any,Any})
     Rp, Rd
 end
 
-function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
+function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tokeep::Vector{String})
     vessel_name = config["label"]
     tosave = get(config, "to_save", true)
     sn = config["sn"]
@@ -278,6 +280,11 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
 
     gamma_profile = get(config, "gamma_profile", 2)
 
+    waveforms = Dict()
+    for q in tokeep
+        waveforms[q] = zeros(Float64, jump, 6)
+    end
+
     Vessel(
         vessel_name,
         tosave,
@@ -340,5 +347,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64)
         Qr,
         Fl,
         Fr,
+        waveforms,
     )
 end
