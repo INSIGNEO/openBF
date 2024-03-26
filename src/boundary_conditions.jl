@@ -86,7 +86,7 @@ end
 
 
 function wk3(dt::Float64, v::Vessel, ρ::Float64)
-    Pout = v.Pc
+    Pout = 0.0
     Al = v.A[end]
     ul = v.u[end]
 
