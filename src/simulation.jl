@@ -76,7 +76,9 @@ function preamble(yaml_config, verbose)
     isdir(results_dir) && rm(results_dir, recursive = true)
     ~isdir(results_dir) && mkdir(results_dir)
     cp(yaml_config, joinpath(results_dir, yaml_config), force = true)
-    cp(config["inlet_file"], joinpath(results_dir, config["inlet_file"]), force = true)
+
+    inlet_file = get_inlet_file(config)
+    cp(inlet_file, joinpath(results_dir, inlet_file), force = true)
     cd(results_dir)
 
     config
@@ -86,7 +88,6 @@ function run_simulation(
     yaml_config::String;
     verbose::Bool = true,
     out_files::Bool = false,
-    conv_ceil::Bool = false,
 )
     initial_dir = pwd()
     config = preamble(yaml_config, verbose)
