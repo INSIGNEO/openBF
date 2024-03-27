@@ -16,9 +16,8 @@ openBF API consists of a single function
 ```julia
 run_simulation(
         yaml_config_path::String;
-        verbose::Bool = false,
-        out_files::Bool = false,
-        conv_ceil::Bool = false,
+        verbose::Bool = false,         # show progress bars
+        out_files::Bool = false,       # save .out files with the all the cycles
         )
 ```
 
@@ -32,3 +31,15 @@ run_simulation("input.yml", verbose=true)
 ```
 
 This will create a `<project_name>_results` folder containing all the output files from the simulation.
+
+## Outputs
+
+Simulation results are saved in the `<project_name>_results` directory or in the `output_directory` specified. There, for each artery in your network, you'll find a file per output quantity (these are specified in the `write_results` list).
+
+By default only `.last` files are saved. Thes contains only the _last_ simulated cardiac cycle; at convergence, these are the files you want to look at.
+
+You can also set `out_files = true` when calling `run_simulation`. This results in the writing of `.out` files which contain the _whole_ simulation history, i.e., all the cardiac cycles simulated.
+
+### Format
+
+These files contain as many rows as defined in the config by the `jump` parameter (default `100`), and 6 columns. The first column contains the simulation time for the current cardiac cycles; column 2-6 report waveforms at five locations along the vessel, namely _inlet_, _1/4th_ of the length, _mid-point_, _3/4th_ of the length and _outlet_.

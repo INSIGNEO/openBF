@@ -87,7 +87,6 @@ function run_simulation(
     yaml_config::String;
     verbose::Bool = true,
     out_files::Bool = false,
-    conv_ceil::Bool = false,
 )
     initial_dir = pwd()
     config, temp_save = preamble(yaml_config, verbose)
