@@ -10,7 +10,7 @@
 
 <a href="https://github.com/INSIGNEO/openBF/actions"><img alt="openbf ci status" src="https://github.com/INSIGNEO/openBF/actions/workflows/ci.yml/badge.svg"></a>
 
-[![chat](https://dcbadge.vercel.app/api/server/xKfr8BgN)](https://discord.gg/xKfr8BgN)
+[![chat](https://dcbadge.vercel.app/api/server/eVU5bDEm8X)](https://discord.gg/eVU5bDEm8X)
 
 [![openBF](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://openBF.streamlit.app)
 

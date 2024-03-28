@@ -14,40 +14,37 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-flush_to_temp(t::Float64, n::Network, temp_save::Vector{String}) =
-    flush_to_temp.(t, values(n.vessels), Ref(temp_save))
-function flush_to_temp(t::Float64, v::Vessel, temp_save::Vector{String})
-    for (l, a) in zip(("P", "Q", "A", "u"), (v.P, v.Q, v.A, v.u))
-        l ∉ temp_save && continue
-        l ∉ ("P", "A") && ~v.tosave && continue
-        temp = open(v.label * "_$l.temp", "a")
-        line = join((t, a[1], a[v.node2], a[v.node3], a[v.node4], a[end]), " ")
-        println(temp, line)
-        close(temp)
+function save_waveforms(idx::Int64, t::Float64, v::Vessel)
+    for k in keys(v.waveforms)
+        if k == "A"
+            v.waveforms[k][idx, :] = [t, v.A[1], v.A[v.node2], v.A[v.node3], v.A[v.node4], v.A[end]]
+        elseif k == "Q"
+            v.waveforms[k][idx, :] = [t, v.Q[1], v.Q[v.node2], v.Q[v.node3], v.Q[v.node4], v.Q[end]]
+        elseif k == "u"
+            v.waveforms[k][idx, :] = [t, v.u[1], v.u[v.node2], v.u[v.node3], v.u[v.node4], v.u[end]]
+        elseif k == "P"
+            # TODO
+            # this ---------------------------v should be a call to compute_pressure instead and handle time
+            v.waveforms[k][idx, :] = [t, [pressure(v.A[i], v.A0[i], v.beta[i], v.Pext) for i=(1, v.node2, v.node3, v.node4, v.M)]...]
+        end
     end
 end
 
 
-move_temp_to_last(n::Network, temp_save::Vector{String}) =
-    move_temp_to_last.(values(n.vessels), Ref(temp_save))
-function move_temp_to_last(v::Vessel, temp_save::Vector{String})
-    for l in ("P", "Q", "A", "u")
-        l ∉ temp_save && continue
-        l ∉ ("P", "A") && ~v.tosave && continue
-        mv(v.label * "_$l.temp", v.label * "_$l.last", force = true)
+function flush_waveforms(v::Vessel)
+    for k in keys(v.waveforms)
+        open("$(v.label)_$k.last", "w") do io
+            writedlm(io, v.waveforms[k], " ")
+        end
     end
 end
 
 
-append_last_to_out(n::Network, temp_save::Vector{String}) =
-    append_last_to_out.(values(n.vessels), Ref(temp_save))
-function append_last_to_out(v::Vessel, temp_save::Vector{String})
-    for l in ("P", "Q", "A", "u")
-        l ∉ temp_save && continue
-        l ∉ ("P", "A") && ~v.tosave && continue
-        out_file = open(v.label * "_$l.out", "a")
-        last_a = readdlm(v.label * "_$l.last")
-        writedlm(out_file, last_a, " ")
-        close(out_file)
+function append_last_to_out(v::Vessel)
+    for k in keys(v.waveforms)
+        open("$(v.label)_$k.out", "a") do io
+            last = readdlm(v.label * "_$k.last")
+            writedlm(io, last, " ")
+        end
     end
 end

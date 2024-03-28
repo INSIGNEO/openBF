@@ -37,7 +37,9 @@ function Network(
     config::Vector{Dict{Any,Any}},
     blood::Blood,
     heart::Heart,
-    Ccfl::Float64;
+    Ccfl::Float64,
+    jump::Int64,
+    tokeep::Vector{String};
     verbose = true,
 )
     prog = verbose ? Progress(length(config); desc = "Building network:") : nothing
@@ -46,7 +48,7 @@ function Network(
 
     vessels = Dict()
     for vessel_config in config
-        vessel = Vessel(vessel_config, blood, Ccfl)
+        vessel = Vessel(vessel_config, blood, Ccfl, jump, tokeep)
         add_edge!(graph, vessel.sn, vessel.tn)
         vessels[(vessel.sn, vessel.tn)] = vessel
         verbose && next!(prog)

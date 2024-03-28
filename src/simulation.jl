@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
+
+# -------------------- deprecated ???? -----------------------------------------
 function compute_pressure(n::Network)
     compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("temp"))
     compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("last"))
@@ -27,7 +29,7 @@ function compute_pressure(v::Vessel, rho::Float64, ext::String)
     for (i, j) in enumerate([1, v.node2, v.node3, v.node4, v.M])
         @. P[:,i+1] = pressure(A[:,i+1], v.A0[j], v.beta[j], v.Pext)
 
-        if any(v.Cv .!= 0.0)
+        if v.viscoelastic
             P[:,i+1] .+= v.Cv[j] .* rho ./ A[:,i+1] .* diff([A[:,i+1];A[end,i+1]])./diff([A[:,1];A[end,1]+(A[end,1]-A[end-1,1])])
         end
     end
@@ -36,6 +38,7 @@ function compute_pressure(v::Vessel, rho::Float64, ext::String)
         writedlm(io, P)
     end
 end
+# ------------------------------------------------------------------------------
 
 load_yaml_config(yaml_config::String) = YAML.load_file(yaml_config)
 
@@ -45,9 +48,9 @@ function get_conv_error(n::Network)
 end
 
 function get_conv_error(v::Vessel)
-    current = readdlm(v.label * "_P.temp")
-    prev = readdlm(v.label * "_P.last")
-    sqrt(mean(current[:, 4] - prev[:, 4]) .^ 2) / 133.332
+    current = v.waveforms["P"][:,4]
+    prev = readdlm(v.label * "_P.last")[:, 4]
+    sqrt(mean(current - prev) .^ 2) / 133.332
 end
 
 getprog(cycle::Int64, verbose::Bool) =
@@ -69,10 +72,6 @@ function preamble(yaml_config, verbose)
     project_name = config["project_name"]
     verbose && println("project name: $project_name")
 
-    temp_save = deepcopy(get(config, "write_results", []))
-    "P" ∉ temp_save && push!(temp_save, "P")
-    "A" ∉ temp_save && push!(temp_save, "A")
-
     results_dir = get(config, "output_directory", project_name * "_results")
     isdir(results_dir) && rm(results_dir, recursive = true)
     ~isdir(results_dir) && mkdir(results_dir)
@@ -82,7 +81,7 @@ function preamble(yaml_config, verbose)
     cp(inlet_file, joinpath(results_dir, inlet_file), force = true)
     cd(results_dir)
 
-    config, temp_save
+    config
 end
 
 function run_simulation(
@@ -91,16 +90,20 @@ function run_simulation(
     out_files::Bool = false,
 )
     initial_dir = pwd()
-    config, temp_save = preamble(yaml_config, verbose)
+    config = preamble(yaml_config, verbose)
 
     blood = Blood(config["blood"])
     heart = Heart(get_inlet_file(config))
 
+    tempsave = deepcopy(get(config, "write_results", []))
+    "P" ∉ tempsave && push!(tempsave, "P")
     network = Network(
         config["network"],
         blood,
         heart,
         config["solver"]["Ccfl"],
+        config["solver"]["jump"],
+        tempsave,
         verbose = verbose,
     )
     total_time = config["solver"]["cycles"] * heart.cardiac_period
@@ -123,7 +126,7 @@ function run_simulation(
         verbose && next!(prog)
 
         if current_time >= checkpoints[counter]
-            flush_to_temp(current_time, network, temp_save)
+            save_waveforms.(counter, current_time, values(network.vessels))
             counter += 1
         end
 
@@ -133,12 +136,12 @@ function run_simulation(
 
             # check convergence
             if passed_cycles > 0
-                compute_pressure(network)
+                # compute_pressure(network)
                 conv_error, error_loc = get_conv_error(network)
             end
 
-            move_temp_to_last(network, temp_save)
-            out_files && append_last_to_out(network, temp_save)
+            flush_waveforms.(values(network.vessels))
+            out_files && append_last_to_out.(values(network.vessels))
 
             if verbose
                 if passed_cycles > 0
@@ -173,7 +176,6 @@ function run_simulation(
 end
 
 function cleanup(v::Vessel, tokeep)
-    println("Cleaning outputs directory")
     ~v.tosave && rm.(glob("$(v.label)_*"))
     for l in ("P", "A", "Q", "u")
         l ∉ tokeep && rm.(glob("$(v.label)_$l.*"), force=true)
