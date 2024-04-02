@@ -48,7 +48,7 @@ When setting `save_stats=true`, a `<project_name>.conv` file is written in the r
 <elapsed cardiac cycles> # integer
 <elapsed time> # float, seconds
 <memory allocated> # integer, bytes
-<garbace collection % time> # float, percentage
+<garbage collection % time> # float, percentage
 ```
 
 ### `.last`/`.out` Format
