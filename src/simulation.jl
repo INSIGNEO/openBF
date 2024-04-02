@@ -88,6 +88,7 @@ function run_simulation(
     yaml_config::String;
     verbose::Bool = true,
     out_files::Bool = false,
+    save_stats::Bool = false,
 )
     initial_dir = pwd()
     config = preamble(yaml_config, verbose)
@@ -117,7 +118,8 @@ function run_simulation(
     prog = getprog(passed_cycles, verbose)
     counter = 1
     conv_error = floatmax()
-    @time while true
+    converged = false
+    stats = @timed while true
 
         # step
         dt = calculate_Δt(network)
@@ -166,12 +168,17 @@ function run_simulation(
            passed_cycles == config["solver"]["cycles"] ||
            conv_error < config["solver"]["convergence_tolerance"]
             verbose && finish!(prog)
+            converged = true
             break
         end
         current_time += dt
     end
     tokeep = get(config, "write_results", [])
     cleanup.(values(network.vessels), Ref(tokeep))
+
+    verbose && printstats(stats, converged, passed_cycles)
+    save_stats && savestats(stats, converged, passed_cycles, config["project_name"])
+
     cd(initial_dir)
 end
 
@@ -179,5 +186,27 @@ function cleanup(v::Vessel, tokeep)
     ~v.tosave && rm.(glob("$(v.label)_*"))
     for l in ("P", "A", "Q", "u")
         l ∉ tokeep && rm.(glob("$(v.label)_$l.*"), force=true)
+    end
+end
+
+function printstats(s, converged, passed_cycles)
+    if converged
+        println("Simulation converged after $passed_cycles cardiac cycles")
+    else
+        println("Simulation not converged, stopping after $passed_cycles cardiac cycles")
+    end
+    @printf "Elapsed time: %5.2fs\n" s.time
+    @printf "Memory: %5.2fGB\n" s.bytes*1e-9
+    gctime = @sprintf "GC time: %5.2f" s.gctime
+    println("$(gctime)%")
+end
+
+function savestats(s, converged, passed_cycles, simulation_name)
+    open("$simulation_name.conv", "w") do io
+        println(io, "$converged")
+        println(io, "$passed_cycles")
+        println(io, "$(s.time)")
+        println(io, "$(s.bytes)")
+        println(io, "$(s.gctime)")
     end
 end
