@@ -173,10 +173,14 @@ function limiter!(
     superbee!(slopes, dUA, dUQ, v.halfDx)
 end
 
-maxmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*max(abs(a), abs(b))
-minmod(a::Float64, b::Float64) = 0.5*(sign(a) + sign(b))*min(abs(a), abs(b))
-function superbee!(slopes::Vector{Float64}, dUA::Vector{Float64}, dUQ::Vector{Float64}, halfDx::Float64)
-    for i = eachindex(slopes)
-        @inbounds slopes[i] = maxmod(minmod(dUA[i], 2.0 * dUQ[i]), minmod(2.0 * dUA[i], dUQ[i])) * halfDx
+# https://discourse.julialang.org/t/optimising-superbee-function/112568/12
+function superbee!(s::T, a::T, b::T, h::Float64) where {T>:Vector{Float64}}
+    @fastmath for i = eachindex(s,a,b)
+        # @inbounds is inferred automatically - yay for safety AND speed!
+        ai = a[i]
+        bi = b[i]
+        t1 = max(min(ai,2bi),min(2ai,bi))
+        t2 = min(max(ai,2bi),max(2ai,bi))
+        s[i] = ifelse(ai>0.0<bi, t1, ifelse(ai<=0.0>bi, t2, zero(eltype(T))))*h
     end
 end
