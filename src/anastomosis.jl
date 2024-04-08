@@ -17,7 +17,7 @@ limitations under the License.
 function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
 
     #Unknowns vector
-    U = [
+    U = @SArray [
         v1.u[end],
         v2.u[end],
         v3.u[1],
@@ -27,7 +27,7 @@ function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
     ]
 
     #Parameters vector
-    k = sqrt.(1.5 .* (v1.gamma[end], v2.gamma[end], v3.gamma[1]))
+    k = @SArray [sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[end]), sqrt(1.5*v3.gamma[1])]
     W = calculateWstarAn(U, k)
     J = calculateJacobianAn(v1, v2, v3, U, k)
     F = calculateFofUAn(v1, v2, v3, U, k, W)
@@ -39,12 +39,6 @@ function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
     while true
         dU = J \ (-F)
         U_new = U + dU
-
-        if any(isnan(dot(F, F)))
-            println(F)
-            @printf "error at anastomosis with vessels %s, %s, and %s \n" v1.label v2.label v3.label
-            break
-        end
 
         u_ok = 0
         f_ok = 0
@@ -79,16 +73,16 @@ function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
     v3.Q[1] = v3.u[1] * v3.A[1]
 end
 
-function calculateWstarAn(U::Array, k::Tuple)
+function calculateWstarAn(U::SArray, k::SArray)
 
     W1 = U[1] + 4 * k[1] * U[4]
     W2 = U[2] + 4 * k[2] * U[5]
     W3 = U[3] - 4 * k[3] * U[6]
 
-    return [W1, W2, W3]
+    return @SArray [W1, W2, W3]
 end
 
-function calculateFofUAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple, W::Array)
+function calculateFofUAn(v1::Vessel, v2::Vessel, v3::Vessel, U::SArray, k::SArray, W::SArray)
 
     f1 = U[1] + 4 * k[1] * U[4] - W[1]
 
@@ -108,12 +102,12 @@ function calculateFofUAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple,
         v2.beta[end] * (U[5]^2 / sqrt(v2.A0[end]) - 1) -
         (v3.beta[1] * ((U[6]^2) / sqrt(v3.A0[1]) - 1))
 
-    return [f1, f2, f3, f4, f5, f6]
+    return @SArray [f1, f2, f3, f4, f5, f6]
 end
 
-function calculateJacobianAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tuple)
-
-    J = eye(6)
+function calculateJacobianAn(v1::Vessel, v2::Vessel, v3::Vessel, U::SArray, k::SArray)
+    J = @MArray zeros(6, 6) 
+    J .+= I(6)
 
     J[1, 4] = 4 * k[1]
     J[2, 5] = 4 * k[2]
@@ -133,5 +127,5 @@ function calculateJacobianAn(v1::Vessel, v2::Vessel, v3::Vessel, U::Array, k::Tu
     J[6, 5] = 2 * v2.beta[end] * U[5] / sqrt(v2.A0[end])
     J[6, 6] = -2 * v3.beta[1] * U[6] / sqrt(v3.A0[1])
 
-    return J
+    J
 end
