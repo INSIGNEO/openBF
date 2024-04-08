@@ -14,8 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-calculate_Δt(n::Network) =
-    minimum(v.dx * v.Ccfl / maximum(abs, v.u .+ v.c) for (_, v) in n.vessels)
+
+function calculateΔt(n::Network)
+    minΔt = floatmax()
+    Δt = 1.0
+    for (_, v) in n.vessels
+        maxspeed = 0.0
+        for i=eachindex(v.u)
+            @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i]))
+            if speed > maxspeed
+                maxspeed = speed
+            end
+        end
+        Δt = v.dx / maxspeed
+        if Δt < minΔt
+            minΔt = Δt
+        end
+    end
+    Δt*n.Ccfl
+end
 
 function solve!(n::Network, dt::Float64, current_time::Float64)
     for edge in edges(n.graph)
@@ -126,10 +143,20 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     #source term
-    for i = eachindex(v.Q) # 1:v.M
-        @inbounds v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt        #viscosity
-        @inbounds v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]   #dP/dA0
-        @inbounds v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]          #dP/dh0
+    for i = eachindex(v.Q, v.A, v.u, v.beta, v.A0, v.dA0dx, v.dTaudx) # 1:v.M
+        #viscosity
+        @inbounds v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt
+
+        if v.tapered
+            #dP/dA0   
+            @inbounds v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]
+
+            #dP/dh0
+            @inbounds v.Q[i] -= dt * (v.A[i] / b.rho) * (sqrt(v.A[i] / v.A0[i]) - 1.0) * v.dTaudx[i]
+        end
+
+        # update
+        @inbounds v.u[i] = v.Q[i] / v.A[i]
     end
 
     #parabolic system (visco-elastic)
@@ -149,12 +176,6 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         d[end] += a[end-1]*v.Q[end-1] + a[end]*v.Q[end]
 
         v.Q = T\d
-    end
-
-    #update
-    for i=eachindex(v.u) # 1:v.M
-        @inbounds v.u[i] = v.Q[i] / v.A[i]
-        @inbounds v.c[i] = wave_speed(v.A[i], v.gamma[i])
     end
 end
 

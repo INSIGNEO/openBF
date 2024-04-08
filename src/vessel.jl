@@ -40,7 +40,6 @@ mutable struct Vessel
     dx::Float64
     invDx::Float64
     halfDx::Float64
-    Ccfl::Float64
 
     #Physical constants
     beta::Vector{Float64}
@@ -49,6 +48,7 @@ mutable struct Vessel
     gamma::Vector{Float64}
     gamma_ghost::Vector{Float64}
     A0::Vector{Float64}
+    tapered::Bool
     dA0dx::Vector{Float64}
     dTaudx::Vector{Float64}
     Pext::Float64
@@ -58,7 +58,6 @@ mutable struct Vessel
     A::Vector{Float64}
     Q::Vector{Float64}
     u::Vector{Float64}
-    c::Vector{Float64}
     P::Vector{Float64}
 
     #Riemann invariants
@@ -123,6 +122,7 @@ mutable struct Vessel
 end
 
 wave_speed(A::Float64, gamma::Float64) = sqrt(1.5 * gamma * sqrt(A))
+wave_speed(v::Vessel) = wave_speed.(v.A, v.gamma)
 
 pressure(A::Float64, A0::Float64, beta::Float64, Pext::Float64) =
     Pext + beta * (sqrt(A / A0) - 1.0)
@@ -150,7 +150,7 @@ function radii(config::Dict{Any,Any})
     Rp, Rd
 end
 
-function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tokeep::Vector{String})
+function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{String})
     vessel_name = config["label"]
     tosave = get(config, "to_save", true)
     sn = config["sn"]
@@ -172,6 +172,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tok
     dA0dx = zeros(Float64, M)
     dTaudx = zeros(Float64, M)
     radius_slope = (Rd - Rp) / (M - 1)
+    tapered = ~isapprox(Rd, Rp, atol=1e-4) # less than 1μm difference = no tapering
     ah = 0.2802
     bh = -5.053e2
     ch = 0.1324
@@ -214,7 +215,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tok
     A = zeros(Float64, M) + A0
     Q = zeros(Float64, M) .+ initial_flow
     u = zeros(Float64, M) + Q ./ A
-    c = wave_speed.(A, gamma)
     P = pressure.(A, A0, beta, Pext)
 
     U00A = A0[1]
@@ -227,8 +227,9 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tok
     UM1Q = initial_flow
     UM2Q = initial_flow
 
-    W1M0 = u[end] - 4 * c[end]
-    W2M0 = u[end] + 4 * c[end]
+    c = wave_speed(A[end], gamma[end])
+    W1M0 = u[end] - 4c
+    W2M0 = u[end] + 4c
 
     node2 = round(Int, M * 0.25)
     node3 = round(Int, M * 0.5)
@@ -292,13 +293,13 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tok
         dx,
         invDx,
         halfDx,
-        Ccfl,
         beta,
         Cv,
         viscoelastic,
         gamma,
         gamma_ghost,
         A0,
+        tapered,
         dA0dx,
         dTaudx,
         Pext,
@@ -306,7 +307,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, Ccfl::Float64, jump::Int64, tok
         A,
         Q,
         u,
-        c,
         P,
         W1M0,
         W2M0,

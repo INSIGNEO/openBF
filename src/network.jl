@@ -31,6 +31,7 @@ struct Network
     vessels::Dict{Tuple{Int,Int},Vessel}
     blood::Blood
     heart::Heart
+    Ccfl::Float64
 end
 number_of_nodes(config::Vector{Dict{Any,Any}}) = maximum(c["tn"] for c in config)
 function Network(
@@ -48,13 +49,13 @@ function Network(
 
     vessels = Dict()
     for vessel_config in config
-        vessel = Vessel(vessel_config, blood, Ccfl, jump, tokeep)
+        vessel = Vessel(vessel_config, blood, jump, tokeep)
         add_edge!(graph, vessel.sn, vessel.tn)
         vessels[(vessel.sn, vessel.tn)] = vessel
         verbose && next!(prog)
     end
     check(graph)
-    Network(graph, vessels, blood, heart)
+    Network(graph, vessels, blood, heart, Ccfl)
 end
 
 function check(g::SimpleDiGraph)
