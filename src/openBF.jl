@@ -20,7 +20,7 @@ module openBF
 using Printf
 using LinearAlgebra
 using DelimitedFiles
-
+using StaticArrays
 using YAML
 using Glob
 using Graphs

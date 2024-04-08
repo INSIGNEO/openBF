@@ -35,15 +35,17 @@ function inlet_from_data(t::Float64, h::Heart)
 end
 
 function riemann_invariants(i::Int64, v::Vessel)
-    W1 = v.u[i] - 4 * v.c[i]
-    W2 = v.u[i] + 4 * v.c[i]
-    W1, W2
+    c = wave_speed(v.A[i], v.gamma[i])
+    # W1 = v.u[i] - 4c
+    # W2 = v.u[i] + 4c
+    # W1, W2
+    @SArray [v.u[i] - 4c, v.u[i] + 4c]
 end
 
 function inv_riemann_invariants(W1::Float64, W2::Float64)
-    u = 0.5 * (W1 + W2)
-    c = (W2 - W1) * 0.125
-    u, c
+    0.5 * (W1 + W2) # u
+    # c = (W2 - W1) * 0.125
+    # u, c
 end
 
 function inlet_compatibility(dt::Float64, v::Vessel)
@@ -51,10 +53,10 @@ function inlet_compatibility(dt::Float64, v::Vessel)
     W11, W21 = riemann_invariants(1, v)
     W12, W22 = riemann_invariants(2, v)
 
-    W11 += (W12 - W11) * (v.c[1] - v.u[1]) * dt / v.dx
+    W11 += (W12 - W11) * (wave_speed(v.A[1], v.gamma[1]) - v.u[1]) * dt / v.dx
     W21 = 2 * v.Q[1] / v.A[1] - W11
 
-    v.u[1], v.c[1] = inv_riemann_invariants(W11, W21)
+    v.u[1] = inv_riemann_invariants(W11, W21)
 
     v.A[1] = v.Q[1] / v.u[1]
     v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
@@ -77,10 +79,10 @@ function outlet_compatibility(dt::Float64, v::Vessel)
     W1M1, W2M1 = riemann_invariants(v.M - 1, v)
     W1M, W2M = riemann_invariants(v.M, v)
 
-    W2M += (W2M1 - W2M) * (v.u[end] + v.c[end]) * dt / v.dx
+    W2M += (W2M1 - W2M) * (v.u[end] + wave_speed(v.A[end], v.gamma[end])) * dt / v.dx
     W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
 
-    v.u[end], v.c[end] = inv_riemann_invariants(W1M, W2M)
+    v.u[end] = inv_riemann_invariants(W1M, W2M)
     v.Q[end] = v.A[end] * v.u[end]
 end
 
