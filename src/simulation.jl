@@ -122,7 +122,7 @@ function run_simulation(
     stats = @timed while true
 
         # step
-        dt = calculate_Δt(network)
+        dt = calculateΔt(network)
         solve!(network, dt, current_time)
         update_ghost_cells!(network)
         verbose && next!(prog)
