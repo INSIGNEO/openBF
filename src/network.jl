@@ -36,6 +36,7 @@ struct Network
     bifW::MVector{3, Float64}
     bifF::MVector{6, Float64}
     bifJ::MArray{Tuple{6, 6}, Float64, 2, 36}
+    # TODO: add vectors for conj and anastomosis
 end
 number_of_nodes(config::Vector{Dict{Any,Any}}) = maximum(c["tn"] for c in config)
 function Network(
