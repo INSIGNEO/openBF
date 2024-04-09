@@ -36,20 +36,14 @@ end
 
 function riemann_invariants(i::Int64, v::Vessel)
     c = wave_speed(v.A[i], v.gamma[i])
-    # W1 = v.u[i] - 4c
-    # W2 = v.u[i] + 4c
-    # W1, W2
-    @SArray [v.u[i] - 4c, v.u[i] + 4c]
+    (v.u[i] - 4c, v.u[i] + 4c)
 end
 
 function inv_riemann_invariants(W1::Float64, W2::Float64)
-    0.5 * (W1 + W2) # u
-    # c = (W2 - W1) * 0.125
-    # u, c
+    0.5 * (W1 + W2)
 end
 
 function inlet_compatibility(dt::Float64, v::Vessel)
-
     W11, W21 = riemann_invariants(1, v)
     W12, W22 = riemann_invariants(2, v)
 
@@ -60,7 +54,6 @@ function inlet_compatibility(dt::Float64, v::Vessel)
 
     v.A[1] = v.Q[1] / v.u[1]
     v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
-
 end
 
 
@@ -75,7 +68,6 @@ function set_outlet_bc(dt::Float64, v::Vessel, ρ::Float64)
 end
 
 function outlet_compatibility(dt::Float64, v::Vessel)
-
     W1M1, W2M1 = riemann_invariants(v.M - 1, v)
     W1M, W2M = riemann_invariants(v.M, v)
 

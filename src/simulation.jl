@@ -74,7 +74,7 @@ function preamble(yaml_config, verbose)
 
     results_dir = get(config, "output_directory", project_name * "_results")
     isdir(results_dir) && rm(results_dir, recursive = true)
-    ~isdir(results_dir) && mkdir(results_dir)
+    ~isdir(results_dir) && mkpath(results_dir)
     cp(yaml_config, joinpath(results_dir, yaml_config), force = true)
 
     inlet_file = get_inlet_file(config)
