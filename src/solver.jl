@@ -94,10 +94,24 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     limiter!(v, v.vQ, v.slopesQ)
 
     #
-    upwind!(v)
+    for i = eachindex(v.Al, v.Ar, v.vA, v.slopesA,
+                    v.Ql, v.Qr, v.vQ, v.slopesQ,
+                    v.Fl, v.Fr, v.gamma_ghost)
+        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
+        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
+
+        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
+        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
+
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+    end
 
     #
-    timeint!(v, dxDt)
+    for i = 1:v.M+1
+        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+    end
 
     # step-2
     for i = 2:v.M+1
@@ -116,10 +130,24 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     limiter!(v, v.vQ, v.slopesQ)
 
     #
-    upwind!(v)
+    for i = eachindex(v.Al, v.Ar, v.vA, v.slopesA,
+                    v.Ql, v.Qr, v.vQ, v.slopesQ,
+                    v.Fl, v.Fr, v.gamma_ghost)
+        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
+        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
+
+        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
+        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
+
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+    end
 
     #
-    timeint!(v, dxDt)
+    for i = 1:v.M+1
+        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+    end
 
     # 2:v.M+1
     for i = eachindex(v.A, v.Q)
@@ -188,27 +216,5 @@ function superbee!(s::Vector{Float64}, a::Vector{Float64}, b::Vector{Float64}, h
         t1 = max(min(ai,2bi),min(2ai,bi))
         t2 = min(max(ai,2bi),max(2ai,bi))
         s[i] = ifelse(ai>0, ifelse(bi>0, t1, zero(Float64)), ifelse(bi<0, t2, zero(Float64)))*h
-    end
-end
-
-function upwind!(v::Vessel)
-    for i = eachindex(v.Al, v.Ar, v.vA, v.slopesA,
-                    v.Ql, v.Qr, v.vQ, v.slopesQ,
-                    v.Fl, v.Fr, v.gamma_ghost)
-        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
-        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
-
-        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
-        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
-
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
-    end
-end
-
-function timeint!(v::Vessel, dxDt::Float64)
-    for i = 1:v.M+1
-        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
     end
 end
