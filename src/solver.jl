@@ -73,73 +73,60 @@ function solve!(n::Network, dt::Float64, current_time::Float64)
 end
 
 function muscl!(v::Vessel, dt::Float64, b::Blood)
-    v.vA[1] = v.U00A
-    v.vA[end] = v.UM1A
-
-    v.vQ[1] = v.U00Q
-    v.vQ[end] = v.UM1Q
-
-    for i = 2:v.M+1
-        @inbounds v.vA[i] = v.A[i-1]
-        @inbounds v.vQ[i] = v.Q[i-1]
-    end
-
-    limiter!(v, v.vA, v.invDx, v.dUA, v.dUQ, v.slopesA)
-    limiter!(v, v.vQ, v.invDx, v.dUA, v.dUQ, v.slopesQ)
-
-    for i = eachindex(v.Al) # 1:v.M+2
-        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
-        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
-
-        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
-        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
-
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
-    end
-
     dxDt = v.dx / dt
     invDxDt = 1.0 / dxDt
 
-    for i = 1:v.M+1
-        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+    # step-1
+    # i = 1
+    @inbounds v.vA[1] = v.U00A
+    @inbounds v.vQ[1] = v.U00Q
+    # 2:v.M+1
+    for i = eachindex(v.A, v.Q)
+        @inbounds v.vA[i+1] = v.A[i]
+        @inbounds v.vQ[i+1] = v.Q[i]
     end
+    # i = M+2
+    @inbounds v.vA[end] = v.UM1A
+    @inbounds v.vQ[end] = v.UM1Q
 
+    #
+    limiter!(v, v.vA, v.slopesA)
+    limiter!(v, v.vQ, v.slopesQ)
+
+    #
+    upwind!(v)
+
+    #
+    timeint!(v, dxDt)
+
+    # step-2
     for i = 2:v.M+1
-        @inbounds v.uStarA[i] = v.vA[i] + invDxDt * (v.fluxA[i-1] - v.fluxA[i])
-        @inbounds v.uStarQ[i] = v.vQ[i] + invDxDt * (v.fluxQ[i-1] - v.fluxQ[i])
+        @inbounds v.vA[i] += invDxDt * (v.fluxA[i-1] - v.fluxA[i])
+        @inbounds v.vQ[i] += invDxDt * (v.fluxQ[i-1] - v.fluxQ[i])
     end
+    # i=1
+    @inbounds v.vA[1] = v.vA[2]
+    @inbounds v.vQ[1] = v.vQ[2]
+    # i=M+2
+    @inbounds v.vA[end] = v.vA[end-1]
+    @inbounds v.vQ[end] = v.vQ[end-1]
 
-    v.uStarA[1] = v.uStarA[2]
-    v.uStarQ[1] = v.uStarQ[2]
-    v.uStarA[end] = v.uStarA[end-1]
-    v.uStarQ[end] = v.uStarQ[end-1]
+    #
+    limiter!(v, v.vA, v.slopesA)
+    limiter!(v, v.vQ, v.slopesQ)
 
-    limiter!(v, v.uStarA, v.invDx, v.dUA, v.dUQ, v.slopesA)
-    limiter!(v, v.uStarQ, v.invDx, v.dUA, v.dUQ, v.slopesQ)
+    #
+    upwind!(v)
 
-    for i = eachindex(v.Al) # 1:v.M+2
-        @inbounds v.Al[i] = v.uStarA[i] + v.slopesA[i]
-        @inbounds v.Ar[i] = v.uStarA[i] - v.slopesA[i]
+    #
+    timeint!(v, dxDt)
 
-        @inbounds v.Ql[i] = v.uStarQ[i] + v.slopesQ[i]
-        @inbounds v.Qr[i] = v.uStarQ[i] - v.slopesQ[i]
-
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
-    end
-
-    for i = 1:v.M+1
-        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
-    end
-
-    for i = 2:v.M+1
-        @inbounds v.A[i-1] =
-            0.5 * (v.A[i-1] + v.uStarA[i] + invDxDt * (v.fluxA[i-1] - v.fluxA[i]))
-        @inbounds v.Q[i-1] =
-            0.5 * (v.Q[i-1] + v.uStarQ[i] + invDxDt * (v.fluxQ[i-1] - v.fluxQ[i]))
+    # 2:v.M+1
+    for i = eachindex(v.A, v.Q)
+        @inbounds v.A[i] =
+            0.5 * (v.A[i] + v.vA[i+1] + invDxDt * (v.fluxA[i] - v.fluxA[i+1]))
+        @inbounds v.Q[i] =
+            0.5 * (v.Q[i] + v.vQ[i+1] + invDxDt * (v.fluxQ[i] - v.fluxQ[i+1]))
     end
 
     #source term
@@ -182,26 +169,46 @@ end
 function limiter!(
     v::Vessel,
     U::Vector{Float64},
-    invDx::Float64,
-    dUA::Vector{Float64},
-    dUQ::Vector{Float64},
     slopes::Vector{Float64},
 )
     for i = 2:v.M+2
-        @inbounds dUA[i] = (U[i] - U[i-1]) * invDx
-        @inbounds dUQ[i-1] = (U[i] - U[i-1]) * invDx
+        u = (U[i] - U[i-1]) * v.invDx
+        @inbounds v.dUA[i] = u
+        @inbounds v.dUQ[i-1] = u
     end
-    superbee!(slopes, dUA, dUQ, v.halfDx)
+    superbee!(slopes, v.dUA, v.dUQ, v.halfDx)
 end
 
 # https://discourse.julialang.org/t/optimising-superbee-function/112568/12
 function superbee!(s::Vector{Float64}, a::Vector{Float64}, b::Vector{Float64}, h::Float64)
-    @simd for i = eachindex(s,a,b)
+    @simd for i = eachindex(s, a, b)
         # @inbounds is inferred automatically - yay for safety AND speed!
         ai = a[i]
         bi = b[i]
         t1 = max(min(ai,2bi),min(2ai,bi))
         t2 = min(max(ai,2bi),max(2ai,bi))
         s[i] = ifelse(ai>0, ifelse(bi>0, t1, zero(Float64)), ifelse(bi<0, t2, zero(Float64)))*h
+    end
+end
+
+function upwind!(v::Vessel)
+    for i = eachindex(v.Al, v.Ar, v.vA, v.slopesA,
+                    v.Ql, v.Qr, v.vQ, v.slopesQ,
+                    v.Fl, v.Fr, v.gamma_ghost)
+        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
+        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
+
+        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
+        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
+
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+    end
+end
+
+function timeint!(v::Vessel, dxDt::Float64)
+    for i = 1:v.M+1
+        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
     end
 end

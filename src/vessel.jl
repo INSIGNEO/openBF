@@ -90,14 +90,9 @@ mutable struct Vessel
     Cc::Float64
     Pc::Float64
 
-    #Slope
-    slope::Vector{Float64}
-
     #MUSCLArrays
     fluxA::Vector{Float64}
     fluxQ::Vector{Float64}
-    uStarA::Vector{Float64}
-    uStarQ::Vector{Float64}
 
     vA::Vector{Float64}
     vQ::Vector{Float64}
@@ -250,14 +245,9 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     # artery-vein interface.
     Pc = 0.0
 
-    #Slope
-    slope = zeros(Float64, M)
-
     # MUSCL arrays
     fluxA = zeros(Float64, M + 2)
     fluxQ = zeros(Float64, M + 2)
-    uStarA = zeros(Float64, M + 2)
-    uStarQ = zeros(Float64, M + 2)
 
     vA = zeros(Float64, M + 2)
     vQ = zeros(Float64, M + 2)
@@ -328,11 +318,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         inlet_impedance_matching,
         Cc,
         Pc,
-        slope,
         fluxA,
         fluxQ,
-        uStarA,
-        uStarQ,
         vA,
         vQ,
         dUA,
