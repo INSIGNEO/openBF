@@ -94,9 +94,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     limiter!(v, v.vQ, v.slopesQ)
 
     #
-    for i = eachindex(v.Al, v.Ar, v.vA, v.slopesA,
-                    v.Ql, v.Qr, v.vQ, v.slopesQ,
-                    v.Fl, v.Fr, v.gamma_ghost)
+    for i = eachindex(v.Al)
         @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
         @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
 
@@ -130,9 +128,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     limiter!(v, v.vQ, v.slopesQ)
 
     #
-    for i = eachindex(v.Al, v.Ar, v.vA, v.slopesA,
-                    v.Ql, v.Qr, v.vQ, v.slopesQ,
-                    v.Fl, v.Fr, v.gamma_ghost)
+    for i = eachindex(v.Al)
         @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
         @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
 
@@ -150,7 +146,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     # 2:v.M+1
-    for i = eachindex(v.A, v.Q)
+    for i = eachindex(v.A)
         @inbounds v.A[i] =
             0.5 * (v.A[i] + v.vA[i+1] + invDxDt * (v.fluxA[i] - v.fluxA[i+1]))
         @inbounds v.Q[i] =
@@ -158,7 +154,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 
     #source term
-    for i = eachindex(v.Q, v.A, v.u, v.beta, v.A0, v.dA0dx, v.dTaudx) # 1:v.M
+    for i = eachindex(v.Q) # 1:v.M
         #viscosity
         @inbounds v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt
 
@@ -209,7 +205,7 @@ end
 
 # https://discourse.julialang.org/t/optimising-superbee-function/112568/12
 function superbee!(s::Vector{Float64}, a::Vector{Float64}, b::Vector{Float64}, h::Float64)
-    @simd for i = eachindex(s, a, b)
+    @simd for i = eachindex(s)
         # @inbounds is inferred automatically - yay for safety AND speed!
         ai = a[i]
         bi = b[i]
