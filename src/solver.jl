@@ -34,7 +34,7 @@ function calculateΔt(n::Network)
     Δt*n.Ccfl
 end
 
-function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
+function solve!(n::Network, dt::Float64, current_time::Float64)
     for edge in edges(n.graph)
         s = src(edge)
         t = dst(edge)
@@ -196,8 +196,9 @@ function limiter!(
     slopes::Vector{Float64},
 )
     for i = 2:v.M+2
-        @inbounds v.dUA[i] = (U[i] - U[i-1]) * v.invDx
-        @inbounds v.dUQ[i-1] = (U[i] - U[i-1]) * v.invDx
+        u = (U[i] - U[i-1]) * v.invDx
+        @inbounds v.dUA[i] = u
+        @inbounds v.dUQ[i-1] = u
     end
     superbee!(slopes, v.dUA, v.dUQ, v.halfDx)
 end
