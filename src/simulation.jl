@@ -57,9 +57,9 @@ getprog(cycle::Int64, verbose::Bool) =
     verbose ?
     ProgressUnknown(desc = "Solving cycle #$cycle:", spinner = true, showspeed = true) :
     nothing
-function get_inlet_file(config)
+function get_inlet_file(config)::String
     if ~haskey(config, "inlet_file")
-        return config["project_name"]*"_inlet.dat"
+        return config["project_name"]::String * "_inlet.dat"
     end
     config["inlet_file"]
 end
@@ -91,24 +91,24 @@ function run_simulation(
     save_stats::Bool = false,
 )
     initial_dir = pwd()
-    config = preamble(yaml_config, verbose)
+    config::Dict{String, Any} = preamble(yaml_config, verbose)
 
     blood = Blood(config["blood"])
-    heart = Heart(get_inlet_file(config))
+    heart = Heart(get_inlet_file(config)::String)
 
-    tempsave = deepcopy(get(config, "write_results", []))
+    tempsave::Vector{String} = deepcopy(get(config, "write_results", []))
     "P" ∉ tempsave && push!(tempsave, "P")
     network = Network(
         config["network"],
         blood,
         heart,
-        config["solver"]["Ccfl"],
-        config["solver"]["jump"],
+        config["solver"]["Ccfl"]::Float64,
+        config["solver"]["jump"]::Int64,
         tempsave,
         verbose = verbose,
     )
-    total_time = config["solver"]["cycles"] * heart.cardiac_period
-    jump = config["solver"]["jump"]
+    total_time = float(config["solver"]["cycles"]) * heart.cardiac_period
+    jump::Int64 = config["solver"]["jump"]
     checkpoints = range(0, stop = heart.cardiac_period, length = jump)
 
     verbose && println("\nStart simulation")
@@ -117,7 +117,7 @@ function run_simulation(
     passed_cycles = 0
     prog = getprog(passed_cycles, verbose)
     counter = 1
-    conv_error = floatmax()
+    conv_error::Float64 = floatmax()
     converged = false
     stats = @timed while true
 
@@ -173,7 +173,7 @@ function run_simulation(
         end
         current_time += dt
     end
-    tokeep = get(config, "write_results", [])
+    tokeep::Vector{String} = get(config, "write_results", [])
     cleanup.(values(network.vessels), Ref(tokeep))
 
     verbose && printstats(stats, converged, passed_cycles)

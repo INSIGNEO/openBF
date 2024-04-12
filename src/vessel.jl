@@ -81,8 +81,8 @@ mutable struct Vessel
     node4::Int64
 
     #Peripheral boundary condition
+    usewk3::Bool
     Rt::Float64
-
     R1::Float64
     R2::Float64
     total_peripheral_resistance::Float64
@@ -239,6 +239,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     end
     total_peripheral_resistance = R1 + R2
     inlet_impedance_matching = get(config, "inlet_impedance_matching", false)
+    usewk3 = R2 != 0.0
 
     # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
@@ -311,6 +312,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         node2,
         node3,
         node4,
+        usewk3,
         Rt,
         R1,
         R2,

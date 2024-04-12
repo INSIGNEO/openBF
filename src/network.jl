@@ -27,7 +27,8 @@ function Heart(inlet_file::String)
 end
 
 struct Network
-    graph::SimpleDiGraph
+    graph::SimpleDiGraph{Int64}
+    edges::Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}
     vessels::Dict{Tuple{Int,Int},Vessel}
     blood::Blood
     heart::Heart
@@ -55,7 +56,7 @@ function Network(
     vessels = Dict()
     for vessel_config in config
         vessel = Vessel(vessel_config, blood, jump, tokeep)
-        add_edge!(graph, vessel.sn, vessel.tn)
+        Graphs.add_edge!(graph, vessel.sn, vessel.tn)
         vessels[(vessel.sn, vessel.tn)] = vessel
         verbose && next!(prog)
     end
@@ -66,7 +67,7 @@ function Network(
     bifF = @MArray zeros(6)
     bifJ = @MArray zeros(6,6) 
     bifJ .+= I(6)
-    Network(graph, vessels, blood, heart, Ccfl,
+    Network(graph, collect(Graphs.edges(graph)), vessels, blood, heart, Ccfl,
         bifU, bifW, bifF, bifJ)
 end
 

@@ -34,40 +34,42 @@ function calculateΔt(n::Network)
     Δt*n.Ccfl
 end
 
-function solve!(n::Network, dt::Float64, current_time::Float64)
-    for edge in edges(n.graph)
-        s = src(edge)
-        t = dst(edge)
+function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
+    for edge in n.edges
+        s = Graphs.src(edge)
+        t = Graphs.dst(edge)
 
         # inlet
-        s == 1 && set_inlet_bc(current_time, dt, n.vessels[(s, t)], n.heart)
+        s == 1 && inbc!(n.vessels[(s, t)], current_time, dt, n.heart)
 
         # TODO: multiple inlets
 
         # vessel
         muscl!(n.vessels[(s, t)], dt, n.blood)
 
-        if outdegree(n.graph, t) == 0 # outlet
-            set_outlet_bc(dt, n.vessels[(s, t)], n.blood.rho)
-        elseif outdegree(n.graph, t) == 1
-            if indegree(n.graph, t) == 1 # conjunction
-                d = first(outneighbors(n.graph, t))
+        # downstream
+        outdeg::Int64 = Graphs.outdegree(n.graph, t)
+        if outdeg == 0 # outlet
+            outbc!(n.vessels[(s, t)], dt, n.blood.rho)
+        elseif outdeg == 1
+            indeg::Int64 = Graphs.indegree(n.graph, t)
+            d::Int64 = first(Graphs.outneighbors(n.graph, t))
+            if indeg == 1 # conjunction
                 join_vessels!(n.blood, n.vessels[(s, t)], n.vessels[(t, d)])
                 # TODO: test ANASTOMOSIS!!!
-            elseif indegree(n.graph, t) == 2 # anastomosis
-                p1, p2 = inneighbors(n.graph, t)
-                if t == max(p1, p2)
-                    d = outneighbors(grado, t)
+            elseif indeg == 2 # anastomosis
+                ps::Vector{Int64} = Graphs.inneighbors(n.graph, t)
+                if t == max(ps[1], ps[2])
                     solveAnastomosis(
-                        n.vessels[(p1, t)],
-                        n.vessels[(p2, t)],
+                        n.vessels[(ps[1], t)],
+                        n.vessels[(ps[2], t)],
                         n.vessels[(t, d)],
                     )
                 end
             end
-        elseif outdegree(n.graph, t) == 2 # bifurcation
-            d1, d2 = outneighbors(n.graph, t)
-            join_vessels!(n, n.vessels[(s, t)], n.vessels[t, d1], n.vessels[t, d2])
+        elseif outdeg == 2 # bifurcation
+            ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
+            join_vessels!(n, n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
         end
     end
 end
@@ -196,9 +198,8 @@ function limiter!(
     slopes::Vector{Float64},
 )
     for i = 2:v.M+2
-        u = (U[i] - U[i-1]) * v.invDx
-        @inbounds v.dUA[i] = u
-        @inbounds v.dUQ[i-1] = u
+        @inbounds v.dUA[i] = (U[i] - U[i-1]) * v.invDx
+        @inbounds v.dUQ[i-1] = (U[i] - U[i-1]) * v.invDx
     end
     superbee!(slopes, v.dUA, v.dUQ, v.halfDx)
 end

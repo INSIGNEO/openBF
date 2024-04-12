@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-function set_inlet_bc(t::Float64, dt::Float64, v::Vessel, h::Heart)
+function inbc!(v::Vessel, t::Float64, dt::Float64, h::Heart)
     v.Q[1] = inlet_from_data(t, h)
-    inlet_compatibility(dt, v)
+    incompat!(v, dt)
 end
 
 function inlet_from_data(t::Float64, h::Heart)
@@ -43,7 +43,7 @@ function inv_riemann_invariants(W1::Float64, W2::Float64)
     0.5 * (W1 + W2)
 end
 
-function inlet_compatibility(dt::Float64, v::Vessel)
+function incompat!(v::Vessel, dt::Float64)
     W11, W21 = riemann_invariants(1, v)
     W12, W22 = riemann_invariants(2, v)
 
@@ -51,23 +51,19 @@ function inlet_compatibility(dt::Float64, v::Vessel)
     W21 = 2 * v.Q[1] / v.A[1] - W11
 
     v.u[1] = inv_riemann_invariants(W11, W21)
-
     v.A[1] = v.Q[1] / v.u[1]
-    v.P[1] = pressure(v.A[1], v.A0[1], v.beta[1], v.Pext)
 end
 
 
-function set_outlet_bc(dt::Float64, v::Vessel, ρ::Float64)
-    # A proximal resistance `R1` set to zero means that a reflection coefficient
-    if v.R1 == 0.0
-        v.P[end] = 2 * v.P[end-1] - v.P[end-2]
-        outlet_compatibility(dt, v)
+function outbc!(v::Vessel, dt::Float64, ρ::Float64)
+    if v.usewk3
+        wk3!(v, dt, ρ)
     else
-        wk3(dt, v, ρ)
+        outcompat!(v, dt)
     end
 end
 
-function outlet_compatibility(dt::Float64, v::Vessel)
+function outcompat!(v::Vessel, dt::Float64)
     W1M1, W2M1 = riemann_invariants(v.M - 1, v)
     W1M, W2M = riemann_invariants(v.M, v)
 
@@ -79,7 +75,7 @@ function outlet_compatibility(dt::Float64, v::Vessel)
 end
 
 
-function wk3(dt::Float64, v::Vessel, ρ::Float64)
+function wk3!(v::Vessel, dt::Float64, ρ::Float64)
     Pout = 0.0
     Al = v.A[end]
     ul = v.u[end]
