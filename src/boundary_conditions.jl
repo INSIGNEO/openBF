@@ -113,15 +113,11 @@ function newtone(f::Function, df::Function, xn)
     xn
 end
 
-update_ghost_cells!(n::Network) = update_ghost_cells!.(values(n.vessels))
-function update_ghost_cells!(v::Vessel)
-    v.U00A = v.A[1]
-    v.U00Q = v.Q[1]
-    v.U01A = v.A[2]
-    v.U01Q = v.Q[2]
-
-    v.UM1A = v.A[v.M]
-    v.UM1Q = v.Q[v.M]
-    v.UM2A = v.A[v.M-1]
-    v.UM2Q = v.Q[v.M-1]
+function update_ghost_cells!(n::Network)
+    for v in values(n.vessels)
+        v.U00A = v.A[1]
+        v.U00Q = v.Q[1]
+        v.UM1A = v.A[v.M]
+        v.UM1Q = v.Q[v.M]
+    end
 end

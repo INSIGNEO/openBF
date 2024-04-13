@@ -67,13 +67,8 @@ mutable struct Vessel
     #Ghost cells
     U00A::Float64
     U00Q::Float64
-    U01A::Float64
-    U01Q::Float64
-
     UM1A::Float64
     UM1Q::Float64
-    UM2A::Float64
-    UM2Q::Float64
 
     #Saving locations
     node2::Int64
@@ -213,14 +208,9 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     P = pressure.(A, A0, beta, Pext)
 
     U00A = A0[1]
-    U01A = A0[2]
     UM1A = A0[M]
-    UM2A = A0[M-1]
-
     U00Q = initial_flow
-    U01Q = initial_flow
     UM1Q = initial_flow
-    UM2Q = initial_flow
 
     c = wave_speed(A[end], gamma[end])
     W1M0 = u[end] - 4c
@@ -303,12 +293,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         W2M0,
         U00A,
         U00Q,
-        U01A,
-        U01Q,
         UM1A,
         UM1Q,
-        UM2A,
-        UM2Q,
         node2,
         node3,
         node4,
