@@ -69,7 +69,7 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
             end
         elseif outdeg == 2 # bifurcation
             ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
-            join_vessels!(n, n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
+            join_vessels!(n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
         end
     end
 end
