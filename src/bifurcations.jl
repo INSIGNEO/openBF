@@ -21,7 +21,7 @@ getUbif(v1::Vessel, v2::Vessel, v3::Vessel) = SVector{6,Float64}(v1.u[end], v2.u
 getWbif(U, k) = SVector{3,Float64}(U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
 
 function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
-    J = zeros(Float64, 6,6)
+    J::Array{Float64, 2} = zeros(Float64, 6,6)
     
     J[1, 1] = 1.0
     J[2, 2] = 1.0

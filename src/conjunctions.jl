@@ -26,7 +26,7 @@ getFconj(v1::Vessel, v2::Vessel, U, k, W, ρ) = SVector{4,Float64}(U[1] + 4k[1] 
         (0.5 * ρ * U[2] * U[2] + v2.beta[1] * (U[4] * U[4] / sqrt(v2.A0[1]) - 1)))
 
 function getJconj(v1::Vessel, v2::Vessel, U, k, ρ)
-    J = zeros(Float64, 4, 4)
+    J::Array{Float64, 2} = zeros(Float64, 4, 4)
     
     J[1, 1] = 1.0
     J[2, 2] = 1.0

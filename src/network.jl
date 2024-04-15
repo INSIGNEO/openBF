@@ -33,11 +33,6 @@ struct Network
     blood::Blood
     heart::Heart
     Ccfl::Float64
-    # bifU::MVector{6, Float64}
-    # bifW::MVector{3, Float64}
-    # bifF::MVector{6, Float64}
-    # bifJ::MArray{Tuple{6, 6}, Float64, 2, 36}
-    # TODO: add vectors for conj and anastomosis
 end
 number_of_nodes(config::Vector{Dict{Any,Any}}) = maximum(c["tn"] for c in config)
 function Network(
@@ -61,12 +56,6 @@ function Network(
         verbose && next!(prog)
     end
     check(graph)
-
-    # bifU = @MArray zeros(6)
-    # bifW = @MArray zeros(3)
-    # bifF = @MArray zeros(6)
-    # bifJ = @MArray zeros(6,6) 
-    # bifJ .+= I(6)
     Network(graph, collect(Graphs.edges(graph)), vessels, blood, heart, Ccfl)
 end
 
