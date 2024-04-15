@@ -35,7 +35,7 @@ function inlet_from_data(t::Float64, h::Heart)
 end
 
 function riemann_invariants(i::Int64, v::Vessel)
-    c = wave_speed(v.A[i], v.gamma[i])
+    c = wave_speed(v.A[i], v.gamma[i+1])
     (v.u[i] - 4c, v.u[i] + 4c)
 end
 
@@ -47,7 +47,7 @@ function incompat!(v::Vessel, dt::Float64)
     W11, W21 = riemann_invariants(1, v)
     W12, W22 = riemann_invariants(2, v)
 
-    W11 += (W12 - W11) * (wave_speed(v.A[1], v.gamma[1]) - v.u[1]) * dt / v.dx
+    W11 += (W12 - W11) * (wave_speed(v.A[1], v.gamma[2]) - v.u[1]) * dt / v.dx
     W21 = 2 * v.Q[1] / v.A[1] - W11
 
     v.u[1] = inv_riemann_invariants(W11, W21)
@@ -67,7 +67,7 @@ function outcompat!(v::Vessel, dt::Float64)
     W1M1, W2M1 = riemann_invariants(v.M - 1, v)
     W1M, W2M = riemann_invariants(v.M, v)
 
-    W2M += (W2M1 - W2M) * (v.u[end] + wave_speed(v.A[end], v.gamma[end])) * dt / v.dx
+    W2M += (W2M1 - W2M) * (v.u[end] + wave_speed(v.A[end], v.gamma[end-1])) * dt / v.dx
     W1M = v.W1M0 - v.Rt * (W2M - v.W2M0)
 
     v.u[end] = inv_riemann_invariants(W1M, W2M)
@@ -77,28 +77,26 @@ end
 
 function wk3!(v::Vessel, dt::Float64, ρ::Float64)
     Pout = 0.0
-    Al = v.A[end]
-    ul = v.u[end]
 
     # inlet impedance matching
     if v.inlet_impedance_matching
-        v.R1 = ρ * wave_speed(v.A[end], v.gamma[end]) / v.A[end]
+        v.R1 = ρ * wave_speed(v.A[end], v.gamma[end-1]) / v.A[end]
         v.R2 = abs(v.total_peripheral_resistance - v.R1)
     end
 
-    v.Pc += dt / v.Cc * (Al * ul - (v.Pc - Pout) / v.R2)
-    As = Al
+    v.Pc += dt / v.Cc * (v.A[end] * v.u[end] - (v.Pc - Pout) / v.R2)
+    As = v.A[end]
 
-    ssAl = sqrt(sqrt(Al))
-    sgamma = 2 * sqrt(6 * v.gamma[end])
+    ssAl = sqrt(sqrt(v.A[end]))
+    sgamma = 2 * sqrt(6 * v.gamma[end-1])
     sA0 = sqrt(v.A0[end])
     bA0 = v.beta[end] / sA0
 
     fun(As) =
-        As * v.R1 * (ul + sgamma * (ssAl - sqrt(sqrt(As)))) -
+        As * v.R1 * (v.u[end] + sgamma * (ssAl - sqrt(sqrt(As)))) -
         (v.Pext + bA0 * (sqrt(As) - sA0)) + v.Pc
 
-    dfun(As) = v.R1 * (ul + sgamma * (ssAl - 1.25 * sqrt(sqrt(As)))) - bA0 * 0.5 / sqrt(As)
+    dfun(As) = v.R1 * (v.u[end] + sgamma * (ssAl - 1.25 * sqrt(sqrt(As)))) - bA0 * 0.5 / sqrt(As)
     As = newtone(fun, dfun, As)
     us = (pressure(As, v.A0[end], v.beta[end], v.Pext) - Pout) / (As * v.R1)
 

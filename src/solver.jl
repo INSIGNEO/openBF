@@ -21,7 +21,7 @@ function calculateΔt(n::Network)
     for (_, v) in n.vessels
         maxspeed = 0.0
         for i=eachindex(v.u)
-            @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i]))
+            @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i+1]))
             if speed > maxspeed
                 maxspeed = speed
             end
@@ -105,8 +105,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
         @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
 
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma[i] * v.Ar[i] * sqrt(v.Ar[i])
     end
 
     #
@@ -139,8 +139,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
         @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
 
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma_ghost[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma_ghost[i] * v.Ar[i] * sqrt(v.Ar[i])
+        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma[i] * v.Al[i] * sqrt(v.Al[i])
+        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma[i] * v.Ar[i] * sqrt(v.Ar[i])
     end
 
     #

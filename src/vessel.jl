@@ -46,7 +46,6 @@ mutable struct Vessel
     Cv::Vector{Float64}
     viscoelastic::Bool
     gamma::Vector{Float64}
-    gamma_ghost::Vector{Float64}
     A0::Vector{Float64}
     tapered::Bool
     dA0dx::Vector{Float64}
@@ -183,7 +182,10 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     end
 
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)
-    gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
+    gamma = zeros(Float64, M + 2)
+    gamma[2:M+1] = beta ./ (3 * b.rho * R0 * sqrt(pi))
+    gamma[1] = gamma[2] # ghost cells
+    gamma[end] = gamma[end-1]
 
     # TODO: add to docs
     # TODO: visco-elastic -> visco_elastic ???
@@ -197,11 +199,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         Cv = zeros(Float64, M)
     end
 
-    gamma_ghost = zeros(Float64, M + 2)
-    gamma_ghost[2:M+1] = gamma
-    gamma_ghost[1] = gamma[1]
-    gamma_ghost[end] = gamma[end]
-
     A = zeros(Float64, M) + A0
     Q = zeros(Float64, M) .+ initial_flow
     u = zeros(Float64, M) + Q ./ A
@@ -212,7 +209,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     U00Q = initial_flow
     UM1Q = initial_flow
 
-    c = wave_speed(A[end], gamma[end])
+    c = wave_speed(A[end], gamma[end-1])
     W1M0 = u[end] - 4c
     W2M0 = u[end] + 4c
 
@@ -225,7 +222,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     R2 = get(config, "R2", 0.0)
     Cc = get(config, "Cc", 0.0)
     if R2 == 0.0
-        R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
+        R2 = R1 - b.rho * wave_speed(A0[end], gamma[end-1]) / A0[end]
     end
     total_peripheral_resistance = R1 + R2
     inlet_impedance_matching = get(config, "inlet_impedance_matching", false)
@@ -278,7 +275,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         Cv,
         viscoelastic,
         gamma,
-        gamma_ghost,
         A0,
         tapered,
         dA0dx,
