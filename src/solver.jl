@@ -55,8 +55,9 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
             indeg::Int64 = Graphs.indegree(n.graph, t)
             d::Int64 = first(Graphs.outneighbors(n.graph, t))
             if indeg == 1 # conjunction
-                join_vessels!(n.blood, n.vessels[(s, t)], n.vessels[(t, d)])
-                # TODO: test ANASTOMOSIS!!!
+                join_vessels!(n.vessels[(s, t)], n.vessels[(t, d)], n.blood.rho)
+            
+            # TODO: test ANASTOMOSIS!!!
             elseif indeg == 2 # anastomosis
                 ps::Vector{Int64} = Graphs.inneighbors(n.graph, t)
                 if t == max(ps[1], ps[2])
@@ -67,6 +68,7 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
                     )
                 end
             end
+            
         elseif outdeg == 2 # bifurcation
             ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
             join_vessels!(n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])

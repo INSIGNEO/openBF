@@ -15,12 +15,13 @@ limitations under the License.
 =#
 
 
-function getW(U, k)
-    SVector{3,Float64}(U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
-end
+getUbif(v1::Vessel, v2::Vessel, v3::Vessel) = SVector{6,Float64}(v1.u[end], v2.u[1], v3.u[1],
+        sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])), sqrt(sqrt(v3.A[1])))
 
-function getJ(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
-    J = zeros(6,6)
+getWbif(U, k) = SVector{3,Float64}(U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
+
+function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
+    J = zeros(Float64, 6,6)
     
     J[1, 1] = 1.0
     J[2, 2] = 1.0
@@ -44,7 +45,7 @@ function getJ(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
     J[6, 4] = 2v1.beta[end] * U[4] / sqrt(v1.A0[end])
     J[6, 6] = -2v3.beta[1] * U[6] / sqrt(v3.A0[1])
 
-    SMatrix{6, 6}(J)
+    SMatrix{6, 6, Float64, 36}(J)
 end
 
 function getF(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
@@ -59,19 +60,13 @@ function getF(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
         (v3.beta[1] * (U[6] * U[6] / sqrt(v3.A0[1]) - 1)))
 end
 
-function getU(v1::Vessel, v2::Vessel, v3::Vessel)
-    SVector{6,Float64}(v1.u[end], v2.u[1], v3.u[1],
-        sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])), sqrt(sqrt(v3.A[1])))
-end
-
-
-function NR(U, W, J, F, k, v1::Vessel, v2::Vessel, v3::Vessel)
-while norm(F)>1e-5
-    U += J \ (-F)
-    W = getW(U, k)
-    F = getF(v1, v2, v3, U, k, W)
-    J = getJ(v1, v2, v3, U, k)
-end
+function NRbif(U, W, J, F, k, v1::Vessel, v2::Vessel, v3::Vessel)
+    while norm(F)>1e-5
+        U += J \ (-F)
+        W = getWbif(U, k)
+        F = getF(v1, v2, v3, U, k, W)
+        J = getJbif(v1, v2, v3, U, k)
+    end
     U
 end
 
@@ -91,13 +86,13 @@ end
 
 function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
     k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]), sqrt(1.5*v3.gamma[1]))
-    U = getU(v1, v2, v3)
-    W = getW(U, k)
+    U = getUbif(v1, v2, v3)
+    W = getWbif(U, k)
     F = getF(v1, v2, v3, U, k, W)
-    J = getJ(v1, v2, v3, U, k)
+    J = getJbif(v1, v2, v3, U, k)
 
     # solve
-    U = NR(U, W, J, F, k, v1, v2, v3)
+    U = NRbif(U, W, J, F, k, v1, v2, v3)
 
     updateBif!(v1, v2, v3, U)
 end
