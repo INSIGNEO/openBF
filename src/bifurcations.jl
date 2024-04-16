@@ -18,8 +18,6 @@ limitations under the License.
 getUbif(v1::Vessel, v2::Vessel, v3::Vessel) = SVector{6,Float64}(v1.u[end], v2.u[1], v3.u[1],
         sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])), sqrt(sqrt(v3.A[1])))
 
-getWbif(U, k) = SVector{3,Float64}(U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
-
 function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
     J::Array{Float64, 2} = zeros(Float64, 6,6)
     
@@ -63,7 +61,6 @@ end
 function NRbif(U, W, J, F, k, v1::Vessel, v2::Vessel, v3::Vessel)
     while norm(F)>1e-5
         U += J \ (-F)
-        W = getWbif(U, k)
         F = getF(v1, v2, v3, U, k, W)
         J = getJbif(v1, v2, v3, U, k)
     end
@@ -86,7 +83,7 @@ end
 
 function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
     k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]), sqrt(1.5*v3.gamma[1]))
-    U = getUbif(v1, v2, v3)
+    U = (U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
     W = getWbif(U, k)
     F = getF(v1, v2, v3, U, k, W)
     J = getJbif(v1, v2, v3, U, k)

@@ -17,8 +17,6 @@ limitations under the License.
 getUconj(v1::Vessel, v2::Vessel) = SVector{4,Float64}(v1.u[end], v2.u[1],
     sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])))
 
-getWconj(U, k) = SVector{2,Float64}(U[1] + 4k[1] * U[3], U[2] - 4k[2] * U[4])
-
 getFconj(v1::Vessel, v2::Vessel, U, k, W, ρ) = SVector{4,Float64}(U[1] + 4k[1] * U[3] - W[1],
         U[2] - 4k[2] * U[4] - W[2],
         U[1] * (U[3] * U[3] * U[3] * U[3]) - U[2] * (U[4] * U[4] * U[4] * U[4]),
@@ -51,7 +49,6 @@ end
 function NRconj(U, W, J, F, k, v1::Vessel, v2::Vessel, ρ)
     while norm(F)>1e-5
         U += J \ (-F)
-        W = getWconj(U, k)
         F = getFconj(v1, v2, U, k, W, ρ)
         J = getJconj(v1, v2, U, k, ρ)
     end
@@ -72,7 +69,7 @@ end
 function join_vessels!(v1::Vessel, v2::Vessel, ρ::Float64)
     k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]))
     U = getUconj(v1, v2)
-    W = getWconj(U, k)
+    W = (U[1] + 4k[1] * U[3], U[2] - 4k[2] * U[4])
     F = getFconj(v1, v2, U, k, W, ρ)
     J = getJconj(v1, v2, U, k, ρ)
 
