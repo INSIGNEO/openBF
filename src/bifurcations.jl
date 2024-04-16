@@ -83,8 +83,8 @@ end
 
 function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
     k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]), sqrt(1.5*v3.gamma[1]))
-    U = (U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
-    W = getWbif(U, k)
+    U = getUbif(v1, v2, v3)
+    W = (U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
     F = getF(v1, v2, v3, U, k, W)
     J = getJbif(v1, v2, v3, U, k)
 
