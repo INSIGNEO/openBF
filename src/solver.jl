@@ -16,20 +16,16 @@ limitations under the License.
 
 
 function calculateΔt(n::Network)
-    minΔt = floatmax()
+    minΔt = 1.0
     Δt = 1.0
     for (_, v) in n.vessels
         maxspeed = 0.0
         for i=eachindex(v.u)
             @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i+1]))
-            if speed > maxspeed
-                maxspeed = speed
-            end
+            maxspeed = ifelse(speed>maxspeed, speed, maxspeed)
         end
         Δt = v.dx / maxspeed
-        if Δt < minΔt
-            minΔt = Δt
-        end
+        minΔt = ifelse(Δt < minΔt, Δt, minΔt)
     end
     minΔt*n.Ccfl
 end
