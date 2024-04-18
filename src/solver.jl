@@ -31,7 +31,7 @@ function calculateΔt(n::Network)
             minΔt = Δt
         end
     end
-    Δt*n.Ccfl
+    minΔt*n.Ccfl
 end
 
 function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
