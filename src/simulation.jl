@@ -64,7 +64,7 @@ function get_inlet_file(config)::String
     config["inlet_file"]
 end
 
-function preamble(yaml_config, verbose)
+function preamble(yaml_config, verbose, savedir)
 
     verbose && println("Loading config...")
     config = load_yaml_config(yaml_config)
@@ -72,13 +72,22 @@ function preamble(yaml_config, verbose)
     project_name = config["project_name"]
     verbose && println("project name: $project_name")
 
-    results_dir = get(config, "output_directory", project_name * "_results")
+    if savedir == ""
+        results_dir = get(config, "output_directory", project_name * "_results")
+    else
+        results_dir = savedir
+    end
     isdir(results_dir) && rm(results_dir, recursive = true)
     ~isdir(results_dir) && mkpath(results_dir)
-    cp(yaml_config, joinpath(results_dir, yaml_config), force = true)
+    yaml_config_name = last(splitpath(yaml_config))
+    cp(yaml_config, joinpath(results_dir, yaml_config_name), force = true)
 
     inlet_file = get_inlet_file(config)
-    cp(inlet_file, joinpath(results_dir, inlet_file), force = true)
+    try
+        cp(inlet_file, joinpath(results_dir, inlet_file), force = true)
+    catch
+        cp(joinpath([splitpath(yaml_config)[1:end-1]; inlet_file]), joinpath(results_dir, inlet_file), force=true)
+    end
     cd(results_dir)
 
     config
@@ -89,9 +98,10 @@ function run_simulation(
     verbose::Bool = true,
     out_files::Bool = false,
     save_stats::Bool = false,
+    savedir::String = "",
 )
     initial_dir = pwd()
-    config::Dict{String, Any} = preamble(yaml_config, verbose)
+    config::Dict{String, Any} = preamble(yaml_config, verbose, savedir)
 
     blood = Blood(config["blood"])
     heart = Heart(get_inlet_file(config)::String)
