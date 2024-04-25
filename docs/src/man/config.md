@@ -17,6 +17,12 @@ inlet_file: "my_inlet.dat"
 
 The inlet BC is given trough an ASCII file containing a list of values (pressure or volumetric flow rate) in time. For now, the inlet vessel is the one whose `sn` node is `1`.
 
+```yaml
+output_directory; "put/results/in/this/directory/please
+```
+
+You can specify where to save results, if not the default directory will be `./<project_name>_results`.
+
 Following the `write_results` list is defined.
 
 ```yaml

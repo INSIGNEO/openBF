@@ -2,7 +2,7 @@ The cardiovascular system is a complex network of elastic vessels through which 
 
 ![](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*XFQ5yKLnyEci7hLaQh0nEQ.png)
 
-Pressure waves measured at a specific location can be seen as the result of a superimposition of incident (forward) and reflected (backward) waves. The analysis of this superposition mechanism allows for the study of mechanical properties upstream and downstream of the measurement point and can be a rich source of diagnostic information about the system through which these waves propagate. However, given the vascular system complexity, it is at present difficult to ascribe a particular waveform feature to a specific trait of the arterial circulation
+Pressure waves measured at a specific location can be seen as the result of a superimposition of incident (forward) and reflected (backward) waves. The analysis of this superposition mechanism allows for the study of mechanical properties upstream and downstream of the measurement point and can be a rich source of diagnostic information about the system through which these waves propagate. However, given the vascular system complexity, it is at present difficult to ascribe a particular waveform feature to a specific trait of the arterial circulation.
 
 The understanding of the cause-effect mechanisms governing wave propagation in the cardiovascular system was used at [INSIGNEO](https://www.sheffield.ac.uk/insigneo) to develop a computer model that can reproduce this behaviour in a quantitative way. openBF is a Julia package for the solution of one-dimensional (1D) blood flow in networks of elastic arteries.
 

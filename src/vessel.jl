@@ -46,7 +46,6 @@ mutable struct Vessel
     Cv::Vector{Float64}
     viscoelastic::Bool
     gamma::Vector{Float64}
-    gamma_ghost::Vector{Float64}
     A0::Vector{Float64}
     tapered::Bool
     dA0dx::Vector{Float64}
@@ -67,13 +66,8 @@ mutable struct Vessel
     #Ghost cells
     U00A::Float64
     U00Q::Float64
-    U01A::Float64
-    U01Q::Float64
-
     UM1A::Float64
     UM1Q::Float64
-    UM2A::Float64
-    UM2Q::Float64
 
     #Saving locations
     node2::Int64
@@ -81,8 +75,8 @@ mutable struct Vessel
     node4::Int64
 
     #Peripheral boundary condition
+    usewk3::Bool
     Rt::Float64
-
     R1::Float64
     R2::Float64
     total_peripheral_resistance::Float64
@@ -90,14 +84,9 @@ mutable struct Vessel
     Cc::Float64
     Pc::Float64
 
-    #Slope
-    slope::Vector{Float64}
-
     #MUSCLArrays
     fluxA::Vector{Float64}
     fluxQ::Vector{Float64}
-    uStarA::Vector{Float64}
-    uStarQ::Vector{Float64}
 
     vA::Vector{Float64}
     vQ::Vector{Float64}
@@ -193,7 +182,10 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     end
 
     beta = sqrt.(pi ./ A0) .* h0 * E / (1 - sigma^2)
-    gamma = beta ./ (3 * b.rho * R0 * sqrt(pi))
+    gamma = zeros(Float64, M + 2)
+    gamma[2:M+1] = beta ./ (3 * b.rho * R0 * sqrt(pi))
+    gamma[1] = gamma[2] # ghost cells
+    gamma[end] = gamma[end-1]
 
     # TODO: add to docs
     # TODO: visco-elastic -> visco_elastic ???
@@ -207,27 +199,17 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         Cv = zeros(Float64, M)
     end
 
-    gamma_ghost = zeros(Float64, M + 2)
-    gamma_ghost[2:M+1] = gamma
-    gamma_ghost[1] = gamma[1]
-    gamma_ghost[end] = gamma[end]
-
     A = zeros(Float64, M) + A0
     Q = zeros(Float64, M) .+ initial_flow
     u = zeros(Float64, M) + Q ./ A
     P = pressure.(A, A0, beta, Pext)
 
     U00A = A0[1]
-    U01A = A0[2]
     UM1A = A0[M]
-    UM2A = A0[M-1]
-
     U00Q = initial_flow
-    U01Q = initial_flow
     UM1Q = initial_flow
-    UM2Q = initial_flow
 
-    c = wave_speed(A[end], gamma[end])
+    c = wave_speed(A[end], gamma[end-1])
     W1M0 = u[end] - 4c
     W2M0 = u[end] + 4c
 
@@ -240,24 +222,20 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     R2 = get(config, "R2", 0.0)
     Cc = get(config, "Cc", 0.0)
     if R2 == 0.0
-        R2 = R1 - b.rho * wave_speed(A0[end], gamma[end]) / A0[end]
+        R2 = R1 - b.rho * wave_speed(A0[end], gamma[end-1]) / A0[end]
     end
     total_peripheral_resistance = R1 + R2
     inlet_impedance_matching = get(config, "inlet_impedance_matching", false)
+    usewk3 = R2 != 0.0
 
     # `Pc` is the pressure through the peripheral compliance of the three
     # elements windkessel. It is set to zero to simulate the pressure at the
     # artery-vein interface.
     Pc = 0.0
 
-    #Slope
-    slope = zeros(Float64, M)
-
     # MUSCL arrays
     fluxA = zeros(Float64, M + 2)
     fluxQ = zeros(Float64, M + 2)
-    uStarA = zeros(Float64, M + 2)
-    uStarQ = zeros(Float64, M + 2)
 
     vA = zeros(Float64, M + 2)
     vQ = zeros(Float64, M + 2)
@@ -297,7 +275,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         Cv,
         viscoelastic,
         gamma,
-        gamma_ghost,
         A0,
         tapered,
         dA0dx,
@@ -312,15 +289,12 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         W2M0,
         U00A,
         U00Q,
-        U01A,
-        U01Q,
         UM1A,
         UM1Q,
-        UM2A,
-        UM2Q,
         node2,
         node3,
         node4,
+        usewk3,
         Rt,
         R1,
         R2,
@@ -328,11 +302,8 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         inlet_impedance_matching,
         Cc,
         Pc,
-        slope,
         fluxA,
         fluxQ,
-        uStarA,
-        uStarQ,
         vA,
         vQ,
         dUA,

@@ -14,40 +14,48 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
+getUconj(v1::Vessel, v2::Vessel) = SVector{4,Float64}(v1.u[end], v2.u[1],
+    sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])))
 
-    U = @SArray [v1.u[end], v2.u[1],  sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1]))]
-    k = @SArray [sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1])]
-    W = w_star_conj(U, k)
-    J = jacobian_conj(b, v1, v2, U, k)
-    F = f_conj(b, v1, v2, U, k, W)
+getFconj(v1::Vessel, v2::Vessel, U, k, W, ρ) = SVector{4,Float64}(U[1] + 4k[1] * U[3] - W[1],
+        U[2] - 4k[2] * U[4] - W[2],
+        U[1] * (U[3] * U[3] * U[3] * U[3]) - U[2] * (U[4] * U[4] * U[4] * U[4]),
+        0.5 * ρ * U[1] * U[1] + v1.beta[end] * (U[3] * U[3] / sqrt(v1.A0[end]) - 1) -
+        (0.5 * ρ * U[2] * U[2] + v2.beta[1] * (U[4] * U[4] / sqrt(v2.A0[1]) - 1)))
 
-    nr_toll_U = 1.e-5
-    nr_toll_F = 1.e-5
+function getJconj(v1::Vessel, v2::Vessel, U, k, ρ)
+    J::Array{Float64, 2} = zeros(Float64, 4, 4)
+    
+    J[1, 1] = 1.0
+    J[2, 2] = 1.0
 
-    while true
-        dU = J \ (-F)
-        U_new = U + dU
+    J[1, 3] = 4k[1]
+    J[2, 4] = -4k[2]
 
-        u_ok = 0
-        f_ok = 0
-        for i = 1:length(dU)
-            if abs(dU[i]) <= nr_toll_U || abs(F[i]) <= nr_toll_F
-                u_ok += 1
-                f_ok += 1
-            end
-        end
+    J[3, 1] = U[3] * U[3] * U[3] * U[3]
+    J[3, 2] = -U[4] * U[4] * U[4] * U[4]
+    J[3, 3] = 4U[1] * U[3] * U[3] * U[3]
+    J[3, 4] = -4U[2] * U[4] * U[4] * U[4]
 
-        if u_ok == length(dU) || f_ok == length(dU)
-            U = U_new
-            break
-        else
-            U = U_new
-            W = w_star_conj(U, k)
-            F = f_conj(b, v1, v2, U, k, W)
-        end
+    J[4, 3] = 2v1.beta[end] * U[3] / sqrt(v1.A0[end])
+    J[4, 4] = -2v2.beta[1] * U[4] / sqrt(v2.A0[1])
+
+    J[4, 1] = ρ * U[1]
+    J[4, 2] = -ρ * U[2]
+
+    SMatrix{4, 4, Float64, 16}(J)
+end
+
+function NRconj(U, W, J, F, k, v1::Vessel, v2::Vessel, ρ)
+    while norm(F)>1e-5
+        U += J \ (-F)
+        F = getFconj(v1, v2, U, k, W, ρ)
+        J = getJconj(v1, v2, U, k, ρ)
     end
+    U
+end
 
+function updateConj!(v1::Vessel, v2::Vessel, U)
     v1.u[end] = U[1]
     v2.u[1] = U[2]
 
@@ -58,50 +66,15 @@ function join_vessels!(b::Blood, v1::Vessel, v2::Vessel)
     v2.Q[1] = v2.u[1] * v2.A[1]
 end
 
+function join_vessels!(v1::Vessel, v2::Vessel, ρ::Float64)
+    k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]))
+    U = getUconj(v1, v2)
+    W = (U[1] + 4k[1] * U[3], U[2] - 4k[2] * U[4])
+    F = getFconj(v1, v2, U, k, W, ρ)
+    J = getJconj(v1, v2, U, k, ρ)
 
-function w_star_conj(U::SArray, k::SArray)
+    # solve
+    U = NRconj(U, W, J, F, k, v1, v2, ρ)
 
-    W1 = U[1] + 4 * k[1] * U[3]
-    W2 = U[2] - 4 * k[2] * U[4]
-
-    @SArray [W1, W2]
-end
-
-
-function f_conj(b::Blood, v1::Vessel, v2::Vessel, U::SArray, k::SArray, W::SArray)
-
-    f1 = U[1] + 4 * k[1] * U[3] - W[1]
-
-    f2 = U[2] - 4 * k[2] * U[4] - W[2]
-
-    f3 = U[1] * (U[3] * U[3] * U[3] * U[3]) - U[2] * (U[4] * U[4] * U[4] * U[4])
-
-    f4 =
-        0.5 * b.rho * U[1] * U[1] + v1.beta[end] * (U[3] * U[3] / sqrt(v1.A0[end]) - 1) -
-        (0.5 * b.rho * U[2] * U[2] + v2.beta[1] * (U[4] * U[4] / sqrt(v2.A0[1]) - 1))
-
-    @SArray [f1, f2, f3, f4]
-end
-
-
-function jacobian_conj(b::Blood, v1::Vessel, v2::Vessel, U::SArray, k::SArray)
-
-    J = @MArray zeros(4, 4)
-    J .+= I(4)
-
-    J[1, 3] = 4 * k[1]
-    J[2, 4] = -4 * k[2]
-
-    J[3, 1] = U[3] * U[3] * U[3] * U[3]
-    J[3, 2] = -U[4] * U[4] * U[4] * U[4]
-    J[3, 3] = 4 * U[1] * U[3] * U[3] * U[3]
-    J[3, 4] = -4 * U[2] * U[4] * U[4] * U[4]
-
-    J[4, 3] = 2 * v1.beta[end] * U[3] / sqrt(v1.A0[end])
-    J[4, 4] = -2 * v2.beta[1] * U[4] / sqrt(v2.A0[1])
-
-    J[4, 1] = b.rho * U[1]
-    J[4, 2] = -b.rho * U[2]
-
-    J
+    updateConj!(v1, v2, U)
 end

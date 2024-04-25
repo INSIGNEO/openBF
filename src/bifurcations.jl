@@ -14,51 +14,60 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
-    #Unknowns vector
-    U = @SArray [
-        v1.u[end],
-        v2.u[1],
-        v3.u[1],
-        sqrt(sqrt(v1.A[end])),
-        sqrt(sqrt(v2.A[1])),
-        sqrt(sqrt(v3.A[1])),
-    ]
 
-    #Parameters vector
-    k = @SArray [sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]), sqrt(1.5*v3.gamma[1])]
-    W = w_star_bifurcation(U, k)
-    J = jacobian_bifurcation(v1, v2, v3, U, k)
-    F = f_bifurcation(v1, v2, v3, U, k, W)
+getUbif(v1::Vessel, v2::Vessel, v3::Vessel) = SVector{6,Float64}(v1.u[end], v2.u[1], v3.u[1],
+        sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])), sqrt(sqrt(v3.A[1])))
 
-    #Newton-Raphson
-    nr_toll_U = 1e-5
-    nr_toll_F = 1e-5
+function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
+    J::Array{Float64, 2} = zeros(Float64, 6,6)
+    
+    J[1, 1] = 1.0
+    J[2, 2] = 1.0
+    J[3, 3] = 1.0
+    J[4, 4] = 1.0
 
-    while true
-        dU = J \ (-F)
-        U_new = U + dU
+    J[1, 4] = 4k[1]
+    J[2, 5] = -4k[2]
+    J[3, 6] = -4k[3]
 
-        u_ok = 0
-        f_ok = 0
-        for i = 1:length(dU)
-            if abs(dU[i]) <= nr_toll_U || abs(F[i]) <= nr_toll_F
-                u_ok += 1
-                f_ok += 1
-            end
-        end
+    J[4, 1] = (U[4] * U[4] * U[4] * U[4])
+    J[4, 2] = -(U[5] * U[5] * U[5] * U[5])
+    J[4, 3] = -(U[6] * U[6] * U[6] * U[6])
+    J[4, 4] = 4U[1] * (U[4] * U[4] * U[4])
+    J[4, 5] = -4U[2] * (U[5] * U[5] * U[5])
+    J[4, 6] = -4U[3] * (U[6] * U[6] * U[6])
 
-        if u_ok == length(dU) || f_ok == length(dU)
-            U = U_new
-            break
-        else
-            U = U_new
-            W = w_star_bifurcation(U, k)
-            F = f_bifurcation(v1, v2, v3, U, k, W)
-        end
+    J[5, 4] = 2v1.beta[end] * U[4] / sqrt(v1.A0[end])
+    J[5, 5] = -2v2.beta[1] * U[5] / sqrt(v2.A0[1])
+
+    J[6, 4] = 2v1.beta[end] * U[4] / sqrt(v1.A0[end])
+    J[6, 6] = -2v3.beta[1] * U[6] / sqrt(v3.A0[1])
+
+    SMatrix{6, 6, Float64, 36}(J)
+end
+
+function getF(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
+    SVector{6,Float64}(U[1] + 4k[1] * U[4] - W[1],
+        U[2] - 4k[2] * U[5] - W[2],
+        U[3] - 4k[3] * U[6] - W[3],
+        U[1] * (U[4] * U[4] * U[4] * U[4]) - U[2] * (U[5] * U[5] * U[5] * U[5]) -
+        U[3] * (U[6] * U[6] * U[6] * U[6]),
+        v1.beta[end] * (U[4] * U[4] / sqrt(v1.A0[end]) - 1) -
+        (v2.beta[1] * (U[5] * U[5] / sqrt(v2.A0[1]) - 1)),
+        v1.beta[end] * (U[4] * U[4] / sqrt(v1.A0[end]) - 1) -
+        (v3.beta[1] * (U[6] * U[6] / sqrt(v3.A0[1]) - 1)))
+end
+
+function NRbif(U, W, J, F, k, v1::Vessel, v2::Vessel, v3::Vessel)
+    while norm(F)>1e-5
+        U += J \ (-F)
+        F = getF(v1, v2, v3, U, k, W)
+        J = getJbif(v1, v2, v3, U, k)
     end
+    U
+end
 
-    #Update vessel quantities
+function updateBif!(v1::Vessel, v2::Vessel, v3::Vessel, U)
     v1.u[end] = U[1]
     v2.u[1] = U[2]
     v3.u[1] = U[3]
@@ -72,57 +81,15 @@ function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
     v3.Q[1] = v3.u[1] * v3.A[1]
 end
 
+function join_vessels!(v1::Vessel, v2::Vessel, v3::Vessel)
+    k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[1]), sqrt(1.5*v3.gamma[1]))
+    U = getUbif(v1, v2, v3)
+    W = (U[1] + 4k[1] * U[4], U[2] - 4k[2] * U[5], U[3] - 4k[3] * U[6])
+    F = getF(v1, v2, v3, U, k, W)
+    J = getJbif(v1, v2, v3, U, k)
 
-function w_star_bifurcation(U::SArray, k::SArray)
-    W1 = U[1] + 4 * k[1] * U[4]
-    W2 = U[2] - 4 * k[2] * U[5]
-    W3 = U[3] - 4 * k[3] * U[6]
+    # solve
+    U = NRbif(U, W, J, F, k, v1, v2, v3)
 
-    @SArray [W1, W2, W3]
-end
-
-
-function f_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::SArray, k::SArray, W::SArray)
-    f1 = U[1] + 4 * k[1] * U[4] - W[1]
-    f2 = U[2] - 4 * k[2] * U[5] - W[2]
-    f3 = U[3] - 4 * k[3] * U[6] - W[3]
-    f4 =
-        U[1] * (U[4] * U[4] * U[4] * U[4]) - U[2] * (U[5] * U[5] * U[5] * U[5]) -
-        U[3] * (U[6] * U[6] * U[6] * U[6])
-    f5 =
-        v1.beta[end] * (U[4] * U[4] / sqrt(v1.A0[end]) - 1) -
-        (v2.beta[1] * (U[5] * U[5] / sqrt(v2.A0[1]) - 1))
-    f6 =
-        v1.beta[end] * (U[4] * U[4] / sqrt(v1.A0[end]) - 1) -
-        (v3.beta[1] * (U[6] * U[6] / sqrt(v3.A0[1]) - 1))
-    @SArray [f1, f2, f3, f4, f5, f6]
-end
-
-
-function jacobian_bifurcation(v1::Vessel, v2::Vessel, v3::Vessel, U::SArray, k::SArray)
-    J = @MArray zeros(6, 6) 
-    J .+= I(6)
-
-    J[1, 4] = 4 * k[1]
-    J[2, 5] = -4 * k[2]
-    J[3, 6] = -4 * k[3]
-
-    J[4, 1] = (U[4] * U[4] * U[4] * U[4])
-    J[4, 2] = -(U[5] * U[5] * U[5] * U[5])
-    J[4, 3] = -(U[6] * U[6] * U[6] * U[6])
-    J[4, 4] = 4 * U[1] * (U[4] * U[4] * U[4])
-    J[4, 5] = -4 * U[2] * (U[5] * U[5] * U[5])
-    J[4, 6] = -4 * U[3] * (U[6] * U[6] * U[6])
-
-    J[5, 1] = 0.0
-    J[5, 2] = 0.0
-    J[5, 4] = 2 * v1.beta[end] * U[4] / sqrt(v1.A0[end])
-    J[5, 5] = -2 * v2.beta[1] * U[5] / sqrt(v2.A0[1])
-
-    J[6, 1] = 0.0
-    J[6, 3] = 0.0
-    J[6, 4] = 2 * v1.beta[end] * U[4] / sqrt(v1.A0[end])
-    J[6, 6] = -2 * v3.beta[1] * U[6] / sqrt(v3.A0[1])
-
-    J
+    updateBif!(v1, v2, v3, U)
 end
