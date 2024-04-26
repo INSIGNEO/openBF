@@ -83,6 +83,7 @@ mutable struct Vessel
     inlet_impedance_matching::Bool
     Cc::Float64
     Pc::Float64
+    Pout::Float64
 
     #MUSCLArrays
     fluxA::Vector{Float64}
@@ -232,6 +233,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     # elements windkessel. It is set to zero to simulate the pressure at the
     # artery-vein interface.
     Pc = 0.0
+    Pout = get(config, "Pout", 0.0)
 
     # MUSCL arrays
     fluxA = zeros(Float64, M + 2)
@@ -302,6 +304,7 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         inlet_impedance_matching,
         Cc,
         Pc,
+        Pout,
         fluxA,
         fluxQ,
         vA,
