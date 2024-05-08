@@ -18,7 +18,7 @@ inlet_file: "my_inlet.dat"
 The inlet BC is given trough an ASCII file containing a list of values (pressure or volumetric flow rate) in time. For now, the inlet vessel is the one whose `sn` node is `1`.
 
 ```yaml
-output_directory; "put/results/in/this/directory/please
+output_directory: "put/results/in/this/directory/please"
 ```
 
 You can specify where to save results, if not the default directory will be `./<project_name>_results`.
@@ -105,7 +105,7 @@ In case of three-element windkessel:
 - `R2` second peripheral resistance
 - `Cc` peripheral compliance
 
-You can also enable `inlet_impedance_matching` to let openBF optimise `R1` at runtime. This will match the windkessel inlet impedance and minimise artificial reflections (recommended).
+You can also enable `inlet_impedance_matching` to let openBF optimise `R1` at runtime. This will match the windkessel inlet impedance and minimise artificial reflections (recommended). Also optional (default $0.0 Pa$) is the windkessel outlet pressure `Pout`.
 
 ## Template
 
@@ -115,6 +115,7 @@ The configuration file template is reported below. This contains all the mandato
 project_name: <project name> # String
 inlet_file: <inlet name>.dat
 write_results: ["P"] # ["P", "Q", "u", "A"]
+output_directory: "put/results/in/this/directory/please"
 
 solver:
   Ccfl: <Courant's number> # 0.0 < Ccfl ≤ 1.0; Float
@@ -154,6 +155,7 @@ network:
     R2: <peripheral resistance>
     Cc: <compliance>
     inlet_impedance_matching: true # Bool (default false)
+    Pout: <windkessel outlet pressure; default 0.0 Pa> # [Pa]; Float
     #------ OR ------ outlet reflection
     Rt: <reflection coefficient> # 1.0 ≤ Rt ≥ -1.0; Float
 ```

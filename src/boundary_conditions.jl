@@ -76,15 +76,13 @@ end
 
 
 function wk3!(v::Vessel, dt::Float64, ρ::Float64)
-    Pout = 0.0
-
     # inlet impedance matching
     if v.inlet_impedance_matching
         v.R1 = ρ * wave_speed(v.A[end], v.gamma[end-1]) / v.A[end]
         v.R2 = abs(v.total_peripheral_resistance - v.R1)
     end
 
-    v.Pc += dt / v.Cc * (v.A[end] * v.u[end] - (v.Pc - Pout) / v.R2)
+    v.Pc += dt / v.Cc * (v.A[end] * v.u[end] - (v.Pc - v.Pout) / v.R2)
     As = v.A[end]
 
     ssAl = sqrt(sqrt(v.A[end]))
@@ -98,7 +96,7 @@ function wk3!(v::Vessel, dt::Float64, ρ::Float64)
 
     dfun(As) = v.R1 * (v.u[end] + sgamma * (ssAl - 1.25 * sqrt(sqrt(As)))) - bA0 * 0.5 / sqrt(As)
     As = newtone(fun, dfun, As)
-    us = (pressure(As, v.A0[end], v.beta[end], v.Pext) - Pout) / (As * v.R1)
+    us = (pressure(As, v.A0[end], v.beta[end], v.Pext) - v.Pout) / (As * v.R1)
 
     v.A[end] = As
     v.u[end] = us
