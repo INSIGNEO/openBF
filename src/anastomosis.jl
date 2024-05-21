@@ -26,7 +26,7 @@ getUan(v1::Vessel, v2::Vessel, v3::Vessel) = SVector{6, Float64}(
 function solveAnastomosis(v1::Vessel, v2::Vessel, v3::Vessel)
     k = (sqrt(1.5*v1.gamma[end]), sqrt(1.5*v2.gamma[end]), sqrt(1.5*v3.gamma[1]))
     U = getUan(v1, v2, v3)
-    W = (U[1] + 4k[1]* U[4], U[2] + 4k[2] * U[5], U[3] + 4k[3] * U[6])
+    W = (U[1] + 4k[1]* U[4], U[2] + 4k[2] * U[5], U[3] - 4k[3] * U[6])
     J = getJan(v1, v2, v3, U, k)
     F = getFan(v1, v2, v3, U, k, W)
 
@@ -56,7 +56,7 @@ function getFan(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
     v2.beta[end] * (U[5]^2 / sqrt(v2.A0[end]) - 1) - (v3.beta[1] * ((U[6]^2) / sqrt(v3.A0[1]) - 1)))
 end
 
-function getJan(v1::Vessel, v2::Vessel, v3::Vessel, U::SArray, k::SArray)
+function getJan(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
     J::Array{Float64, 2} = zeros(Float64, 6, 6)
 
     J[1, 1] = 1.0
@@ -89,5 +89,5 @@ function NRan(U, W, J, F, k, v1, v2, v3)
         F = getFan(v1, v2, v3, U, k, W)
         J = getJan(v1, v2, v3, U, k)
     end
-    J
+    U
 end

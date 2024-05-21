@@ -30,44 +30,78 @@ function calculateΔt(n::Network)
     minΔt*n.Ccfl
 end
 
+function skipthis(n::Network, s, t)
+    if n.vessels[(s, t)].solved
+        return true
+    end
+
+    if s == 1
+        return false
+    end
+
+    indeg::Int64 = Graphs.indegree(n.graph, s)
+
+    if indeg == 1
+        parent_src = first(Graphs.inneighbors(n.graph, s))
+        return ~n.vessels[parent_src, s].solved
+    end
+
+    if indeg == 2
+        parent_src = Graphs.inneighbors(n.graph, s)
+        return ~(n.vessels[first(parent_src), s].solved && n.vessels[last(parent_src), s].solved)
+    end
+
+    # TODO: this should error
+
+    return false
+end
+
 function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
-    for edge in n.edges
-        s = Graphs.src(edge)
-        t = Graphs.dst(edge)
+    for (k, v) in n.vessels
+        v.solved = false
+    end
 
-        # inlet
-        s == 1 && inbc!(n.vessels[(s, t)], current_time, dt, n.heart)
-
-        # TODO: multiple inlets
-
-        # vessel
-        muscl!(n.vessels[(s, t)], dt, n.blood)
-
-        # downstream
-        outdeg::Int64 = Graphs.outdegree(n.graph, t)
-        if outdeg == 0 # outlet
-            outbc!(n.vessels[(s, t)], dt, n.blood.rho)
-        elseif outdeg == 1
-            indeg::Int64 = Graphs.indegree(n.graph, t)
-            d::Int64 = first(Graphs.outneighbors(n.graph, t))
-            if indeg == 1 # conjunction
-                join_vessels!(n.vessels[(s, t)], n.vessels[(t, d)], n.blood.rho)
+    while ~all(v.solved for v in values(n.vessels))
+        for edge in n.edges
+            s = Graphs.src(edge)
+            t = Graphs.dst(edge)
             
-            # TODO: test ANASTOMOSIS!!!
-            elseif indeg == 2 # anastomosis
-                ps::Vector{Int64} = Graphs.inneighbors(n.graph, t)
-                if t == max(ps[1], ps[2])
+            skipthis(n, s, t) && continue
+
+            # inlet
+            s == 1 && inbc!(n.vessels[(s, t)], current_time, dt, n.heart)
+
+            # TODO: multiple inlets
+
+            # vessel
+            muscl!(n.vessels[(s, t)], dt, n.blood)
+
+            # downstream
+            outdeg::Int64 = Graphs.outdegree(n.graph, t)
+            if outdeg == 0 # outlet
+                outbc!(n.vessels[(s, t)], dt, n.blood.rho)
+            elseif outdeg == 1
+                indeg::Int64 = Graphs.indegree(n.graph, t)
+                d::Int64 = first(Graphs.outneighbors(n.graph, t))
+                if indeg == 1 # conjunction
+                    join_vessels!(n.vessels[(s, t)], n.vessels[(t, d)], n.blood.rho)
+                
+                # TODO: test ANASTOMOSIS!!!
+                elseif indeg == 2 # anastomosis
+                    ps::Vector{Int64} = Graphs.inneighbors(n.graph, t)
                     solveAnastomosis(
                         n.vessels[(ps[1], t)],
                         n.vessels[(ps[2], t)],
                         n.vessels[(t, d)],
                     )
                 end
+                
+            elseif outdeg == 2 # bifurcation
+                ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
+                join_vessels!(n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
             end
             
-        elseif outdeg == 2 # bifurcation
-            ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
-            join_vessels!(n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
+            n.vessels[(s, t)].solved = true
         end
     end
 end
