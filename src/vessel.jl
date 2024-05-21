@@ -28,6 +28,7 @@ function Blood(config::Dict)
 end
 
 mutable struct Vessel
+    solved::Bool
     label::SubString{String}
     tosave::Bool
 
@@ -264,7 +265,10 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         waveforms[q] = zeros(Float64, jump, 6)
     end
 
+    solved = false
+
     Vessel(
+        solved,
         vessel_name,
         tosave,
         sn,

@@ -24,7 +24,6 @@ function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
     J[1, 1] = 1.0
     J[2, 2] = 1.0
     J[3, 3] = 1.0
-    J[4, 4] = 1.0
 
     J[1, 4] = 4k[1]
     J[2, 5] = -4k[2]
