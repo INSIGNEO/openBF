@@ -1,7 +1,7 @@
 name = "openBF"
 uuid = "e815b1a4-10eb-11ea-25f1-272ff651e618"
 authors = ["alessandro <alessandro_melis@rocketmail.com>"]
-version = "2.6.1"
+version = "2.6.2"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
