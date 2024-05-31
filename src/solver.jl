@@ -22,9 +22,11 @@ function calculateΔt(n::Network)
         maxspeed = 0.0
         for i=eachindex(v.u)
             @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i+1]))
+            isnan(speed) && continue
             maxspeed = max(maxspeed, speed)
         end
         Δt = v.dx / maxspeed
+        isnan(Δt) && continue
         minΔt = min(minΔt, Δt)
     end
     minΔt*n.Ccfl
