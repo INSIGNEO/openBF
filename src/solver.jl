@@ -22,9 +22,11 @@ function calculateΔt(n::Network)
         maxspeed = 0.0
         for i=eachindex(v.u)
             @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i+1]))
+            isnan(speed) && continue
             maxspeed = max(maxspeed, speed)
         end
         Δt = v.dx / maxspeed
+        isnan(Δt) && continue
         minΔt = min(minΔt, Δt)
     end
     minΔt*n.Ccfl
@@ -73,9 +75,6 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
 
             # TODO: multiple inlets
 
-            # vessel
-            muscl!(n.vessels[(s, t)], dt, n.blood)
-
             # downstream
             outdeg::Int64 = Graphs.outdegree(n.graph, t)
             if outdeg == 0 # outlet
@@ -97,6 +96,8 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
                 ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
                 join_vessels!(n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
             end
+
+            muscl!(n.vessels[(s, t)], dt, n.blood)
             n.vessels[(s, t)].solved = true
         end
     end
