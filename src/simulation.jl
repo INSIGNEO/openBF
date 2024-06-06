@@ -129,65 +129,71 @@ function run_simulation(
     counter = 1
     conv_error::Float64 = floatmax()
     converged = false
-    stats = @timed while true
 
-        # step
-        dt = calculateΔt(network)
-        solve!(network, dt, current_time)
-        update_ghost_cells!(network)
-        verbose && next!(prog)
+    try
+        stats = @timed while true
 
-        if current_time >= checkpoints[counter]
-            save_waveforms.(counter, current_time, values(network.vessels))
-            counter += 1
-        end
+            # step
+            dt = calculateΔt(network)
+            solve!(network, dt, current_time)
+            update_ghost_cells!(network)
+            verbose && next!(prog)
 
-        # at the end of the cardiac cycle
-        if (current_time - heart.cardiac_period * passed_cycles) >= heart.cardiac_period &&
-           (current_time - heart.cardiac_period * passed_cycles + dt) > heart.cardiac_period
-
-            # check convergence
-            if passed_cycles > 0
-                # compute_pressure(network)
-                conv_error, error_loc = get_conv_error(network)
+            if current_time >= checkpoints[counter]
+                save_waveforms.(counter, current_time, values(network.vessels))
+                counter += 1
             end
 
-            flush_waveforms.(values(network.vessels))
-            out_files && append_last_to_out.(values(network.vessels))
+            # at the end of the cardiac cycle
+            if (current_time - heart.cardiac_period * passed_cycles) >= heart.cardiac_period &&
+               (current_time - heart.cardiac_period * passed_cycles + dt) > heart.cardiac_period
 
-            if verbose
+                # check convergence
                 if passed_cycles > 0
-                    finish!(
-                        prog,
-                        showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)],
-                    )
-                else
-                    finish!(prog)
+                    # compute_pressure(network)
+                    conv_error, error_loc = get_conv_error(network)
                 end
-                println()
+
+                flush_waveforms.(values(network.vessels))
+                out_files && append_last_to_out.(values(network.vessels))
+
+                if verbose
+                    if passed_cycles > 0
+                        finish!(
+                            prog,
+                            showvalues = [("RMSE (mmHg)", conv_error), ("@", error_loc)],
+                        )
+                    else
+                        finish!(prog)
+                    end
+                    println()
+                end
+
+                checkpoints = checkpoints .+ heart.cardiac_period
+                passed_cycles += 1
+                prog = getprog(passed_cycles, verbose)
+                counter = 1
             end
 
-            checkpoints = checkpoints .+ heart.cardiac_period
-            passed_cycles += 1
-            prog = getprog(passed_cycles, verbose)
-            counter = 1
+            # at the end of the simulation
+            if current_time >= total_time ||
+               passed_cycles == config["solver"]["cycles"] ||
+               conv_error < config["solver"]["convergence_tolerance"]
+                verbose && finish!(prog)
+                converged = true
+                break
+            end
+            current_time += dt
         end
+        tokeep::Vector{String} = get(config, "write_results", [])
+        cleanup.(values(network.vessels), Ref(tokeep))
 
-        # at the end of the simulation
-        if current_time >= total_time ||
-           passed_cycles == config["solver"]["cycles"] ||
-           conv_error < config["solver"]["convergence_tolerance"]
-            verbose && finish!(prog)
-            converged = true
-            break
-        end
-        current_time += dt
+        verbose && printstats(stats, converged, passed_cycles)
+        save_stats && savestats(stats, converged, passed_cycles, config["project_name"])
+    catch e
+        println("\nAn error occurred, terminating simulation.\n")
+        println(e)
     end
-    tokeep::Vector{String} = get(config, "write_results", [])
-    cleanup.(values(network.vessels), Ref(tokeep))
-
-    verbose && printstats(stats, converged, passed_cycles)
-    save_stats && savestats(stats, converged, passed_cycles, config["project_name"])
 
     cd(initial_dir)
 end
