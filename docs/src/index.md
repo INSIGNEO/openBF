@@ -26,6 +26,8 @@ openBF has been used in the following works:
 
 - Benemerito I, Narata AP, Narracott A, Marzo A. [Identification of biomarkers for perfusion following an ischaemic event](https://cbmc21.vfairs.com/), _CMBE_ September 2021, Online event, _In proceedings_
 
+- Mercuri M, Wustmann K, von Tengg-Kobligk H, Goksu C, Hose DR, Narracott A. [Subject-specific simulation for non-invasive assessment of aortic coarctation: towards a translational approach](https://www.sciencedirect.com/science/article/pii/S1350453319302449), _Medical Engineering & Physics_, 2020. DOI: 10.1016/j.medengphy.2019.12.003
+
 - Melis A, Moura F, Larrabide I, Janot K, Clayton RH, Narata AP, Marzo A. [Improved biomechanical metrics of cerebral vasospasm identified via sensitivity analysis of a 1D cerebral circulation model](https://www.sciencedirect.com/science/article/pii/S0021929019302830), _Journal of Biomechanics_, 2019. DOI: 10.1016/j.biomech.2019.04.019
 
 - Melis A. [Gaussian process emulators for 1D vascular models](http://etheses.whiterose.ac.uk/19175/), _PhD Thesis_, 2017.
