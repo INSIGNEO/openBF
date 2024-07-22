@@ -17,7 +17,7 @@ limitations under the License.
 
 # -------------------- deprecated ???? -----------------------------------------
 function compute_pressure(n::Network)
-    compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("temp"))
+    # compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("temp"))
     compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("last"))
 end
 function compute_pressure(v::Vessel, rho::Float64, ext::String)
@@ -27,10 +27,10 @@ function compute_pressure(v::Vessel, rho::Float64, ext::String)
     P[:,1] = A[:,1]
 
     for (i, j) in enumerate([1, v.node2, v.node3, v.node4, v.M])
-        @. P[:,i+1] = pressure(A[:,i+1], v.A0[j], v.beta[j], v.Pext)
+        @. P[:,i+1] = pressure(A[:,i+1], v.A0[j], v.beta[j], v.Pext) - v.Pout
 
         if v.viscoelastic
-            P[:,i+1] .+= v.Cv[j] .* rho ./ A[:,i+1] .* diff([A[:,i+1];A[end,i+1]])./diff([A[:,1];A[end,1]+(A[end,1]-A[end-1,1])])
+            P[:,i+1] .+= v.Cv[j] .* rho ./ A[:,i+1] .* diff([A[:,i+1];A[end,i+1]])./diff([A[:,1];A[end,1]+(A[end,1]-A[end-1,1])]) 
         end
     end
 
@@ -156,6 +156,7 @@ function run_simulation(
 
                 flush_waveforms.(values(network.vessels))
                 out_files && append_last_to_out.(values(network.vessels))
+                compute_pressure(network)
 
                 if verbose
                     if passed_cycles > 0
