@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Mentioned in Awesome Julia.jl](https://awesome.re/mentioned-badge.svg)](https://github.com/svaksha/Julia.jl/blob/master/Biology.md#bioinformatics)
 
-[![DOI](https://img.shields.io/badge/DOI-10.15131/shef.data.7166183-blue.svg)](https://figshare.com/articles/openBF_Julia_software_for_1D_blood_flow_modelling/7166183)
+[![DOI](https://zenodo.org/badge/92175375.svg)](https://doi.org/10.5281/zenodo.13850604)
 
 <a href="https://github.com/INSIGNEO/openBF/actions"><img alt="openbf ci status" src="https://github.com/INSIGNEO/openBF/actions/workflows/ci.yml/badge.svg"></a>
 
