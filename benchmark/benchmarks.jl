@@ -17,3 +17,6 @@ SUITE["single_vessel"]["uta"] = @benchmarkable bmodel("uta")
 
 SUITE["bifurcation"] = BenchmarkGroup()
 SUITE["bifurcation"]["ibif"] = @benchmarkable bmodel("ibif")
+
+SUITE["circulation"] = BenchmarkGroup()
+SUITE["circulation"]["adan56"] = @benchmarkable bmodel("adan56")
