@@ -2,11 +2,12 @@
 
 The latest Julia binary can be downloaded for all platforms from the official [website](https://julialang.org/downloads/).
 
-openBF can be installed via `Pkg.clone`. Start `julia` in a terminal session and run
+openBF can be installed via Julia REPL. Start `julia` in a terminal session and run
 
 ```julia
-using Pkg
-Pkg.clone("https://github.com/INSIGNEO/openBF.git")
+julia> ]
+
+(@v1.11) pkg>  add https://github.com/INSIGNEO/openBF.git
 ```
 
 ## Run a simulation
