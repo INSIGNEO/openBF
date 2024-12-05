@@ -4,7 +4,7 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 openBF has been developed by [Dr. A. Melis](https://alemel.is) under the supervision of [Dr. A. Marzo](https://www.sheffield.ac.uk/mecheng/academic-staff/alberto-marzo) as part of the PhD project on cardiovascular modelling at [INSIGNEO](https://www.sheffield.ac.uk/insigneo) Institute, Department of Mechanical Engineering of The University of Sheffield. All the contributors are listed on [github](https://github.com/INSIGNEO/openBF/graphs/contributors).
 
-The accompaigning [PhD Thesis](https://etheses.whiterose.ac.uk/19175/) contains the relevant theoretical background and the explanation of the numerical scheme implemented. A shorter backgound introduction is given in the [Overview](man/overview.md) page.
+The accompaigning [PhD Thesis](https://etheses.whiterose.ac.uk/19175/) contains the relevant theoretical background and the explanation of the numerical scheme implemented. A multiscale validation study is presented in [this](https://iopscience.iop.org/article/10.1088/1361-6579/ad9663) paper. A shorter backgound introduction is given in the [Overview](man/overview.md) page.
 
 Head over to the [Quickstart](man/quickstart.md) section for installation and running instructions.
 
@@ -12,11 +12,21 @@ Head over to the [Quickstart](man/quickstart.md) section for installation and ru
 
 openBF has been used in the following works:
 
+- Benemerito I, Melis A, Wehenkel A, Marzo A. [openBF: an open-source finite volume 1D blood flow solver](https://iopscience.iop.org/article/10.1088/1361-6579/ad9663), _Physiological Measurement_, 2024. DOI: 10.1088/1361-6579-ad9663
+
+- Wang N, Benemerito I, Sourbron S, Marzo A. [An in silico modelling approach to predict haemodynamic outcomes in diabetic and hypertensive kidney disease](https://link.springer.com/article/10.1007/s10439-024-03573-2), _Annals of Biomedical Engineering_, 2024. DOI: 10.1007/s10439-024-03573-2
+
 - Benemerito I, Mustafa A, Wang N, Narata AP, Narracott A, Marzo A. [A multiscale computational framework to evaluate flow alterations during mechanical thrombectomy for treatment of ischaemic stroke](https://www.frontiersin.org/articles/10.3389/fcvm.2023.1117449/full), _Frontiers in Cardiovascular Medicine_, 2023. DOI: 10.3389/fcvm.2023.1117449
+
+- Wehenkel A, Behrmann J, Miller AC, Sapiro G, Sener O, Cuturi M, Jacobsen JH. [Simulation-based inference for cardiovascular models](https://arxiv.org/abs/2307.13918), _arXiv_, 2023. 
+
+- Lahtinen J, Moura F, Samavaki M, Siltanen S, Pursiainen S. [In silico study of the effects of cerebral circulation on source localization using a dynamical anatomical atlas of the human head](https://iopscience.iop.org/article/10.1088/1741-2552/acbdc1), _Journal of Neural Engineering_, 2023. DOI: 10.1088/1741-2552/acbdc1
 
 - Ning W, Sharma K, Sourbron SP, Benemerito I, Marzo A. [Distinguishing hypertensive renal injury from diabetic nephropathy using MR imaging and computational modelling of renal blood flow](https://vph-conference.org/), _VPH2022_ September 2022, Porto, PO _In proceedings_
 
 - Benemerito I, Narata AP, Narracott A, Marzo A. [Determining clinically-viable biomarkers for ischaemic stroke through a mechanistic and machine learning approach](https://link.springer.com/article/10.1007/s10439-022-02956-7), _Annals of Biomedical Engineering_, 2022. DOI: 10.1007/s10439-022-02956-7
+
+- Moura F, Beraldo RG, Ferreira LA, Siltanen S. [Anatomical atlas of the upper part of the human head for electroencephalography and bioimpedance applications](https://iopscience.iop.org/article/10.1088/1361-6579/ac3218), _Physiological Measurement_, 2021. DOI: 10.1088/1361-6579/ac3218.
 
 - Mustafa A. [An efficient computational approach to guide intervention in treatment of stroke](https://etheses.whiterose.ac.uk/29992/), _PhD Thesis_, 2021
 
