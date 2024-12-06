@@ -34,17 +34,17 @@ If your workflow relies on this feature, we recommend to use [release v1.5.1](ht
 ### Citation
 
 ```
-@misc{openBF.jl-2018,
-title={openBF: Julia software for 1D blood flow modelling}, 
-url={https://figshare.com/articles/openBF_Julia_software_for_1D_blood_flow_modelling/7166183/1}, 
-DOI={10.15131/shef.data.7166183}, 
-abstractNote={
-openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in Julia and released under Apache 2.0 free software license.
-
-See https://github.com/INSIGNEO/openBF for the git repository and https://insigneo.github.io/openBF/stable for the documentation.
-}, 
-publisher={figshare}, 
-author={Melis, Alessandro}, 
-year={2018}, 
-month={Oct}}
+@article{Benemerito_2024,
+doi = {10.1088/1361-6579/ad9663},
+url = {https://dx.doi.org/10.1088/1361-6579/ad9663},
+year = {2024},
+month = {dec},
+publisher = {IOP Publishing},
+volume = {45},
+number = {12},
+pages = {125002},
+author = {I Benemerito and A Melis and A Wehenkel and A Marzo},
+title = {openBF: an open-source finite volume 1D blood flow solver},
+journal = {Physiological Measurement}
+}
 ```
