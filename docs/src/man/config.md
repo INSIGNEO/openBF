@@ -29,7 +29,7 @@ Following the `write_results` list is defined.
 write_results: ["P"] # ["P", "Q", "u", "A"]
 ```
 
-Here you can specify which quantities to write in the output files (`P`ressure, `Q` flow, `u` velocity and `A`rea). These are all optional but at least one is recommended.
+Here you can specify which quantities to write in the output files (`P`ressure [ $Pa$ ], `Q` flow [ $m^3 \cdot s^{-1}$ ], `u` velocity [ $m \cdot s^{-1}$ ] and `A`rea [ $m^2 $ ]). These are all optional but at least one is recommended.
 
 Then there are three main sections: `solver`, `blood`, and `network`.
 
@@ -94,16 +94,16 @@ The system boundary conditions (BCs) are applied to inlet vessel(s) and outlet v
 
 In the case a vessel outlet is not connected to any other vessel, an outlet BC must be assigned by imposing a reflection coefficient `Rt` or by coupling a _windkessel_ model. In case of `Rt`:
 
-- `Rt` 1.0 ≤ Rt ≥ -1.0
+- `Rt` -1.0 ≥ Rt ≤ 1.0
 
 In case of two-element windkessel:
-- `R1` peripheral resistance
-- `Cc` peripheral compliance
+- `R1` peripheral resistance [ $Pa \cdot s \cdot m^{-3}$ ]
+- `Cc` peripheral compliance [ $m^3 \cdot Pa^{-1}$ ]
 
 In case of three-element windkessel:
-- `R1` first peripheral resistance
-- `R2` second peripheral resistance
-- `Cc` peripheral compliance
+- `R1` first peripheral resistance  [ $Pa \cdot s \cdot m^{-3}$ ]
+- `R2` second peripheral resistance [ $Pa \cdot s \cdot m^{-3}$ ]
+- `Cc` peripheral compliance        [ $m^3 \cdot Pa^{-1}$ ]
 
 You can also enable `inlet_impedance_matching` to let openBF optimise `R1` at runtime. This will match the windkessel inlet impedance and minimise artificial reflections (recommended). Also optional (default $0.0 Pa$) is the windkessel outlet pressure `Pout`.
 
