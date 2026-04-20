@@ -24,8 +24,8 @@ getFconj(v1::Vessel, v2::Vessel, U, k, W, ρ) = SVector{4,Float64}(U[1] + 4k[1] 
         (0.5 * ρ * U[2] * U[2] + v2.beta[1] * (U[4] * U[4] / sqrt(v2.A0[1]) - 1)))
 
 function getJconj(v1::Vessel, v2::Vessel, U, k, ρ)
-    J::Array{Float64, 2} = zeros(Float64, 4, 4)
-    
+    J = zero(MMatrix{4, 4, Float64, 16})
+
     J[1, 1] = 1.0
     J[2, 2] = 1.0
 
@@ -43,14 +43,16 @@ function getJconj(v1::Vessel, v2::Vessel, U, k, ρ)
     J[4, 1] = ρ * U[1]
     J[4, 2] = -ρ * U[2]
 
-    SMatrix{4, 4, Float64, 16}(J)
+    SMatrix(J)
 end
 
-function NRconj(U, W, J, F, k, v1::Vessel, v2::Vessel, ρ)
-    while norm(F)>1e-5
+function NRconj(U, W, J, F, k, v1::Vessel, v2::Vessel, ρ; maxiter=30)
+    iter = 0
+    while norm(F) > 1e-5
         U += J \ (-F)
         F = getFconj(v1, v2, U, k, W, ρ)
         J = getJconj(v1, v2, U, k, ρ)
+        (iter += 1) >= maxiter && (@warn "NRconj did not converge"; break)
     end
     U
 end

@@ -57,7 +57,7 @@ function getFan(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
 end
 
 function getJan(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
-    J::Array{Float64, 2} = zeros(Float64, 6, 6)
+    J = zero(MMatrix{6, 6, Float64, 36})
 
     J[1, 1] = 1.0
     J[2, 2] = 1.0
@@ -80,14 +80,16 @@ function getJan(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
     J[6, 5] = 2v2.beta[end] * U[5] / sqrt(v2.A0[end])
     J[6, 6] = -2v3.beta[1] * U[6] / sqrt(v3.A0[1])
 
-    SMatrix{6, 6, Float64, 36}(J)
+    SMatrix(J)
 end
 
-function NRan(U, W, J, F, k, v1, v2, v3)
-    while norm(F)>1e-5
+function NRan(U, W, J, F, k, v1, v2, v3; maxiter=30)
+    iter = 0
+    while norm(F) > 1e-5
         U += J \ (-F)
         F = getFan(v1, v2, v3, U, k, W)
         J = getJan(v1, v2, v3, U, k)
+        (iter += 1) >= maxiter && (@warn "NRan did not converge"; break)
     end
     U
 end

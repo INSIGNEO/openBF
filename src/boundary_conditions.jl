@@ -20,18 +20,11 @@ function inbc!(v::Vessel, t::Float64, dt::Float64, h::Heart)
 end
 
 function inlet_from_data(t::Float64, h::Heart)
-    idt = h.input_data[:, 1]
-    idq = h.input_data[:, 2]
-    t_hat = div(t, h.cardiac_period)
-    t -= t_hat * h.cardiac_period
-    idx = 0
-    for i = 1:length(idt)
-        if ((t >= idt[i]) && (t <= idt[i+1]))
-            idx = i
-            break
-        end
-    end
-    idq[idx] + (t - idt[idx]) * (idq[idx+1] - idq[idx]) / (idt[idx+1] - idt[idx])
+    T = h.cardiac_period
+    t_mod = t - div(t, T) * T
+    i = searchsortedlast(h.t, t_mod)
+    i = clamp(i, 1, length(h.t) - 1)
+    @inbounds h.q[i] + (t_mod - h.t[i]) * (h.q[i+1] - h.q[i]) / (h.t[i+1] - h.t[i])
 end
 
 function riemann_invariants(i::Int64, v::Vessel)
@@ -102,7 +95,7 @@ function wk3!(v::Vessel, dt::Float64, ρ::Float64)
     v.u[end] = us
 end
 
-function newtone(f::Function, df::Function, xn)
+function newtone(f::F, df::DF, xn) where {F, DF}
     for _=1:10
         xn -= f(xn) / df(xn)
     end
@@ -110,7 +103,7 @@ function newtone(f::Function, df::Function, xn)
 end
 
 function update_ghost_cells!(n::Network)
-    for v in values(n.vessels)
+    for v in n.vessels_vec
         v.U00A = v.A[1]
         v.U00Q = v.Q[1]
         v.UM1A = v.A[v.M]

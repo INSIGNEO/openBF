@@ -28,7 +28,6 @@ function Blood(config::Dict)
 end
 
 mutable struct Vessel
-    solved::Bool
     label::SubString{String}
     tosave::Bool
 
@@ -110,6 +109,7 @@ mutable struct Vessel
 
     # waveforms
     waveforms::Dict{String, Array{Float64, 2}}
+    waveforms_prev::Dict{String, Array{Float64, 2}}
 end
 
 wave_speed(A::Float64, gamma::Float64) = sqrt(1.5 * gamma * sqrt(A))
@@ -261,14 +261,13 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     gamma_profile = get(config, "gamma_profile", 2)
 
     waveforms = Dict()
+    waveforms_prev = Dict()
     for q in tokeep
         waveforms[q] = zeros(Float64, jump, 6)
+        waveforms_prev[q] = zeros(Float64, jump, 6)
     end
 
-    solved = false
-
     Vessel(
-        solved,
         vessel_name,
         tosave,
         sn,
@@ -324,5 +323,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         Fl,
         Fr,
         waveforms,
+        waveforms_prev,
     )
 end

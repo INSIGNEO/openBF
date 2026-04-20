@@ -19,8 +19,8 @@ getUbif(v1::Vessel, v2::Vessel, v3::Vessel) = SVector{6,Float64}(v1.u[end], v2.u
         sqrt(sqrt(v1.A[end])), sqrt(sqrt(v2.A[1])), sqrt(sqrt(v3.A[1])))
 
 function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
-    J::Array{Float64, 2} = zeros(Float64, 6,6)
-    
+    J = zero(MMatrix{6, 6, Float64, 36})
+
     J[1, 1] = 1.0
     J[2, 2] = 1.0
     J[3, 3] = 1.0
@@ -42,7 +42,7 @@ function getJbif(v1::Vessel, v2::Vessel, v3::Vessel, U, k)
     J[6, 4] = 2v1.beta[end] * U[4] / sqrt(v1.A0[end])
     J[6, 6] = -2v3.beta[1] * U[6] / sqrt(v3.A0[1])
 
-    SMatrix{6, 6, Float64, 36}(J)
+    SMatrix(J)
 end
 
 function getF(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
@@ -57,11 +57,13 @@ function getF(v1::Vessel, v2::Vessel, v3::Vessel, U, k, W)
         (v3.beta[1] * (U[6] * U[6] / sqrt(v3.A0[1]) - 1)))
 end
 
-function NRbif(U, W, J, F, k, v1::Vessel, v2::Vessel, v3::Vessel)
-    while norm(F)>1e-5
+function NRbif(U, W, J, F, k, v1::Vessel, v2::Vessel, v3::Vessel; maxiter=30)
+    iter = 0
+    while norm(F) > 1e-5
         U += J \ (-F)
         F = getF(v1, v2, v3, U, k, W)
         J = getJbif(v1, v2, v3, U, k)
+        (iter += 1) >= maxiter && (@warn "NRbif did not converge"; break)
     end
     U
 end

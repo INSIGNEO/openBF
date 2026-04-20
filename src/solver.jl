@@ -17,10 +17,9 @@ limitations under the License.
 
 function calculateΔt(n::Network)
     minΔt = 1.0
-    Δt = 1.0
-    for (_, v) in n.vessels
+    for v in n.vessels_vec
         maxspeed = 0.0
-        for i=eachindex(v.u)
+        for i in eachindex(v.u)
             @inbounds speed = abs(v.u[i] + wave_speed(v.A[i], v.gamma[i+1]))
             isnan(speed) && continue
             maxspeed = max(maxspeed, speed)
@@ -29,78 +28,41 @@ function calculateΔt(n::Network)
         isnan(Δt) && continue
         minΔt = min(minΔt, Δt)
     end
-    minΔt*n.Ccfl
-end
-
-function skipthis(n::Network, s, t)
-    if n.vessels[(s, t)].solved
-        return true
-    end
-
-    if s == 1
-        return false
-    end
-
-    indeg::Int64 = Graphs.indegree(n.graph, s)
-
-    if indeg == 1
-        parent_src = first(Graphs.inneighbors(n.graph, s))
-        return ~n.vessels[parent_src, s].solved
-    end
-
-    if indeg == 2
-        parent_src = Graphs.inneighbors(n.graph, s)
-        return ~(n.vessels[first(parent_src), s].solved && n.vessels[last(parent_src), s].solved)
-    end
-
-    # TODO: this should error
-
-    return false
+    minΔt * n.Ccfl
 end
 
 function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
-    for (k, v) in n.vessels
-        v.solved = false
-    end
+    @inbounds for k in eachindex(n.topo_order)
+        eid = n.topo_order[k]
+        v = n.vessels_vec[eid]
 
-    while ~all(v.solved for v in values(n.vessels))
-        for edge in n.edges
-            s = Graphs.src(edge)
-            t = Graphs.dst(edge)
-            
-            skipthis(n, s, t) && continue
+        # inlet BC
+        n.is_inlet[eid] && inbc!(v, current_time, dt, n.heart)
 
-            # inlet
-            s == 1 && inbc!(n.vessels[(s, t)], current_time, dt, n.heart)
-
-            # TODO: multiple inlets
-
-            # downstream
-            outdeg::Int64 = Graphs.outdegree(n.graph, t)
-            if outdeg == 0 # outlet
-                outbc!(n.vessels[(s, t)], dt, n.blood.rho)
-            elseif outdeg == 1
-                indeg::Int64 = Graphs.indegree(n.graph, t)
-                d::Int64 = first(Graphs.outneighbors(n.graph, t))
-                if indeg == 1 # conjunction
-                    join_vessels!(n.vessels[(s, t)], n.vessels[(t, d)], n.blood.rho)
-                elseif indeg == 2 # anastomosis
-                    ps::Vector{Int64} = Graphs.inneighbors(n.graph, t)
-                    solveAnastomosis(
-                        n.vessels[(ps[1], t)],
-                        n.vessels[(ps[2], t)],
-                        n.vessels[(t, d)],
-                    )
+        # downstream junction / outlet
+        nc = n.child_count[eid]
+        if nc == 0
+            outbc!(v, dt, n.blood.rho)
+        elseif nc == 1
+            c1 = Int(n.child_eids[eid][1])
+            np_child = n.parent_count[c1]
+            if np_child == 1
+                join_vessels!(v, n.vessels_vec[c1], n.blood.rho)
+            else
+                # anastomosis: only the parent with the higher eid triggers the solve
+                p1, p2 = Int(n.parent_eids[c1][1]), Int(n.parent_eids[c1][2])
+                if eid == max(p1, p2)
+                    solveAnastomosis(n.vessels_vec[p1], n.vessels_vec[p2], n.vessels_vec[c1])
                 end
-            elseif outdeg == 2 # bifurcation
-                ds::Vector{Int64} = Graphs.outneighbors(n.graph, t)
-                join_vessels!(n.vessels[(s, t)], n.vessels[t, ds[1]], n.vessels[t, ds[2]])
             end
-
-            muscl!(n.vessels[(s, t)], dt, n.blood)
-            n.vessels[(s, t)].solved = true
+        elseif nc == 2
+            c1, c2 = Int(n.child_eids[eid][1]), Int(n.child_eids[eid][2])
+            join_vessels!(v, n.vessels_vec[c1], n.vessels_vec[c2])
         end
+
+        muscl!(v, dt, n.blood)
     end
+    return
 end
 
 function muscl!(v::Vessel, dt::Float64, b::Blood)

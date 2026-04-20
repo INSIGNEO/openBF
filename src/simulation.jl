@@ -17,8 +17,8 @@ limitations under the License.
 
 # -------------------- deprecated ???? -----------------------------------------
 function compute_pressure(n::Network)
-    compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("temp"))
-    compute_pressure.(values(n.vessels), Ref(n.blood.rho), Ref("last"))
+    compute_pressure.(n.vessels_vec, Ref(n.blood.rho), Ref("temp"))
+    compute_pressure.(n.vessels_vec, Ref(n.blood.rho), Ref("last"))
 end
 function compute_pressure(v::Vessel, rho::Float64, ext::String)
     A = readdlm(v.label * "_A.$(ext)")
@@ -43,14 +43,14 @@ end
 load_yaml_config(yaml_config::String) = YAML.load_file(yaml_config)
 
 function get_conv_error(n::Network)
-    error, edge = findmax(get_conv_error, n.vessels)
-    error, n.vessels[edge].label
+    error, idx = findmax(get_conv_error, n.vessels_vec)
+    error, n.vessels_vec[idx].label
 end
 
 function get_conv_error(v::Vessel)
-    current = v.waveforms["P"][:,4]
-    prev = readdlm(v.label * "_P.last")[:, 4]
-    sqrt(mean(current - prev) .^ 2) / 133.332
+    current = @view v.waveforms["P"][:, 4]
+    prev    = @view v.waveforms_prev["P"][:, 4]
+    sqrt(mean(abs2.(current .- prev))) / 133.332
 end
 
 getprog(cycle::Int64, verbose::Bool) =
@@ -127,6 +127,7 @@ function run_simulation(
     passed_cycles = 0
     prog = getprog(passed_cycles, verbose)
     counter = 1
+    counter_prog = 0
     conv_error::Float64 = floatmax()
     converged = false
 
@@ -137,10 +138,10 @@ function run_simulation(
             dt = calculateΔt(network)
             solve!(network, dt, current_time)
             update_ghost_cells!(network)
-            verbose && next!(prog)
+            verbose && (counter_prog += 1) % 100 == 0 && next!(prog)
 
             if current_time >= checkpoints[counter]
-                save_waveforms.(counter, current_time, values(network.vessels))
+                save_waveforms.(counter, current_time, network.vessels_vec)
                 counter += 1
             end
 
@@ -154,8 +155,9 @@ function run_simulation(
                     conv_error, error_loc = get_conv_error(network)
                 end
 
-                flush_waveforms.(values(network.vessels))
-                out_files && append_last_to_out.(values(network.vessels))
+                flush_waveforms.(network.vessels_vec)
+                swap_waveforms!.(network.vessels_vec)
+                out_files && append_last_to_out.(network.vessels_vec)
 
                 if verbose
                     if passed_cycles > 0
@@ -186,7 +188,7 @@ function run_simulation(
             current_time += dt
         end
         tokeep::Vector{String} = get(config, "write_results", [])
-        cleanup.(values(network.vessels), Ref(tokeep))
+        cleanup.(network.vessels_vec, Ref(tokeep))
 
         verbose && printstats(stats, converged, passed_cycles)
         save_stats && savestats(stats, converged, passed_cycles, config["project_name"])
