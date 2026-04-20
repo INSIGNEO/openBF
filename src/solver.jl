@@ -83,8 +83,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     @inbounds v.vQ[end] = v.UM1Q
 
     #
-    limiter!(v, v.vA, v.slopesA)
-    limiter!(v, v.vQ, v.slopesQ)
+    limit_slopes!(v.slopesA, v.vA, v.invDx, v.halfDx)
+    limit_slopes!(v.slopesQ, v.vQ, v.invDx, v.halfDx)
 
     #
     for i = eachindex(v.Al)
@@ -117,8 +117,8 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     @inbounds v.vQ[end] = v.vQ[end-1]
 
     #
-    limiter!(v, v.vA, v.slopesA)
-    limiter!(v, v.vQ, v.slopesQ)
+    limit_slopes!(v.slopesA, v.vA, v.invDx, v.halfDx)
+    limit_slopes!(v.slopesQ, v.vQ, v.invDx, v.halfDx)
 
     #
     for i = eachindex(v.Al)
@@ -183,26 +183,18 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     end
 end
 
-function limiter!(
-    v::Vessel,
-    U::Vector{Float64},
-    slopes::Vector{Float64},
-)
-    for i = 2:v.M+2
-        @inbounds v.dUA[i] = (U[i] - U[i-1]) * v.invDx
-        @inbounds v.dUQ[i-1] = (U[i] - U[i-1]) * v.invDx
+function limit_slopes!(slopes::Vector{Float64}, U::Vector{Float64},
+                        invDx::Float64, halfDx::Float64)
+    N = length(slopes)
+    @inbounds slopes[1]   = 0.0
+    @inbounds slopes[end] = 0.0
+    @inbounds @simd for i in 2:N-1
+        a = (U[i]   - U[i-1]) * invDx
+        b = (U[i+1] - U[i])   * invDx
+        t1 = max(min(a, 2b), min(2a, b))
+        t2 = min(max(a, 2b), max(2a, b))
+        slopes[i] = ifelse(a > 0, ifelse(b > 0, t1, zero(Float64)),
+                                   ifelse(b < 0, t2, zero(Float64))) * halfDx
     end
-    superbee!(slopes, v.dUA, v.dUQ, v.halfDx)
-end
-
-# https://discourse.julialang.org/t/optimising-superbee-function/112568/12
-function superbee!(s::Vector{Float64}, a::Vector{Float64}, b::Vector{Float64}, h::Float64)
-    @simd for i = eachindex(s)
-        # @inbounds is inferred automatically - yay for safety AND speed!
-        ai = a[i]
-        bi = b[i]
-        t1 = max(min(ai,2bi),min(2ai,bi))
-        t2 = min(max(ai,2bi),max(2ai,bi))
-        s[i] = ifelse(ai>0, ifelse(bi>0, t1, zero(Float64)), ifelse(bi<0, t2, zero(Float64)))*h
-    end
+    return
 end
