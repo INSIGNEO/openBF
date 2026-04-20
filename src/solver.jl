@@ -65,6 +65,30 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
     return
 end
 
+# Shared half-step: limit slopes, reconstruct cell-edge states, compute fluxes.
+# Called twice per muscl! (predictor + corrector).
+@inline function muscl_halfstep!(v::Vessel, dxDt::Float64)
+    limit_slopes!(v.slopesA, v.vA, v.invDx, v.halfDx)
+    limit_slopes!(v.slopesQ, v.vQ, v.invDx, v.halfDx)
+    @fastmath @inbounds for i = eachindex(v.Al)
+        Ali = v.vA[i] + v.slopesA[i]
+        Ari = v.vA[i] - v.slopesA[i]
+        Qli = v.vQ[i] + v.slopesQ[i]
+        Qri = v.vQ[i] - v.slopesQ[i]
+        v.Al[i] = Ali
+        v.Ar[i] = Ari
+        v.Ql[i] = Qli
+        v.Qr[i] = Qri
+        v.Fl[i] = Qli * Qli / Ali + v.gamma[i] * Ali * sqrt(Ali)
+        v.Fr[i] = Qri * Qri / Ari + v.gamma[i] * Ari * sqrt(Ari)
+    end
+    @fastmath @inbounds for i = 1:v.M+1
+        v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
+        v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
+    end
+    return
+end
+
 function muscl!(v::Vessel, dt::Float64, b::Blood)
     dxDt = v.dx / dt
     invDxDt = 1.0 / dxDt
@@ -82,27 +106,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     @inbounds v.vA[end] = v.UM1A
     @inbounds v.vQ[end] = v.UM1Q
 
-    #
-    limit_slopes!(v.slopesA, v.vA, v.invDx, v.halfDx)
-    limit_slopes!(v.slopesQ, v.vQ, v.invDx, v.halfDx)
-
-    #
-    for i = eachindex(v.Al)
-        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
-        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
-
-        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
-        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
-
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma[i] * v.Ar[i] * sqrt(v.Ar[i])
-    end
-
-    #
-    for i = 1:v.M+1
-        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
-    end
+    muscl_halfstep!(v, dxDt)
 
     # step-2
     for i = 2:v.M+1
@@ -116,27 +120,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
     @inbounds v.vA[end] = v.vA[end-1]
     @inbounds v.vQ[end] = v.vQ[end-1]
 
-    #
-    limit_slopes!(v.slopesA, v.vA, v.invDx, v.halfDx)
-    limit_slopes!(v.slopesQ, v.vQ, v.invDx, v.halfDx)
-
-    #
-    for i = eachindex(v.Al)
-        @inbounds v.Al[i] = v.vA[i] + v.slopesA[i]
-        @inbounds v.Ar[i] = v.vA[i] - v.slopesA[i]
-
-        @inbounds v.Ql[i] = v.vQ[i] + v.slopesQ[i]
-        @inbounds v.Qr[i] = v.vQ[i] - v.slopesQ[i]
-
-        @inbounds v.Fl[i] = v.Ql[i] * v.Ql[i] / v.Al[i] + v.gamma[i] * v.Al[i] * sqrt(v.Al[i])
-        @inbounds v.Fr[i] = v.Qr[i] * v.Qr[i] / v.Ar[i] + v.gamma[i] * v.Ar[i] * sqrt(v.Ar[i])
-    end
-
-    #
-    for i = 1:v.M+1
-        @inbounds v.fluxA[i] = 0.5 * (v.Qr[i+1] + v.Ql[i] - dxDt * (v.Ar[i+1] - v.Al[i]))
-        @inbounds v.fluxQ[i] = 0.5 * (v.Fr[i+1] + v.Fl[i] - dxDt * (v.Qr[i+1] - v.Ql[i]))
-    end
+    muscl_halfstep!(v, dxDt)
 
     # 2:v.M+1
     for i = eachindex(v.A)
@@ -152,7 +136,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         @inbounds v.Q[i] -= 2 * (v.gamma_profile + 2) * pi * b.mu * v.Q[i] / (v.A[i] * b.rho) * dt
 
         if v.tapered
-            #dP/dA0   
+            #dP/dA0
             @inbounds v.Q[i] += dt * 0.5 * v.beta[i] * sqrt(v.A[i])*v.A[i] / (v.A0[i] * b.rho) * v.dA0dx[i]
 
             #dP/dh0
@@ -171,7 +155,7 @@ function muscl!(v::Vessel, dt::Float64, b::Blood)
         Tdiagonal = 1.0.+2.0.*a
         Tdiagonal[1] -= a[1]
         Tdiagonal[end] -= a[end]
-        
+
         T = Tridiagonal(Tupper, Tdiagonal, Tlower)
 
         d = (1.0 .- 2.0.*a).*v.Q

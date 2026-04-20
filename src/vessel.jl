@@ -92,9 +92,6 @@ mutable struct Vessel
     vA::Vector{Float64}
     vQ::Vector{Float64}
 
-    dUA::Vector{Float64}
-    dUQ::Vector{Float64}
-
     slopesA::Vector{Float64}
     slopesQ::Vector{Float64}
 
@@ -243,9 +240,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
     vA = zeros(Float64, M + 2)
     vQ = zeros(Float64, M + 2)
 
-    dUA = zeros(Float64, M + 2)
-    dUQ = zeros(Float64, M + 2)
-
     slopesA = zeros(Float64, M + 2)
     slopesQ = zeros(Float64, M + 2)
 
@@ -312,8 +306,6 @@ function Vessel(config::Dict{Any,Any}, b::Blood, jump::Int64, tokeep::Vector{Str
         fluxQ,
         vA,
         vQ,
-        dUA,
-        dUQ,
         slopesA,
         slopesQ,
         Al,
