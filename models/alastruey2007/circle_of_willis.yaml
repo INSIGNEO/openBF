@@ -1,5 +1,5 @@
 project_name: circle_of_willis
-write_results: ["P", "u"]
+write_results: ["P", "Q", "u"]
 blood:
   rho: 1060.0
   mu: 0.004
