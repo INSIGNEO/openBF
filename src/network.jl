@@ -42,6 +42,9 @@ struct Network
     is_inlet::BitVector
     is_outlet::BitVector
     topo_order::Vector{Int32}
+    # Indexed by child-vessel eid: true if the anastomosis junction at that child's
+    # source node has already been solved this step. Reset to false at start of solve!.
+    anastomosis_solved::Vector{Bool}
 end
 number_of_nodes(config::Vector{Dict{Any,Any}}) = maximum(c["tn"] for c in config)
 function Network(
@@ -108,10 +111,12 @@ function Network(
     end
     topo_order = Int32.(Graphs.topological_sort_by_dfs(edge_dag))
 
+    anastomosis_solved = zeros(Bool, n_vessels)
+
     Network(blood, heart, Ccfl,
             vessels_vec, edge_to_eid, eid_to_edge,
             parent_eids, child_eids, parent_count, child_count,
-            is_inlet, is_outlet, topo_order)
+            is_inlet, is_outlet, topo_order, anastomosis_solved)
 end
 
 function check(g::SimpleDiGraph)
