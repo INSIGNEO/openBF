@@ -1,4 +1,6 @@
 include("observer.jl")
+include("ringbuf.jl")
+include("snapshot.jl")
 
 function tui_should_run(cli_flag::Bool)
     cli_flag                              || return false
