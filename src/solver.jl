@@ -32,6 +32,7 @@ function calculateΔt(n::Network)
 end
 
 function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
+    fill!(n.anastomosis_solved, false)
     @inbounds for k in eachindex(n.topo_order)
         eid = n.topo_order[k]
         v = n.vessels_vec[eid]
@@ -53,6 +54,7 @@ function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
                 p1, p2 = Int(n.parent_eids[c1][1]), Int(n.parent_eids[c1][2])
                 if eid == max(p1, p2)
                     solveAnastomosis(n.vessels_vec[p1], n.vessels_vec[p2], n.vessels_vec[c1])
+                    n.anastomosis_solved[c1] = true
                 end
             end
         elseif nc == 2
