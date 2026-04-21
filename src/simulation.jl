@@ -99,6 +99,7 @@ function run_simulation(
     out_files::Bool = false,
     save_stats::Bool = false,
     savedir::String = "",
+    no_tui::Bool = false,
 )
     initial_dir = pwd()
     config::Dict{String, Any} = preamble(yaml_config, verbose, savedir)
@@ -123,6 +124,9 @@ function run_simulation(
 
     verbose && println("\nStart simulation")
 
+    observer = nothing  # Phase 3: tui_should_run(!no_tui) ? TUIObserver(...) : nothing
+    start_render!(observer)
+
     current_time = 0.0
     passed_cycles = 0
     prog = getprog(passed_cycles, verbose)
@@ -138,6 +142,7 @@ function run_simulation(
             dt = calculateΔt(network)
             solve!(network, dt, current_time)
             update_ghost_cells!(network)
+            record_step!(observer, network.vessels_vec, current_time, dt)
             verbose && (counter_prog += 1) % 100 == 0 && next!(prog)
 
             if current_time >= checkpoints[counter]
@@ -154,6 +159,7 @@ function run_simulation(
                     # compute_pressure(network)
                     conv_error, error_loc = get_conv_error(network)
                 end
+                record_cycle!(observer, passed_cycles, conv_error)
 
                 flush_waveforms.(network.vessels_vec)
                 swap_waveforms!.(network.vessels_vec)
@@ -187,12 +193,14 @@ function run_simulation(
             end
             current_time += dt
         end
+        stop_render!(observer)
         tokeep::Vector{String} = get(config, "write_results", [])
         cleanup.(network.vessels_vec, Ref(tokeep))
 
         verbose && printstats(stats, converged, passed_cycles)
         save_stats && savestats(stats, converged, passed_cycles, config["project_name"])
     catch e
+        stop_render!(observer)
         println("\nAn error occurred, terminating simulation.\n")
         println(e)
     end

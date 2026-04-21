@@ -29,6 +29,7 @@ using Statistics
 
 export run_simulation
 
+include("tui/TUI.jl")
 include("vessel.jl")
 include("network.jl")
 include("solver.jl")
