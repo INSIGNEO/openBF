@@ -128,7 +128,10 @@ function run_simulation(
     observer = if _observer !== nothing
         _observer
     elseif tui_should_run(!no_tui)
-        TUIObserver(network.vessels_vec, network.is_outlet)
+        TUIObserver(network.vessels_vec, network.is_outlet;
+                    sim_name = config["project_name"],
+                    t_final  = total_time,
+                    n_cycles = config["solver"]["cycles"])
     else
         nothing
     end

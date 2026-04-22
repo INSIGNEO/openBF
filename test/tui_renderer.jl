@@ -13,8 +13,10 @@ end
     @testset "start and stop cleanly" begin
         monitored = [MonitorSpec(1, 2, "aorta")]
         waveforms = [WaveformSite("aorta")]
+        now = time()
         obs = TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128),
-                          monitored, 1, 0, Threads.Atomic{Bool}(false), nothing)
+                          monitored, 1, 0, Threads.Atomic{Bool}(false), nothing,
+                          "test", 1.0, 5, now, Threads.Atomic{Int}(1), 0, 0, now, 0.0)
 
         vessels = [MockVessel([1.0, 2.0, 3.0], [0.1, 0.2, 0.3], 2)]
         for k in 1:50
@@ -36,8 +38,10 @@ end
     @testset "stop before any data is safe" begin
         monitored = [MonitorSpec(1, 2, "aorta")]
         waveforms = [WaveformSite("aorta")]
+        now = time()
         obs = TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128),
-                          monitored, 1, 0, Threads.Atomic{Bool}(false), nothing)
+                          monitored, 1, 0, Threads.Atomic{Bool}(false), nothing,
+                          "test", 1.0, 5, now, Threads.Atomic{Int}(1), 0, 0, now, 0.0)
 
         start_render!(obs)
         stop_render!(obs)
@@ -47,8 +51,10 @@ end
     @testset "double stop_render! is a no-op" begin
         monitored = [MonitorSpec(1, 2, "aorta")]
         waveforms = [WaveformSite("aorta")]
+        now = time()
         obs = TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128),
-                          monitored, 1, 0, Threads.Atomic{Bool}(false), nothing)
+                          monitored, 1, 0, Threads.Atomic{Bool}(false), nothing,
+                          "test", 1.0, 5, now, Threads.Atomic{Int}(1), 0, 0, now, 0.0)
 
         start_render!(obs)
         stop_render!(obs)

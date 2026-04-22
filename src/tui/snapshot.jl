@@ -7,9 +7,10 @@ mutable struct Snapshot
     map_pressure::Float64
     pulse_pressure::Float64
     gc_bytes::Int64
+    passed_cycles::Int
 end
 
-Snapshot() = Snapshot(0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0)
+Snapshot() = Snapshot(0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0, 0)
 
 struct WaveformSite
     P::RingBuffer{Float32}

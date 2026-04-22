@@ -1,5 +1,5 @@
 const _WAVEFORM_SAMPLES = 400
-const _PLOT_HEIGHT = 6
+const _PLOT_HEIGHT      = 6
 
 function _prewarm_plots()
     dummy = lineplot(zeros(Float64, 10); name="P", height=_PLOT_HEIGHT, width=40,
@@ -27,21 +27,15 @@ function _waveform_panel(site::WaveformSite, plot_width::Int)
 
     Panel(repr(MIME("text/plain"), plt);
           title   = site.label,
-          width   = plot_width + 12,
+          width   = plot_width,
           padding = (0, 0, 0, 0),
           style   = "cyan dim")
 end
 
-function draw_waveforms(obs::TUIObserver, io::IO, term_cols::Int = 80)
-    plot_width = max(20, term_cols - 12)
-    panels = []
-    for site in obs.waveforms
-        p = _waveform_panel(site, plot_width)
-        p === nothing && continue
-        push!(panels, p)
-    end
-    isempty(panels) && return false
-    stacked = reduce(/, panels)
-    print(io, stacked)
-    true
+# Returns the Panel for the active site only (or nothing if no data yet).
+function draw_waveforms(obs::TUIObserver, term_cols::Int = 80)
+    isempty(obs.waveforms) && return nothing
+    plot_width = max(20, term_cols - _SIDEBAR_WIDTH - 2)
+    idx  = clamp(obs.active_site[], 1, length(obs.waveforms))
+    _waveform_panel(obs.waveforms[idx], plot_width)
 end
