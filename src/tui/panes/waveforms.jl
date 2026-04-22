@@ -31,7 +31,7 @@ function _waveform_panel(site::WaveformSite, panel_width::Int)
         lineplot!(plt, x_prev, Float64.(prev); name = "prev", color = :yellow)
     end
 
-    Panel(repr(MIME("text/plain"), plt);
+    Panel(sprint(show, MIME("text/plain"), plt; context = :color => true);
           title   = site.label * "  P (mmHg)",
           width   = panel_width,
           padding = (0, 0, 0, 0),

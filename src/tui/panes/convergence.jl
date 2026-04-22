@@ -27,7 +27,7 @@ function draw_convergence(obs::TUIObserver, term_cols::Int = 80)
         lineplot!(plt, clamp.(Float64.(a_vals), 1e-10, Inf); name = "A", color = :yellow)
     end
 
-    Panel(repr(MIME("text/plain"), plt);
+    Panel(sprint(show, MIME("text/plain"), plt; context = :color => true);
           title   = "convergence  RMSE/cycle",
           width   = panel_width,
           padding = (0, 0, 0, 0),
