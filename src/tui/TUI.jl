@@ -1,6 +1,10 @@
+using Term: Panel
+using UnicodePlots: lineplot, lineplot!, BrailleCanvas
+
 include("ringbuf.jl")
 include("snapshot.jl")
 include("observer.jl")
+include("panes/waveforms.jl")
 include("renderer.jl")
 
 function tui_should_run(cli_flag::Bool)

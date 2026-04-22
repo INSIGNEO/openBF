@@ -1,18 +1,41 @@
-const _RENDER_HZ = 30
+const _RENDER_HZ       = 30
 const _RENDER_INTERVAL = 1.0 / _RENDER_HZ
+const _CURSOR_HIDE     = "\e[?25l"
+const _CURSOR_SHOW     = "\e[?25h"
+const _SCREEN_HOME     = "\e[H"
+const _SCREEN_CLEAR    = "\e[2J\e[H"
 
-function _render_frame(obs::TUIObserver)
-    vals = latest(obs.waveforms[1].P, 80)
-    isempty(vals) && return
-    @printf "[TUI] t=%.4f  P̄=%6.1f  Pmin=%6.1f  Pmax=%6.1f\n" obs.scalars.t mean(vals) minimum(vals) maximum(vals)
+function _term_size()
+    try
+        displaysize(stdout)
+    catch
+        (24, 80)
+    end
+end
+
+function _render_frame(obs::TUIObserver, buf::IOBuffer, first_frame::Bool)
+    truncate(buf, 0)
+    seek(buf, 0)
+    _, cols = _term_size()
+    print(buf, first_frame ? _SCREEN_CLEAR : _SCREEN_HOME)
+    draw_waveforms(obs, buf, cols)
+    write(stdout, take!(buf))
+    flush(stdout)
+    nothing
 end
 
 function _render_loop(obs::TUIObserver)
+    buf = IOBuffer()
+    first = true
     try
         while !obs.should_stop[]
             sleep(_RENDER_INTERVAL)
             obs.should_stop[] && break
-            _render_frame(obs)
+            try
+                _render_frame(obs, buf, first)
+                first = false
+            catch
+            end
         end
     catch e
         e isa InterruptException || rethrow()
@@ -21,6 +44,9 @@ function _render_loop(obs::TUIObserver)
 end
 
 function start_render!(obs::TUIObserver)
+    _prewarm_plots()
+    print(stdout, _CURSOR_HIDE)
+    flush(stdout)
     obs.should_stop[] = false
     obs.render_task = Threads.@spawn :interactive _render_loop(obs)
     nothing
@@ -29,7 +55,10 @@ end
 function stop_render!(obs::TUIObserver)
     obs.should_stop[] = true
     t = obs.render_task
-    t === nothing && return
-    timedwait(() -> istaskdone(t), 2.0; pollint = 0.05)
+    if t !== nothing
+        timedwait(() -> istaskdone(t), 2.0; pollint = 0.05)
+    end
+    print(stdout, _CURSOR_SHOW)
+    flush(stdout)
     nothing
 end
