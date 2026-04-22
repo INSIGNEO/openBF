@@ -15,18 +15,25 @@ function _waveform_panel(site::WaveformSite, panel_width::Int)
     isempty(p_live) && return nothing
 
     plot_width = max(20, panel_width - _PLOT_OVERHEAD)
+    prev       = site.prev_P
+
+    # anchor y-axis to the full previous cycle so the live trace doesn't zoom in
+    y_ref = isempty(prev) ? p_live : prev
+    lo    = Float64(minimum(y_ref))
+    hi    = Float64(maximum(y_ref))
+    pad   = max((hi - lo) * 0.05, 1.0)  # ≥1 mmHg breathing room
+    ylim  = (lo - pad, hi + pad)
 
     plt = lineplot(Float64.(p_live);
                    title  = "",
                    name   = "curr",
                    height = _PLOT_HEIGHT,
                    width  = plot_width,
+                   ylim   = ylim,
                    canvas = BrailleCanvas,
                    color  = :cyan)
 
-    prev = site.prev_P
     if !isempty(prev)
-        # stretch prev cycle onto the same x-range as the live buffer so shapes align
         x_prev = collect(LinRange(1.0, Float64(length(p_live)), length(prev)))
         lineplot!(plt, x_prev, Float64.(prev); name = "prev", color = :yellow)
     end
