@@ -12,7 +12,8 @@ end
 function make_observer(n_sites::Int = 2; stride::Int = 10)
     monitored = [MonitorSpec(i, 2, "vessel_$i") for i in 1:n_sites]
     waveforms = [WaveformSite(spec.label) for spec in monitored]
-    TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored, stride, 0)
+    TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored,
+                stride, 0, Threads.Atomic{Bool}(false), nothing)
 end
 
 @testset "TUIObserver recording" begin
