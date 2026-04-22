@@ -18,7 +18,8 @@ function _make_obs()
     TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128),
                 monitored, 1, 0, Threads.Atomic{Bool}(false), nothing,
                 "test", 1.0, 5, now,
-                Threads.Atomic{Int}(1), Threads.Atomic{Int}(1), 0, 0, now, 0.0)
+                Threads.Atomic{Int}(1), Threads.Atomic{Int}(1), 0, 0, now, 0.0,
+                Channel{Symbol}(Inf), Threads.Atomic{Bool}(false), nothing)
 end
 
 @testset "render thread lifecycle" begin

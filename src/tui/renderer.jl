@@ -57,6 +57,41 @@ function _render_frame(obs::TUIObserver, buf::IOBuffer)
     nothing
 end
 
+function _save_snapshot(obs::TUIObserver)
+    fname = string(obs.sim_name, "_snapshot_", round(Int, obs.scalars.t), "s.txt")
+    try
+        open(fname, "w") do io
+            println(io, "snapshot  t=$(obs.scalars.t)s  cycle=$(obs.scalars.passed_cycles)")
+            for (i, site) in enumerate(obs.waveforms)
+                p_vals = latest(site.P, _WAVEFORM_SAMPLES)
+                isempty(p_vals) && continue
+                println(io, "  $(site.label)  P_min=$(minimum(p_vals)) P_max=$(maximum(p_vals)) mmHg")
+            end
+        end
+        push!(obs.log, (time(), "[Info] snapshot saved → $fname"))
+    catch e
+        push!(obs.log, (time(), "[Warn] snapshot failed: $(sprint(showerror, e))"))
+    end
+    nothing
+end
+
+function _process_commands!(obs::TUIObserver)
+    while isready(obs.commands)
+        cmd = take!(obs.commands)
+        if cmd === :quit
+            obs.should_stop[] = true
+        elseif cmd === :pause
+            obs.paused[] = !obs.paused[]
+        elseif cmd === :tab
+            n = length(_PANE_LABELS)
+            obs.active_pane[] = (obs.active_pane[] % n) + 1
+        elseif cmd === :snapshot
+            _save_snapshot(obs)
+        end
+    end
+    nothing
+end
+
 function _render_loop(obs::TUIObserver)
     buf     = IOBuffer()
     err_msg = ""
@@ -64,6 +99,8 @@ function _render_loop(obs::TUIObserver)
     try
         while !obs.should_stop[]
             sleep(_RENDER_INTERVAL)
+            obs.should_stop[] && break
+            _process_commands!(obs)
             obs.should_stop[] && break
             try
                 _render_frame(obs, buf)
@@ -93,6 +130,8 @@ function start_render!(obs::TUIObserver)
     install_log_sink!(obs)
     print(stdout, _ALT_ENTER, _CURSOR_HIDE); flush(stdout)
     obs.should_stop[] = false
+    obs.paused[]      = false
+    start_input!(obs)
     obs.render_task = if Threads.nthreads(:interactive) > 0
         Threads.@spawn :interactive _render_loop(obs)
     else
@@ -103,6 +142,7 @@ end
 
 function stop_render!(obs::TUIObserver)
     obs.should_stop[] = true
+    stop_input!(obs)
     t = obs.render_task
     t !== nothing && timedwait(() -> istaskdone(t), 2.0; pollint = 0.05)
     print(stdout, _CURSOR_SHOW, _ALT_EXIT); flush(stdout)
