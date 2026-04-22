@@ -1,3 +1,5 @@
+const _PA_TO_MMHG = Float32(1.0 / 133.322)
+
 mutable struct Snapshot
     t::Float64
     dt::Float64
@@ -12,14 +14,19 @@ end
 
 Snapshot() = Snapshot(0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0, 0)
 
-struct WaveformSite
-    P::RingBuffer{Float32}
+# P is stored in mmHg (converted from Pa at record_cycle! time).
+# curr_P / prev_P are full-cycle waveforms snapshotted from v.waveforms["P"][:, 4]
+# once per cardiac cycle — no per-step pressure computation on the solver thread.
+# Q is a live ring buffer of per-step samples for the sidebar stats.
+mutable struct WaveformSite
+    curr_P::Vector{Float32}
+    prev_P::Vector{Float32}
     Q::RingBuffer{Float32}
     label::String
 end
 
-WaveformSite(label::String, capacity::Int = 2048) =
-    WaveformSite(RingBuffer{Float32}(capacity), RingBuffer{Float32}(capacity), label)
+WaveformSite(label::String) =
+    WaveformSite(Float32[], Float32[], RingBuffer{Float32}(2048), label)
 
 struct ConvergenceHistory
     A::RingBuffer{Float32}

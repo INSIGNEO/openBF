@@ -3,11 +3,6 @@ using openBF: TUIObserver, MonitorSpec, WaveformSite, ConvergenceHistory, Snapsh
               LogRing, RingBuffer, record_step!, start_render!, stop_render!
 
 struct MockVessel
-    A::Vector{Float64}
-    A0::Vector{Float64}
-    beta::Vector{Float64}
-    Pext::Float64
-    Pout::Float64
     Q::Vector{Float64}
 end
 
@@ -25,8 +20,7 @@ end
 
     @testset "start and stop cleanly" begin
         obs     = _make_obs()
-        vessels = [MockVessel([1e-4, 2e-4, 3e-4], [2e-4, 2e-4, 2e-4],
-                              [1e6, 1e6, 1e6], 0.0, 0.0, [0.1, 0.2, 0.3])]
+        vessels = [MockVessel([0.1, 0.2, 0.3])]
         for k in 1:50
             record_step!(obs, vessels, k * 1e-3, 1e-3)
         end

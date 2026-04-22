@@ -189,7 +189,7 @@ function run_simulation(
                     conv_error_A = _conv_error_field(network, "A")
                     conv_error_Q = _conv_error_field(network, "Q")
                 end
-                record_cycle!(observer, passed_cycles, conv_error, conv_error_A, conv_error_Q)
+                record_cycle!(observer, passed_cycles, network.vessels_vec, conv_error, conv_error_A, conv_error_Q)
 
                 flush_waveforms.(network.vessels_vec)
                 swap_waveforms!.(network.vessels_vec)
