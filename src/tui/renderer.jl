@@ -2,25 +2,41 @@ const _RENDER_HZ       = 30
 const _RENDER_INTERVAL = 1.0 / _RENDER_HZ
 const _CURSOR_HIDE     = "\e[?25l"
 const _CURSOR_SHOW     = "\e[?25h"
-const _ALT_ENTER       = "\e[?1049h"  # switch to alternate screen buffer
-const _ALT_EXIT        = "\e[?1049l"  # restore normal screen buffer
+const _ALT_ENTER       = "\e[?1049h"
+const _ALT_EXIT        = "\e[?1049l"
 const _SCREEN_HOME     = "\e[H"
 const _SCREEN_CLEAR    = "\e[2J\e[H"
+const _BODY_HEIGHT     = _PLOT_HEIGHT + 4  # plot rows + border + title + legend
 
 function _term_size()
-    try
-        displaysize(stdout)
-    catch
-        (24, 80)
-    end
+    try displaysize(stdout) catch; (24, 80) end
+end
+
+function _update_rate!(obs::TUIObserver)
+    now = time()
+    elapsed = now - obs.last_check_time
+    elapsed < 0.5 && return
+    obs.steps_per_sec   = (obs.step_counter - obs.last_step_count) / elapsed
+    obs.last_step_count = obs.step_counter
+    obs.last_check_time = now
 end
 
 function _render_frame(obs::TUIObserver, buf::IOBuffer)
-    truncate(buf, 0)
-    seek(buf, 0)
+    _update_rate!(obs)
+    obs.frame_count += 1
     _, cols = _term_size()
+
+    header    = _make_header(obs, cols)
+    wave      = draw_waveforms(obs, cols)
+    sidebar   = _make_sidebar(obs, _BODY_HEIGHT)
+
+    truncate(buf, 0); seek(buf, 0)
     print(buf, _SCREEN_HOME)
-    draw_waveforms(obs, buf, cols)
+    if wave !== nothing
+        print(buf, header / (wave * sidebar))
+    else
+        print(buf, header)
+    end
     write(stdout, take!(buf))
     flush(stdout)
     nothing
@@ -28,9 +44,7 @@ end
 
 function _render_loop(obs::TUIObserver)
     buf = IOBuffer()
-    # clear once on entry to the alternate screen
-    print(stdout, _SCREEN_CLEAR)
-    flush(stdout)
+    print(stdout, _SCREEN_CLEAR); flush(stdout)
     try
         while !obs.should_stop[]
             sleep(_RENDER_INTERVAL)
@@ -48,8 +62,7 @@ end
 
 function start_render!(obs::TUIObserver)
     _prewarm_plots()
-    print(stdout, _ALT_ENTER, _CURSOR_HIDE)
-    flush(stdout)
+    print(stdout, _ALT_ENTER, _CURSOR_HIDE); flush(stdout)
     obs.should_stop[] = false
     obs.render_task = Threads.@spawn :interactive _render_loop(obs)
     nothing
@@ -58,10 +71,7 @@ end
 function stop_render!(obs::TUIObserver)
     obs.should_stop[] = true
     t = obs.render_task
-    if t !== nothing
-        timedwait(() -> istaskdone(t), 2.0; pollint = 0.05)
-    end
-    print(stdout, _CURSOR_SHOW, _ALT_EXIT)
-    flush(stdout)
+    t !== nothing && timedwait(() -> istaskdone(t), 2.0; pollint = 0.05)
+    print(stdout, _CURSOR_SHOW, _ALT_EXIT); flush(stdout)
     nothing
 end

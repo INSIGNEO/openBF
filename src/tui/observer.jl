@@ -22,6 +22,17 @@ mutable struct TUIObserver
     step_counter::Int
     should_stop::Threads.Atomic{Bool}
     render_task::Union{Task, Nothing}
+    # sim metadata (set at construction, read-only after)
+    sim_name::String
+    t_final::Float64
+    n_cycles::Int
+    start_time::Float64
+    # render-thread state (only written by render loop)
+    active_site::Threads.Atomic{Int}
+    frame_count::Int
+    last_step_count::Int
+    last_check_time::Float64
+    steps_per_sec::Float64
 end
 
 const _PRIORITY_PATTERNS = ("aorta", "carotid", "brachial", "femoral")
@@ -53,11 +64,18 @@ function _select_monitored(vessels_vec, is_outlet)
     matched
 end
 
-function TUIObserver(vessels_vec, is_outlet; step_stride::Int = 200)
+function TUIObserver(vessels_vec, is_outlet;
+                     step_stride::Int = 200,
+                     sim_name::String = "",
+                     t_final::Float64 = 0.0,
+                     n_cycles::Int = 0)
     monitored = _select_monitored(vessels_vec, is_outlet)
     waveforms = [WaveformSite(spec.label) for spec in monitored]
+    now = time()
     TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored,
-                step_stride, 0, Threads.Atomic{Bool}(false), nothing)
+                step_stride, 0, Threads.Atomic{Bool}(false), nothing,
+                sim_name, t_final, n_cycles, now,
+                Threads.Atomic{Int}(1), 0, 0, now, 0.0)
 end
 
 function record_step!(obs::TUIObserver, vessels, t::Float64, dt::Float64)
@@ -77,5 +95,6 @@ end
 
 function record_cycle!(obs::TUIObserver, cycle_idx::Int, conv_error::Float64)
     push!(obs.convergence.P, Float32(conv_error))
+    obs.scalars.passed_cycles = cycle_idx
     nothing
 end
