@@ -20,6 +20,8 @@ mutable struct TUIObserver
     monitored::Vector{MonitorSpec}
     step_stride::Int
     step_counter::Int
+    should_stop::Threads.Atomic{Bool}
+    render_task::Union{Task, Nothing}
 end
 
 const _PRIORITY_PATTERNS = ("aorta", "carotid", "brachial", "femoral")
@@ -54,7 +56,8 @@ end
 function TUIObserver(vessels_vec, is_outlet; step_stride::Int = 200)
     monitored = _select_monitored(vessels_vec, is_outlet)
     waveforms = [WaveformSite(spec.label) for spec in monitored]
-    TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored, step_stride, 0)
+    TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored,
+                step_stride, 0, Threads.Atomic{Bool}(false), nothing)
 end
 
 function record_step!(obs::TUIObserver, vessels, t::Float64, dt::Float64)

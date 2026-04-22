@@ -132,6 +132,7 @@ function run_simulation(
     else
         nothing
     end
+    observer !== nothing && Base.exit_on_sigint(false)
     start_render!(observer)
 
     current_time = 0.0
@@ -201,6 +202,7 @@ function run_simulation(
             current_time += dt
         end
         stop_render!(observer)
+        observer !== nothing && Base.exit_on_sigint(true)
         tokeep::Vector{String} = get(config, "write_results", [])
         cleanup.(network.vessels_vec, Ref(tokeep))
 
@@ -208,6 +210,7 @@ function run_simulation(
         save_stats && savestats(stats, converged, passed_cycles, config["project_name"])
     catch e
         stop_render!(observer)
+        observer !== nothing && Base.exit_on_sigint(true)
         println("\nAn error occurred, terminating simulation.\n")
         println(e)
     end
