@@ -34,4 +34,3 @@ ConvergenceHistory(capacity::Int = 512) =
     )
 
 const LogRing = RingBuffer{Tuple{Float64,String}}
-LogRing(capacity::Int = 128) = RingBuffer{Tuple{Float64,String}}(capacity)
