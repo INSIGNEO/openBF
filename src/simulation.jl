@@ -100,6 +100,7 @@ function run_simulation(
     save_stats::Bool = false,
     savedir::String = "",
     no_tui::Bool = false,
+    _observer = nothing,
 )
     initial_dir = pwd()
     config::Dict{String, Any} = preamble(yaml_config, verbose, savedir)
@@ -124,7 +125,13 @@ function run_simulation(
 
     verbose && println("\nStart simulation")
 
-    observer = nothing  # Phase 3: tui_should_run(!no_tui) ? TUIObserver(...) : nothing
+    observer = if _observer !== nothing
+        _observer
+    elseif tui_should_run(!no_tui)
+        TUIObserver(network.vessels_vec, network.is_outlet)
+    else
+        nothing
+    end
     start_render!(observer)
 
     current_time = 0.0
