@@ -26,16 +26,19 @@ function _render_frame(obs::TUIObserver, buf::IOBuffer)
     obs.frame_count += 1
     _, cols = _term_size()
 
-    header    = _make_header(obs, cols)
-    wave      = draw_waveforms(obs, cols)
-    sidebar   = _make_sidebar(obs, _BODY_HEIGHT)
+    header  = _make_header(obs, cols)
+    wave    = draw_waveforms(obs, cols)
+    sidebar = _make_sidebar(obs, _BODY_HEIGHT)
 
     truncate(buf, 0); seek(buf, 0)
     print(buf, _SCREEN_HOME)
     if wave !== nothing
         print(buf, header / (wave * sidebar))
     else
-        print(buf, header)
+        # no waveform data yet — show header + waiting message
+        waiting = Panel(" Waiting for simulation data… (stride=$(obs.step_stride) steps)";
+                        width = cols, padding = (0,0,0,0), style = "dim")
+        print(buf, header / waiting)
     end
     write(stdout, take!(buf))
     flush(stdout)
@@ -43,7 +46,8 @@ function _render_frame(obs::TUIObserver, buf::IOBuffer)
 end
 
 function _render_loop(obs::TUIObserver)
-    buf = IOBuffer()
+    buf     = IOBuffer()
+    err_msg = ""
     print(stdout, _SCREEN_CLEAR); flush(stdout)
     try
         while !obs.should_stop[]
@@ -51,7 +55,17 @@ function _render_loop(obs::TUIObserver)
             obs.should_stop[] && break
             try
                 _render_frame(obs, buf)
-            catch
+                err_msg = ""  # clear any previous error once a frame succeeds
+            catch e
+                # show the error on screen so it's diagnosable
+                msg = sprint(showerror, e)
+                if msg != err_msg
+                    err_msg = msg
+                    truncate(buf, 0); seek(buf, 0)
+                    print(buf, _SCREEN_HOME, _SCREEN_CLEAR)
+                    print(buf, "TUI render error (solver still running):\n", msg, "\n")
+                    write(stdout, take!(buf)); flush(stdout)
+                end
             end
         end
     catch e
