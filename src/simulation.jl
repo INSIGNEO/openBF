@@ -138,9 +138,12 @@ function run_simulation(
     observer !== nothing && Base.exit_on_sigint(false)
     start_render!(observer)
 
+    # suppress ProgressMeter when TUI is active (Phase 8 routes output to log pane)
+    loop_verbose = verbose && (observer === nothing)
+
     current_time = 0.0
     passed_cycles = 0
-    prog = getprog(passed_cycles, verbose)
+    prog = getprog(passed_cycles, loop_verbose)
     counter = 1
     counter_prog = 0
     conv_error::Float64 = floatmax()
@@ -154,7 +157,7 @@ function run_simulation(
             solve!(network, dt, current_time)
             update_ghost_cells!(network)
             record_step!(observer, network.vessels_vec, current_time, dt)
-            verbose && (counter_prog += 1) % 100 == 0 && next!(prog)
+            loop_verbose && (counter_prog += 1) % 100 == 0 && next!(prog)
 
             if current_time >= checkpoints[counter]
                 save_waveforms.(counter, current_time, network.vessels_vec)
@@ -176,7 +179,7 @@ function run_simulation(
                 swap_waveforms!.(network.vessels_vec)
                 out_files && append_last_to_out.(network.vessels_vec)
 
-                if verbose
+                if loop_verbose
                     if passed_cycles > 0
                         finish!(
                             prog,
@@ -190,7 +193,7 @@ function run_simulation(
 
                 checkpoints = checkpoints .+ heart.cardiac_period
                 passed_cycles += 1
-                prog = getprog(passed_cycles, verbose)
+                prog = getprog(passed_cycles, loop_verbose)
                 counter = 1
             end
 
@@ -198,7 +201,7 @@ function run_simulation(
             if current_time >= total_time ||
                passed_cycles == config["solver"]["cycles"] ||
                conv_error < config["solver"]["convergence_tolerance"]
-                verbose && finish!(prog)
+                loop_verbose && finish!(prog)
                 converged = true
                 break
             end
