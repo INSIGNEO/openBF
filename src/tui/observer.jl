@@ -29,6 +29,7 @@ mutable struct TUIObserver
     start_time::Float64
     # render-thread state (only written by render loop)
     active_site::Threads.Atomic{Int}
+    active_pane::Threads.Atomic{Int}   # 1=waveforms  2=convergence  3=log
     frame_count::Int
     last_step_count::Int
     last_check_time::Float64
@@ -75,7 +76,7 @@ function TUIObserver(vessels_vec, is_outlet;
     TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored,
                 step_stride, 0, Threads.Atomic{Bool}(false), nothing,
                 sim_name, t_final, n_cycles, now,
-                Threads.Atomic{Int}(1), 0, 0, now, 0.0)
+                Threads.Atomic{Int}(1), Threads.Atomic{Int}(1), 0, 0, now, 0.0)
 end
 
 function record_step!(obs::TUIObserver, vessels, t::Float64, dt::Float64)
@@ -83,18 +84,28 @@ function record_step!(obs::TUIObserver, vessels, t::Float64, dt::Float64)
     obs.step_counter % obs.step_stride == 0 || return nothing
     @inbounds for i in eachindex(obs.monitored)
         spec = obs.monitored[i]
-        v = vessels[spec.vessel_idx]
-        push!(obs.waveforms[i].P, Float32(v.P[spec.node_idx]))
-        push!(obs.waveforms[i].Q, Float32(v.Q[spec.node_idx]))
+        v    = vessels[spec.vessel_idx]
+        n    = spec.node_idx
+        # v.P is never updated by the solver — recompute from area the same way
+        # save_waveforms does (pressure function is defined in vessel.jl)
+        p = pressure(v.A[n], v.A0[n], v.beta[n], v.Pext) - v.Pout
+        push!(obs.waveforms[i].P, Float32(p))
+        push!(obs.waveforms[i].Q, Float32(v.Q[n]))
     end
     obs.scalars.t = t
     obs.scalars.dt = dt
     obs.scalars.gc_bytes = Base.gc_live_bytes()
+    # cooperative yield so render task can run on single-threaded Julia.
+    yield()
     nothing
 end
 
-function record_cycle!(obs::TUIObserver, cycle_idx::Int, conv_error::Float64)
-    push!(obs.convergence.P, Float32(conv_error))
+function record_cycle!(obs::TUIObserver, cycle_idx::Int,
+                       conv_P::Float64, conv_A::Float64 = 0.0, conv_Q::Float64 = 0.0)
+    # guard against the floatmax() sentinel used before cycle 1
+    conv_P > 0 && conv_P < floatmax() && push!(obs.convergence.P, Float32(conv_P))
+    conv_A > 0 && push!(obs.convergence.A, Float32(conv_A))
+    conv_Q > 0 && push!(obs.convergence.Q, Float32(conv_Q))
     obs.scalars.passed_cycles = cycle_idx
     nothing
 end

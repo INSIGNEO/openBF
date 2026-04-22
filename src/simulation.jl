@@ -53,6 +53,18 @@ function get_conv_error(v::Vessel)
     sqrt(mean(abs2.(current .- prev))) / 133.332
 end
 
+function _conv_error_field(n::Network, field::String)
+    err = 0.0
+    for v in n.vessels_vec
+        haskey(v.waveforms, field) || continue
+        current = @view v.waveforms[field][:, 4]
+        prev    = @view v.waveforms_prev[field][:, 4]
+        e = sqrt(mean(abs2.(current .- prev)))
+        e > err && (err = e)
+    end
+    err
+end
+
 getprog(cycle::Int64, verbose::Bool) =
     verbose ?
     ProgressUnknown(desc = "Solving cycle #$cycle:", spinner = true, showspeed = true) :
@@ -169,11 +181,15 @@ function run_simulation(
                (current_time - heart.cardiac_period * passed_cycles + dt) > heart.cardiac_period
 
                 # check convergence
+                conv_error_A = 0.0
+                conv_error_Q = 0.0
                 if passed_cycles > 0
                     # compute_pressure(network)
                     conv_error, error_loc = get_conv_error(network)
+                    conv_error_A = _conv_error_field(network, "A")
+                    conv_error_Q = _conv_error_field(network, "Q")
                 end
-                record_cycle!(observer, passed_cycles, conv_error)
+                record_cycle!(observer, passed_cycles, conv_error, conv_error_A, conv_error_Q)
 
                 flush_waveforms.(network.vessels_vec)
                 swap_waveforms!.(network.vessels_vec)

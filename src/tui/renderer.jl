@@ -21,24 +21,34 @@ function _update_rate!(obs::TUIObserver)
     obs.last_check_time = now
 end
 
+const _PANE_LABELS = ("waveforms", "convergence", "log")
+
 function _render_frame(obs::TUIObserver, buf::IOBuffer)
     _update_rate!(obs)
     obs.frame_count += 1
-    _, cols = _term_size()
+    rows, cols = _term_size()
 
     header  = _make_header(obs, cols)
-    wave    = draw_waveforms(obs, cols)
     sidebar = _make_sidebar(obs, _BODY_HEIGHT)
+    pane    = clamp(obs.active_pane[], 1, length(_PANE_LABELS))
+
+    body = if pane == 2
+        draw_convergence(obs, cols)
+    else
+        draw_waveforms(obs, cols)
+    end
 
     truncate(buf, 0); seek(buf, 0)
-    print(buf, _SCREEN_HOME)
-    if wave !== nothing
-        print(buf, header / (wave * sidebar))
+    ctx = IOContext(buf, :color => true, :displaysize => (rows, cols))
+    print(ctx, _SCREEN_HOME)
+    if body !== nothing
+        print(ctx, header / (body * sidebar))
     else
-        # no waveform data yet — show header + waiting message
-        waiting = Panel(" Waiting for simulation data… (stride=$(obs.step_stride) steps)";
-                        width = cols, padding = (0,0,0,0), style = "dim")
-        print(buf, header / waiting)
+        label = pane == 2 ?
+            " Waiting for convergence data… (need ≥1 completed cycle)" :
+            " Waiting for simulation data… (stride=$(obs.step_stride) steps)"
+        waiting = Panel(label; width = cols, padding = (0,0,0,0), style = "dim")
+        print(ctx, header / waiting)
     end
     write(stdout, take!(buf))
     flush(stdout)
@@ -57,13 +67,15 @@ function _render_loop(obs::TUIObserver)
                 _render_frame(obs, buf)
                 err_msg = ""  # clear any previous error once a frame succeeds
             catch e
-                # show the error on screen so it's diagnosable
                 msg = sprint(showerror, e)
                 if msg != err_msg
                     err_msg = msg
                     truncate(buf, 0); seek(buf, 0)
-                    print(buf, _SCREEN_HOME, _SCREEN_CLEAR)
-                    print(buf, "TUI render error (solver still running):\n", msg, "\n")
+                    write(buf, _SCREEN_HOME)
+                    write(buf, _SCREEN_CLEAR)
+                    write(buf, "TUI render error (solver still running):\n")
+                    write(buf, msg)
+                    write(buf, "\n")
                     write(stdout, take!(buf)); flush(stdout)
                 end
             end
@@ -78,7 +90,13 @@ function start_render!(obs::TUIObserver)
     _prewarm_plots()
     print(stdout, _ALT_ENTER, _CURSOR_HIDE); flush(stdout)
     obs.should_stop[] = false
-    obs.render_task = Threads.@spawn :interactive _render_loop(obs)
+    # prefer interactive thread pool; fall back to default if Julia was started
+    # without interactive threads (e.g. plain `julia -e ...`).
+    obs.render_task = if Threads.nthreads(:interactive) > 0
+        Threads.@spawn :interactive _render_loop(obs)
+    else
+        Threads.@spawn :default _render_loop(obs)
+    end
     nothing
 end
 
