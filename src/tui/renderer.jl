@@ -34,6 +34,8 @@ function _render_frame(obs::TUIObserver, buf::IOBuffer)
 
     body = if pane == 2
         draw_convergence(obs, cols)
+    elseif pane == 3
+        draw_log(obs, cols, _BODY_HEIGHT)
     else
         draw_waveforms(obs, cols)
     end
@@ -88,10 +90,9 @@ end
 
 function start_render!(obs::TUIObserver)
     _prewarm_plots()
+    install_log_sink!(obs)
     print(stdout, _ALT_ENTER, _CURSOR_HIDE); flush(stdout)
     obs.should_stop[] = false
-    # prefer interactive thread pool; fall back to default if Julia was started
-    # without interactive threads (e.g. plain `julia -e ...`).
     obs.render_task = if Threads.nthreads(:interactive) > 0
         Threads.@spawn :interactive _render_loop(obs)
     else
@@ -105,5 +106,6 @@ function stop_render!(obs::TUIObserver)
     t = obs.render_task
     t !== nothing && timedwait(() -> istaskdone(t), 2.0; pollint = 0.05)
     print(stdout, _CURSOR_SHOW, _ALT_EXIT); flush(stdout)
+    uninstall_log_sink!(obs)
     nothing
 end
