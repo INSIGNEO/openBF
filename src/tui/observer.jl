@@ -84,7 +84,11 @@ function record_step!(obs::TUIObserver, vessels, t::Float64, dt::Float64)
     obs.step_counter % obs.step_stride == 0 || return nothing
     @inbounds for i in eachindex(obs.monitored)
         spec = obs.monitored[i]
-        push!(obs.waveforms[i].Q, Float32(vessels[spec.vessel_idx].Q[spec.node_idx]))
+        v    = vessels[spec.vessel_idx]
+        n    = spec.node_idx
+        p    = (pressure(v.A[n], v.A0[n], v.beta[n], v.Pext) - v.Pout) * _PA_TO_MMHG
+        push!(obs.waveforms[i].P, Float32(p))
+        push!(obs.waveforms[i].Q, Float32(v.Q[n]))
     end
     obs.scalars.t = t
     obs.scalars.dt = dt
@@ -96,20 +100,16 @@ end
 
 function record_cycle!(obs::TUIObserver, cycle_idx::Int, vessels,
                        conv_P::Float64, conv_A::Float64 = 0.0, conv_Q::Float64 = 0.0)
-    # guard against the floatmax() sentinel used before cycle 1
     conv_P > 0 && conv_P < floatmax() && push!(obs.convergence.P, Float32(conv_P))
     conv_A > 0 && push!(obs.convergence.A, Float32(conv_A))
     conv_Q > 0 && push!(obs.convergence.Q, Float32(conv_Q))
     obs.scalars.passed_cycles = cycle_idx
-    # snapshot P waveforms from checkpoint data (col 4 = node3 = midpoint)
-    # v.waveforms["P"] holds the just-completed cycle; v.waveforms_prev holds the one before
+    # snapshot prev cycle from checkpoint matrix (col 4 = node3 = midpoint, Pa → mmHg)
+    # v.waveforms["P"] = just-completed cycle; v.waveforms_prev["P"] = cycle before that
     @inbounds for i in eachindex(obs.monitored)
         v = vessels[obs.monitored[i].vessel_idx]
         haskey(v.waveforms, "P") || continue
-        obs.waveforms[i].prev_P = cycle_idx > 0 ?
-            Float32.(view(v.waveforms_prev["P"], :, 4)) .* _PA_TO_MMHG :
-            Float32[]
-        obs.waveforms[i].curr_P = Float32.(view(v.waveforms["P"], :, 4)) .* _PA_TO_MMHG
+        obs.waveforms[i].prev_P = Float32.(view(v.waveforms["P"], :, 4)) .* _PA_TO_MMHG
     end
     nothing
 end
