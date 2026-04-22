@@ -17,10 +17,10 @@ function _make_sidebar(obs::TUIObserver, height::Int)
         @sprintf("MAP  %7.1f mmHg", map_p  * _PA_TO_MMHG),
         @sprintf("PP   %7.1f mmHg", pp     * _PA_TO_MMHG),
         @sprintf("Peak %7.1f mmHg", peak_p * _PA_TO_MMHG),
-        @sprintf("Q̄   %8.5f m³/s",  q_m),
-        @sprintf("dt   %8.2e s",     s.dt),
-        @sprintf("GC   %7.1f MB",    s.gc_bytes / 1e6),
-        @sprintf("cyc  %7d",         s.passed_cycles),
+        @sprintf("Qmn  %8.5f m3/s", q_m),
+        @sprintf("dt   %8.2e s",    s.dt),
+        @sprintf("GC   %7.1f MB",   s.gc_bytes / 1e6),
+        @sprintf("cyc  %7d",        s.passed_cycles),
     )
 
     Panel(join(lines, "\n"); title = "vitals", width = _SIDEBAR_WIDTH,
