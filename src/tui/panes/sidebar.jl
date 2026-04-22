@@ -4,8 +4,8 @@ function _make_sidebar(obs::TUIObserver, height::Int)
     s      = obs.scalars
     idx    = clamp(obs.active_site[], 1, length(obs.waveforms))
     site   = obs.waveforms[idx]
-    p_vals = site.curr_P          # mmHg, from checkpoint snapshots
-    q_vals = latest(site.Q, 400)  # m³/s, from live ring buffer
+    p_vals = latest(site.P, 400)  # mmHg, live ring buffer
+    q_vals = latest(site.Q, 400)  # m³/s, live ring buffer
 
     map_p  = isempty(p_vals) ? 0.0 : Float64(mean(p_vals))
     peak_p = isempty(p_vals) ? 0.0 : Float64(maximum(p_vals))

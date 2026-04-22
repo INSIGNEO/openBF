@@ -14,19 +14,20 @@ end
 
 Snapshot() = Snapshot(0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0, 0)
 
-# P is stored in mmHg (converted from Pa at record_cycle! time).
-# curr_P / prev_P are full-cycle waveforms snapshotted from v.waveforms["P"][:, 4]
-# once per cardiac cycle — no per-step pressure computation on the solver thread.
-# Q is a live ring buffer of per-step samples for the sidebar stats.
+# P: live rolling ring buffer in mmHg — per-step, for the progressive waveform display.
+#    Pressure computation runs only when a TUIObserver is attached (Nothing dispatch is free).
+# prev_P: previous cycle's full waveform in mmHg, snapshotted from v.waveforms["P"][:, 4]
+#         once at cycle end — used as the comparison overlay.
+# Q: live rolling ring buffer in m³/s — per-step, for sidebar stats.
 mutable struct WaveformSite
-    curr_P::Vector{Float32}
+    P::RingBuffer{Float32}
     prev_P::Vector{Float32}
     Q::RingBuffer{Float32}
     label::String
 end
 
 WaveformSite(label::String) =
-    WaveformSite(Float32[], Float32[], RingBuffer{Float32}(2048), label)
+    WaveformSite(RingBuffer{Float32}(2048), Float32[], RingBuffer{Float32}(2048), label)
 
 struct ConvergenceHistory
     A::RingBuffer{Float32}

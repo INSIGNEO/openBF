@@ -1,20 +1,22 @@
-const _PLOT_HEIGHT   = 6
-const _PLOT_OVERHEAD = 17  # y-axis label + borders + legend space
+const _WAVEFORM_SAMPLES = 400
+const _PLOT_HEIGHT      = 6
+const _PLOT_OVERHEAD    = 17  # y-axis label + borders + legend space
 
 function _prewarm_plots()
     dummy = lineplot(zeros(Float64, 10); name="curr", height=_PLOT_HEIGHT, width=40,
                      canvas=BrailleCanvas, color=:cyan)
-    lineplot!(dummy, zeros(Float64, 10); name="prev", color=:blue)
+    lineplot!(dummy, zeros(Float64, 10); name="prev", color=:yellow)
     repr(MIME("text/plain"), dummy)
     nothing
 end
 
 function _waveform_panel(site::WaveformSite, panel_width::Int)
-    isempty(site.curr_P) && return nothing
+    p_live = latest(site.P, _WAVEFORM_SAMPLES)
+    isempty(p_live) && return nothing
 
     plot_width = max(20, panel_width - _PLOT_OVERHEAD)
 
-    plt = lineplot(Float64.(site.curr_P);
+    plt = lineplot(Float64.(p_live);
                    title  = "",
                    name   = "curr",
                    height = _PLOT_HEIGHT,
@@ -22,8 +24,11 @@ function _waveform_panel(site::WaveformSite, panel_width::Int)
                    canvas = BrailleCanvas,
                    color  = :cyan)
 
-    if !isempty(site.prev_P) && length(site.prev_P) == length(site.curr_P)
-        lineplot!(plt, Float64.(site.prev_P); name = "prev", color = :blue)
+    prev = site.prev_P
+    if !isempty(prev)
+        # stretch prev cycle onto the same x-range as the live buffer so shapes align
+        x_prev = collect(LinRange(1.0, Float64(length(p_live)), length(prev)))
+        lineplot!(plt, x_prev, Float64.(prev); name = "prev", color = :yellow)
     end
 
     Panel(repr(MIME("text/plain"), plt);
