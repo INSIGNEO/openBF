@@ -1,8 +1,10 @@
-record_step!(::Nothing, args...) = nothing
+record_step!(::Nothing, args...)  = nothing
 record_cycle!(::Nothing, args...) = nothing
-record_log!(::Nothing, args...) = nothing
-start_render!(::Nothing) = nothing
-stop_render!(::Nothing) = nothing
+record_log!(::Nothing, args...)   = nothing
+start_render!(::Nothing)          = nothing
+stop_render!(::Nothing)           = nothing
+check_pause!(::Nothing)           = nothing
+should_quit(::Nothing)            = false
 
 # ---------------------------------------------------------------------------
 
@@ -34,6 +36,10 @@ mutable struct TUIObserver
     last_step_count::Int
     last_check_time::Float64
     steps_per_sec::Float64
+    # hotkey state
+    commands::Channel{Symbol}
+    paused::Threads.Atomic{Bool}
+    input_task::Union{Task, Nothing}
 end
 
 const _PRIORITY_PATTERNS = ("aorta", "carotid", "brachial", "femoral")
@@ -76,8 +82,19 @@ function TUIObserver(vessels_vec, is_outlet;
     TUIObserver(waveforms, ConvergenceHistory(), Snapshot(), LogRing(128), monitored,
                 step_stride, 0, Threads.Atomic{Bool}(false), nothing,
                 sim_name, t_final, n_cycles, now,
-                Threads.Atomic{Int}(1), Threads.Atomic{Int}(1), 0, 0, now, 0.0)
+                Threads.Atomic{Int}(1), Threads.Atomic{Int}(1), 0, 0, now, 0.0,
+                Channel{Symbol}(Inf), Threads.Atomic{Bool}(false), nothing)
 end
+
+function check_pause!(obs::TUIObserver)
+    obs.paused[] || return nothing
+    while obs.paused[] && !obs.should_stop[]
+        sleep(0.05)
+    end
+    nothing
+end
+
+should_quit(obs::TUIObserver) = obs.should_stop[]
 
 function record_step!(obs::TUIObserver, vessels, t::Float64, dt::Float64)
     obs.step_counter += 1
