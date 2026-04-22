@@ -104,12 +104,14 @@ function record_cycle!(obs::TUIObserver, cycle_idx::Int, vessels,
     conv_A > 0 && push!(obs.convergence.A, Float32(conv_A))
     conv_Q > 0 && push!(obs.convergence.Q, Float32(conv_Q))
     obs.scalars.passed_cycles = cycle_idx
-    # snapshot prev cycle from checkpoint matrix (col 4 = node3 = midpoint, Pa → mmHg)
-    # v.waveforms["P"] = just-completed cycle; v.waveforms_prev["P"] = cycle before that
+    # snapshot just-completed cycle as the new prev reference, then reset live ring
     @inbounds for i in eachindex(obs.monitored)
         v = vessels[obs.monitored[i].vessel_idx]
-        haskey(v.waveforms, "P") || continue
-        obs.waveforms[i].prev_P = Float32.(view(v.waveforms["P"], :, 4)) .* _PA_TO_MMHG
+        if haskey(v.waveforms, "P")
+            obs.waveforms[i].prev_P = Float32.(view(v.waveforms["P"], :, 4)) .* _PA_TO_MMHG
+        end
+        # reset write index so the next cycle's live waveform starts fresh
+        obs.waveforms[i].P.write_idx[] = 0
     end
     nothing
 end
