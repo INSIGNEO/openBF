@@ -10,11 +10,10 @@ makedocs(
         "Quickstart" => "man/quickstart.md",
         "Configuration" => "man/config.md",
         "Examples" => "man/examples.md",
+        "Plotting" => "man/plotting.md",
+        "Benchmarking" => "man/benchmarking.md",
     ],
 )
-
-
-# TODO: add link to dashboard
 
 deploydocs(
     repo = "github.com/INSIGNEO/openBF.git",
