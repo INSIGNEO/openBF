@@ -31,38 +31,47 @@ function calculateΔt(n::Network)
     minΔt * n.Ccfl
 end
 
+# Apply inlet BC and downstream junction for one edge.
+# Called in Phase A (junctions-only pass) before any muscl! runs this step.
+@inline function _apply_junctions!(n::Network, eid::Int, current_time::Float64, dt::Float64)
+    v = n.vessels_vec[eid]
+    n.is_inlet[eid] && inbc!(v, current_time, dt, n.heart)
+
+    nc = n.child_count[eid]
+    if nc == 0
+        outbc!(v, dt, n.blood.rho)
+    elseif nc == 1
+        c1 = Int(n.child_eids[eid][1])
+        np_child = n.parent_count[c1]
+        if np_child == 1
+            join_vessels!(v, n.vessels_vec[c1], n.blood.rho)
+        else
+            # Anastomosis: max-eid parent triggers the single solve per step.
+            # In two-phase both parents' boundaries are pre-muscl → single consistent read.
+            p1, p2 = Int(n.parent_eids[c1][1]), Int(n.parent_eids[c1][2])
+            if eid == max(p1, p2)
+                solveAnastomosis(n.vessels_vec[p1], n.vessels_vec[p2], n.vessels_vec[c1])
+                n.anastomosis_solved[c1] = true
+            end
+        end
+    elseif nc == 2
+        c1, c2 = Int(n.child_eids[eid][1]), Int(n.child_eids[eid][2])
+        join_vessels!(v, n.vessels_vec[c1], n.vessels_vec[c2])
+    end
+    return
+end
+
 function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
     fill!(n.anastomosis_solved, false)
+
+    # Phase A: all junctions in topological order (reads only previous-step boundaries)
     @inbounds for k in eachindex(n.topo_order)
-        eid = n.topo_order[k]
-        v = n.vessels_vec[eid]
+        _apply_junctions!(n, Int(n.topo_order[k]), current_time, dt)
+    end
 
-        # inlet BC
-        n.is_inlet[eid] && inbc!(v, current_time, dt, n.heart)
-
-        # downstream junction / outlet
-        nc = n.child_count[eid]
-        if nc == 0
-            outbc!(v, dt, n.blood.rho)
-        elseif nc == 1
-            c1 = Int(n.child_eids[eid][1])
-            np_child = n.parent_count[c1]
-            if np_child == 1
-                join_vessels!(v, n.vessels_vec[c1], n.blood.rho)
-            else
-                # anastomosis: only the parent with the higher eid triggers the solve
-                p1, p2 = Int(n.parent_eids[c1][1]), Int(n.parent_eids[c1][2])
-                if eid == max(p1, p2)
-                    solveAnastomosis(n.vessels_vec[p1], n.vessels_vec[p2], n.vessels_vec[c1])
-                    n.anastomosis_solved[c1] = true
-                end
-            end
-        elseif nc == 2
-            c1, c2 = Int(n.child_eids[eid][1]), Int(n.child_eids[eid][2])
-            join_vessels!(v, n.vessels_vec[c1], n.vessels_vec[c2])
-        end
-
-        muscl!(v, dt, n.blood)
+    # Phase B: all MUSCL advances (boundaries fully set; order irrelevant)
+    @inbounds for k in eachindex(n.topo_order)
+        muscl!(n.vessels_vec[Int(n.topo_order[k])], dt, n.blood)
     end
     return
 end
