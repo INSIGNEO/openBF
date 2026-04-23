@@ -7,26 +7,29 @@ using JSON
 # Used by: benchmarkpkg(openBF) / judge(openBF, "vtag")
 # ---------------------------------------------------------------------------
 
-function _bmodel(modelname, subdir="boileau2015")
-    dir = joinpath(@__DIR__, "..", "models", subdir, modelname)
+function _bmodel(dir::String, modelname::String)
     cwd = pwd()
     cd(dir)
     openBF.run_simulation("$modelname.yaml", verbose=false)
     cd(cwd)
 end
 
+const _ROOT = joinpath(@__DIR__, "..", "models")
+const _B15  = joinpath(_ROOT, "boileau2015")
+const _A07  = joinpath(_ROOT, "alastruey2007")
+
 const SUITE = BenchmarkGroup()
 
 SUITE["single_vessel"] = BenchmarkGroup()
-SUITE["single_vessel"]["cca"] = @benchmarkable _bmodel("cca")
-SUITE["single_vessel"]["uta"] = @benchmarkable _bmodel("uta")
+SUITE["single_vessel"]["cca"] = @benchmarkable _bmodel(joinpath($_B15, "cca"), "cca")
+SUITE["single_vessel"]["uta"] = @benchmarkable _bmodel(joinpath($_B15, "uta"), "uta")
 
 SUITE["bifurcation"] = BenchmarkGroup()
-SUITE["bifurcation"]["ibif"] = @benchmarkable _bmodel("ibif")
+SUITE["bifurcation"]["ibif"] = @benchmarkable _bmodel(joinpath($_B15, "ibif"), "ibif")
 
 SUITE["circulation"] = BenchmarkGroup()
-SUITE["circulation"]["adan56"]           = @benchmarkable _bmodel("adan56")
-SUITE["circulation"]["circle_of_willis"] = @benchmarkable _bmodel("circle_of_willis", "alastruey2007")
+SUITE["circulation"]["adan56"]           = @benchmarkable _bmodel(joinpath($_B15, "adan56"), "adan56")
+SUITE["circulation"]["circle_of_willis"] = @benchmarkable _bmodel($_A07, "circle_of_willis")
 
 # ---------------------------------------------------------------------------
 # Manual regression harness
@@ -37,17 +40,16 @@ SUITE["circulation"]["circle_of_willis"] = @benchmarkable _bmodel("circle_of_wil
 # ---------------------------------------------------------------------------
 
 const HARNESS_MODELS = [
-    ("cca",              "boileau2015"),
-    ("ibif",             "boileau2015"),
-    ("adan56",           "boileau2015"),
-    ("circle_of_willis", "alastruey2007"),
+    ("cca",              joinpath(_B15, "cca")),
+    ("ibif",             joinpath(_B15, "ibif")),
+    ("adan56",           joinpath(_B15, "adan56")),
+    ("circle_of_willis", _A07),
 ]
 
 const RESULTS_PATH = joinpath(@__DIR__, "results")
 isdir(RESULTS_PATH) || mkpath(RESULTS_PATH)
 
-function bench_model(name::String, subdir::String)
-    dir = joinpath(@__DIR__, "..", "models", subdir, name)
+function bench_model(name::String, dir::String)
     cwd = pwd()
     cd(dir)
     t = @benchmark openBF.run_simulation($name * ".yaml", verbose=false) seconds=60 samples=5
