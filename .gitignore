@@ -12,6 +12,7 @@ README.html
 **/*.pyc
 tmp_sim
 plot*
+!docs/src/man/plotting.md
 !models/**/*.yaml
 !models/**/*.dat
 models/charlton2019/**/*
