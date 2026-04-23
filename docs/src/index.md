@@ -4,7 +4,7 @@ openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numer
 
 openBF has been developed by [Dr. A. Melis](https://alemel.is) under the supervision of [Dr. A. Marzo](https://www.sheffield.ac.uk/mecheng/academic-staff/alberto-marzo) as part of the PhD project on cardiovascular modelling at [INSIGNEO](https://www.sheffield.ac.uk/insigneo) Institute, Department of Mechanical Engineering of The University of Sheffield. All the contributors are listed on [github](https://github.com/INSIGNEO/openBF/graphs/contributors).
 
-The accompaigning [PhD Thesis](https://etheses.whiterose.ac.uk/19175/) contains the relevant theoretical background and the explanation of the numerical scheme implemented. A multiscale validation study is presented in [this](https://iopscience.iop.org/article/10.1088/1361-6579/ad9663) paper. A shorter backgound introduction is given in the [Overview](man/overview.md) page.
+The accompanying [PhD Thesis](https://etheses.whiterose.ac.uk/19175/) contains the relevant theoretical background and the explanation of the numerical scheme implemented. A multiscale validation study is presented in [this](https://iopscience.iop.org/article/10.1088/1361-6579/ad9663) paper. A shorter background introduction is given in the [Overview](man/overview.md) page.
 
 Head over to the [Quickstart](man/quickstart.md) section for installation and running instructions.
 
@@ -68,7 +68,7 @@ year={2018},
 month={Oct}}
 ```
 
-and the accompaining PhD thesis
+and the accompanying PhD thesis
 
 ```bibtex
 @phdthesis{wreo19175,
