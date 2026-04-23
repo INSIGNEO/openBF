@@ -27,7 +27,7 @@ using Graphs
 using ProgressMeter
 using Statistics
 
-export run_simulation
+export run_simulation, Junction
 
 include("vessel.jl")
 include("network.jl")
@@ -38,4 +38,5 @@ include("conjunctions.jl")
 include("bifurcations.jl")
 include("output.jl")
 include("anastomosis.jl")
+include("junction.jl")
 end
