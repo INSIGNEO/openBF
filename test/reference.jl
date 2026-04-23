@@ -3,6 +3,7 @@ using YAML
 using DelimitedFiles
 using Serialization
 using Statistics
+using Printf
 
 const MODEL_PATHS = Dict(
     "cca"              => joinpath(@__DIR__, "..", "models", "boileau2015", "cca"),
@@ -60,6 +61,30 @@ end
 """
 load_reference(model_name::String) =
     deserialize(joinpath(@__DIR__, "ref_$(model_name).jls"))
+
+const ALL_MODELS = ("cca", "ibif", "adan56", "circle_of_willis")
+
+"""
+    check_all(; rtol=0, atol=0) -> Bool
+
+Run all four models, compare waveforms against stored references.
+Returns true if every vessel in every model is within tolerance.
+"""
+function check_all(; rtol=0.0, atol=0.0)
+    all_ok = true
+    for m in ALL_MODELS
+        ref = load_reference(m)
+        data, _ = capture_waveforms(m)
+        diffs = waveform_diff(ref, data; field="P")
+        max_diff = isempty(diffs) ? 0.0 : maximum(values(diffs))
+        tol = rtol + atol
+        ok = max_diff <= tol
+        all_ok &= ok
+        status = ok ? "PASS" : "FAIL"
+        @printf "  [%s] %s  max_rel_diff=%.6f  (tol=%.6f)\n" status m max_diff tol
+    end
+    all_ok
+end
 
 """
     waveform_diff(data_a, data_b; field="P") -> Dict{label => max_rel_diff}
