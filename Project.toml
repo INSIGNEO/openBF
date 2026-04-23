@@ -1,6 +1,6 @@
 name = "openBF"
 uuid = "e815b1a4-10eb-11ea-25f1-272ff651e618"
-version = "2.7.1"
+version = "2.8.0"
 authors = ["alessandro <alessandro_melis@rocketmail.com>"]
 
 [deps]
