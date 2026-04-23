@@ -27,7 +27,7 @@ using Graphs
 using ProgressMeter
 using Statistics
 
-export run_simulation, Junction
+export run_simulation, Junction, solve_junction!
 
 include("vessel.jl")
 include("network.jl")
