@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =#
 
-# NOTE: Junction holds preallocated work arrays (x, F, J, dx). It is NOT
+# NOTE: Junction holds preallocated work arrays (x, F, J, dx, Wstar). It is NOT
 # safe to solve the same Junction from multiple threads concurrently.
 # If the junction loop is ever parallelised, each thread must own a
 # private Junction copy (or these arrays must move to a thread-local
@@ -26,23 +26,25 @@ limitations under the License.
 A generic n-furcation: k ≥ 2 vessels meeting at a single point with
 arbitrary parent (`:outlet`) / daughter (`:inlet`) split.
 
-Parameterised in `(u, α)` where `α = A^{1/4}`, matching the three legacy
-solvers exactly. Unknowns are laid out as `[u₁…uₖ, α₁…αₖ]`.
+Parameterised in `(u, α)` where `α = A^{1/4}`, matching the three former
+per-topology Newton solvers exactly. Unknowns laid out as `[u₁…uₖ, α₁…αₖ]`.
 
 # Fields
 - `id::Int`: unique identifier (the shared node ID) for diagnostics.
 - `vessels::Vector{Int}`: indices into the network's vessel list.
 - `sides::Vector{Symbol}`: `:outlet` or `:inlet`, per attached vessel.
 - `signs::Vector{Int}`: +1 for `:outlet`, −1 for `:inlet`. Precomputed.
-- `use_total_pressure::Bool`: when true, the pressure-continuity equation
-  uses total pressure (static + dynamic); set to `true` for k=2 (conjunction).
+- `use_total_pressure::Bool`: when true pressure continuity uses total pressure;
+  set to `true` for k=2 (conjunction).
 
-Work arrays (preallocated to avoid per-step allocation):
+Preallocated work arrays (avoid per-step heap allocation):
 
-- `x::Vector{Float64}`: unknowns, length 2k, ordered [u₁…uₖ, α₁…αₖ].
+- `x::Vector{Float64}`: unknowns `[u₁…uₖ, α₁…αₖ]`, length 2k.
 - `F::Vector{Float64}`: residual, length 2k.
 - `J::Matrix{Float64}`: Jacobian, 2k × 2k.
 - `dx::Vector{Float64}`: Newton update, length 2k.
+- `Wstar::Vector{Float64}`: incoming Riemann invariants, length k.
+  Filled once before the Newton loop; constant during iteration.
 """
 struct Junction
     id::Int
@@ -54,6 +56,7 @@ struct Junction
     F::Vector{Float64}
     J::Matrix{Float64}
     dx::Vector{Float64}
+    Wstar::Vector{Float64}
 end
 
 function Junction(id::Int, vessels::Vector{Int}, sides::Vector{Symbol};
@@ -69,7 +72,7 @@ function Junction(id::Int, vessels::Vector{Int}, sides::Vector{Symbol};
     k = length(vessels)
     signs = [s == :outlet ? +1 : -1 for s in sides]
     Junction(id, vessels, sides, signs, use_total_pressure,
-             zeros(2k), zeros(2k), zeros(2k, 2k), zeros(2k))
+             zeros(2k), zeros(2k), zeros(2k, 2k), zeros(2k), zeros(k))
 end
 
 # ── private helpers ───────────────────────────────────────────────────────────
@@ -78,7 +81,7 @@ end
 face_u_alpha(v::Vessel, side::Symbol) =
     side == :outlet ? (v.u[end], v.A[end]^0.25) : (v.u[1], v.A[1]^0.25)
 
-# Wave-speed coefficient: c = k·α  (matches legacy sqrt(1.5·gamma))
+# Wave-speed coefficient: c = k·α  (c = sqrt(1.5·gamma·sqrt(A)) = sqrt(1.5·gamma)·A^{1/4})
 face_k(v::Vessel, side::Symbol) =
     side == :outlet ? sqrt(1.5 * v.gamma[end]) : sqrt(1.5 * v.gamma[1])
 
@@ -98,15 +101,24 @@ function pack_initial_guess!(jc::Junction, vessels::Vector{Vessel})
     return jc
 end
 
-function residual!(jc::Junction, vessels::Vector{Vessel}, rho::Float64,
-                   Wstar::Vector{Float64})
+# Fill jc.Wstar from the pre-Newton face state (constant during Newton loop).
+function fill_Wstar!(jc::Junction, vessels::Vector{Vessel})
+    k = length(jc.vessels)
+    for i in 1:k
+        v  = vessels[jc.vessels[i]]
+        ki = face_k(v, jc.sides[i])
+        jc.Wstar[i] = jc.x[i] + jc.signs[i] * 4ki * jc.x[k+i]
+    end
+end
+
+function residual!(jc::Junction, vessels::Vector{Vessel}, rho::Float64)
     k = length(jc.vessels)
 
-    # Block 1 — characteristic equations (linear in α, matching legacy)
+    # Block 1 — characteristic equations (linear in α)
     for i in 1:k
         v    = vessels[jc.vessels[i]]
         ki   = face_k(v, jc.sides[i])
-        jc.F[i] = jc.x[i] + jc.signs[i] * 4ki * jc.x[k+i] - Wstar[i]
+        jc.F[i] = jc.x[i] + jc.signs[i] * 4ki * jc.x[k+i] - jc.Wstar[i]
     end
 
     # Block 2 — mass conservation: Σ sᵢ · uᵢ · αᵢ⁴ = 0
@@ -198,7 +210,22 @@ function unpack_solution!(jc::Junction, vessels::Vector{Vessel})
     end
 end
 
-const JUNCTION_NEWTON_TOL   = 1e-5   # matches NRbif / NRconj / NRan tolerance
+# In-place linear solve  dx ← J⁻¹F  using StaticArrays for k=2,3
+# (stack-allocated LU, zero heap allocation). Falls back to generic for k≥4.
+@inline function _solve_dx!(jc::Junction)
+    n = length(jc.F)
+    if n == 4
+        JJ = MMatrix{4,4,Float64}(jc.J)
+        ldiv!(jc.dx, lu!(JJ), jc.F)
+    elseif n == 6
+        JJ = MMatrix{6,6,Float64}(jc.J)
+        ldiv!(jc.dx, lu!(JJ), jc.F)
+    else
+        jc.dx .= jc.J \ jc.F
+    end
+end
+
+const JUNCTION_NEWTON_TOL   = 1e-5   # matches legacy NR solver tolerance
 const JUNCTION_NEWTON_MAXIT = 30     # matches legacy maxiter
 
 """
@@ -208,24 +235,16 @@ Solve the n-furcation junction `jc` in-place using Newton's method and
 write the converged face state back into each attached vessel.
 """
 function solve_junction!(jc::Junction, vessels::Vector{Vessel}, blood::Blood)
-    k = length(jc.vessels)
     pack_initial_guess!(jc, vessels)
-
-    # Precompute Riemann invariants from the current (pre-Newton) face state.
-    Wstar = ntuple(k) do i
-        v  = vessels[jc.vessels[i]]
-        ki = face_k(v, jc.sides[i])
-        jc.x[i] + jc.signs[i] * 4ki * jc.x[k+i]
-    end
-    Wstar_vec = collect(Float64, Wstar)
+    fill_Wstar!(jc, vessels)          # constant during Newton; no allocation
 
     converged = false
     for _ in 1:JUNCTION_NEWTON_MAXIT
-        residual!(jc, vessels, blood.rho, Wstar_vec)
+        residual!(jc, vessels, blood.rho)
         norm(jc.F) < JUNCTION_NEWTON_TOL && (converged = true; break)
         jacobian!(jc, vessels, blood.rho)
-        jc.dx .= jc.J \ jc.F
-        jc.x  .-= jc.dx
+        _solve_dx!(jc)                # stack-allocated for k=2,3
+        jc.x .-= jc.dx
     end
     converged || @warn "junction $(jc.id) did not converge" norm(jc.F)
     unpack_solution!(jc, vessels)
