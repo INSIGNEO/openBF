@@ -18,13 +18,14 @@ const MODEL_PATHS = Dict(
 Run a simulation and return the last-cycle waveform matrices keyed by vessel label.
 `data[label][field]` is a Matrix with columns [t, val_node1, val_node2, val_node3, val_node4, val_nodeM].
 """
-function capture_waveforms(model_name::String)
+function capture_waveforms(model_name::String; use_generic_junctions::Bool=false)
     dir = abspath(MODEL_PATHS[model_name])
     yaml = joinpath(dir, "$model_name.yaml")
     savedir = mktempdir(; prefix="openbf_$(model_name)_", cleanup=false)
 
     cwd = pwd()
-    openBF.run_simulation(yaml, verbose=false, savedir=savedir)
+    openBF.run_simulation(yaml, verbose=false, savedir=savedir,
+                          use_generic_junctions=use_generic_junctions)
     cd(cwd)
 
     config = YAML.load_file(yaml)

@@ -30,6 +30,7 @@ using Statistics
 export run_simulation, Junction, solve_junction!
 
 include("vessel.jl")
+include("junction.jl")
 include("network.jl")
 include("solver.jl")
 include("simulation.jl")
@@ -38,5 +39,4 @@ include("conjunctions.jl")
 include("bifurcations.jl")
 include("output.jl")
 include("anastomosis.jl")
-include("junction.jl")
 end

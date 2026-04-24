@@ -99,6 +99,7 @@ function run_simulation(
     out_files::Bool = false,
     save_stats::Bool = false,
     savedir::String = "",
+    use_generic_junctions::Bool = false,
 )
     initial_dir = pwd()
     config::Dict{String, Any} = preamble(yaml_config, verbose, savedir)
@@ -116,6 +117,7 @@ function run_simulation(
         config["solver"]["jump"]::Int64,
         tempsave,
         verbose = verbose,
+        use_generic_junctions = use_generic_junctions,
     )
     total_time = float(config["solver"]["cycles"]) * heart.cardiac_period
     jump::Int64 = config["solver"]["jump"]

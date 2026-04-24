@@ -62,11 +62,24 @@ end
 end
 
 function solve!(n::Network, dt::Float64, current_time::Float64)::Nothing
-    fill!(n.anastomosis_solved, false)
-
-    # Phase A: all junctions in topological order (reads only previous-step boundaries)
-    @inbounds for k in eachindex(n.topo_order)
-        _apply_junctions!(n, Int(n.topo_order[k]), current_time, dt)
+    if n.use_generic_junctions
+        # Phase A (generic): BCs first, then all junction solves.
+        # Reads only previous-step boundaries; no ordering dependency between junctions.
+        @inbounds for k in eachindex(n.topo_order)
+            eid = Int(n.topo_order[k])
+            v   = n.vessels_vec[eid]
+            n.is_inlet[eid]         && inbc!(v, current_time, dt, n.heart)
+            n.child_count[eid] == 0 && outbc!(v, dt, n.blood.rho)
+        end
+        for jc in n.junctions
+            solve_junction!(jc, n.vessels_vec, n.blood)
+        end
+    else
+        fill!(n.anastomosis_solved, false)
+        # Phase A (legacy): all junctions in topological order
+        @inbounds for k in eachindex(n.topo_order)
+            _apply_junctions!(n, Int(n.topo_order[k]), current_time, dt)
+        end
     end
 
     # Phase B: all MUSCL advances (boundaries fully set; order irrelevant)
