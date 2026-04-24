@@ -45,6 +45,8 @@ blood:
 
 A list of vessel entries. Each vessel connects a source node (`sn`) to a target node (`tn`). Node 1 is the network inlet.
 
+Junctions are inferred automatically from shared node IDs — you never declare them explicitly. Any node shared by two or more vessels becomes a junction, regardless of fan-in/fan-out. Bifurcations (1→2), trifurcations (1→3), anastomoses (2→1), and higher-order junctions all work without any special syntax.
+
 ### Mandatory parameters
 
 ```yaml

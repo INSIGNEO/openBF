@@ -32,6 +32,22 @@ openBF.run_simulation("my_network.yaml")
 
 Results are written to `<project_name>_results/` in the working directory, or to `savedir` if provided.
 
+Alternatively, use the included `run.jl` script from the terminal:
+
+```bash
+julia run.jl my_network.yaml
+```
+
+## Validating a network
+
+Before running a simulation you can check the network topology for common errors (self-loops, disconnected subgraphs, malformed junctions) without executing the solver:
+
+```bash
+julia run.jl --validate my_network.yaml
+```
+
+Exits with status 0 if the network is well-formed, status 1 if any errors are found. Warnings (e.g. unusually high-k junctions) are printed but do not affect the exit code.
+
 ## Output files
 
 For each vessel listed in `write_results`, two files are produced:
