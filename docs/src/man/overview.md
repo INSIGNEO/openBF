@@ -14,7 +14,7 @@ The resulting system of PDEs captures pulse wave transmission and reflection at 
 
 ## Numerical scheme
 
-openBF solves the 1D blood flow equations using a second-order MUSCL finite-volume scheme with a predictor-corrector time integration. Junctions of arbitrary fan-in/fan-out (confluences, bifurcations, trifurcations, anastomoses, …) are resolved by a single generic Newton solver enforcing conservation of mass and continuity of static pressure. Outlet boundary conditions are either a reflection coefficient or a Windkessel (two- or three-element) model.
+openBF solves the 1D blood flow equations using a second-order MUSCL finite-volume scheme with a predictor-corrector time integration. Junctions (confluences, bifurcations, anastomoses) are resolved by a Newton solver enforcing conservation of mass and total pressure. Outlet boundary conditions are either a reflection coefficient or a Windkessel (two- or three-element) model.
 
 ## Acknowledgements
 
