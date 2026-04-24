@@ -77,7 +77,7 @@ function Network(
     jump::Int64,
     tokeep::Vector{String};
     verbose = true,
-    use_generic_junctions::Bool = false,
+    use_generic_junctions::Bool = true,
 )
     prog = verbose ? Progress(length(config); desc = "Building network:") : nothing
 
