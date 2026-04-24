@@ -26,7 +26,7 @@ using Graphs
 using ProgressMeter
 using Statistics
 
-export run_simulation, Junction, solve_junction!
+export run_simulation, Junction, solve_junction!, validate_network
 
 include("vessel.jl")
 include("junction.jl")
@@ -35,4 +35,5 @@ include("solver.jl")
 include("simulation.jl")
 include("boundary_conditions.jl")
 include("output.jl")
+include("validate.jl")
 end
