@@ -20,7 +20,6 @@ module openBF
 using Printf
 using LinearAlgebra
 using DelimitedFiles
-using StaticArrays
 using YAML
 using Glob
 using Graphs
@@ -35,8 +34,5 @@ include("network.jl")
 include("solver.jl")
 include("simulation.jl")
 include("boundary_conditions.jl")
-include("conjunctions.jl")
-include("bifurcations.jl")
 include("output.jl")
-include("anastomosis.jl")
 end

@@ -1,33 +1,24 @@
-# Fast A/B: ibif has a bifurcation junction and well-configured windkessel outlets.
-# Conjunction and anastomosis are covered at solver level by test_junction_k2/k3.
-# Verifies use_generic_junctions=true matches legacy to 1e-10 relative.
+# Smoke test: generic junction solver runs ibif (bifurcation) end-to-end
+# and produces finite, non-trivial waveforms on all vessels.
 
-@testset "Junction generic solver (A/B on ibif)" begin
-    dir    = abspath(joinpath(@__DIR__, "..", "models", "boileau2015", "ibif"))
-    yaml   = joinpath(dir, "ibif.yaml")
+@testset "Junction solver smoke test (ibif)" begin
+    dir  = abspath(joinpath(@__DIR__, "..", "models", "boileau2015", "ibif"))
+    yaml = joinpath(dir, "ibif.yaml")
     labels = ["parent", "d1", "d2"]
     fields = ("Q", "P", "A", "u")
-    tol    = 1e-10
+    savedir = mktempdir(; prefix="openbf_ibif_", cleanup=false)
+    cwd = pwd()
 
-    dir_leg = mktempdir(; prefix="openbf_leg_", cleanup=false)
-    dir_gen = mktempdir(; prefix="openbf_gen_", cleanup=false)
-    cwd     = pwd()
-
-    openBF.run_simulation(yaml; verbose=false, savedir=dir_leg)
-    cd(cwd)
-    openBF.run_simulation(yaml; verbose=false, savedir=dir_gen, use_generic_junctions=true)
+    openBF.run_simulation(yaml; verbose=false, savedir=savedir)
     cd(cwd)
 
     for label in labels, field in fields
-        fleg = joinpath(dir_leg, "$(label)_$field.last")
-        fgen = joinpath(dir_gen, "$(label)_$field.last")
-        (isfile(fleg) && isfile(fgen)) || continue
-        leg   = readdlm(fleg, Float64)[:, 2:end]
-        gen   = readdlm(fgen, Float64)[:, 2:end]
-        denom = maximum(abs, leg)
-        denom > 0 && @test maximum(abs, leg .- gen) / denom ≤ tol
+        fpath = joinpath(savedir, "$(label)_$field.last")
+        isfile(fpath) || continue
+        data = readdlm(fpath, Float64)[:, 2:end]
+        @test all(isfinite, data)
+        @test maximum(abs, data) > 0
     end
 
-    rm(dir_leg; recursive=true, force=true)
-    rm(dir_gen; recursive=true, force=true)
+    rm(savedir; recursive=true, force=true)
 end
