@@ -99,7 +99,7 @@ function run_simulation(
     out_files::Bool = false,
     save_stats::Bool = false,
     savedir::String = "",
-    use_generic_junctions::Bool = false,
+    use_generic_junctions::Bool = true,
 )
     initial_dir = pwd()
     config::Dict{String, Any} = preamble(yaml_config, verbose, savedir)
