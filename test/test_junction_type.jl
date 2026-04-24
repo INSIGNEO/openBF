@@ -19,6 +19,18 @@
         @test size(jc.J)   == (4, 4)
     end
 
+    @testset "construction — k=4 (trifurcation)" begin
+        jc = Junction(9, [1, 2, 3, 4], [:outlet, :inlet, :inlet, :inlet])
+        @test jc.id == 9
+        @test length(jc.vessels) == 4
+        @test jc.signs == [+1, -1, -1, -1]
+        @test jc.use_total_pressure == false
+        @test length(jc.x)  == 8
+        @test length(jc.F)  == 8
+        @test size(jc.J)    == (8, 8)
+        @test length(jc.dx) == 8
+    end
+
     @testset "construction — invalid args" begin
         @test_throws ArgumentError Junction(1, [1, 2, 3], [:outlet, :inlet])
         @test_throws ArgumentError Junction(1, [1],       [:outlet])
