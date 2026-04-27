@@ -6,7 +6,7 @@ Guidance for AI coding agents working on openBF. Human contributors are welcome 
 
 ## What openBF is
 
-openBF is a 1D hemodynamics solver. It simulates blood flow through networks of arbitrary topology using a MUSCL finite-volume scheme on a directed graph of 1D vessels. Junctions (bifurcations, conjunctions, anastomoses) are resolved with Newton iteration on small (4×4, 6×6) systems. Outlets use either a three-element Windkessel model or a characteristic-based compatibility condition.
+openBF is a 1D hemodynamics solver. It simulates blood flow through networks of arbitrary topology using a MUSCL finite-volume scheme on a directed graph of 1D vessels. Junctions of arbitrary fan-in/fan-out (conjunctions, bifurcations, anastomoses, trifurcations, …) are resolved with a single generic Newton solver on 2k×2k systems, where k is the number of attached vessels. Outlets use either a three-element Windkessel model or a characteristic-based compatibility condition.
 
 The math is correct. The software engineering has room to move. Assume any change you propose is a performance or clarity change, not a physics change.
 
@@ -21,9 +21,8 @@ src/
   network.jl             Network + Heart
   solver.jl              MUSCL time-stepping (hot path)
   boundary_conditions.jl inlet, outlet, WK3
-  bifurcations.jl        3-vessel junction Newton solve
-  conjunctions.jl        2-vessel junction Newton solve
-  anastomosis.jl         inverse 3-vessel junction Newton solve
+  junction.jl            generic n-furcation Newton solver (Junction type)
+  validate.jl            network topology validation
   simulation.jl          outer loop, convergence, I/O orchestration
   output.jl              waveform saving
 models/                  YAML network configs + inlet waveforms
@@ -42,7 +41,7 @@ Before your first edit, confirm you understand:
 - The graph topology does not change mid-simulation. Treat it as compile-time data.
 - `Vessel` holds both immutable geometry (`M`, `beta`, `A0`, `gamma`, …) and mutable state (`A`, `Q`, `u`, `P`).
 - `solve!` in `solver.jl` is called once per time step and is where hot-path work happens.
-- Junctions are solved by iterating over edges, not nodes. A bifurcation solve writes across three vessels simultaneously.
+- Junctions are solved by iterating over `Network.junctions` (a `Vector{Junction}` built once at construction). Each `Junction` holds preallocated work arrays and is solved with Newton iteration in `solve_junction!`.
 - `run_simulation` in `simulation.jl` does real work: it `cd`s into a results directory, reads YAML, constructs the network, and loops until convergence or a cycle cap.
 
 If any of these statements surprises you, re-read the relevant file.
@@ -174,10 +173,7 @@ check_regression("ibif"; rtol=1e-10)            # after FP-reordering changes
 
 ### Known correctness issues in the current code
 
-These are pre-existing bugs. Do not introduce more.
-
-- `check()` in `network.jl` has a `||`/`&&` precedence trap that silences the "too many edges at vertex" error in some cases.
-- `get_conv_error` computes `|mean(error)|`, not RMSE, despite its name and the "RMSE (mmHg)" label.
+These are not pre-existing bugs. Do not introduce more.
 
 If you find more, flag them. Do not silently fix — file an issue first, fix in a dedicated commit with clear tolerance discussion.
 
