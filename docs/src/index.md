@@ -12,6 +12,8 @@ Head over to the [Quickstart](man/quickstart.md) section for installation and ru
 
 openBF has been used in the following works:
 
+Wardhana G, van Loon LM, Potters JW, et al. [Modeling age and sex variations of arterial pressure and cardiac hemodynamics in a virtual population using a 0D-1D cardiovascular simulator](https://journals.physiology.org/doi/full/10.1152/ajpheart.00387.2025), _Am J Physiol Heart Circ Physiol_, 2025. DOI: 10.1152/ajpheart.00387.2025
+
 - Benemerito I, Melis A, Wehenkel A, Marzo A. [openBF: an open-source finite volume 1D blood flow solver](https://iopscience.iop.org/article/10.1088/1361-6579/ad9663), _Physiological Measurement_, 2024. DOI: 10.1088/1361-6579-ad9663
 
 - Wang N, Benemerito I, Sourbron S, Marzo A. [An in silico modelling approach to predict haemodynamic outcomes in diabetic and hypertensive kidney disease](https://link.springer.com/article/10.1007/s10439-024-03573-2), _Annals of Biomedical Engineering_, 2024. DOI: 10.1007/s10439-024-03573-2
