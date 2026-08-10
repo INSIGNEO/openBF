@@ -27,15 +27,14 @@ using Graphs
 using ProgressMeter
 using Statistics
 
-export run_simulation
+export run_simulation, Junction, solve_junction!, validate_network
 
 include("vessel.jl")
+include("junction.jl")
 include("network.jl")
 include("solver.jl")
 include("simulation.jl")
 include("boundary_conditions.jl")
-include("conjunctions.jl")
-include("bifurcations.jl")
 include("output.jl")
-include("anastomosis.jl")
+include("validate.jl")
 end

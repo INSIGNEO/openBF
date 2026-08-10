@@ -42,11 +42,29 @@ struct Network
     is_inlet::BitVector
     is_outlet::BitVector
     topo_order::Vector{Int32}
-    # Indexed by child-vessel eid: true if the anastomosis junction at that child's
-    # source node has already been solved this step. Reset to false at start of solve!.
-    anastomosis_solved::Vector{Bool}
+    junctions::Vector{Junction}
 end
 number_of_nodes(config::Vector{Dict{Any,Any}}) = maximum(c["tn"] for c in config)
+function build_junctions(vessels::Vector{Vessel})::Vector{Junction}
+    by_node = Dict{Int, Vector{Tuple{Int,Symbol}}}()
+    for (vid, v) in enumerate(vessels)
+        push!(get!(by_node, v.sn, Tuple{Int,Symbol}[]), (vid, :inlet))
+        push!(get!(by_node, v.tn, Tuple{Int,Symbol}[]), (vid, :outlet))
+    end
+    junctions = Junction[]
+    for (node, attachments) in by_node
+        length(attachments) < 2 && continue
+        vids  = [a[1] for a in attachments]
+        sides = [a[2] for a in attachments]
+        @assert any(s == :outlet for s in sides) "node $node: no outlet vessel"
+        @assert any(s == :inlet  for s in sides) "node $node: no inlet vessel"
+        k = length(vids)
+        push!(junctions, Junction(node, vids, sides; use_total_pressure=(k == 2)))
+    end
+    sort!(junctions, by=j -> j.id)
+    return junctions
+end
+
 function Network(
     config::Vector{Dict{Any,Any}},
     blood::Blood,
@@ -111,12 +129,12 @@ function Network(
     end
     topo_order = Int32.(Graphs.topological_sort_by_dfs(edge_dag))
 
-    anastomosis_solved = zeros(Bool, n_vessels)
+    junctions = build_junctions(vessels_vec)
 
     Network(blood, heart, Ccfl,
             vessels_vec, edge_to_eid, eid_to_edge,
             parent_eids, child_eids, parent_count, child_count,
-            is_inlet, is_outlet, topo_order, anastomosis_solved)
+            is_inlet, is_outlet, topo_order, junctions)
 end
 
 function check(g::SimpleDiGraph)

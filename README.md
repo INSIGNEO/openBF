@@ -16,6 +16,8 @@
 
 openBF is an open-source 1D blood flow solver based on MUSCL finite-volume numerical scheme, written in [Julia](https://julialang.org/downloads/) and released under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) free software license.
 
+Junctions of arbitrary fan-in/fan-out (bifurcations, trifurcations, anastomoses, and beyond) are supported out of the box — see the [Circle of Willis](models/) model as a realistic example.
+
 Read the [documentation](https://insigneo.github.io/openBF/stable) for installation and run instructions.
 
 ## Release notes
